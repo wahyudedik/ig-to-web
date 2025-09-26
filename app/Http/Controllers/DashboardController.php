@@ -15,6 +15,8 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         switch ($user->user_type) {
+            case 'superadmin':
+                return view('dashboards.superadmin');
             case 'admin':
                 return view('dashboards.admin');
             case 'guru':

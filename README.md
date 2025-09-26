@@ -1,3 +1,274 @@
+# Website Sekolah - Sistem Informasi Sekolah Terintegrasi
+
+Website sekolah dengan fitur lengkap untuk manajemen data siswa, guru, kegiatan, dan administrasi sekolah.
+
+## 📋 Persyaratan Sistem
+
+- PHP >= 8.2
+- Composer
+- Node.js >= 18.x
+- NPM atau Yarn
+- MySQL/MariaDB atau SQLite
+- Web Server (Apache/Nginx) atau PHP Built-in Server
+
+## 🚀 Cara Clone dan Setup Development
+
+### 1. Clone Repository
+
+```bash
+# Clone repository dari GitHub
+git clone https://github.com/wahyudedik/ig-to-web.git
+
+# Masuk ke direktori project
+cd ig-to-web
+```
+
+### 2. Install Dependencies
+
+```bash
+# Install PHP dependencies dengan Composer
+composer install
+
+# Install JavaScript dependencies dengan NPM
+npm install
+```
+
+### 3. Konfigurasi Environment
+
+```bash
+# Copy file environment
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+```
+
+### 4. Konfigurasi Database
+
+Edit file `.env` dan sesuaikan konfigurasi database:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=sekolah_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Setup Database
+
+```bash
+# Jalankan migrasi database
+php artisan migrate
+
+# (Opsional) Jalankan seeder untuk data sample
+php artisan db:seed
+```
+
+### 6. Konfigurasi Instagram API (Opsional)
+
+Untuk fitur modul kegiatan Instagram, tambahkan konfigurasi berikut di file `.env`:
+
+```env
+# Instagram API Configuration
+INSTAGRAM_ACCESS_TOKEN=your_access_token_here
+INSTAGRAM_USER_ID=your_user_id_here
+INSTAGRAM_APP_ID=your_app_id_here
+INSTAGRAM_APP_SECRET=your_app_secret_here
+INSTAGRAM_REDIRECT_URI=https://yourdomain.com/instagram/callback
+```
+
+### 7. Build Assets
+
+```bash
+# Build assets untuk development
+npm run dev
+
+# Atau build untuk production
+npm run build
+```
+
+### 8. Jalankan Aplikasi
+
+```bash
+# Jalankan development server
+php artisan serve
+
+# Atau jalankan dengan semua service (server, queue, logs, vite)
+composer run dev
+```
+
+Aplikasi akan berjalan di `http://localhost:8000`
+
+## 📁 Struktur Project
+
+```
+ig-to-web/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/          # Controller aplikasi
+│   │   │   ├── Auth/            # Controller autentikasi
+│   │   │   ├── DashboardController.php
+│   │   │   ├── InstagramController.php
+│   │   │   ├── ProfileController.php
+│   │   │   └── SuperadminController.php
+│   │   ├── Middleware/          # Custom middleware
+│   │   │   ├── CheckRole.php
+│   │   │   └── CheckPermission.php
+│   │   └── Requests/            # Form request validation
+│   ├── Models/                  # Eloquent models
+│   │   ├── User.php
+│   │   ├── Role.php
+│   │   ├── Permission.php
+│   │   ├── ModuleAccess.php
+│   │   └── AuditLog.php
+│   ├── Services/                # Business logic services
+│   │   └── InstagramService.php
+│   └── View/Components/         # Blade components
+├── config/                      # Konfigurasi aplikasi
+├── database/
+│   ├── migrations/              # Database migrations
+│   ├── seeders/                 # Database seeders
+│   └── factories/               # Model factories
+├── public/                      # Public assets
+├── resources/
+│   ├── css/                     # Stylesheet
+│   ├── js/                      # JavaScript
+│   └── views/                   # Blade templates
+│       ├── auth/                # View autentikasi
+│       ├── dashboards/          # View dashboard per role
+│       │   └── superadmin.blade.php
+│       ├── instagram/           # View Instagram activities
+│       └── layouts/             # Layout templates
+├── routes/                      # Route definitions
+├── storage/                     # File storage
+└── tests/                       # Test files
+```
+
+## 👥 Sistem Role dan Akses
+
+Aplikasi memiliki 5 jenis pengguna dengan akses berbeda:
+
+1. **Superadmin** - Akses penuh ke semua fitur + User Management & Permission Control
+2. **Admin** - Akses penuh ke semua fitur (kecuali user management)
+3. **Guru** - Akses ke modul mengajar dan data siswa
+4. **Siswa** - Akses terbatas ke profil dan kegiatan
+5. **Sarpras** - Akses ke modul sarana dan prasarana
+
+## 🔧 Development Commands
+
+```bash
+# Clear cache
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+
+# Refresh database
+php artisan migrate:fresh --seed
+
+# Run tests
+php artisan test
+
+# Generate model dengan migration
+php artisan make:model ModelName -m
+
+# Generate controller
+php artisan make:controller ControllerName
+
+# Watch assets untuk development
+npm run dev
+```
+
+## 🔑 Default Login
+
+Setelah setup selesai, Anda bisa login dengan akun default:
+
+**Superadmin:**
+- Email: superadmin@sekolah.com
+- Password: password
+
+**Admin:**
+- Email: admin@sekolah.com
+- Password: password
+
+**Guru:**
+- Email: guru@sekolah.com  
+- Password: password
+
+**Siswa:**
+- Email: siswa@sekolah.com
+- Password: password
+
+**Sarpras:**
+- Email: sarpras@sekolah.com
+- Password: password
+
+## 🛠️ Troubleshooting
+
+### Error: "Class 'PDO' not found"
+```bash
+# Install PHP PDO extension
+sudo apt-get install php-pdo php-mysql  # Ubuntu/Debian
+brew install php@8.2                    # macOS
+```
+
+### Error: "Permission denied" pada storage
+```bash
+# Set permission yang benar
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache  # Linux
+```
+
+### Error: "Vite manifest not found"
+```bash
+# Build assets
+npm run build
+```
+
+### Database connection error
+- Pastikan MySQL/MariaDB service berjalan
+- Periksa konfigurasi database di file `.env`
+- Pastikan database sudah dibuat
+
+## 📝 Environment Variables
+
+File `.env` yang diperlukan:
+
+```env
+APP_NAME="Website Sekolah"
+APP_ENV=local
+APP_KEY=base64:your_app_key_here
+APP_DEBUG=true
+APP_TIMEZONE=Asia/Jakarta
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=sekolah_db
+DB_USERNAME=root
+DB_PASSWORD=
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+# Instagram API (Opsional)
+INSTAGRAM_ACCESS_TOKEN=
+INSTAGRAM_USER_ID=
+INSTAGRAM_APP_ID=
+INSTAGRAM_APP_SECRET=
+INSTAGRAM_REDIRECT_URI=
+```
+
+## 📚 Dokumentasi Fitur
+
 Fitur :
 1. Modul Kegiatan = ambil dari data instagram sekolah mmenggunakan api dari meta
 2. Modul Page = untuk membuat halaman/keterangan (Judul, isi halaman, gambar, kategori, waktu posting)
@@ -111,8 +382,29 @@ Fitur :
    - Tambahan Sarana
 
    Untuk akses lebih detail, silakan kunjungi:
-   https://www.maudu.aplikasimadrasah.com/admin
+   https://maudu.aplikasimadrasah.com/administrator
 
    Login:
-   - Username: sarpras
+   - Username: admin
    - Password: password
+
+## 🤝 Contributing
+
+Kontribusi sangat diterima! Silakan ikuti langkah berikut:
+
+1. Fork repository ini
+2. Buat branch fitur baru (`git checkout -b feature/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buat Pull Request
+
+## 📄 Lisensi
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 🙏 Acknowledgments
+
+- [Laravel Framework](https://laravel.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Alpine.js](https://alpinejs.dev/)
+- [Instagram Basic Display API](https://developers.facebook.com/docs/instagram-basic-display-api)
