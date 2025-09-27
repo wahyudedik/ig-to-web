@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('permissions', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('display_name');
+            $table->string('guard_name')->default('web');
+            $table->string('display_name')->nullable();
             $table->string('module')->nullable(); // instagram, guru, siswa, osis, lulus, sarpras, etc.
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);

@@ -10,6 +10,8 @@ class ModuleAccess extends Model
 {
     use HasFactory;
 
+    protected $table = 'module_access';
+
     protected $fillable = [
         'user_id',
         'module_name',

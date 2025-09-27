@@ -8,11 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -49,21 +50,6 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Get the roles for the user.
-     */
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'user_roles');
-    }
-
-    /**
-     * Get the permissions for the user.
-     */
-    public function permissions(): BelongsToMany
-    {
-        return $this->belongsToMany(Permission::class, 'user_permissions');
-    }
 
     /**
      * Get the module access for the user.
@@ -82,7 +68,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has specific permission.
+     * Check if user has specific permission using Spatie.
      */
     public function hasPermission(string $permission): bool
     {
@@ -91,10 +77,7 @@ class User extends Authenticatable
             return true;
         }
 
-        return $this->permissions()->where('name', $permission)->exists() ||
-            $this->roles()->whereHas('permissions', function ($query) use ($permission) {
-                $query->where('name', $permission);
-            })->exists();
+        return $this->hasPermissionTo($permission);
     }
 
     /**
@@ -116,13 +99,20 @@ class User extends Authenticatable
     /**
      * Check if user can perform specific action on module.
      */
-    public function can(string $action, string $module): bool
+    public function canPerform(string $action, string $module): bool
     {
         // Superadmin bypass all actions
         if ($this->user_type === 'superadmin') {
             return true;
         }
 
+        // Check Spatie permission first
+        $permission = "{$module}.{$action}";
+        if ($this->hasPermissionTo($permission)) {
+            return true;
+        }
+
+        // Fallback to module access system
         return $this->moduleAccess()
             ->where('module_name', $module)
             ->where('can_access', true)

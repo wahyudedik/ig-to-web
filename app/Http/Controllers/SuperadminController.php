@@ -81,7 +81,9 @@ class SuperadminController extends Controller
         ]);
 
         if ($request->has('roles')) {
-            $user->roles()->attach($request->roles);
+            $roleIds = $request->roles;
+            $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
+            $user->assignRole($roleNames);
         }
 
         // Log the action
@@ -137,7 +139,9 @@ class SuperadminController extends Controller
         }
 
         if ($request->has('roles')) {
-            $user->roles()->sync($request->roles);
+            $roleIds = $request->roles;
+            $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
+            $user->syncRoles($roleNames);
         }
 
         // Log the action

@@ -148,13 +148,34 @@ ig-to-web/
 
 ## 👥 Sistem Role dan Akses
 
-Aplikasi memiliki 5 jenis pengguna dengan akses berbeda:
+Aplikasi menggunakan **Role + Module Access Control** yang fleksibel:
 
-1. **Superadmin** - Akses penuh ke semua fitur + User Management & Permission Control
-2. **Admin** - Akses penuh ke semua fitur (kecuali user management)
-3. **Guru** - Akses ke modul mengajar dan data siswa
-4. **Siswa** - Akses terbatas ke profil dan kegiatan
-5. **Sarpras** - Akses ke modul sarana dan prasarana
+### **🔐 Role System**
+1. **Superadmin** - Akses penuh ke semua fitur + User Management & Module Access Control
+2. **Admin** - Default tidak ada akses, harus di-assign manual oleh superadmin
+3. **Guru** - Default tidak ada akses, harus di-assign manual oleh superadmin  
+4. **Siswa** - Default tidak ada akses, harus di-assign manual oleh superadmin
+5. **Sarpras** - Default tidak ada akses, harus di-assign manual oleh superadmin
+
+### **📋 Permission System (Spatie Laravel Permission)**
+- **Superadmin**: Otomatis punya akses ke SEMUA modul dengan SEMUA permission
+- **Role lain**: Default TIDAK punya akses ke modul apapun
+- **Spatie Permission**: Menggunakan `spatie/laravel-permission` untuk role & permission management
+- **Permission Format**: `{module}.{action}` (contoh: `instagram.create`, `guru.read`)
+- **Superadmin** bisa assign permission granular ke user lain:
+  - ✅ `{module}.create` - Bisa create data  
+  - ✅ `{module}.read` - Bisa lihat data
+  - ✅ `{module}.update` - Bisa edit data
+  - ❌ `{module}.delete` - Bisa delete data
+
+### **📱 Available Modules**
+- **instagram** - Modul kegiatan Instagram
+- **pages** - Modul page management  
+- **guru** - Modul tenaga pendidik
+- **siswa** - Modul siswa aktif
+- **osis** - Modul E-OSIS
+- **lulus** - Modul E-Lulus
+- **sarpras** - Modul sarana prasarana
 
 ## 🔧 Development Commands
 
@@ -178,6 +199,11 @@ php artisan make:controller ControllerName
 
 # Watch assets untuk development
 npm run dev
+
+# Spatie Permission Commands
+php artisan permission:create-role superadmin
+php artisan permission:create-permission "instagram.create"
+php artisan permission:show
 ```
 
 ## 🔑 Default Login

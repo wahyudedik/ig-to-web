@@ -62,7 +62,7 @@ class AuditLog extends Model
     /**
      * Scope to filter by model.
      */
-    public function scopeForModel($query, string $modelType, int $modelId = null)
+    public function scopeForModel($query, string $modelType, ?int $modelId = null)
     {
         $query = $query->where('model_type', $modelType);
 
@@ -77,14 +77,14 @@ class AuditLog extends Model
      * Create audit log entry.
      */
     public static function createLog(
-        int $userId = null,
         string $action,
-        string $modelType = null,
-        int $modelId = null,
-        array $oldValues = null,
-        array $newValues = null,
-        string $ipAddress = null,
-        string $userAgent = null
+        ?int $userId = null,
+        ?string $modelType = null,
+        ?int $modelId = null,
+        ?array $oldValues = null,
+        ?array $newValues = null,
+        ?string $ipAddress = null,
+        ?string $userAgent = null
     ): self {
         return self::create([
             'user_id' => $userId,

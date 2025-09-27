@@ -28,8 +28,8 @@ class CheckPermission
             return $next($request);
         }
 
-        // Check if user has permission
-        if (!$user->hasPermission($permission)) {
+        // Check if user has permission using Spatie
+        if (!$user->hasPermissionTo($permission)) {
             abort(403, 'Insufficient permissions.');
         }
 
