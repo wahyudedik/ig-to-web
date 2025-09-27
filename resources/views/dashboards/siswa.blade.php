@@ -147,6 +147,37 @@
                     </div>
                 </div>
             </div>
+
+            <!-- E-Lulus (Only for Grade 12) -->
+            @php
+                $user = Auth::user();
+                $siswa = \App\Models\Siswa::where('user_id', $user->id)->first();
+                $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
+            @endphp
+
+            @if ($isGrade12)
+                <div
+                    class="bg-gradient-to-r from-green-500 to-blue-600 text-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <span class="text-3xl">🎓</span>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium">E-Lulus</h3>
+                                <p class="text-sm opacity-90">Cek status kelulusan Anda</p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ route('kelulusan.check') }}"
+                                class="inline-flex items-center px-4 py-2 bg-white text-green-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors">
+                                <span class="mr-2">🔍</span>
+                                Cek Status Kelulusan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <!-- Today's Schedule -->

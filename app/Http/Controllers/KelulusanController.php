@@ -257,7 +257,7 @@ class KelulusanController extends Controller
             'nis' => 'required_without:nisn|string',
         ]);
 
-        $query = Kelulusan::query();
+        $query = Kelulusan::with('siswa');
 
         if ($request->nisn) {
             $query->where('nisn', $request->nisn);
@@ -271,6 +271,16 @@ class KelulusanController extends Controller
             return redirect()->back()
                 ->with('error', 'Data tidak ditemukan. Silakan periksa NISN atau NIS yang dimasukkan.');
         }
+
+        // Check if student is eligible (only grade 12 or graduated)
+        if (!$kelulusan->isEligibleForCheck()) {
+            $kelas = $kelulusan->siswa?->kelas ?? 'Tidak diketahui';
+            return redirect()->back()
+                ->with('error', "Maaf, fitur E-Lulus hanya untuk siswa kelas XII atau alumni. Kelas Anda: {$kelas}");
+        }
+
+        // Record the check attempt
+        $kelulusan->recordCheck($request->ip(), $request->userAgent());
 
         return view('lulus.result', compact('kelulusan'));
     }

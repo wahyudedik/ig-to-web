@@ -11,24 +11,36 @@
                 <div class="p-6">
                     <!-- Success Message -->
                     <div class="text-center mb-8">
-                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                            Selamat {{ $kelulusan->nama }}!
-                        </h3>
-                        <p class="text-lg text-gray-600">
+                        <div
+                            class="mx-auto flex items-center justify-center h-16 w-16 rounded-full 
+                            @if ($kelulusan->status === 'lulus') bg-green-100
+                            @elseif($kelulusan->status === 'tidak_lulus') bg-red-100
+                            @else bg-yellow-100 @endif mb-4">
                             @if ($kelulusan->status === 'lulus')
-                                Kamu Dinyatakan <span class="font-bold text-green-600">LULUS</span>!
+                                <span class="text-3xl">🎉</span>
                             @elseif($kelulusan->status === 'tidak_lulus')
-                                Status: <span class="font-bold text-red-600">TIDAK LULUS</span>
+                                <span class="text-3xl">😔</span>
                             @else
-                                Status: <span class="font-bold text-yellow-600">MENGULANG</span>
+                                <span class="text-3xl">⏳</span>
                             @endif
-                        </p>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-4">
+                            {{ $kelulusan->graduation_message }}
+                        </h3>
+
+                        <!-- Check Statistics -->
+                        @if ($kelulusan->check_count > 0)
+                            <div class="bg-blue-50 rounded-lg p-4 max-w-md mx-auto">
+                                <p class="text-sm text-blue-800">
+                                    📊 Ini adalah pengecekan ke-{{ $kelulusan->check_count }} Anda
+                                </p>
+                                @if ($kelulusan->last_checked_at)
+                                    <p class="text-xs text-blue-600 mt-1">
+                                        Terakhir dicek: {{ $kelulusan->last_checked_at->format('d/m/Y H:i') }}
+                                    </p>
+                                @endif
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Student Information -->

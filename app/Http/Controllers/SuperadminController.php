@@ -88,9 +88,9 @@ class SuperadminController extends Controller
 
         // Log the action
         AuditLog::createLog(
+            'user_created',
             Auth::id(),
-            'create',
-            User::class,
+            'User',
             $user->id,
             null,
             $user->toArray(),
@@ -146,9 +146,9 @@ class SuperadminController extends Controller
 
         // Log the action
         AuditLog::createLog(
+            'user_updated',
             Auth::id(),
-            'update',
-            User::class,
+            'User',
             $user->id,
             $oldValues,
             $user->fresh()->toArray(),
@@ -176,9 +176,9 @@ class SuperadminController extends Controller
 
         // Log the action
         AuditLog::createLog(
+            'user_deleted',
             Auth::id(),
-            'delete',
-            User::class,
+            'User',
             $user->id,
             $oldValues,
             null,
@@ -234,9 +234,9 @@ class SuperadminController extends Controller
 
         // Log the action
         AuditLog::createLog(
+            'module_access_updated',
             Auth::id(),
-            'update',
-            'ModuleAccess',
+            'User',
             $user->id,
             null,
             $request->modules,

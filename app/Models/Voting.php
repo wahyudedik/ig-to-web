@@ -13,6 +13,8 @@ class Voting extends Model
     protected $fillable = [
         'calon_id',
         'pemilih_id',
+        'siswa_id',
+        'election_id',
         'waktu_voting',
         'ip_address',
         'user_agent',
@@ -38,6 +40,22 @@ class Voting extends Model
     public function pemilih(): BelongsTo
     {
         return $this->belongsTo(Pemilih::class);
+    }
+
+    /**
+     * Get the siswa that owns the voting.
+     */
+    public function siswa(): BelongsTo
+    {
+        return $this->belongsTo(Siswa::class);
+    }
+
+    /**
+     * Get the election that owns the voting.
+     */
+    public function election(): BelongsTo
+    {
+        return $this->belongsTo(OsisElection::class);
     }
 
     /**

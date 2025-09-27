@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Milon\Barcode\Facades\DNS1DFacade;
+use Milon\Barcode\Facades\DNS2DFacade;
 
 class Barang extends Model
 {
@@ -22,6 +24,8 @@ class Barang extends Model
         'merk',
         'model',
         'serial_number',
+        'barcode',
+        'qr_code',
         'harga_beli',
         'tanggal_pembelian',
         'sumber_dana',
@@ -177,5 +181,66 @@ class Barang extends Model
             return $this->tanggal_pembelian->diffInYears(now());
         }
         return 0;
+    }
+
+    /**
+     * Generate barcode for this item.
+     */
+    public function generateBarcode(): string
+    {
+        if (!$this->barcode) {
+            $this->barcode = 'BRG' . str_pad($this->id, 8, '0', STR_PAD_LEFT);
+            $this->save();
+        }
+        return $this->barcode;
+    }
+
+    /**
+     * Generate QR code for this item.
+     */
+    public function generateQRCode(): string
+    {
+        if (!$this->qr_code) {
+            $this->qr_code = 'QR' . str_pad($this->id, 8, '0', STR_PAD_LEFT);
+            $this->save();
+        }
+        return $this->qr_code;
+    }
+
+    /**
+     * Get barcode image URL.
+     */
+    public function getBarcodeImageUrlAttribute(): string
+    {
+        $barcode = $this->generateBarcode();
+        return route('sarpras.barcode', ['code' => $barcode]);
+    }
+
+    /**
+     * Get QR code image URL.
+     */
+    public function getQRCodeImageUrlAttribute(): string
+    {
+        $qrCode = $this->generateQRCode();
+        return route('sarpras.qrcode', ['code' => $qrCode]);
+    }
+
+    /**
+     * Get barcode data for scanning.
+     */
+    public function getBarcodeDataAttribute(): array
+    {
+        return [
+            'id' => $this->id,
+            'kode_barang' => $this->kode_barang,
+            'nama_barang' => $this->nama_barang,
+            'kategori' => $this->kategori?->nama_kategori,
+            'lokasi' => $this->lokasi,
+            'kondisi' => $this->kondisi,
+            'status' => $this->status,
+            'serial_number' => $this->serial_number,
+            'barcode' => $this->barcode,
+            'qr_code' => $this->qr_code,
+        ];
     }
 }

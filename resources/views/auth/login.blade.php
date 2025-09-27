@@ -9,8 +9,8 @@
                             d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.555a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.43 0l5.01-2.147a1 1 0 00.71-.739 1 1 0 00-.71-1.26l-5.01-2.147a3 3 0 00-2.43 0L7 8.5V5.5a1 1 0 00-1.5-.5L3.5 6.5a1 1 0 00-.5 1.5v8a1 1 0 001.5.5L7 14.5v-1.5a1 1 0 011.5-.5L9.3 16.573z" />
                     </svg>
                 </div>
-                <h2 class="mt-6 text-3xl font-bold text-slate-900">Welcome back</h2>
-                <p class="mt-2 text-sm text-slate-600">Sign in to your account</p>
+                <h2 class="mt-6 text-3xl font-bold text-slate-900">Selamat Datang</h2>
+                <p class="mt-2 text-sm text-slate-600">Masuk ke akun Anda</p>
             </div>
 
             <!-- Session Status -->

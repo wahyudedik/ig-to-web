@@ -8,7 +8,10 @@ use App\Models\Ruang;
 use App\Models\Maintenance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Milon\Barcode\Facades\DNS1DFacade;
+use Milon\Barcode\Facades\DNS2DFacade;
 
 class SarprasController extends Controller
 {
@@ -546,7 +549,7 @@ class SarprasController extends Controller
         ]);
 
         $data = $request->all();
-        $data['user_id'] = auth()->id();
+        $data['user_id'] = Auth::id();
         $data['kode_maintenance'] = 'MTN-' . strtoupper(Str::random(8));
 
         // Handle photo uploads
@@ -679,5 +682,105 @@ class SarprasController extends Controller
             ->get();
 
         return view('sarpras.reports', compact('stats', 'kategori_stats', 'maintenance_by_month'));
+    }
+
+    // ==================== BARCODE SYSTEM ====================
+
+    /**
+     * Generate barcode image.
+     */
+    public function generateBarcode($code)
+    {
+        try {
+            $barcode = DNS1DFacade::getBarcodePNG($code, 'C39+', 3, 33);
+            return response($barcode)->header('Content-Type', 'image/png');
+        } catch (\Exception $e) {
+            return response('Barcode generation failed', 500);
+        }
+    }
+
+    /**
+     * Generate QR code image.
+     */
+    public function generateQRCode($code)
+    {
+        try {
+            $qrCode = DNS2DFacade::getBarcodePNG($code, 'QRCODE', 10, 10);
+            return response($qrCode)->header('Content-Type', 'image/png');
+        } catch (\Exception $e) {
+            return response('QR Code generation failed', 500);
+        }
+    }
+
+    /**
+     * Scan barcode/QR code.
+     */
+    public function scanBarcode(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $barang = Barang::where('barcode', $request->code)
+            ->orWhere('qr_code', $request->code)
+            ->orWhere('kode_barang', $request->code)
+            ->with(['kategori', 'ruang'])
+            ->first();
+
+        if (!$barang) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Barang tidak ditemukan'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $barang->barcode_data
+        ]);
+    }
+
+    /**
+     * Generate barcode for all items.
+     */
+    public function generateAllBarcodes()
+    {
+        $barangs = Barang::whereNull('barcode')->orWhereNull('qr_code')->get();
+
+        foreach ($barangs as $barang) {
+            $barang->generateBarcode();
+            $barang->generateQRCode();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Barcode berhasil digenerate untuk ' . $barangs->count() . ' barang'
+        ]);
+    }
+
+    /**
+     * Print barcode label.
+     */
+    public function printBarcode(Barang $barang)
+    {
+        $barang->load(['kategori', 'ruang']);
+        return view('sarpras.print-barcode', compact('barang'));
+    }
+
+    /**
+     * Bulk print barcodes.
+     */
+    public function bulkPrintBarcodes(Request $request)
+    {
+        $request->validate([
+            'barang_ids' => 'required|array',
+            'barang_ids.*' => 'exists:barang,id',
+        ]);
+
+        $barangs = Barang::whereIn('id', $request->barang_ids)
+            ->with(['kategori', 'ruang'])
+            ->get();
+
+        return view('sarpras.bulk-print-barcode', compact('barangs'));
     }
 }

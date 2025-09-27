@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Calon;
 use App\Models\Pemilih;
 use App\Models\Voting;
+use App\Models\Siswa;
+use App\Models\OsisElection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -296,20 +298,42 @@ class OSISController extends Controller
      */
     public function voting()
     {
-        $calons = Calon::active()->ordered()->get();
-        $pemilih = Pemilih::where('nis', Auth::user()->email)->first(); // Assuming email is NIS
-
-        if (!$pemilih) {
-            return redirect()->route('osis.index')
-                ->with('error', 'Anda tidak terdaftar sebagai pemilih.');
+        // Check if user is a student
+        $user = Auth::user();
+        if ($user->user_type !== 'siswa') {
+            return redirect()->route('dashboard')
+                ->with('error', 'Hanya siswa yang dapat memilih.');
         }
 
-        if ($pemilih->hasVoted()) {
+        // Get student data
+        $siswa = Siswa::where('user_id', $user->id)->first();
+        if (!$siswa) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        // Check if student has already voted
+        if ($siswa->hasVotedOsis()) {
             return redirect()->route('osis.results')
-                ->with('info', 'Anda sudah memilih.');
+                ->with('info', 'Anda sudah memilih dalam pemilihan OSIS ini.');
         }
 
-        return view('osis.voting', compact('calons', 'pemilih'));
+        // Get active election
+        $election = OsisElection::active()->first();
+        if (!$election) {
+            return redirect()->route('osis.index')
+                ->with('error', 'Tidak ada pemilihan OSIS yang sedang berlangsung.');
+        }
+
+        // Check if student's class is allowed to vote
+        if ($election->allowed_classes && !in_array($siswa->kelas, $election->allowed_classes)) {
+            return redirect()->route('osis.index')
+                ->with('error', 'Kelas Anda tidak diizinkan untuk memilih dalam pemilihan ini.');
+        }
+
+        $calons = $election->candidates()->active()->ordered()->get();
+
+        return view('osis.voting', compact('calons', 'siswa', 'election'));
     }
 
     /**
@@ -319,25 +343,44 @@ class OSISController extends Controller
     {
         $request->validate([
             'calon_id' => 'required|exists:calons,id',
-            'pemilih_id' => 'required|exists:pemilihs,id',
         ]);
 
-        $pemilih = Pemilih::findOrFail($request->pemilih_id);
+        $user = Auth::user();
+        $siswa = Siswa::where('user_id', $user->id)->first();
 
-        if ($pemilih->hasVoted()) {
-            return redirect()->route('osis.voting')
-                ->with('error', 'Anda sudah memilih sebelumnya.');
+        if (!$siswa) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Data siswa tidak ditemukan.');
         }
 
+        if ($siswa->hasVotedOsis()) {
+            return redirect()->route('osis.voting')
+                ->with('error', 'Anda sudah memilih dalam pemilihan OSIS ini.');
+        }
+
+        // Get active election
+        $election = OsisElection::active()->first();
+        if (!$election) {
+            return redirect()->route('osis.index')
+                ->with('error', 'Tidak ada pemilihan OSIS yang sedang berlangsung.');
+        }
+
+        $calon = Calon::findOrFail($request->calon_id);
+
+        // Create vote record
         Voting::create([
-            'calon_id' => $request->calon_id,
-            'pemilih_id' => $request->pemilih_id,
+            'calon_id' => $calon->id,
+            'pemilih_id' => null, // We'll use student ID instead
+            'siswa_id' => $siswa->id,
+            'election_id' => $election->id,
+            'voted_at' => now(),
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'is_valid' => true,
         ]);
 
-        $pemilih->markAsVoted($request->ip(), $request->userAgent());
+        // Mark student as voted
+        $siswa->markAsVoted($request->ip(), $request->userAgent());
 
         return redirect()->route('osis.results')
             ->with('success', 'Terima kasih! Suara Anda telah tercatat.');

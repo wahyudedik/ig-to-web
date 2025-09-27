@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InstagramController;
+use App\Http\Controllers\InstagramAnalyticsController;
+use App\Http\Controllers\InstagramManagementController;
+use App\Http\Controllers\InstagramSettingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\PageController;
@@ -42,6 +45,14 @@ Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')
     // Module Access Management
     Route::get('/users/{user}/module-access', [SuperadminController::class, 'moduleAccess'])->name('users.module-access');
     Route::put('/users/{user}/module-access', [SuperadminController::class, 'updateModuleAccess'])->name('users.module-access.update');
+
+    // Instagram Settings Management
+    Route::get('/instagram-settings', [InstagramSettingController::class, 'index'])->name('instagram-settings');
+    Route::post('/instagram-settings', [InstagramSettingController::class, 'store'])->name('instagram-settings.store');
+    Route::post('/instagram-settings/test-connection', [InstagramSettingController::class, 'testConnection'])->name('instagram-settings.test-connection');
+    Route::post('/instagram-settings/sync', [InstagramSettingController::class, 'syncData'])->name('instagram-settings.sync');
+    Route::post('/instagram-settings/deactivate', [InstagramSettingController::class, 'deactivate'])->name('instagram-settings.deactivate');
+    Route::get('/instagram-settings/current', [InstagramSettingController::class, 'getSettings'])->name('instagram-settings.current');
 });
 
 // Page Management Routes
@@ -106,6 +117,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lulus/{kelulusan}/certificate', [KelulusanController::class, 'generateCertificate'])->name('lulus.certificate');
 });
 
+// Public E-Lulus Routes (tanpa auth)
+Route::get('/kelulusan/check', [KelulusanController::class, 'checkStatus'])->name('kelulusan.check');
+Route::post('/kelulusan/check', [KelulusanController::class, 'processCheck'])->name('kelulusan.processCheck');
+
 // Sarpras Management Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/sarpras', [SarprasController::class, 'index'])->name('sarpras.index');
@@ -153,6 +168,48 @@ Route::get('/kegiatan/refresh', [InstagramController::class, 'refresh'])->name('
 Route::get('/kegiatan/posts', [InstagramController::class, 'getPosts'])->name('instagram.posts');
 Route::get('/kegiatan/account', [InstagramController::class, 'getAccountInfo'])->name('instagram.account');
 Route::get('/kegiatan/validate', [InstagramController::class, 'validateConnection'])->name('instagram.validate');
+
+// Instagram Analytics Routes
+Route::get('/instagram/analytics', [InstagramAnalyticsController::class, 'index'])->name('instagram.analytics');
+Route::get('/instagram/analytics/data', [InstagramAnalyticsController::class, 'getAnalytics'])->name('instagram.analytics.data');
+Route::get('/instagram/analytics/engagement', [InstagramAnalyticsController::class, 'getEngagementMetrics'])->name('instagram.analytics.engagement');
+Route::get('/instagram/analytics/top-posts', [InstagramAnalyticsController::class, 'getTopPosts'])->name('instagram.analytics.top-posts');
+Route::post('/instagram/analytics/refresh', [InstagramAnalyticsController::class, 'refreshAnalytics'])->name('instagram.analytics.refresh');
+
+// Instagram Management Routes
+Route::get('/instagram/management', [InstagramManagementController::class, 'index'])->name('instagram.management');
+Route::post('/instagram/management/update-config', [InstagramManagementController::class, 'updateConfig'])->name('instagram.management.update-config');
+Route::get('/instagram/management/test-connection', [InstagramManagementController::class, 'testConnection'])->name('instagram.management.test-connection');
+Route::post('/instagram/management/filter-posts', [InstagramManagementController::class, 'filterPosts'])->name('instagram.management.filter-posts');
+Route::post('/instagram/management/schedule-content', [InstagramManagementController::class, 'scheduleContent'])->name('instagram.management.schedule-content');
+Route::get('/instagram/management/scheduled-content', [InstagramManagementController::class, 'getScheduledContent'])->name('instagram.management.scheduled-content');
+Route::post('/instagram/management/cancel-scheduled', [InstagramManagementController::class, 'cancelScheduledContent'])->name('instagram.management.cancel-scheduled');
+Route::get('/instagram/management/insights', [InstagramManagementController::class, 'getInsights'])->name('instagram.management.insights');
+
+// Page Management Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Page CRUD Routes
+    Route::resource('pages', PageController::class);
+    Route::post('pages/{page}/publish', [PageController::class, 'publish'])->name('pages.publish');
+    Route::post('pages/{page}/unpublish', [PageController::class, 'unpublish'])->name('pages.unpublish');
+    Route::post('pages/{page}/duplicate', [PageController::class, 'duplicate'])->name('pages.duplicate');
+    Route::get('pages/{page}/versions', [PageController::class, 'versions'])->name('pages.versions');
+    Route::post('pages/{page}/versions/{version}/restore', [PageController::class, 'restoreVersion'])->name('pages.versions.restore');
+    Route::get('pages/{page}/versions/{version1}/compare/{version2}', [PageController::class, 'compareVersions'])->name('pages.versions.compare');
+});
+
+// Public Page Routes
+Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
+Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show');
+
+// Documentation Routes
+Route::get('/docs/instagram-setup', function () {
+    return view('docs.instagram-setup');
+})->name('docs.instagram-setup');
+
+// Barcode Routes
+Route::get('/barcode/{code}', [SarprasController::class, 'generateBarcode'])->name('sarpras.barcode');
+Route::get('/qrcode/{code}', [SarprasController::class, 'generateQRCode'])->name('sarpras.qrcode');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -29,11 +29,18 @@ class Kelulusan extends Model
         'foto',
         'is_active',
         'tanggal_lulus',
+        'siswa_id',
+        'check_count',
+        'last_checked_at',
+        'check_ip',
+        'check_user_agent',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'tanggal_lulus' => 'datetime',
+        'last_checked_at' => 'datetime',
+        'check_count' => 'integer',
     ];
 
     /**
@@ -216,5 +223,81 @@ class Kelulusan extends Model
             return "{$this->tempat_kerja} - {$this->jabatan_kerja}";
         }
         return $this->tempat_kerja ?? 'Tidak ada data';
+    }
+
+    /**
+     * Relationship with Siswa
+     */
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class);
+    }
+
+    /**
+     * Record check attempt
+     */
+    public function recordCheck(?string $ipAddress = null, ?string $userAgent = null): void
+    {
+        $this->increment('check_count');
+        $this->update([
+            'last_checked_at' => now(),
+            'check_ip' => $ipAddress,
+            'check_user_agent' => $userAgent,
+        ]);
+    }
+
+    /**
+     * Get check statistics
+     */
+    public function getCheckStatsAttribute(): array
+    {
+        return [
+            'total_checks' => $this->check_count ?? 0,
+            'last_checked' => $this->last_checked_at?->format('d/m/Y H:i'),
+            'check_frequency' => $this->getCheckFrequency(),
+        ];
+    }
+
+    /**
+     * Get check frequency description
+     */
+    private function getCheckFrequency(): string
+    {
+        $count = $this->check_count ?? 0;
+
+        if ($count === 0) return 'Belum pernah dicek';
+        if ($count === 1) return 'Sekali';
+        if ($count <= 3) return 'Beberapa kali';
+        if ($count <= 10) return 'Sering';
+
+        return 'Sangat sering';
+    }
+
+    /**
+     * Check if student is eligible for graduation check
+     */
+    public function isEligibleForCheck(): bool
+    {
+        // Only students in grade 12 or graduated can check
+        if ($this->siswa) {
+            $kelas = $this->siswa->kelas;
+            return str_contains($kelas, 'XII') || $this->status === 'lulus';
+        }
+
+        return false;
+    }
+
+    /**
+     * Get graduation message
+     */
+    public function getGraduationMessageAttribute(): string
+    {
+        if ($this->status === 'lulus') {
+            return "🎉 Selamat {$this->nama}! Kamu Dinyatakan LULUS! 🎓";
+        } elseif ($this->status === 'tidak_lulus') {
+            return "😔 Maaf {$this->nama}, kamu belum lulus. Tetap semangat! 💪";
+        } else {
+            return "⏳ {$this->nama}, status kelulusan masih dalam proses. Sabar ya! 😊";
+        }
     }
 }

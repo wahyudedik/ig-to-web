@@ -59,11 +59,11 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="">Home</a>
+                        href="/">Home</a>
                     <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="">Halaman</a>
+                        href="{{ route('pages.index') }}">Halaman</a>
                     <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="">Galeri</a>
+                        href="{{ route('instagram.activities') }}">Galeri</a>
                     <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
                         href="{{ route('instagram.activities') }}">Kegiatan</a>
                     <div class="relative group">
@@ -77,20 +77,29 @@
                         </button>
                         <div
                             class="absolute left-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-200 z-50">
+                            @php
+                                $user = Auth::user();
+                                $siswa = $user ? \App\Models\Siswa::where('user_id', $user->id)->first() : null;
+                                $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
+                            @endphp
+
+                            @if ($isGrade12)
+                                <a class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition duration-300"
+                                    href="{{ route('kelulusan.check') }}">🎓 E-Lulus</a>
+                            @endif
+
                             <a class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition duration-300"
-                                href="">E-Lulus</a>
+                                href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
                             <a class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition duration-300"
-                                href="">E-OSIS</a>
-                            <a class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition duration-300"
-                                href="">Sarpras</a>
+                                href="{{ route('sarpras.index') }}">🏢 Sarpras</a>
                         </div>
                     </div>
                     <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="">Tenaga Pendidik</a>
+                        href="{{ route('guru.index') }}">Tenaga Pendidik</a>
                     <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="">Data Siswa</a>
+                        href="{{ route('siswa.index') }}">Data Siswa</a>
                     <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="">Kontak</a>
+                        href="#contact">Kontak</a>
                     @if (Route::has('login'))
                         @auth
                             <a href="{{ url('/dashboard') }}"

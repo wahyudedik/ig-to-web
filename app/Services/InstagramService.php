@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\InstagramSetting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -14,9 +15,17 @@ class InstagramService
 
     public function __construct()
     {
-        // In production, these would come from environment variables
-        $this->accessToken = config('services.instagram.access_token');
-        $this->userId = config('services.instagram.user_id');
+        // Get settings from database first, fallback to config
+        $settings = InstagramSetting::active()->first();
+
+        if ($settings && $settings->isComplete()) {
+            $this->accessToken = $settings->access_token;
+            $this->userId = $settings->user_id;
+        } else {
+            // Fallback to environment variables
+            $this->accessToken = config('services.instagram.access_token');
+            $this->userId = config('services.instagram.user_id');
+        }
     }
 
     /**

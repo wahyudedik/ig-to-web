@@ -158,7 +158,7 @@ class Ruang extends Model
     public function getFormattedAreaAttribute(): string
     {
         if ($this->luas_ruang) {
-            return number_format($this->luas_ruang, 2, ',', '.') . ' m²';
+            return number_format((float)$this->luas_ruang, 2, ',', '.') . ' m²';
         }
         return 'Tidak ada data';
     }

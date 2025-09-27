@@ -40,12 +40,18 @@ class Siswa extends Model
         'nilai_akademik',
         'ekstrakurikuler',
         'user_id',
+        'has_voted_osis',
+        'voted_at',
+        'voting_ip',
+        'voting_user_agent',
     ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
         'nilai_akademik' => 'array',
         'ekstrakurikuler' => 'array',
+        'has_voted_osis' => 'boolean',
+        'voted_at' => 'datetime',
     ];
 
     /**
@@ -257,5 +263,55 @@ class Siswa extends Model
             'grade' => $grade,
             'total_subjects' => $count
         ];
+    }
+
+    /**
+     * Check if student has voted in OSIS election
+     */
+    public function hasVotedOsis(): bool
+    {
+        return $this->has_voted_osis ?? false;
+    }
+
+    /**
+     * Mark student as voted
+     */
+    public function markAsVoted(?string $ipAddress = null, ?string $userAgent = null): void
+    {
+        $this->update([
+            'has_voted_osis' => true,
+            'voted_at' => now(),
+            'voting_ip' => $ipAddress,
+            'voting_user_agent' => $userAgent,
+        ]);
+    }
+
+    /**
+     * Reset voting status (for admin purposes)
+     */
+    public function resetVotingStatus(): void
+    {
+        $this->update([
+            'has_voted_osis' => false,
+            'voted_at' => null,
+            'voting_ip' => null,
+            'voting_user_agent' => null,
+        ]);
+    }
+
+    /**
+     * Get voting status badge color
+     */
+    public function getVotingStatusBadgeColorAttribute(): string
+    {
+        return $this->hasVotedOsis() ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+    }
+
+    /**
+     * Get voting status display text
+     */
+    public function getVotingStatusDisplayAttribute(): string
+    {
+        return $this->hasVotedOsis() ? 'Sudah Memilih' : 'Belum Memilih';
     }
 }

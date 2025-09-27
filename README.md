@@ -406,6 +406,18 @@ Fitur :
 
    Sarana:
    - Tambahan Sarana
+   - **Sistem Barcode** - Generate barcode dan QR code untuk setiap barang
+   - **Barcode Scanning** - Scan barcode untuk melihat detail barang
+   - **Print Labels** - Print barcode labels untuk barang
+   - **Inventory Management** - Manajemen inventaris dengan barcode
+
+   Fitur Barcode:
+   - Generate barcode otomatis (BRG00000001)
+   - Generate QR code otomatis (QR00000001)
+   - Scan barcode dengan smartphone/tablet
+   - Print barcode labels
+   - Bulk barcode generation
+   - Barcode data tracking
 
    Untuk akses lebih detail, silakan kunjungi:
    https://maudu.aplikasimadrasah.com/administrator
