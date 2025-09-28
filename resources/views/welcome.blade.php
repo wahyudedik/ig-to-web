@@ -2,548 +2,693 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal Digital Pendidikan - Website Sekolah Terintegrasi">
+    <meta name="keywords" content="sekolah, pendidikan, digital, portal, e-learning, e-osis, e-lulus, sarpras">
+
+    <!-- title -->
     <title>Website Sekolah - Portal Digital Pendidikan</title>
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/favicon.png') }}">
+
+    <!-- css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/all-fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Styles / Scripts -->
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @else
-        <style>
-            /* Include the existing Tailwind CSS here */
-            /* ... existing styles ... */
-        </style>
-    @endif
-
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .feature-card {
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-    </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg fixed w-full z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                            <i class="fas fa-graduation-cap text-blue-600 mr-2"></i>
-                            Website Sekolah
-                        </h1>
+<body>
+
+    <!-- header area -->
+    <header class="header">
+        <!-- header top -->
+        <div class="header-top">
+            <div class="container">
+                <div class="header-top-wrap">
+                    <div class="header-top-left">
+                        <div class="header-top-social">
+                            <span>Follow Us: </span>
+                            <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="{{ route('instagram.activities') }}" target="_blank"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="header-top-right">
+                        <div class="header-top-contact">
+                            <ul>
+                                <li>
+                                    <a href="#" target="_blank"><i class="far fa-location-dot"></i> Jl. Pendidikan
+                                        No. 123, Jakarta</a>
+                                </li>
+                                <li>
+                                    <a href="mailto:info@sekolahdigital.com" target="_blank"><i
+                                            class="far fa-envelopes"></i> info@sekolahdigital.com</a>
+                                </li>
+                                <li>
+                                    <a href="tel:+62123456789" target="_blank"><i class="far fa-phone-volume"></i> +62
+                                        123 456 789</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="/">Home</a>
-                    <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="{{ route('pages.index') }}">Halaman</a>
-                    <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="{{ route('instagram.activities') }}">Galeri</a>
-                    <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="{{ route('instagram.activities') }}">Kegiatan</a>
-                    <div class="relative group">
-                        <button
-                            class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300 flex items-center focus:outline-none">
-                            Modul
-                            <svg class="ml-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
-                                <path
-                                    d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.085l3.71-3.855a.75.75 0 1 1 1.08 1.04l-4.24 4.4a.75.75 0 0 1-1.08 0l-4.24-4.4a.75.75 0 0 1 .02-1.06z" />
-                            </svg>
+            </div>
+        </div>
+
+        <div class="main-navigation">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container position-relative">
+                    <a class="navbar-brand" href="/">
+                        <img src="{{ asset('assets/img/logo/logo.png') }}" alt="logo">
+                    </a>
+                    <div class="mobile-menu-right">
+                        <div class="search-btn">
+                            <button type="button" class="nav-right-link search-box-outer"><i
+                                    class="far fa-search"></i></button>
+                        </div>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#main_nav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-mobile-icon"><i class="far fa-bars"></i></span>
                         </button>
-                        <div
-                            class="absolute left-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-200 z-50">
+                    </div>
+                    <div class="collapse navbar-collapse" id="main_nav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle active" href="#"
+                                    data-bs-toggle="dropdown">PROFIL</a>
+                                <ul class="dropdown-menu fade-down">
+                                    <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">GALERI</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                    data-bs-toggle="dropdown">AKADEMIK</a>
+                                <ul class="dropdown-menu fade-down">
+                                    <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA PENDIDIK</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a></li>
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">LAYANAN
+                                    DIGITAL</a>
+                                <ul class="dropdown-menu fade-down">
                             @php
                                 $user = Auth::user();
                                 $siswa = $user ? \App\Models\Siswa::where('user_id', $user->id)->first() : null;
                                 $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
                             @endphp
-
                             @if ($isGrade12)
-                                <a class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition duration-300"
-                                    href="{{ route('kelulusan.check') }}">🎓 E-Lulus</a>
+                                        <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
+                                                E-LULUS</a></li>
                             @endif
-
-                            <a class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition duration-300"
-                                href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
-                            <a class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium transition duration-300"
-                                href="{{ route('sarpras.index') }}">🏢 Sarpras</a>
-                        </div>
-                    </div>
-                    <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="{{ route('guru.index') }}">Tenaga Pendidik</a>
-                    <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="{{ route('siswa.index') }}">Data Siswa</a>
-                    <a class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300"
-                        href="#contact">Kontak</a>
+                                    <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢 E-SARPRAS</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
+                                            E-GALERI</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="#contact">KONTAK</a></li>
+                        </ul>
+                        <div class="nav-right">
+                            <div class="nav-right-btn mt-2">
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ url('/dashboard') }}"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-300">
-                                Dashboard
-                            </a>
+                                        <a href="{{ url('/dashboard') }}" class="theme-btn"><span
+                                                class="fal fa-user"></span> DASHBOARD</a>
                         @else
-                            <a href="{{ route('login') }}"
-                                class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                                Login
-                            </a>
-                            {{-- @if (Route::has('register'))
-                                <a href="{{ route('register') }}"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-300">
-                                    Register
-                                </a>
-                            @endif --}}
+                                        <a href="{{ route('login') }}" class="theme-btn"><span
+                                                class="fal fa-sign-in"></span> LOGIN</a>
                         @endauth
                     @endif
+                            </div>
                 </div>
             </div>
         </div>
     </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-section flex items-center justify-center text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-5xl md:text-7xl font-bold mb-6">
-                Portal Digital Pendidikan
-            </h1>
-            <p class="text-xl md:text-2xl mb-8 opacity-90">
-                Mengintegrasikan semua layanan sekolah dalam satu platform digital yang modern
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#features"
-                    class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">
-                    Jelajahi Fitur
-                </a>
-                <a href="#contact"
-                    class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-300">
-                    Hubungi Kami
-                </a>
-            </div>
         </div>
-    </section>
+    </header>
+    <!-- header area end -->
 
-    <!-- Features Section -->
-    <section id="features" class="py-20 bg-white dark:bg-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                    Fitur Unggulan
-                </h2>
-                <p class="text-xl text-gray-600 dark:text-gray-300">
-                    Semua layanan sekolah dalam satu platform yang terintegrasi
-                </p>
+    <!-- popup search -->
+    <div class="search-popup">
+        <button class="close-search"><span class="far fa-times"></span></button>
+        <form action="#">
+            <div class="form-group">
+                <input type="search" name="search-field" placeholder="Search Here..." required>
+                <button type="submit"><i class="far fa-search"></i></button>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Modul Kegiatan -->
-                <div
-                    class="feature-card bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-600">
-                    <div
-                        class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-calendar-alt text-2xl text-blue-600 dark:text-blue-400"></i>
+        </form>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Modul Kegiatan</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">
-                        Integrasi dengan Instagram sekolah untuk menampilkan kegiatan dan aktivitas terbaru
-                    </p>
-                    <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Update otomatis dari Instagram</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Galeri kegiatan sekolah</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Timeline aktivitas</li>
-                    </ul>
+    <!-- popup search end -->
+
+    <main class="main">
+
+        <!-- hero slider -->
+        <div class="hero-section">
+            <div class="hero-slider owl-carousel owl-theme">
+                @php
+                    // Ambil data dari Instagram atau Pages untuk slider
+                    $sliderItems = [
+                        [
+                            'image' => asset('assets/img/slider/slider-1.jpg'),
+                            'subtitle' => 'Portal Digital Pendidikan',
+                            'title' => 'Website <span>Sekolah</span> Terintegrasi',
+                            'description' =>
+                                'Mengintegrasikan semua layanan sekolah dalam satu platform digital yang modern dan efisien',
+                        ],
+                        [
+                            'image' => asset('assets/img/slider/slider-2.jpg'),
+                            'subtitle' => 'Sistem E-Learning',
+                            'title' => 'Pembelajaran <span>Digital</span> Modern',
+                            'description' =>
+                                'Platform pembelajaran online dengan fitur lengkap untuk mendukung kegiatan belajar mengajar',
+                        ],
+                        [
+                            'image' => asset('assets/img/slider/slider-3.jpg'),
+                            'subtitle' => 'Manajemen Sekolah',
+                            'title' => 'Administrasi <span>Sekolah</span> Digital',
+                            'description' =>
+                                'Sistem manajemen sekolah yang komprehensif untuk semua kebutuhan administratif',
+                        ],
+                    ];
+                @endphp
+
+                @foreach ($sliderItems as $item)
+                    <div class="hero-single" style="background: url({{ $item['image'] }})">
+                        <div class="container">
+                            <div class="row align-items-center">
+                                <div class="col-md-12 col-lg-7">
+                                    <div class="hero-content">
+                                        <h6 class="hero-sub-title" data-animation="fadeInDown" data-delay=".25s">
+                                            <i class="far fa-book-open-reader"></i>{{ $item['subtitle'] }}
+                                        </h6>
+                                        <h1 class="hero-title" data-animation="fadeInRight" data-delay=".50s">
+                                            {!! $item['title'] !!}
+                                        </h1>
+                                        <p data-animation="fadeInLeft" data-delay=".75s">
+                                            {{ $item['description'] }}
+                                        </p>
+                                        <div class="hero-btn" data-animation="fadeInUp" data-delay="1s">
+                                            <a href="#features" class="theme-btn">Jelajahi Fitur<i
+                                                    class="fas fa-arrow-right-long"></i></a>
+                                            <a href="#contact" class="theme-btn theme-btn2">Hubungi Kami<i
+                                                    class="fas fa-arrow-right-long"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                 </div>
-
-                <!-- Modul Page -->
-                <div
-                    class="feature-card bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-600">
-                    <div
-                        class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-file-alt text-2xl text-green-600 dark:text-green-400"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Modul Page</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">
-                        Sistem manajemen konten untuk membuat halaman informasi sekolah
-                    </p>
-                    <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Editor konten WYSIWYG</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Kategori dan tag</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Upload gambar</li>
-                    </ul>
+                @endforeach
+            </div>
                 </div>
+        <!-- hero slider end -->
 
-                <!-- Modul Tenaga Pendidik -->
-                <div
-                    class="feature-card bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-600">
-                    <div
-                        class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-chalkboard-teacher text-2xl text-purple-600 dark:text-purple-400"></i>
+        <!-- feature area -->
+        <div class="feature-area fa-negative">
+            <div class="col-xl-9 ms-auto">
+                <div class="feature-wrapper">
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="feature-item">
+                                <span class="count">01</span>
+                                <div class="feature-icon">
+                                    <img src="{{ asset('assets/img/icon/library.svg') }}" alt="">
+                                </div>
+                                <div class="feature-content">
+                                    <h4 class="feature-title"><a href="{{ route('pages.index') }}">E-PAGES</a></h4>
+                                    <p>Sistem manajemen konten untuk membuat halaman informasi sekolah</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="feature-item">
+                                <span class="count">02</span>
+                                <div class="feature-icon">
+                                    <img src="{{ asset('assets/img/icon/teacher-2.svg') }}" alt="">
+                                </div>
+                                <div class="feature-content">
+                                    <h4 class="feature-title"><a href="{{ route('guru.index') }}">TENAGA PENDIDIK</a>
+                                    </h4>
+                                    <p>Database lengkap informasi guru dan tenaga kependidikan</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="feature-item">
+                                <span class="count">03</span>
+                                <div class="feature-icon">
+                                    <img src="{{ asset('assets/img/icon/course.svg') }}" alt="">
+                                </div>
+                                <div class="feature-content">
+                                    <h4 class="feature-title"><a
+                                            href="{{ route('instagram.activities') }}">E-GALERI</a></h4>
+                                    <p>Integrasi dengan Instagram sekolah untuk menampilkan kegiatan terbaru</p>
+                                </div>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Tenaga Pendidik</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">
-                        Database lengkap informasi guru dan tenaga kependidikan
-                    </p>
-                    <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Profil lengkap guru</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Mata pelajaran</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Kontak informasi</li>
-                    </ul>
                 </div>
-
-                <!-- Modul Siswa -->
-                <div
-                    class="feature-card bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-600">
-                    <div
-                        class="w-16 h-16 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-user-graduate text-2xl text-yellow-600 dark:text-yellow-400"></i>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="feature-item">
+                                <span class="count">04</span>
+                                <div class="feature-icon">
+                                    <img src="{{ asset('assets/img/icon/graduation.svg') }}" alt="">
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Data Siswa</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">
-                        Manajemen data siswa aktif dan alumni dengan informasi lengkap
-                    </p>
-                    <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Data siswa aktif</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Informasi alumni</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Tracking kelulusan</li>
-                    </ul>
+                                <div class="feature-content">
+                                    <h4 class="feature-title"><a href="{{ route('siswa.index') }}">DATA SISWA</a>
+                                    </h4>
+                                    <p>Manajemen data siswa aktif dan alumni dengan informasi lengkap</p>
                 </div>
-
-                <!-- E-OSIS -->
-                <div
-                    class="feature-card bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-600">
-                    <div class="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-vote-yea text-2xl text-red-600 dark:text-red-400"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">E-OSIS</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">
-                        Sistem pemilihan OSIS digital dengan monitoring real-time
-                    </p>
-                    <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Pemilihan online</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Monitoring hasil</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Dashboard admin</li>
-                    </ul>
                 </div>
-
-                <!-- E-Lulus -->
-                <div
-                    class="feature-card bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-600">
-                    <div
-                        class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-certificate text-2xl text-indigo-600 dark:text-indigo-400"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">E-Lulus</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">
-                        Sistem pengumuman kelulusan dengan verifikasi NISN/NIS
-                    </p>
-                    <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Verifikasi otomatis</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Import data kelulusan</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Pengumuman real-time</li>
-                    </ul>
                 </div>
             </div>
         </div>
-    </section>
+        <!-- feature area end -->
 
-    <!-- Detailed Features Section -->
-    <section class="py-20 bg-gray-50 dark:bg-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                    Detail Fitur
-                </h2>
-                <p class="text-xl text-gray-600 dark:text-gray-300">
-                    Penjelasan lengkap setiap modul dan fungsionalitas
-                </p>
+        <!-- about area -->
+        <div class="about-area py-120">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="about-left wow fadeInLeft" data-wow-delay=".25s">
+                            <div class="about-img">
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <img class="img-1" src="{{ asset('assets/img/about/01.jpg') }}"
+                                            alt="">
+                                        <div class="about-experience mt-4">
+                                            <div class="about-experience-icon">
+                                                <img src="{{ asset('assets/img/icon/monitor.svg') }}" alt="">
+                                            </div>
+                                            <b class="text-start">Galeri Kegiatan<br> Sekolah Digital</b>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <img class="img-2" src="{{ asset('assets/img/about/02.jpg') }}"
+                                            alt="">
+                                        <img class="img-3 mt-4" src="{{ asset('assets/img/about/03.jpg') }}"
+                                            alt="">
+                                    </div>
+                                </div>
+                            </div>
             </div>
-
-            <!-- E-OSIS Detail -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-vote-yea text-xl text-red-600 dark:text-red-400"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">E-OSIS - Sistem Pemilihan Digital</h3>
+                    <div class="col-lg-6">
+                        <div class="about-right wow fadeInRight" data-wow-delay=".25s">
+                            <div class="site-heading mb-3">
+                                <span class="site-title-tagline"><i class="far fa-book-open-reader"></i> TENTANG
+                                    KAMI</span>
+                                <h2 class="site-title">
+                                    Portal Digital <span>Pendidikan</span> Terintegrasi
+                                </h2>
+                            </div>
+                            <p class="about-text">
+                                Website sekolah yang mengintegrasikan semua layanan pendidikan dalam satu platform
+                                digital yang modern dan efisien. Memudahkan akses informasi dan layanan untuk seluruh
+                                civitas akademika.
+                            </p>
+                            <div class="about-content">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="about-item">
+                                            <div class="about-item-icon">
+                                                <img src="{{ asset('assets/img/icon/information.svg') }}"
+                                                    alt="">
+                                            </div>
+                                            <div class="about-item-content">
+                                                <h5>SISTEM E-OSIS</h5>
+                                                <p>Pemilihan OSIS digital dengan monitoring real-time dan sistem voting
+                                                    yang aman</p>
+                                            </div>
+                                        </div>
+                                        <div class="about-item">
+                                            <div class="about-item-icon">
+                                                <img src="{{ asset('assets/img/icon/global-education.svg') }}"
+                                                    alt="">
+                                            </div>
+                                            <div class="about-item-content">
+                                                <h5>SISTEM E-LULUS</h5>
+                                                <p>Pengumuman kelulusan dengan verifikasi NISN/NIS yang akurat dan
+                                                    real-time</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="about-item">
+                                            <div class="about-item-icon">
+                                                <img src="{{ asset('assets/img/icon/open-book.svg') }}"
+                                                    alt="">
+                                            </div>
+                                            <div class="about-item-content">
+                                                <h5>MANAJEMEN SARPRAS</h5>
+                                                <p>Sistem inventaris sarana dan prasarana sekolah dengan barcode
+                                                    tracking</p>
+                                            </div>
+                                        </div>
+                                        <div class="about-item">
+                                            <div class="about-item-icon">
+                                                <img src="{{ asset('assets/img/icon/location.svg') }}"
+                                                    alt="">
+                                            </div>
+                                            <div class="about-item-content">
+                                                <h5>INTEGRASI INSTAGRAM</h5>
+                                                <p>Sinkronisasi otomatis dengan Instagram sekolah untuk galeri kegiatan
+                                                    terbaru</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="about-bottom">
+                                <a href="#features" class="theme-btn">JELAJAHI FITUR<i
+                                        class="fas fa-arrow-right-long"></i></a>
+                                <div class="about-phone">
+                                    <div class="icon"><i class="fal fa-headset"></i></div>
+                                    <div class="number">
+                                        <span>HUBUNGI KAMI</span>
+                                        <h6><a href="tel:+62123456789">+62 123 456 789</a></h6>
+                                    </div>
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Data Calon</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                            <li>• Nama Ketua & Wakil</li>
-                            <li>• Foto Calon</li>
-                            <li>• Visi Misi</li>
-                            <li>• Jenis Pencalonan</li>
-                        </ul>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Monitor Hasil</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                            <li>• Jumlah suara real-time</li>
-                            <li>• Persentase perolehan</li>
-                            <li>• Grafik hasil voting</li>
-                            <li>• Dashboard statistik</li>
-                        </ul>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Data Pemilih</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                            <li>• Daftar pemilih</li>
-                            <li>• Status voting</li>
-                            <li>• NIS/NISN</li>
-                            <li>• Kelas</li>
-                        </ul>
                     </div>
                 </div>
             </div>
+        </div>
+        <!-- about area end -->
 
-            <!-- E-Lulus Detail -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8">
-                <div class="flex items-center mb-6">
-                    <div
-                        class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-certificate text-xl text-indigo-600 dark:text-indigo-400"></i>
+        <!-- counter area -->
+        <div class="counter-area pt-60 pb-60">
+            <div class="container">
+                <div class="row">
+                    @php
+                        // Ambil data statistik dari database
+                        $totalGuru = \App\Models\Guru::count();
+                        $totalSiswa = \App\Models\Siswa::count();
+                        $totalPages = \App\Models\Page::where('status', 'published')->count();
+                        $totalSarpras = \App\Models\Barang::count();
+                    @endphp
+
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="counter-box">
+                            <div class="icon">
+                                <img src="{{ asset('assets/img/icon/teacher-2.svg') }}" alt="">
+                            </div>
+                            <div>
+                                <span class="counter" data-count="+" data-to="{{ $totalGuru }}"
+                                    data-speed="3000">{{ $totalGuru }}</span>
+                                <h6 class="title">+ Tenaga Pendidik</h6>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">E-Lulus - Sistem Pengumuman Kelulusan
-                    </h3>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="counter-box">
+                            <div class="icon">
+                                <img src="{{ asset('assets/img/icon/graduation.svg') }}" alt="">
+                            </div>
+                            <div>
+                                <span class="counter" data-count="+" data-to="{{ $totalSiswa }}"
+                                    data-speed="3000">{{ $totalSiswa }}</span>
+                                <h6 class="title">+ Siswa Aktif</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="counter-box">
+                            <div class="icon">
+                                <img src="{{ asset('assets/img/icon/course.svg') }}" alt="">
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div>
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Fitur Import Data</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                            <li>• Import data kelulusan Excel/CSV</li>
-                            <li>• Kolom: Nama, NISN, NIS, Jurusan</li>
-                            <li>• Tahun Ajaran & Status</li>
-                            <li>• Validasi data otomatis</li>
-                        </ul>
+                                <span class="counter" data-count="+" data-to="{{ $totalPages }}"
+                                    data-speed="3000">{{ $totalPages }}</span>
+                                <h6 class="title">+ Halaman Informasi</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="counter-box">
+                            <div class="icon">
+                                <img src="{{ asset('assets/img/icon/award.svg') }}" alt="">
                     </div>
                     <div>
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Verifikasi Siswa</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                            <li>• Input NISN atau NIS</li>
-                            <li>• Pengumuman kelulusan</li>
-                            <li>• Tampilan hasil real-time</li>
-                            <li>• Keamanan data</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sarpras Detail -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div
-                        class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-building text-xl text-green-600 dark:text-green-400"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Sarpras - Sarana & Prasarana</h3>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Master Data</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                            <li>• Kategori Sarpras</li>
-                            <li>• Nama Barang</li>
-                            <li>• Kode Inventaris</li>
-                            <li>• Klasifikasi</li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Prasarana</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                            <li>• Data Ruang</li>
-                            <li>• Data Tanah</li>
-                            <li>• Data Bangunan</li>
-                            <li>• Kondisi & Status</li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Sarana</h4>
-                        <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                            <li>• Inventaris Barang</li>
-                            <li>• Maintenance</li>
-                            <li>• Laporan</li>
-                            <li>• Monitoring</li>
-                        </ul>
+                                <span class="counter" data-count="+" data-to="{{ $totalSarpras }}"
+                                    data-speed="3000">{{ $totalSarpras }}</span>
+                                <h6 class="title">+ Item Sarpras</h6>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+        <!-- counter area end -->
 
-    <!-- Demo Section -->
-    <section class="py-20 bg-blue-600 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-4xl font-bold mb-6">Lihat Demo Sistem</h2>
-            <p class="text-xl mb-8 opacity-90">
-                Akses demo lengkap untuk melihat semua fitur dalam aksi
-            </p>
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-2xl mx-auto">
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Demo Sarpras</h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-6">
-                    Login ke sistem demo untuk melihat fitur Sarana & Prasarana
-                </p>
-                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
-                    <p class="text-sm text-gray-600 dark:text-gray-300">
-                        <strong>URL:</strong> https://www.maudu.aplikasimadrasah.com/admin
-                    </p>
-                    <p class="text-sm text-gray-600 dark:text-gray-300">
-                        <strong>Username:</strong> sarpras
-                    </p>
-                    <p class="text-sm text-gray-600 dark:text-gray-300">
-                        <strong>Password:</strong> password
-                    </p>
-                </div>
-                <a href="https://www.maudu.aplikasimadrasah.com/admin" target="_blank"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300">
-                    <i class="fas fa-external-link-alt mr-2"></i>
-                    Akses Demo
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-20 bg-white dark:bg-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                    Hubungi Kami
-                </h2>
-                <p class="text-xl text-gray-600 dark:text-gray-300">
-                    Ingin mengimplementasikan sistem ini di sekolah Anda?
-                </p>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                        Informasi Kontak
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-envelope text-blue-600 text-xl mr-4"></i>
-                            <span class="text-gray-600 dark:text-gray-300">info@sekolahdigital.com</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-phone text-blue-600 text-xl mr-4"></i>
-                            <span class="text-gray-600 dark:text-gray-300">+62 123 456 789</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-map-marker-alt text-blue-600 text-xl mr-4"></i>
-                            <span class="text-gray-600 dark:text-gray-300">Jl. Pendidikan No. 123, Jakarta</span>
+        <!-- portfolio-area -->
+        <div class="portfolio-area py-120">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 mx-auto">
+                        <div class="site-heading text-center">
+                            <span class="site-title-tagline"><i class="far fa-book-open-reader"></i> Galeri
+                                Kegiatan</span>
+                            <h2 class="site-title">Kegiatan<span> Sekolah</span> Terbaru</h2>
+                            <p>Galeri kegiatan sekolah yang diambil langsung dari Instagram resmi</p>
                         </div>
                     </div>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                        Kirim Pesan
-                    </h3>
-                    <form class="space-y-4">
-                        <div>
-                            <input type="text" placeholder="Nama Lengkap"
-                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
-                        </div>
-                        <div>
-                            <input type="email" placeholder="Email"
-                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
-                        </div>
-                        <div>
-                            <textarea rows="4" placeholder="Pesan"
-                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"></textarea>
-                        </div>
-                        <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300">
-                            Kirim Pesan
-                        </button>
-                    </form>
+                <div class="row">
+                    @php
+                        // Ambil data dari Instagram atau dummy data
+                        $instagramPosts = [
+                            [
+                                'image' => asset('assets/img/portfolio/01.jpg'),
+                                'title' => 'Kegiatan Pembelajaran',
+                                'category' => 'Akademik',
+                            ],
+                            [
+                                'image' => asset('assets/img/portfolio/02.jpg'),
+                                'title' => 'Ekstrakurikuler',
+                                'category' => 'Kegiatan',
+                            ],
+                            [
+                                'image' => asset('assets/img/portfolio/03.jpg'),
+                                'title' => 'Upacara Bendera',
+                                'category' => 'Kegiatan',
+                            ],
+                            [
+                                'image' => asset('assets/img/portfolio/04.jpg'),
+                                'title' => 'Lomba Sains',
+                                'category' => 'Prestasi',
+                            ],
+                            [
+                                'image' => asset('assets/img/portfolio/05.jpg'),
+                                'title' => 'Kegiatan Olahraga',
+                                'category' => 'Olahraga',
+                            ],
+                            [
+                                'image' => asset('assets/img/portfolio/06.jpg'),
+                                'title' => 'Acara Sekolah',
+                                'category' => 'Event',
+                            ],
+                        ];
+                    @endphp
+
+                    @foreach ($instagramPosts as $post)
+                        <div class="col-md-4">
+                            <div class="portfolio-item">
+                                <div class="portfolio-img">
+                                    <img src="{{ $post['image'] }}" alt="{{ $post['title'] }}">
+                    </div>
+                                <div class="portfolio-content">
+                                    <div class="portfolio-info">
+                                        <div class="portfolio-title-info">
+                                            <h5 class="portfolio-subtitle"><span>//</span> {{ $post['category'] }}
+                                            </h5>
+                                            <a href="{{ route('instagram.activities') }}">
+                                                <h4 class="portfolio-title">{{ $post['title'] }}</h4>
+                                            </a>
+                    </div>
+                                        <a href="{{ route('instagram.activities') }}" class="portfolio-btn"><i
+                                                class="far fa-arrow-right"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        <!-- portfolio-area end -->
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Website Sekolah</h3>
-                    <p class="text-gray-400">
-                        Portal digital pendidikan terintegrasi untuk sekolah modern
+    </main>
+
+    <!-- footer area -->
+    <footer class="footer-area" id="contact">
+        <div class="footer-shape">
+            <img src="{{ asset('assets/img/shape/03.png') }}" alt="">
+        </div>
+        <div class="footer-widget">
+            <div class="container">
+                <div class="row footer-widget-wrapper pt-100 pb-70">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="footer-widget-box about-us">
+                            <a href="#" class="footer-logo">
+                                <img src="{{ asset('assets/img/logo/logo-light.png') }}" alt="">
+                            </a>
+                            <p class="mb-3">
+                                Portal Digital Pendidikan yang mengintegrasikan semua layanan sekolah dalam satu
+                                platform modern dan efisien
+                            </p>
+                            <ul class="footer-contact">
+                                <li><a href="tel:+62123456789"><i class="fab fa-whatsapp"></i>+62 123 456 789</a></li>
+                                <li><i class="far fa-map-marker-alt"></i>Jl. Pendidikan No. 123, Jakarta</li>
+                                <li><a href="mailto:info@sekolahdigital.com"><i
+                                            class="far fa-envelope"></i>info@sekolahdigital.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-2">
+                        <div class="footer-widget-box list">
+                            <h4 class="footer-widget-title">Menu Utama</h4>
+                            <ul class="footer-list">
+                                <li><a href="{{ route('pages.index') }}"><i class="fas fa-caret-right"></i>
+                                        Halaman</a></li>
+                                <li><a href="{{ route('guru.index') }}"><i class="fas fa-caret-right"></i> Tenaga
+                                        Pendidik</a></li>
+                                <li><a href="{{ route('siswa.index') }}"><i class="fas fa-caret-right"></i> Data
+                                        Siswa</a></li>
+                                <li><a href="{{ route('instagram.activities') }}"><i class="fas fa-caret-right"></i>
+                                        Galeri</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="footer-widget-box list">
+                            <h4 class="footer-widget-title">Layanan Digital</h4>
+                            <ul class="footer-list">
+                                @php
+                                    $user = Auth::user();
+                                    $siswa = $user ? \App\Models\Siswa::where('user_id', $user->id)->first() : null;
+                                    $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
+                                @endphp
+                                @if ($isGrade12)
+                                    <li><a href="{{ route('kelulusan.check') }}"><i class="fas fa-caret-right"></i>
+                                            E-Lulus</a></li>
+                                @endif
+                                <li><a href="{{ route('osis.voting') }}"><i class="fas fa-caret-right"></i>
+                                        E-OSIS</a></li>
+                                <li><a href="{{ route('sarpras.index') }}"><i class="fas fa-caret-right"></i>
+                                        E-Sarpras</a></li>
+                                <li><a href="{{ route('instagram.activities') }}"><i class="fas fa-caret-right"></i>
+                                        E-Galeri</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="footer-widget-box list">
+                            <h4 class="footer-widget-title">Akses Sistem</h4>
+                            <div class="footer-newsletter">
+                                <p>Login untuk mengakses semua fitur sistem</p>
+                                <div class="subscribe-form">
+                                    @if (Route::has('login'))
+                                        @auth
+                                            <a href="{{ url('/dashboard') }}" class="theme-btn">
+                                                DASHBOARD <i class="far fa-user"></i>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('login') }}" class="theme-btn">
+                                                LOGIN SISTEM <i class="far fa-sign-in"></i>
+                                            </a>
+                                        @endauth
+                                    @endif
+                </div>
+                        </div>
+                        </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <div class="copyright-wrapper">
+                    <div class="row">
+                        <div class="col-md-6 align-self-center">
+                            <p class="copyright-text">
+                                &copy; Copyright <span id="date"></span> <a href="#"> Portal Digital
+                                    Pendidikan </a> All Rights Reserved.
                     </p>
                 </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Fitur Utama</h4>
-                    <ul class="text-gray-400 space-y-2">
-                        <li>Modul Kegiatan</li>
-                        <li>E-OSIS</li>
-                        <li>E-Lulus</li>
-                        <li>Sarpras</li>
+                        <div class="col-md-6 align-self-center">
+                            <ul class="footer-social">
+                                <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                                <li><a href="{{ route('instagram.activities') }}" target="_blank"><i
+                                            class="fab fa-instagram"></i></a></li>
+                                <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
+                                <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Layanan</h4>
-                    <ul class="text-gray-400 space-y-2">
-                        <li>Implementasi</li>
-                        <li>Training</li>
-                        <li>Support</li>
-                        <li>Maintenance</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Sosial Media</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                            <i class="fab fa-facebook text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                            <i class="fab fa-twitter text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                            <i class="fab fa-instagram text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                            <i class="fab fa-linkedin text-xl"></i>
-                        </a>
                     </div>
                 </div>
-            </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 Website Sekolah. All rights reserved.</p>
             </div>
         </div>
     </footer>
+    <!-- footer area end -->
 
-    <!-- Smooth Scroll Script -->
+    <!-- scroll-top -->
+    <a href="#" id="scroll-top"><i class="far fa-arrow-up-from-arc"></i></a>
+    <!-- scroll-top end -->
+
+    <!-- js -->
+    <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('assets/js/modernizr.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.appear.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('assets/js/counter-up.js') }}"></script>
+    <script src="{{ asset('assets/js/wow.min.js') }}"></script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+
+    <!-- Custom Scripts -->
     <script>
+        // Update copyright year
+        document.getElementById('date').innerHTML = new Date().getFullYear();
+
+        // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
                     behavior: 'smooth'
                 });
+                }
             });
         });
     </script>
