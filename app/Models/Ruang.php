@@ -164,6 +164,44 @@ class Ruang extends Model
     }
 
     /**
+     * Get formatted luas (alias for formatted_area).
+     */
+    public function getFormattedLuasAttribute(): string
+    {
+        return $this->getFormattedAreaAttribute();
+    }
+
+    /**
+     * Get condition badge.
+     */
+    public function getConditionBadgeAttribute(): string
+    {
+        $color = $this->getKondisiBadgeColorAttribute();
+        $text = match ($this->kondisi) {
+            'baik' => 'Baik',
+            'rusak' => 'Rusak',
+            'renovasi' => 'Renovasi',
+            default => 'Tidak Diketahui'
+        };
+        return "<span class=\"badge badge-{$color}\">{$text}</span>";
+    }
+
+    /**
+     * Get status badge.
+     */
+    public function getStatusBadgeAttribute(): string
+    {
+        $color = $this->getStatusBadgeColorAttribute();
+        $text = match ($this->status) {
+            'aktif' => 'Aktif',
+            'tidak_aktif' => 'Tidak Aktif',
+            'renovasi' => 'Renovasi',
+            default => 'Tidak Diketahui'
+        };
+        return "<span class=\"badge badge-{$color}\">{$text}</span>";
+    }
+
+    /**
      * Get facilities list.
      */
     public function getFacilitiesListAttribute(): string

@@ -78,6 +78,8 @@ class SuperadminController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type,
+            'email_verified_at' => now(), // Auto verify when created by superadmin
+            'is_verified_by_admin' => true, // Mark as verified by admin
         ]);
 
         if ($request->has('roles')) {

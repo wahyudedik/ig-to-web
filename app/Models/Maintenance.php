@@ -55,7 +55,9 @@ class Maintenance extends Model
         } elseif ($this->jenis_item === 'ruang') {
             return $this->belongsTo(Ruang::class, 'item_id');
         }
-        return null;
+
+        // Return a dummy relationship for null cases to avoid eager loading issues
+        return $this->belongsTo(Barang::class, 'item_id')->whereRaw('1 = 0');
     }
 
     /**

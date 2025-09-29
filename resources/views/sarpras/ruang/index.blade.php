@@ -39,7 +39,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Ruang</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $ruang->count() }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $ruangs->total() }}</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,8 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Ruang Aktif</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $ruang->where('is_active', true)->count() }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $ruangs->where('is_active', true)->count() }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -75,7 +76,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Barang</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $ruang->sum('barang_count') }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $ruangs->sum('barang_count') }}</p>
                     </div>
                 </div>
             </div>
@@ -93,7 +94,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Luas</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $ruang->sum('luas') }} m²</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $ruangs->sum('luas_ruang') }} m²</p>
                     </div>
                 </div>
             </div>
@@ -142,9 +143,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($ruang as $index => $r)
+                        @forelse($ruangs as $index => $r)
                             <tr>
-                                <td>{{ $ruang->firstItem() + $index }}</td>
+                                <td>{{ $ruangs->firstItem() + $index }}</td>
                                 <td>
                                     @if ($r->photo_url)
                                         <img src="{{ $r->photo_url }}" alt="{{ $r->nama_ruang }}"
@@ -167,7 +168,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <p class="text-sm text-slate-900">{{ $r->lokasi }}</p>
+                                    <p class="text-sm text-slate-900">{{ $r->full_location }}</p>
                                 </td>
                                 <td>
                                     <p class="text-sm text-slate-900">{{ $r->formatted_luas }}</p>
@@ -242,9 +243,9 @@
             </div>
 
             <!-- Pagination -->
-            @if ($ruang->hasPages())
+            @if ($ruangs->hasPages())
                 <div class="px-6 py-4 border-t border-slate-200">
-                    {{ $ruang->links() }}
+                    {{ $ruangs->links() }}
                 </div>
             @endif
         </div>

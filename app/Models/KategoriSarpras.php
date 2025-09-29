@@ -63,4 +63,14 @@ class KategoriSarpras extends Model
     {
         return $this->barang()->where('is_active', true)->count();
     }
+
+    /**
+     * Get status badge.
+     */
+    public function getStatusBadgeAttribute(): string
+    {
+        $color = $this->is_active ? 'green' : 'red';
+        $text = $this->is_active ? 'Aktif' : 'Tidak Aktif';
+        return "<span class=\"badge badge-{$color}\">{$text}</span>";
+    }
 }

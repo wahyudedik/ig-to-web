@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Milon\Barcode\Facades\DNS1DFacade;
 use Milon\Barcode\Facades\DNS2DFacade;
+use Carbon\Carbon;
 
 class Barang extends Model
 {
@@ -78,7 +79,7 @@ class Barang extends Model
         static::deleting(function ($barang) {
             // Delete photo when barang is deleted
             if ($barang->foto) {
-                Storage::disk('public')->delete($barang->foto);
+                Storage::disk('local')->delete($barang->foto);
             }
         });
     }
@@ -167,7 +168,7 @@ class Barang extends Model
     public function getFormattedPriceAttribute(): string
     {
         if ($this->harga_beli) {
-            return 'Rp ' . number_format($this->harga_beli, 0, ',', '.');
+            return 'Rp ' . number_format((float) $this->harga_beli, 0, ',', '.');
         }
         return 'Tidak ada data';
     }
@@ -178,7 +179,9 @@ class Barang extends Model
     public function getAgeAttribute(): int
     {
         if ($this->tanggal_pembelian) {
-            return $this->tanggal_pembelian->diffInYears(now());
+            /** @var Carbon $tanggalPembelian */
+            $tanggalPembelian = $this->tanggal_pembelian;
+            return $tanggalPembelian->diffInYears(now());
         }
         return 0;
     }
@@ -242,5 +245,47 @@ class Barang extends Model
             'barcode' => $this->barcode,
             'qr_code' => $this->qr_code,
         ];
+    }
+
+    /**
+     * Get condition badge.
+     */
+    public function getConditionBadgeAttribute(): string
+    {
+        $color = match ($this->kondisi) {
+            'baik' => 'green',
+            'rusak' => 'red',
+            'hilang' => 'gray',
+            default => 'gray'
+        };
+        $text = match ($this->kondisi) {
+            'baik' => 'Baik',
+            'rusak' => 'Rusak',
+            'hilang' => 'Hilang',
+            default => 'Tidak Diketahui'
+        };
+        return "<span class=\"badge badge-{$color}\">{$text}</span>";
+    }
+
+    /**
+     * Get status badge.
+     */
+    public function getStatusBadgeAttribute(): string
+    {
+        $color = match ($this->status) {
+            'tersedia' => 'green',
+            'dipinjam' => 'blue',
+            'rusak' => 'red',
+            'hilang' => 'gray',
+            default => 'gray'
+        };
+        $text = match ($this->status) {
+            'tersedia' => 'Tersedia',
+            'dipinjam' => 'Dipinjam',
+            'rusak' => 'Rusak',
+            'hilang' => 'Hilang',
+            default => 'Tidak Diketahui'
+        };
+        return "<span class=\"badge badge-{$color}\">{$text}</span>";
     }
 }

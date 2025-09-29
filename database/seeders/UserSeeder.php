@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'user_type' => 'superadmin',
             'email_verified_at' => now(),
+            'is_verified_by_admin' => true, // Mark as verified by admin
         ]);
 
         // Create Admin User
@@ -30,6 +31,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'user_type' => 'admin',
             'email_verified_at' => now(),
+            'is_verified_by_admin' => true, // Mark as verified by admin
         ]);
 
         // Create Guru User
@@ -39,6 +41,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'user_type' => 'guru',
             'email_verified_at' => now(),
+            'is_verified_by_admin' => true, // Mark as verified by admin
         ]);
 
         // Create Siswa User
@@ -48,6 +51,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'user_type' => 'siswa',
             'email_verified_at' => now(),
+            'is_verified_by_admin' => true, // Mark as verified by admin
         ]);
 
         // Create Sarpras User
@@ -57,6 +61,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'user_type' => 'sarpras',
             'email_verified_at' => now(),
+            'is_verified_by_admin' => true, // Mark as verified by admin
         ]);
     }
 }

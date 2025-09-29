@@ -177,12 +177,12 @@
             itemSelect.innerHTML = '<option value="">Pilih Item</option>';
 
             if (itemType === 'barang') {
-                @foreach ($barang_list as $barang)
+                @foreach ($barangs as $barang)
                     itemSelect.innerHTML +=
                         '<option value="{{ $barang->id }}">{{ $barang->nama_barang }}</option>';
                 @endforeach
             } else if (itemType === 'ruang') {
-                @foreach ($ruang_list as $ruang)
+                @foreach ($ruangs as $ruang)
                     itemSelect.innerHTML +=
                         '<option value="{{ $ruang->id }}">{{ $ruang->nama_ruang }}</option>';
                 @endforeach

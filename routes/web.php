@@ -20,14 +20,14 @@ Route::get('/', function () {
 });
 
 // Main dashboard route - redirects based on user role
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email'])->name('dashboard');
 
 // Role-specific dashboard routes
-Route::get('/superadmin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:superadmin'])->name('superadmin.dashboard');
-Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:admin'])->name('admin.dashboard');
-Route::get('/guru/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:guru'])->name('guru.dashboard');
-Route::get('/siswa/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:siswa'])->name('siswa.dashboard');
-Route::get('/sarpras/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:sarpras'])->name('sarpras.dashboard');
+Route::get('/superadmin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:superadmin'])->name('superadmin.dashboard');
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:admin'])->name('admin.dashboard');
+Route::get('/guru/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:guru'])->name('guru.dashboard');
+Route::get('/siswa/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:siswa'])->name('siswa.dashboard');
+Route::get('/sarpras/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:sarpras'])->name('sarpras.dashboard');
 
 // Superadmin Routes
 Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
@@ -122,7 +122,7 @@ Route::get('/kelulusan/check', [KelulusanController::class, 'checkStatus'])->nam
 Route::post('/kelulusan/check', [KelulusanController::class, 'processCheck'])->name('kelulusan.processCheck');
 
 // Sarpras Management Routes
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:sarpras'])->group(function () {
     Route::get('/sarpras', [SarprasController::class, 'index'])->name('sarpras.index');
     Route::get('/sarpras/reports', [SarprasController::class, 'reports'])->name('sarpras.reports');
 
@@ -202,6 +202,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
 Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show');
 
+// Admin Page Routes (Superadmin only)
+Route::middleware(['auth', 'verified', 'role:superadmin'])->group(function () {
+    Route::get('/admin/pages', [PageController::class, 'admin'])->name('pages.admin');
+    Route::resource('admin/pages', PageController::class)->except(['index', 'show']);
+    Route::post('/admin/pages/{page}/publish', [PageController::class, 'publish'])->name('pages.publish');
+    Route::post('/admin/pages/{page}/unpublish', [PageController::class, 'unpublish'])->name('pages.unpublish');
+    Route::post('/admin/pages/{page}/duplicate', [PageController::class, 'duplicate'])->name('pages.duplicate');
+    Route::get('/admin/pages/{page}/versions', [PageController::class, 'versions'])->name('pages.versions');
+    Route::post('/admin/pages/{page}/versions/{version}/restore', [PageController::class, 'restoreVersion'])->name('pages.versions.restore');
+    Route::get('/admin/pages/{page}/versions/{version1}/compare/{version2}', [PageController::class, 'compareVersions'])->name('pages.versions.compare');
+});
+
 // Documentation Routes
 Route::get('/docs/instagram-setup', function () {
     return view('docs.instagram-setup');
@@ -216,5 +228,22 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Email Verification Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/email/verify', [App\Http\Controllers\Auth\EmailVerificationController::class, 'show'])->name('verification.notice');
+    Route::post('/email/verify/resend', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])->name('verification.resend');
+});
+
+Route::get('/email/verify/{id}/{hash}/{token}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verifyRegistration'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
+Route::get('/email/verify/resend', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resendForGuest'])->name('verification.resend-guest');
+Route::post('/email/verify/resend', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resendForGuest'])->name('verification.resend-guest.post');
+
+// Registration Routes
+Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
 require __DIR__ . '/auth.php';

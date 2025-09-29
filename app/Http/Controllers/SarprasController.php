@@ -31,7 +31,7 @@ class SarprasController extends Controller
             'maintenance_selesai' => Maintenance::where('status', 'selesai')->count(),
         ];
 
-        $recent_maintenance = Maintenance::with(['user', 'item'])
+        $recent_maintenance = Maintenance::with('user')
             ->latest()
             ->limit(5)
             ->get();
@@ -89,9 +89,17 @@ class SarprasController extends Controller
             'kode_kategori' => 'required|string|max:50|unique:kategori_sarpras',
             'deskripsi' => 'nullable|string',
             'sort_order' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
         ]);
 
-        KategoriSarpras::create($request->all());
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active');
+
+        // Sanitize input data
+        $data['nama_kategori'] = strip_tags($data['nama_kategori']);
+        $data['deskripsi'] = strip_tags($data['deskripsi'] ?? '');
+
+        KategoriSarpras::create($data);
 
         return redirect()->route('sarpras.kategori.index')
             ->with('success', 'Kategori berhasil ditambahkan.');
@@ -115,9 +123,17 @@ class SarprasController extends Controller
             'kode_kategori' => 'required|string|max:50|unique:kategori_sarpras,kode_kategori,' . $kategori->id,
             'deskripsi' => 'nullable|string',
             'sort_order' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
         ]);
 
-        $kategori->update($request->all());
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active');
+
+        // Sanitize input data
+        $data['nama_kategori'] = strip_tags($data['nama_kategori']);
+        $data['deskripsi'] = strip_tags($data['deskripsi'] ?? '');
+
+        $kategori->update($data);
 
         return redirect()->route('sarpras.kategori.index')
             ->with('success', 'Kategori berhasil diperbarui.');
@@ -214,7 +230,6 @@ class SarprasController extends Controller
             'tanggal_pembelian' => 'nullable|date',
             'sumber_dana' => 'nullable|string|max:100',
             'kondisi' => 'required|in:baik,rusak,hilang',
-            'lokasi' => 'nullable|string|max:255',
             'ruang_id' => 'nullable|exists:ruang,id',
             'status' => 'required|in:tersedia,dipinjam,rusak,hilang',
             'catatan' => 'nullable|string',
@@ -223,9 +238,16 @@ class SarprasController extends Controller
 
         $data = $request->all();
 
-        // Handle photo upload
+        // Sanitize input data
+        $data['nama_barang'] = strip_tags($data['nama_barang']);
+        $data['deskripsi'] = strip_tags($data['deskripsi'] ?? '');
+        $data['merk'] = strip_tags($data['merk'] ?? '');
+        $data['model'] = strip_tags($data['model'] ?? '');
+        $data['catatan'] = strip_tags($data['catatan'] ?? '');
+
+        // Handle photo upload - move to private storage
         if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('barang', 'public');
+            $data['foto'] = $request->file('foto')->store('private/barang');
         }
 
         Barang::create($data);
@@ -270,7 +292,6 @@ class SarprasController extends Controller
             'tanggal_pembelian' => 'nullable|date',
             'sumber_dana' => 'nullable|string|max:100',
             'kondisi' => 'required|in:baik,rusak,hilang',
-            'lokasi' => 'nullable|string|max:255',
             'ruang_id' => 'nullable|exists:ruang,id',
             'status' => 'required|in:tersedia,dipinjam,rusak,hilang',
             'catatan' => 'nullable|string',
@@ -279,13 +300,20 @@ class SarprasController extends Controller
 
         $data = $request->all();
 
-        // Handle photo upload
+        // Sanitize input data
+        $data['nama_barang'] = strip_tags($data['nama_barang']);
+        $data['deskripsi'] = strip_tags($data['deskripsi'] ?? '');
+        $data['merk'] = strip_tags($data['merk'] ?? '');
+        $data['model'] = strip_tags($data['model'] ?? '');
+        $data['catatan'] = strip_tags($data['catatan'] ?? '');
+
+        // Handle photo upload - move to private storage
         if ($request->hasFile('foto')) {
             // Delete old photo
             if ($barang->foto) {
-                Storage::disk('public')->delete($barang->foto);
+                Storage::disk('local')->delete($barang->foto);
             }
-            $data['foto'] = $request->file('foto')->store('barang', 'public');
+            $data['foto'] = $request->file('foto')->store('private/barang');
         }
 
         $barang->update($data);
@@ -301,7 +329,7 @@ class SarprasController extends Controller
     {
         // Delete photo
         if ($barang->foto) {
-            Storage::disk('public')->delete($barang->foto);
+            Storage::disk('local')->delete($barang->foto);
         }
 
         $barang->delete();
@@ -372,6 +400,7 @@ class SarprasController extends Controller
         $request->validate([
             'kode_ruang' => 'required|string|max:50|unique:ruang',
             'nama_ruang' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
             'jenis_ruang' => 'required|string|max:100',
             'luas_ruang' => 'nullable|numeric|min:0',
             'kapasitas' => 'nullable|integer|min:0',
@@ -379,16 +408,28 @@ class SarprasController extends Controller
             'gedung' => 'nullable|string|max:100',
             'kondisi' => 'required|in:baik,rusak,renovasi',
             'status' => 'required|in:aktif,tidak_aktif,renovasi',
-            'fasilitas' => 'nullable|array',
+            'fasilitas' => 'nullable|string',
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->all();
 
-        // Handle photo upload
+        // Sanitize input data
+        $data['nama_ruang'] = strip_tags($data['nama_ruang']);
+        $data['deskripsi'] = strip_tags($data['deskripsi'] ?? '');
+        $data['catatan'] = strip_tags($data['catatan'] ?? '');
+
+        // Convert fasilitas string to array
+        if ($request->filled('fasilitas')) {
+            $data['fasilitas'] = array_map('trim', explode(',', $request->fasilitas));
+        } else {
+            $data['fasilitas'] = [];
+        }
+
+        // Handle photo upload - move to private storage
         if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('ruang', 'public');
+            $data['foto'] = $request->file('foto')->store('private/ruang');
         }
 
         Ruang::create($data);
@@ -422,6 +463,7 @@ class SarprasController extends Controller
         $request->validate([
             'kode_ruang' => 'required|string|max:50|unique:ruang,kode_ruang,' . $ruang->id,
             'nama_ruang' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
             'jenis_ruang' => 'required|string|max:100',
             'luas_ruang' => 'nullable|numeric|min:0',
             'kapasitas' => 'nullable|integer|min:0',
@@ -429,20 +471,32 @@ class SarprasController extends Controller
             'gedung' => 'nullable|string|max:100',
             'kondisi' => 'required|in:baik,rusak,renovasi',
             'status' => 'required|in:aktif,tidak_aktif,renovasi',
-            'fasilitas' => 'nullable|array',
+            'fasilitas' => 'nullable|string',
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->all();
 
-        // Handle photo upload
+        // Sanitize input data
+        $data['nama_ruang'] = strip_tags($data['nama_ruang']);
+        $data['deskripsi'] = strip_tags($data['deskripsi'] ?? '');
+        $data['catatan'] = strip_tags($data['catatan'] ?? '');
+
+        // Convert fasilitas string to array
+        if ($request->filled('fasilitas')) {
+            $data['fasilitas'] = array_map('trim', explode(',', $request->fasilitas));
+        } else {
+            $data['fasilitas'] = [];
+        }
+
+        // Handle photo upload - move to private storage
         if ($request->hasFile('foto')) {
             // Delete old photo
             if ($ruang->foto) {
-                Storage::disk('public')->delete($ruang->foto);
+                Storage::disk('local')->delete($ruang->foto);
             }
-            $data['foto'] = $request->file('foto')->store('ruang', 'public');
+            $data['foto'] = $request->file('foto')->store('private/ruang');
         }
 
         $ruang->update($data);
@@ -458,7 +512,7 @@ class SarprasController extends Controller
     {
         // Delete photo
         if ($ruang->foto) {
-            Storage::disk('public')->delete($ruang->foto);
+            Storage::disk('local')->delete($ruang->foto);
         }
 
         $ruang->delete();
@@ -681,7 +735,31 @@ class SarprasController extends Controller
             ->orderBy('month')
             ->get();
 
-        return view('sarpras.reports', compact('stats', 'kategori_stats', 'maintenance_by_month'));
+        // Analytics data for the view
+        $analytics = [
+            'total_categories' => KategoriSarpras::count(),
+            'total_items' => Barang::count(),
+            'total_rooms' => Ruang::count(),
+            'total_value' => Barang::sum('harga_beli') ?? 0,
+            'items_by_category' => $kategori_stats,
+            'maintenance_pending' => Maintenance::where('status', 'dijadwalkan')->count(),
+            'maintenance_in_progress' => Maintenance::where('status', 'sedang_dikerjakan')->count(),
+            'maintenance_completed' => Maintenance::where('status', 'selesai')->count(),
+            'maintenance_cancelled' => Maintenance::where('status', 'dibatalkan')->count(),
+            'items_good' => Barang::where('kondisi', 'baik')->count(),
+            'items_good_percentage' => Barang::count() > 0 ? round((Barang::where('kondisi', 'baik')->count() / Barang::count()) * 100, 1) : 0,
+            'items_repair' => Barang::where('kondisi', 'rusak')->count(),
+            'items_repair_percentage' => Barang::count() > 0 ? round((Barang::where('kondisi', 'rusak')->count() / Barang::count()) * 100, 1) : 0,
+            'items_damaged' => Barang::where('kondisi', 'hilang')->count(),
+            'items_damaged_percentage' => Barang::count() > 0 ? round((Barang::where('kondisi', 'hilang')->count() / Barang::count()) * 100, 1) : 0,
+            'maintenance_cost_month' => Maintenance::whereMonth('tanggal_maintenance', now()->month)->sum('biaya') ?? 0,
+            'maintenance_cost_year' => Maintenance::whereYear('tanggal_maintenance', now()->year)->sum('biaya') ?? 0,
+            'maintenance_cost_total' => Maintenance::sum('biaya') ?? 0,
+            'maintenance_cost_average' => Maintenance::count() > 0 ? round(Maintenance::avg('biaya'), 0) : 0,
+            'recent_activities' => Maintenance::with('user')->latest()->limit(10)->get(),
+        ];
+
+        return view('sarpras.reports', compact('stats', 'kategori_stats', 'maintenance_by_month', 'analytics'));
     }
 
     // ==================== BARCODE SYSTEM ====================

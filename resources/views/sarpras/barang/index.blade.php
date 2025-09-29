@@ -39,7 +39,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Barang</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $barang->count() }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $barangs->total() }}</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Baik</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $barang->where('kondisi', 'baik')->count() }}
+                        <p class="text-2xl font-bold text-slate-900">{{ $barangs->where('kondisi', 'baik')->count() }}
                         </p>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Rusak Ringan</p>
                         <p class="text-2xl font-bold text-slate-900">
-                            {{ $barang->where('kondisi', 'rusak_ringan')->count() }}</p>
+                            {{ $barangs->where('kondisi', 'rusak_ringan')->count() }}</p>
                     </div>
                 </div>
             </div>
@@ -95,7 +95,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Rusak Berat</p>
                         <p class="text-2xl font-bold text-slate-900">
-                            {{ $barang->where('kondisi', 'rusak_berat')->count() }}</p>
+                            {{ $barangs->where('kondisi', 'rusak_berat')->count() }}</p>
                     </div>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                 <div class="flex gap-2">
                     <select name="kategori" class="form-input">
                         <option value="">Semua Kategori</option>
-                        @foreach ($kategori_list as $k)
+                        @foreach ($kategoris as $k)
                             <option value="{{ $k->id }}" {{ request('kategori') == $k->id ? 'selected' : '' }}>
                                 {{ $k->nama_kategori }}</option>
                         @endforeach
@@ -152,9 +152,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($barang as $index => $b)
+                        @forelse($barangs as $index => $b)
                             <tr>
-                                <td>{{ $barang->firstItem() + $index }}</td>
+                                <td>{{ $barangs->firstItem() + $index }}</td>
                                 <td>
                                     @if ($b->photo_url)
                                         <img src="{{ $b->photo_url }}" alt="{{ $b->nama_barang }}"
@@ -247,9 +247,9 @@
             </div>
 
             <!-- Pagination -->
-            @if ($barang->hasPages())
+            @if ($barangs->hasPages())
                 <div class="px-6 py-4 border-t border-slate-200">
-                    {{ $barang->links() }}
+                    {{ $barangs->links() }}
                 </div>
             @endif
         </div>

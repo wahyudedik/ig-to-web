@@ -53,7 +53,7 @@
                                 class="form-input @error('kategori_id') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                 required>
                                 <option value="">Pilih Kategori</option>
-                                @foreach ($kategori_list as $kategori)
+                                @foreach ($kategoris as $kategori)
                                     <option value="{{ $kategori->id }}"
                                         {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>
                                         {{ $kategori->nama_kategori }}
@@ -70,7 +70,7 @@
                             <select id="ruang_id" name="ruang_id"
                                 class="form-input @error('ruang_id') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
                                 <option value="">Pilih Ruang</option>
-                                @foreach ($ruang_list as $ruang)
+                                @foreach ($ruangs as $ruang)
                                     <option value="{{ $ruang->id }}"
                                         {{ old('ruang_id') == $ruang->id ? 'selected' : '' }}>
                                         {{ $ruang->nama_ruang }}

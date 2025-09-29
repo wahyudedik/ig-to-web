@@ -24,6 +24,14 @@ class Page extends Model
         'custom_fields',
         'status',
         'is_featured',
+        'is_menu',
+        'menu_title',
+        'menu_position',
+        'parent_id',
+        'menu_icon',
+        'menu_url',
+        'menu_target_blank',
+        'menu_sort_order',
         'sort_order',
         'published_at',
         'user_id',
@@ -33,6 +41,8 @@ class Page extends Model
         'seo_meta' => 'array',
         'custom_fields' => 'array',
         'is_featured' => 'boolean',
+        'is_menu' => 'boolean',
+        'menu_target_blank' => 'boolean',
         'published_at' => 'datetime',
     ];
 
@@ -50,6 +60,22 @@ class Page extends Model
     public function versions(): HasMany
     {
         return $this->hasMany(PageVersion::class);
+    }
+
+    /**
+     * Get the parent page (for submenu).
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Page::class, 'parent_id');
+    }
+
+    /**
+     * Get the child pages (submenu).
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Page::class, 'parent_id')->orderBy('menu_sort_order');
     }
 
     /**
@@ -106,11 +132,63 @@ class Page extends Model
     }
 
     /**
+     * Scope to filter menu pages.
+     */
+    public function scopeMenu($query)
+    {
+        return $query->where('is_menu', true)->where('status', 'published');
+    }
+
+    /**
+     * Scope to filter by menu position.
+     */
+    public function scopeMenuPosition($query, string $position)
+    {
+        return $query->where('menu_position', $position);
+    }
+
+    /**
+     * Scope to get main menu items (no parent).
+     */
+    public function scopeMainMenu($query)
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    /**
+     * Scope to get submenu items.
+     */
+    public function scopeSubmenu($query, int $parentId)
+    {
+        return $query->where('parent_id', $parentId);
+    }
+
+    /**
      * Get the page URL.
      */
     public function getUrlAttribute(): string
     {
         return route('pages.show', $this->slug);
+    }
+
+    /**
+     * Get the menu URL (custom URL or page URL).
+     */
+    public function getMenuUrlAttribute(): string
+    {
+        if ($this->getRawOriginal('menu_url')) {
+            return $this->getRawOriginal('menu_url');
+        }
+
+        return route('pages.show', $this->slug);
+    }
+
+    /**
+     * Get the menu title (custom title or page title).
+     */
+    public function getMenuTitleAttribute($value): string
+    {
+        return $value ?: $this->title;
     }
 
     /**

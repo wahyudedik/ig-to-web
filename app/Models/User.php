@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -25,6 +26,10 @@ class User extends Authenticatable
         'email',
         'password',
         'user_type',
+        'email_verified_at',
+        'email_verification_token',
+        'is_verified_by_admin',
+        'email_verification_sent_at',
     ];
 
     /**
@@ -46,6 +51,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'email_verification_sent_at' => 'datetime',
+            'is_verified_by_admin' => 'boolean',
             'password' => 'hashed',
         ];
     }
@@ -173,5 +180,105 @@ class User extends Authenticatable
             ->where('can_access', true)
             ->pluck('module_name')
             ->toArray();
+    }
+
+    /**
+     * Check if email is verified.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark email as verified.
+     */
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+            'email_verification_token' => null,
+        ])->save();
+    }
+
+    /**
+     * Check if user was verified by admin.
+     */
+    public function isVerifiedByAdmin(): bool
+    {
+        return $this->is_verified_by_admin;
+    }
+
+    /**
+     * Mark user as verified by admin.
+     */
+    public function markAsVerifiedByAdmin(): bool
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+            'is_verified_by_admin' => true,
+            'email_verification_token' => null,
+        ])->save();
+    }
+
+    /**
+     * Generate email verification token.
+     */
+    public function generateEmailVerificationToken(): string
+    {
+        $token = Str::random(64);
+
+        $this->forceFill([
+            'email_verification_token' => $token,
+            'email_verification_sent_at' => $this->freshTimestamp(),
+        ])->save();
+
+        return $token;
+    }
+
+    /**
+     * Verify email with token.
+     */
+    public function verifyEmailWithToken(string $token): bool
+    {
+        if ($this->email_verification_token !== $token) {
+            return false;
+        }
+
+        return $this->markEmailAsVerified();
+    }
+
+    /**
+     * Check if user needs email verification.
+     */
+    public function needsEmailVerification(): bool
+    {
+        // Superadmin created users don't need verification
+        if ($this->isVerifiedByAdmin()) {
+            return false;
+        }
+
+        // Already verified users don't need verification
+        return !$this->hasVerifiedEmail();
+    }
+
+    /**
+     * Get the email verification URL.
+     */
+    public function getEmailVerificationUrl(): string
+    {
+        return route('verification.verify', [
+            'id' => $this->getKey(),
+            'hash' => sha1($this->getEmailForVerification()),
+            'token' => $this->email_verification_token,
+        ]);
+    }
+
+    /**
+     * Get the email for verification.
+     */
+    public function getEmailForVerification(): string
+    {
+        return $this->email;
     }
 }

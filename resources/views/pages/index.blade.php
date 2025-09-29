@@ -2,240 +2,563 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>All Pages - {{ config('app.name') }}</title>
+    <!-- meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Halaman Sekolah - Informasi dan Konten Sekolah">
+    <meta name="keywords" content="halaman, sekolah, informasi, konten, artikel">
+
+    <!-- title -->
+    <title>Halaman Sekolah - {{ config('app.name') }}</title>
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/favicon.png') }}">
+
+    <!-- css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/all-fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/magnific-popup.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Styles / Scripts -->
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @else
-        <style>
-            /* Include the existing Tailwind CSS here */
-        </style>
-    @endif
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <a href="/" class="text-2xl font-bold text-gray-900 dark:text-white">
-                            <i class="fas fa-graduation-cap text-blue-600 mr-2"></i>
-                            {{ config('app.name') }}
-                        </a>
+<body>
+
+    <!-- header area -->
+    <header class="header">
+        <!-- header top -->
+        <div class="header-top">
+            <div class="container">
+                <div class="header-top-wrap">
+                    <div class="header-top-left">
+                        <div class="header-top-social">
+                            <span>Follow Us: </span>
+                            <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="{{ route('instagram.activities') }}" target="_blank"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="header-top-right">
+                        <div class="header-top-contact">
+                            <ul>
+                                <li>
+                                    <a href="#" target="_blank"><i class="far fa-location-dot"></i> Jl. Pendidikan
+                                        No. 123, Jakarta</a>
+                                </li>
+                                <li>
+                                    <a href="mailto:info@sekolahdigital.com" target="_blank"><i
+                                            class="far fa-envelopes"></i> info@sekolahdigital.com</a>
+                                </li>
+                                <li>
+                                    <a href="tel:+62123456789" target="_blank"><i class="far fa-phone-volume"></i> +62
+                                        123 456 789</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <a href="/"
-                        class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                        Home
-                    </a>
-                    <a href="/kegiatan"
-                        class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                        Kegiatan
-                    </a>
-                    <a href="/about"
-                        class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                        About
-                    </a>
-                </div>
             </div>
         </div>
-    </nav>
 
-    <!-- Header Section -->
-    <section class="bg-white dark:bg-gray-800 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                    All Pages
-                </h1>
-                <p class="text-xl text-gray-600 dark:text-gray-300">
-                    Explore all pages on our website
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Filter Section -->
-    <section class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-                <form method="GET" class="flex flex-wrap gap-4 items-center">
-                    <div class="flex-1 min-w-64">
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Search pages..."
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                    </div>
-                    <div>
-                        <select name="category"
-                            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                            <option value="">All Categories</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}"
-                                    {{ request('category') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <select name="sort"
-                            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First
-                            </option>
-                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First
-                            </option>
-                            <option value="title" {{ request('sort') == 'title' ? 'selected' : '' }}>Title A-Z</option>
-                        </select>
-                    </div>
-                    <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition duration-300">
-                        <i class="fas fa-search mr-2"></i>
-                        Filter
-                    </button>
-                    <a href="{{ route('pages.index') }}"
-                        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition duration-300">
-                        <i class="fas fa-times mr-2"></i>
-                        Clear
+        <div class="main-navigation">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container position-relative">
+                    <a class="navbar-brand" href="/">
+                        <img src="{{ asset('assets/img/logo/logo.png') }}" alt="logo">
                     </a>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pages Grid -->
-    <section class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            @if ($pages->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach ($pages as $page)
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                            @if ($page->featured_image)
-                                <img src="{{ Storage::url($page->featured_image) }}" alt="{{ $page->title }}"
-                                    class="w-full h-48 object-cover">
-                            @else
-                                <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                    <i class="fas fa-file-alt text-4xl text-gray-400"></i>
-                                </div>
-                            @endif
-
-                            <div class="p-6">
-                                <div class="flex items-center justify-between mb-2">
-                                    @if ($page->category)
-                                        <span
-                                            class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full text-xs">
-                                            {{ $page->category->name }}
-                                        </span>
-                                    @endif
-                                    @if ($page->is_featured)
-                                        <span
-                                            class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-full text-xs">
-                                            <i class="fas fa-star mr-1"></i>
-                                            Featured
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                                    <a href="{{ route('pages.show', $page->slug) }}"
-                                        class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                        {{ $page->title }}
-                                    </a>
-                                </h3>
-
-                                @if ($page->excerpt)
-                                    <p class="text-gray-600 dark:text-gray-300 mb-4">
-                                        {{ Str::limit($page->excerpt, 120) }}
-                                    </p>
+                    <div class="mobile-menu-right">
+                        <div class="search-btn">
+                            <button type="button" class="nav-right-link search-box-outer"><i
+                                    class="far fa-search"></i></button>
+                        </div>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#main_nav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-mobile-icon"><i class="far fa-bars"></i></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse" id="main_nav">
+                        <ul class="navbar-nav">
+                            @foreach ($headerMenus as $menu)
+                                @if ($menu->children->count() > 0)
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle {{ request()->is($menu->slug) ? 'active' : '' }}"
+                                            href="#" data-bs-toggle="dropdown">
+                                            @if ($menu->menu_icon)
+                                                <i class="{{ $menu->menu_icon }}"></i>
+                                            @endif
+                                            {{ $menu->menu_title }}
+                                        </a>
+                                        <ul class="dropdown-menu fade-down">
+                                            @foreach ($menu->children as $submenu)
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ $submenu->menu_url }}"
+                                                        @if ($submenu->menu_target_blank) target="_blank" @endif>
+                                                        @if ($submenu->menu_icon)
+                                                            <i class="{{ $submenu->menu_icon }}"></i>
+                                                        @endif
+                                                        {{ $submenu->menu_title }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                @else
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ request()->is($menu->slug) ? 'active' : '' }}"
+                                            href="{{ $menu->menu_url }}"
+                                            @if ($menu->menu_target_blank) target="_blank" @endif>
+                                            @if ($menu->menu_icon)
+                                                <i class="{{ $menu->menu_icon }}"></i>
+                                            @endif
+                                            {{ $menu->menu_title }}
+                                        </a>
+                                    </li>
                                 @endif
+                            @endforeach
 
-                                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                                    <span>
-                                        <i class="fas fa-calendar mr-1"></i>
-                                        {{ $page->updated_at->format('M d, Y') }}
-                                    </span>
-                                    <a href="{{ route('pages.show', $page->slug) }}"
-                                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
-                                        Read More <i class="fas fa-arrow-right ml-1"></i>
-                                    </a>
+                            <!-- Fallback menu items if no custom menus are configured -->
+                            @if ($headerMenus->count() == 0)
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle active" href="#"
+                                        data-bs-toggle="dropdown">PROFIL</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a>
+                                        </li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('instagram.activities') }}">GALERI</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                        data-bs-toggle="dropdown">AKADEMIK</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA
+                                                PENDIDIK</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a>
+                                        </li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                        data-bs-toggle="dropdown">LAYANAN DIGITAL</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        @php
+                                            $user = Auth::user();
+                                            $siswa = $user
+                                                ? \App\Models\Siswa::where('user_id', $user->id)->first()
+                                                : null;
+                                            $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
+                                        @endphp
+                                        @if ($isGrade12)
+                                            <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
+                                                    E-LULUS</a></li>
+                                        @endif
+                                        <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢
+                                                E-SARPRAS</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
+                                                E-GALERI</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item"><a class="nav-link" href="#contact">KONTAK</a></li>
+                            @endif
+                        </ul>
+                        <div class="nav-right">
+                            <div class="nav-right-btn mt-2">
+                                @if (Route::has('login'))
+                                    @auth
+                                        <a href="{{ url('/dashboard') }}" class="theme-btn"><span
+                                                class="fal fa-user"></span> DASHBOARD</a>
+                                    @else
+                                        <a href="{{ route('login') }}" class="theme-btn"><span
+                                                class="fal fa-sign-in"></span> LOGIN</a>
+                                    @endauth
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!-- header area end -->
+
+    <!-- popup search -->
+    <div class="search-popup">
+        <button class="close-search"><span class="far fa-times"></span></button>
+        <form action="#">
+            <div class="form-group">
+                <input type="search" name="search-field" placeholder="Search Here..." required>
+                <button type="submit"><i class="far fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+    <!-- popup search end -->
+    <main class="main">
+
+        <!-- breadcrumb -->
+        <div class="site-breadcrumb" style="background: url({{ asset('assets/img/breadcrumb/01.jpg') }})">
+            <div class="container">
+                <h2 class="breadcrumb-title">Halaman Sekolah</h2>
+                <ul class="breadcrumb-menu">
+                    <li><a href="/">Home</a></li>
+                    <li class="active">Halaman</li>
+                </ul>
+            </div>
+        </div>
+        <!-- breadcrumb end -->
+
+        <!-- Pages Info Section -->
+        <div class="campus-tour pt-120 pb-80">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="content-info wow fadeInUp" data-wow-delay=".25s">
+                            <div class="site-heading mb-3">
+                                <h2 class="site-title">
+                                    HALAMAN SEKOLAH
+                                </h2>
+                            </div>
+                            <p class="content-text">
+                                Kumpulan halaman informasi dan konten sekolah yang lengkap.
+                                Temukan berbagai informasi penting, berita, pengumuman, dan
+                                konten edukatif yang disediakan untuk siswa, orang tua, dan masyarakat.
+                            </p>
+                            <p class="content-text mt-2">
+                                Semua halaman telah dikurasi dan dipublikasikan dengan standar
+                                kualitas tinggi untuk memberikan pengalaman membaca yang optimal.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="content-img wow fadeInRight" data-wow-delay=".25s">
+                            <img src="{{ asset('assets/img/campus-tour/01.jpg') }}" alt="Halaman Sekolah">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Pages Info Section end -->
+
+        <!-- Search and Filter Section -->
+        <div class="campus-life pt-120 pb-80">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="site-heading text-center mb-5">
+                            <h2 class="site-title">Cari Halaman</h2>
+                            <p class="site-subtitle">Temukan informasi yang Anda butuhkan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <form method="GET" class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    placeholder="Cari halaman..." class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <select name="category" class="form-control">
+                                    <option value="">Semua Kategori</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category }}"
+                                            {{ request('category') == $category ? 'selected' : '' }}>
+                                            {{ ucfirst($category) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="status" class="form-control">
+                                    <option value="">Semua Status</option>
+                                    @foreach ($statuses as $status)
+                                        <option value="{{ $status }}"
+                                            {{ request('status') == $status ? 'selected' : '' }}>
+                                            {{ ucfirst($status) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button type="submit" class="theme-btn me-3">
+                                    <i class="fas fa-search me-2"></i>Filter
+                                </button>
+                                <a href="{{ route('pages.index') }}" class="theme-btn theme-btn-2">
+                                    <i class="fas fa-times me-2"></i>Clear
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Search and Filter Section end -->
+
+        <!-- Pages Grid Section -->
+        <div class="campus-tour pt-120 pb-80">
+            <div class="container">
+                @if ($pages->count() > 0)
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="site-heading text-center mb-5">
+                                <h2 class="site-title">Halaman Terbaru</h2>
+                                <p class="site-subtitle">Kumpulan halaman informasi sekolah</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @foreach ($pages as $page)
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    @if ($page->featured_image)
+                                        <img src="{{ Storage::url($page->featured_image) }}" class="card-img-top"
+                                            alt="{{ $page->title }}" style="height: 250px; object-fit: cover;">
+                                    @else
+                                        <div class="card-img-top d-flex align-items-center justify-content-center"
+                                            style="height: 250px; background-color: #f8f9fa;">
+                                            <i class="fas fa-file-alt fa-4x text-muted"></i>
+                                        </div>
+                                    @endif
+
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="mb-2">
+                                            @if ($page->category)
+                                                <span class="badge bg-primary">{{ ucfirst($page->category) }}</span>
+                                            @endif
+                                            @if ($page->is_featured)
+                                                <span class="badge bg-warning">
+                                                    <i class="fas fa-star me-1"></i>Featured
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        <h5 class="card-title">
+                                            <a href="{{ route('pages.show', $page->slug) }}"
+                                                class="text-decoration-none">
+                                                {{ $page->title }}
+                                            </a>
+                                        </h5>
+
+                                        @if ($page->excerpt)
+                                            <p class="card-text flex-grow-1">{{ Str::limit($page->excerpt, 120) }}</p>
+                                        @endif
+
+                                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                {{ $page->updated_at->format('M d, Y') }}
+                                            </small>
+                                            <a href="{{ route('pages.show', $page->slug) }}"
+                                                class="btn btn-outline-primary btn-sm">
+                                                Baca Selengkapnya <i class="fas fa-arrow-right ms-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Pagination -->
+                    @if ($pages->hasPages())
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <nav aria-label="Page navigation">
+                                    {{ $pages->appends(request()->query())->links() }}
+                                </nav>
+                            </div>
+                        </div>
+                    @endif
+                @else
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="text-center py-5">
+                                <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+                                <h4 class="text-muted">Belum ada halaman</h4>
+                                <p class="text-muted">
+                                    @if (request()->hasAny(['search', 'category', 'status']))
+                                        Coba ubah kriteria pencarian Anda.
+                                    @else
+                                        Belum ada halaman yang dipublikasikan.
+                                    @endif
+                                </p>
+                                <a href="/" class="theme-btn">
+                                    <i class="fas fa-home me-2"></i>Kembali ke Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+        <!-- Pages Grid Section end -->
+
+    </main>
+
+    <!-- footer area -->
+    <footer class="footer-area">
+        <div class="footer-shape">
+            <img src="{{ asset('assets/img/shape/03.png') }}" alt="">
+        </div>
+        <div class="footer-widget">
+            <div class="container">
+                <div class="row footer-widget-wrapper pt-100 pb-70">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="footer-widget-box about-us">
+                            <a href="/" class="footer-logo">
+                                <img src="{{ asset('assets/img/logo/logo-light.png') }}" alt="">
+                            </a>
+                            <p class="mb-3">
+                                Portal Digital Pendidikan yang mengintegrasikan semua layanan sekolah
+                                dalam satu platform modern dan terpadu.
+                            </p>
+                            <ul class="footer-contact">
+                                <li><a href="#"><i class="fab fa-whatsapp"></i>+62 123 456 789</a></li>
+                                <li><i class="far fa-map-marker-alt"></i>Jl. Pendidikan No. 123, Jakarta</li>
+                                <li><a href="mailto:info@sekolahdigital.com"><i
+                                            class="far fa-envelope"></i>info@sekolahdigital.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Dynamic Footer Menus -->
+                    @if ($footerMenus->count() > 0)
+                        @foreach ($footerMenus as $menu)
+                            <div class="col-md-6 col-lg-2">
+                                <div class="footer-widget-box list">
+                                    <h4 class="footer-widget-title">{{ $menu->menu_title }}</h4>
+                                    <ul class="footer-list">
+                                        @if ($menu->children->count() > 0)
+                                            @foreach ($menu->children as $submenu)
+                                                <li>
+                                                    <a href="{{ $submenu->menu_url }}"
+                                                        @if ($submenu->menu_target_blank) target="_blank" @endif>
+                                                        <i class="fas fa-caret-right"></i>
+                                                        {{ $submenu->menu_title }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        @else
+                                            <li>
+                                                <a href="{{ $menu->menu_url }}"
+                                                    @if ($menu->menu_target_blank) target="_blank" @endif>
+                                                    <i class="fas fa-caret-right"></i>
+                                                    {{ $menu->menu_title }}
+                                                </a>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <!-- Fallback Footer Menus -->
+                        <div class="col-md-6 col-lg-2">
+                            <div class="footer-widget-box list">
+                                <h4 class="footer-widget-title">Link Terkait</h4>
+                                <ul class="footer-list">
+                                    <li><a href="{{ route('pages.index') }}"><i class="fas fa-caret-right"></i>
+                                            Halaman</a></li>
+                                    <li><a href="{{ route('guru.index') }}"><i class="fas fa-caret-right"></i> Tenaga
+                                            Pendidik</a></li>
+                                    <li><a href="{{ route('siswa.index') }}"><i class="fas fa-caret-right"></i> Data
+                                            Siswa</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="footer-widget-box list">
+                                <h4 class="footer-widget-title">Layanan Digital</h4>
+                                <ul class="footer-list">
+                                    <li><a href="{{ route('kelulusan.check') }}"><i class="fas fa-caret-right"></i>
+                                            E-Lulus</a></li>
+                                    <li><a href="{{ route('osis.voting') }}"><i class="fas fa-caret-right"></i>
+                                            E-OSIS</a></li>
+                                    <li><a href="{{ route('sarpras.index') }}"><i class="fas fa-caret-right"></i>
+                                            E-Sarpras</a></li>
+                                    <li><a href="{{ route('instagram.activities') }}"><i
+                                                class="fas fa-caret-right"></i> E-Galeri</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
+                    <div class="col-md-6 col-lg-3">
+                        <div class="footer-widget-box list">
+                            <h4 class="footer-widget-title">Slogan Kami</h4>
+                            <div class="footer-newsletter">
+                                <p>Pendidikan Digital, Masa Depan Cerah</p>
+                                <div class="subscribe-form">
+                                    <form action="{{ route('pages.index') }}">
+                                        <button class="theme-btn" type="submit">
+                                            LIHAT HALAMAN <i class="far fa-file-alt"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-
-                <!-- Pagination -->
-                @if ($pages->hasPages())
-                    <div class="mt-8">
-                        {{ $pages->appends(request()->query())->links() }}
                     </div>
-                @endif
-            @else
-                <div class="text-center py-12">
-                    <i class="fas fa-file-alt text-6xl text-gray-400 mb-4"></i>
-                    <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">No pages found</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">
-                        @if (request()->hasAny(['search', 'category', 'sort']))
-                            Try adjusting your search criteria.
-                        @else
-                            No pages have been published yet.
-                        @endif
-                    </p>
-                    <a href="/"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300">
-                        <i class="fas fa-home mr-2"></i>
-                        Go Home
-                    </a>
-                </div>
-            @endif
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">{{ config('app.name') }}</h3>
-                    <p class="text-gray-300">
-                        Sistem Informasi Sekolah Terintegrasi untuk manajemen sekolah yang lebih baik.
-                    </p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li><a href="/" class="text-gray-300 hover:text-white transition-colors">Home</a></li>
-                        <li><a href="/kegiatan" class="text-gray-300 hover:text-white transition-colors">Kegiatan</a>
-                        </li>
-                        <li><a href="/about" class="text-gray-300 hover:text-white transition-colors">About</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
-                    <p class="text-gray-300">
-                        Email: info@sekolah.com<br>
-                        Phone: (021) 123-4567
-                    </p>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                <p>&copy; 2024 {{ config('app.name') }}. Semua hak cipta dilindungi.</p>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <div class="copyright-wrapper">
+                    <div class="row">
+                        <div class="col-md-6 align-self-center">
+                            <p class="copyright-text">
+                                &copy; Copyright <span id="date"></span> <a href="#">Website Sekolah</a>
+                                All Rights Reserved.
+                            </p>
+                        </div>
+                        <div class="col-md-6 align-self-center">
+                            <ul class="footer-social">
+                                <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                                <li><a href="{{ route('instagram.activities') }}" target="_blank"><i
+                                            class="fab fa-instagram"></i></a></li>
+                                <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
+                                <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
+    <!-- footer area end -->
+
+    <!-- scroll-top -->
+    <a href="#" id="scroll-top"><i class="far fa-arrow-up-from-arc"></i></a>
+    <!-- scroll-top end -->
+
+    <!-- js -->
+    <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('assets/js/modernizr.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.appear.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('assets/js/counter-up.js') }}"></script>
+    <script src="{{ asset('assets/js/wow.min.js') }}"></script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+
 </body>
 
 </html>

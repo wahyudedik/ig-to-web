@@ -48,11 +48,11 @@
                         </div>
 
                         <div>
-                            <label for="lokasi" class="form-label">Lokasi</label>
-                            <input type="text" id="lokasi" name="lokasi" value="{{ old('lokasi') }}"
-                                class="form-input @error('lokasi') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan lokasi ruang" required>
-                            @error('lokasi')
+                            <label for="gedung" class="form-label">Gedung</label>
+                            <input type="text" id="gedung" name="gedung" value="{{ old('gedung') }}"
+                                class="form-input @error('gedung') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                placeholder="Masukkan nama gedung">
+                            @error('gedung')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -66,6 +66,42 @@
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        <div>
+                            <label for="lantai" class="form-label">Lantai</label>
+                            <input type="text" id="lantai" name="lantai" value="{{ old('lantai') }}"
+                                class="form-input @error('lantai') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                placeholder="Masukkan lantai ruang">
+                            @error('lantai')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="jenis_ruang" class="form-label">Jenis Ruang</label>
+                            <select id="jenis_ruang" name="jenis_ruang"
+                                class="form-select @error('jenis_ruang') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                required>
+                                <option value="">Pilih jenis ruang</option>
+                                <option value="kelas" {{ old('jenis_ruang') == 'kelas' ? 'selected' : '' }}>Kelas
+                                </option>
+                                <option value="laboratorium"
+                                    {{ old('jenis_ruang') == 'laboratorium' ? 'selected' : '' }}>Laboratorium</option>
+                                <option value="perpustakaan"
+                                    {{ old('jenis_ruang') == 'perpustakaan' ? 'selected' : '' }}>Perpustakaan</option>
+                                <option value="kantor" {{ old('jenis_ruang') == 'kantor' ? 'selected' : '' }}>Kantor
+                                </option>
+                                <option value="aula" {{ old('jenis_ruang') == 'aula' ? 'selected' : '' }}>Aula
+                                </option>
+                                <option value="gudang" {{ old('jenis_ruang') == 'gudang' ? 'selected' : '' }}>Gudang
+                                </option>
+                                <option value="lainnya" {{ old('jenis_ruang') == 'lainnya' ? 'selected' : '' }}>Lainnya
+                                </option>
+                            </select>
+                            @error('jenis_ruang')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
@@ -74,20 +110,54 @@
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Detail Ruang</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="luas" class="form-label">Luas (m²)</label>
-                            <input type="number" id="luas" name="luas" value="{{ old('luas') }}"
-                                class="form-input @error('luas') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            <label for="luas_ruang" class="form-label">Luas (m²)</label>
+                            <input type="number" id="luas_ruang" name="luas_ruang" value="{{ old('luas_ruang') }}"
+                                class="form-input @error('luas_ruang') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                 placeholder="Masukkan luas ruang" step="0.01" min="0">
-                            @error('luas')
+                            @error('luas_ruang')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="photo" class="form-label">Foto Ruang</label>
-                            <input type="file" id="photo" name="photo" accept="image/*"
-                                class="form-input @error('photo') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                            @error('photo')
+                            <label for="foto" class="form-label">Foto Ruang</label>
+                            <input type="file" id="foto" name="foto" accept="image/*"
+                                class="form-input @error('foto') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            @error('foto')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="kondisi" class="form-label">Kondisi Ruang</label>
+                            <select id="kondisi" name="kondisi"
+                                class="form-select @error('kondisi') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                required>
+                                <option value="">Pilih kondisi ruang</option>
+                                <option value="baik" {{ old('kondisi') == 'baik' ? 'selected' : '' }}>Baik</option>
+                                <option value="rusak" {{ old('kondisi') == 'rusak' ? 'selected' : '' }}>Rusak
+                                </option>
+                                <option value="renovasi" {{ old('kondisi') == 'renovasi' ? 'selected' : '' }}>Renovasi
+                                </option>
+                            </select>
+                            @error('kondisi')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="status" class="form-label">Status Ruang</label>
+                            <select id="status" name="status"
+                                class="form-select @error('status') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                required>
+                                <option value="">Pilih status ruang</option>
+                                <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="tidak_aktif" {{ old('status') == 'tidak_aktif' ? 'selected' : '' }}>
+                                    Tidak Aktif</option>
+                                <option value="renovasi" {{ old('status') == 'renovasi' ? 'selected' : '' }}>Renovasi
+                                </option>
+                            </select>
+                            @error('status')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -117,6 +187,20 @@
                             class="form-input @error('deskripsi') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                             placeholder="Masukkan deskripsi ruang">{{ old('deskripsi') }}</textarea>
                         @error('deskripsi')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="border-b border-slate-200 pb-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Catatan</h3>
+                    <div>
+                        <label for="catatan" class="form-label">Catatan Tambahan</label>
+                        <textarea id="catatan" name="catatan" rows="3"
+                            class="form-input @error('catatan') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            placeholder="Masukkan catatan tambahan jika ada">{{ old('catatan') }}</textarea>
+                        @error('catatan')
                             <p class="form-error">{{ $message }}</p>
                         @enderror
                     </div>

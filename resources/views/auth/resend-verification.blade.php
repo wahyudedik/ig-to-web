@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Email - {{ config('app.name') }}</title>
+    <title>Kirim Ulang Verifikasi - {{ config('app.name') }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -15,25 +15,25 @@
             align-items: center;
         }
 
-        .verification-card {
+        .resend-card {
             background: white;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
-        .verification-header {
+        .resend-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 2rem;
             text-align: center;
         }
 
-        .verification-body {
+        .resend-body {
             padding: 2rem;
         }
 
-        .verification-icon {
+        .resend-icon {
             width: 80px;
             height: 80px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -52,30 +52,23 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
-                <div class="verification-card">
-                    <div class="verification-header">
+                <div class="resend-card">
+                    <div class="resend-header">
                         <h3 class="mb-0">
                             <i class="fas fa-envelope-open me-2"></i>
-                            Verifikasi Email
+                            Kirim Ulang Verifikasi
                         </h3>
                     </div>
-                    <div class="verification-body text-center">
-                        <div class="verification-icon">
-                            <i class="fas fa-envelope"></i>
+                    <div class="resend-body">
+                        <div class="resend-icon">
+                            <i class="fas fa-paper-plane"></i>
                         </div>
 
-                        <h4 class="mb-3">Halo, {{ $user->name }}!</h4>
+                        <h4 class="text-center mb-4">Masukkan Email Anda</h4>
 
-                        <p class="text-muted mb-4">
-                            Kami telah mengirimkan link verifikasi ke email Anda:
-                            <strong>{{ $user->email }}</strong>
+                        <p class="text-muted text-center mb-4">
+                            Kami akan mengirimkan link verifikasi baru ke email Anda.
                         </p>
-
-                        <div class="alert alert-info mb-4">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Silakan cek folder <strong>Inbox</strong> atau <strong>Spam</strong> di email Anda.
-                            Klik link verifikasi untuk mengaktifkan akun.
-                        </div>
 
                         @if (session('success'))
                             <div class="alert alert-success">
@@ -91,30 +84,42 @@
                             </div>
                         @endif
 
-                        <div class="d-grid gap-2">
-                            <form action="{{ route('verification.resend') }}" method="POST">
-                                @csrf
+                        @if (session('info'))
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                {{ session('info') }}
+                            </div>
+                        @endif
+
+                        <form action="{{ route('verification.resend-guest') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                    id="email" name="email" value="{{ old('email') }}" required autofocus>
+                                @error('email')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="fas fa-paper-plane me-2"></i>
-                                    Kirim Ulang Email Verifikasi
+                                    Kirim Link Verifikasi
                                 </button>
-                            </form>
+                            </div>
+                        </form>
 
+                        <hr class="my-4">
+
+                        <div class="text-center">
                             <a href="{{ route('login') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>
                                 Kembali ke Login
                             </a>
                         </div>
-
-                        <hr class="my-4">
-
-                        <p class="text-muted small mb-0">
-                            <i class="fas fa-question-circle me-1"></i>
-                            Tidak menerima email?
-                            <a href="{{ route('verification.resend-guest') }}" class="text-decoration-none">
-                                Kirim ulang untuk email lain
-                            </a>
-                        </p>
                     </div>
                 </div>
             </div>

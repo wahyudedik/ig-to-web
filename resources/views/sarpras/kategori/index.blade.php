@@ -39,7 +39,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Kategori</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $kategori->count() }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $kategoris->total() }}</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Kategori Aktif</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $kategori->where('is_active', true)->count() }}
+                        <p class="text-2xl font-bold text-slate-900">{{ $kategoris->where('is_active', true)->count() }}
                         </p>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Barang</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $kategori->sum('barang_count') }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $kategoris->sum('barang_count') }}</p>
                     </div>
                 </div>
             </div>
@@ -123,9 +123,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($kategori as $index => $k)
+                        @forelse($kategoris as $index => $k)
                             <tr>
-                                <td>{{ $kategori->firstItem() + $index }}</td>
+                                <td>{{ $kategoris->firstItem() + $index }}</td>
                                 <td>
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -155,18 +155,8 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('sarpras.kategori.show', $k) }}"
-                                            class="text-blue-600 hover:text-blue-700">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </a>
                                         <a href="{{ route('sarpras.kategori.edit', $k) }}"
-                                            class="text-amber-600 hover:text-amber-700">
+                                            class="text-blue-600 hover:text-blue-700" title="Edit Kategori">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -207,9 +197,9 @@
             </div>
 
             <!-- Pagination -->
-            @if ($kategori->hasPages())
+            @if ($kategoris->hasPages())
                 <div class="px-6 py-4 border-t border-slate-200">
-                    {{ $kategori->links() }}
+                    {{ $kategoris->links() }}
                 </div>
             @endif
         </div>

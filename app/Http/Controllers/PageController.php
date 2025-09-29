@@ -13,10 +13,40 @@ use Illuminate\Support\Str;
 class PageController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource (public view).
      */
     public function index(Request $request)
     {
+        $query = Page::published()->with('user');
+
+        // Filter by category
+        if ($request->has('category') && $request->category !== '') {
+            $query->where('category', $request->category);
+        }
+
+        // Search by title
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        // Sort
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        $pages = $query->paginate(15);
+        $categories = Page::distinct()->pluck('category')->filter();
+
+        return view('pages.index', compact('pages', 'categories'));
+    }
+
+    /**
+     * Display admin listing of pages (superadmin only).
+     */
+    public function admin(Request $request)
+    {
+        // Middleware will handle authorization
+
         $query = Page::with('user');
 
         // Filter by status
@@ -43,7 +73,7 @@ class PageController extends Controller
         $categories = Page::distinct()->pluck('category')->filter();
         $statuses = ['draft', 'published', 'archived'];
 
-        return view('pages.index', compact('pages', 'categories', 'statuses'));
+        return view('pages.admin', compact('pages', 'categories', 'statuses'));
     }
 
     /**
@@ -51,10 +81,13 @@ class PageController extends Controller
      */
     public function create()
     {
+        // Middleware will handle authorization
+
         $templates = $this->getAvailableTemplates();
         $categories = Page::distinct()->pluck('category')->filter();
+        $parentPages = Page::whereNull('parent_id')->where('is_menu', true)->get();
 
-        return view('pages.create', compact('templates', 'categories'));
+        return view('pages.create', compact('templates', 'categories', 'parentPages'));
     }
 
     /**
@@ -112,11 +145,37 @@ class PageController extends Controller
     public function show(Page $page)
     {
         // Check if page is published or user has permission
-        if (!$page->isPublished() && !Auth::user()->canPerform('read', 'pages')) {
+        $user = Auth::user();
+        if (!$page->isPublished() && (!$user || $user->user_type !== 'superadmin')) {
             abort(403, 'Page not found or not published.');
         }
 
         return view('pages.show', compact('page'));
+    }
+
+    /**
+     * Get menu data for header/footer.
+     */
+    public function getMenus()
+    {
+        $headerMenus = Page::menu()
+            ->menuPosition('header')
+            ->mainMenu()
+            ->orderBy('menu_sort_order')
+            ->with('children')
+            ->get();
+
+        $footerMenus = Page::menu()
+            ->menuPosition('footer')
+            ->mainMenu()
+            ->orderBy('menu_sort_order')
+            ->with('children')
+            ->get();
+
+        return [
+            'header' => $headerMenus,
+            'footer' => $footerMenus
+        ];
     }
 
     /**

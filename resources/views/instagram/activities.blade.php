@@ -86,50 +86,96 @@
                     </div>
                     <div class="collapse navbar-collapse" id="main_nav">
                         <ul class="navbar-nav">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">PROFIL</a>
-                                <ul class="dropdown-menu fade-down">
-                                    <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">GALERI</a>
+                            @foreach ($headerMenus as $menu)
+                                @if ($menu->children->count() > 0)
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle {{ request()->is($menu->slug) ? 'active' : '' }}"
+                                            href="#" data-bs-toggle="dropdown">
+                                            @if ($menu->menu_icon)
+                                                <i class="{{ $menu->menu_icon }}"></i>
+                                            @endif
+                                            {{ $menu->menu_title }}
+                                        </a>
+                                        <ul class="dropdown-menu fade-down">
+                                            @foreach ($menu->children as $submenu)
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ $submenu->menu_url }}"
+                                                        @if ($submenu->menu_target_blank) target="_blank" @endif>
+                                                        @if ($submenu->menu_icon)
+                                                            <i class="{{ $submenu->menu_icon }}"></i>
+                                                        @endif
+                                                        {{ $submenu->menu_title }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     </li>
-                                    <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#"
-                                    data-bs-toggle="dropdown">AKADEMIK</a>
-                                <ul class="dropdown-menu fade-down">
-                                    <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA PENDIDIK</a>
+                                @else
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ request()->is($menu->slug) ? 'active' : '' }}"
+                                            href="{{ $menu->menu_url }}"
+                                            @if ($menu->menu_target_blank) target="_blank" @endif>
+                                            @if ($menu->menu_icon)
+                                                <i class="{{ $menu->menu_icon }}"></i>
+                                            @endif
+                                            {{ $menu->menu_title }}
+                                        </a>
                                     </li>
-                                    <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a></li>
-                                    <li><a class="dropdown-item"
-                                            href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
-                                </ul>
-                            </li>
+                                @endif
+                            @endforeach
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">LAYANAN
-                                    DIGITAL</a>
-                                <ul class="dropdown-menu fade-down">
-                                    @php
-                                        $user = Auth::user();
-                                        $siswa = $user ? \App\Models\Siswa::where('user_id', $user->id)->first() : null;
-                                        $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
-                                    @endphp
-                                    @if ($isGrade12)
-                                        <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
-                                                E-LULUS</a></li>
-                                    @endif
-                                    <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢 E-SARPRAS</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
-                                            E-GALERI</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item"><a class="nav-link active"
-                                    href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                            <!-- Fallback menu items if no custom menus are configured -->
+                            @if ($headerMenus->count() == 0)
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                        data-bs-toggle="dropdown">PROFIL</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a>
+                                        </li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('instagram.activities') }}">GALERI</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                        data-bs-toggle="dropdown">AKADEMIK</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA
+                                                PENDIDIK</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a>
+                                        </li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                        data-bs-toggle="dropdown">LAYANAN DIGITAL</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        @php
+                                            $user = Auth::user();
+                                            $siswa = $user
+                                                ? \App\Models\Siswa::where('user_id', $user->id)->first()
+                                                : null;
+                                            $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
+                                        @endphp
+                                        @if ($isGrade12)
+                                            <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
+                                                    E-LULUS</a></li>
+                                        @endif
+                                        <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢
+                                                E-SARPRAS</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
+                                                E-GALERI</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item"><a class="nav-link active"
+                                        href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                            @endif
                         </ul>
                         <div class="nav-right">
                             <div class="nav-right-btn mt-2">

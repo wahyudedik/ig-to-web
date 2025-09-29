@@ -88,11 +88,12 @@
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Detail Ruang</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="luas" class="form-label">Luas (m²)</label>
-                            <input type="number" id="luas" name="luas" value="{{ old('luas', $ruang->luas) }}"
-                                class="form-input @error('luas') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            <label for="luas_ruang" class="form-label">Luas (m²)</label>
+                            <input type="number" id="luas_ruang" name="luas_ruang"
+                                value="{{ old('luas_ruang', $ruang->luas_ruang) }}"
+                                class="form-input @error('luas_ruang') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                 placeholder="Masukkan luas ruang" step="0.01" min="0">
-                            @error('luas')
+                            @error('luas_ruang')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -122,7 +123,7 @@
                         <label for="fasilitas" class="form-label">Daftar Fasilitas</label>
                         <textarea id="fasilitas" name="fasilitas" rows="4"
                             class="form-input @error('fasilitas') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Masukkan daftar fasilitas yang tersedia (pisahkan dengan koma)">{{ old('fasilitas', $ruang->fasilitas) }}</textarea>
+                            placeholder="Masukkan daftar fasilitas yang tersedia (pisahkan dengan koma)">{{ old('fasilitas', $ruang->facilities_list) }}</textarea>
                         @error('fasilitas')
                             <p class="form-error">{{ $message }}</p>
                         @enderror

@@ -86,67 +86,112 @@
                     </div>
                     <div class="collapse navbar-collapse" id="main_nav">
                         <ul class="navbar-nav">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle active" href="#"
-                                    data-bs-toggle="dropdown">PROFIL</a>
-                                <ul class="dropdown-menu fade-down">
-                                    <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">GALERI</a>
+                            @foreach ($headerMenus as $menu)
+                                @if ($menu->children->count() > 0)
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle {{ request()->is($menu->slug) ? 'active' : '' }}"
+                                            href="#" data-bs-toggle="dropdown">
+                                            @if ($menu->menu_icon)
+                                                <i class="{{ $menu->menu_icon }}"></i>
+                                            @endif
+                                            {{ $menu->menu_title }}
+                                        </a>
+                                        <ul class="dropdown-menu fade-down">
+                                            @foreach ($menu->children as $submenu)
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ $submenu->menu_url }}"
+                                                        @if ($submenu->menu_target_blank) target="_blank" @endif>
+                                                        @if ($submenu->menu_icon)
+                                                            <i class="{{ $submenu->menu_icon }}"></i>
+                                                        @endif
+                                                        {{ $submenu->menu_title }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     </li>
-                                    <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#"
-                                    data-bs-toggle="dropdown">AKADEMIK</a>
-                                <ul class="dropdown-menu fade-down">
-                                    <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA PENDIDIK</a>
+                                @else
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ request()->is($menu->slug) ? 'active' : '' }}"
+                                            href="{{ $menu->menu_url }}"
+                                            @if ($menu->menu_target_blank) target="_blank" @endif>
+                                            @if ($menu->menu_icon)
+                                                <i class="{{ $menu->menu_icon }}"></i>
+                                            @endif
+                                            {{ $menu->menu_title }}
+                                        </a>
                                     </li>
-                                    <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a></li>
-                                    <li><a class="dropdown-item"
-                                            href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
-                                </ul>
-                            </li>
+                                @endif
+                            @endforeach
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">LAYANAN
-                                    DIGITAL</a>
-                                <ul class="dropdown-menu fade-down">
-                            @php
-                                $user = Auth::user();
-                                $siswa = $user ? \App\Models\Siswa::where('user_id', $user->id)->first() : null;
-                                $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
-                            @endphp
-                            @if ($isGrade12)
-                                        <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
-                                                E-LULUS</a></li>
+                            <!-- Fallback menu items if no custom menus are configured -->
+                            @if ($headerMenus->count() == 0)
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle active" href="#"
+                                        data-bs-toggle="dropdown">PROFIL</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a>
+                                        </li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('instagram.activities') }}">GALERI</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                        data-bs-toggle="dropdown">AKADEMIK</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA
+                                                PENDIDIK</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a>
+                                        </li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                        data-bs-toggle="dropdown">LAYANAN DIGITAL</a>
+                                    <ul class="dropdown-menu fade-down">
+                                        @php
+                                            $user = Auth::user();
+                                            $siswa = $user
+                                                ? \App\Models\Siswa::where('user_id', $user->id)->first()
+                                                : null;
+                                            $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
+                                        @endphp
+                                        @if ($isGrade12)
+                                            <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
+                                                    E-LULUS</a></li>
+                                        @endif
+                                        <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢
+                                                E-SARPRAS</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
+                                                E-GALERI</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item"><a class="nav-link" href="#contact">KONTAK</a></li>
                             @endif
-                                    <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢 E-SARPRAS</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
-                                            E-GALERI</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="#contact">KONTAK</a></li>
                         </ul>
                         <div class="nav-right">
                             <div class="nav-right-btn mt-2">
-                    @if (Route::has('login'))
-                        @auth
+                                @if (Route::has('login'))
+                                    @auth
                                         <a href="{{ url('/dashboard') }}" class="theme-btn"><span
                                                 class="fal fa-user"></span> DASHBOARD</a>
-                        @else
+                                    @else
                                         <a href="{{ route('login') }}" class="theme-btn"><span
                                                 class="fal fa-sign-in"></span> LOGIN</a>
-                        @endauth
-                    @endif
+                                    @endauth
+                                @endif
                             </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </nav>
+            </nav>
         </div>
     </header>
     <!-- header area end -->
@@ -160,7 +205,7 @@
                 <button type="submit"><i class="far fa-search"></i></button>
             </div>
         </form>
-                    </div>
+    </div>
     <!-- popup search end -->
 
     <main class="main">
@@ -219,11 +264,11 @@
                                     </div>
                                 </div>
                             </div>
-                </div>
+                        </div>
                     </div>
                 @endforeach
             </div>
-                </div>
+        </div>
         <!-- hero slider end -->
 
         <!-- feature area -->
@@ -267,21 +312,21 @@
                                             href="{{ route('instagram.activities') }}">E-GALERI</a></h4>
                                     <p>Integrasi dengan Instagram sekolah untuk menampilkan kegiatan terbaru</p>
                                 </div>
-                    </div>
-                </div>
+                            </div>
+                        </div>
                         <div class="col-md-6 col-lg-3">
                             <div class="feature-item">
                                 <span class="count">04</span>
                                 <div class="feature-icon">
                                     <img src="{{ asset('assets/img/icon/graduation.svg') }}" alt="">
-                    </div>
+                                </div>
                                 <div class="feature-content">
                                     <h4 class="feature-title"><a href="{{ route('siswa.index') }}">DATA SISWA</a>
                                     </h4>
                                     <p>Manajemen data siswa aktif dan alumni dengan informasi lengkap</p>
-                </div>
-                    </div>
-                </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -314,7 +359,7 @@
                                     </div>
                                 </div>
                             </div>
-            </div>
+                        </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="about-right wow fadeInRight" data-wow-delay=".25s">
@@ -391,9 +436,9 @@
                                         <span>HUBUNGI KAMI</span>
                                         <h6><a href="tel:+62123456789">+62 123 456 789</a></h6>
                                     </div>
-                </div>
-                    </div>
-                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -440,8 +485,8 @@
                         <div class="counter-box">
                             <div class="icon">
                                 <img src="{{ asset('assets/img/icon/course.svg') }}" alt="">
-                </div>
-                    <div>
+                            </div>
+                            <div>
                                 <span class="counter" data-count="+" data-to="{{ $totalPages }}"
                                     data-speed="3000">{{ $totalPages }}</span>
                                 <h6 class="title">+ Halaman Informasi</h6>
@@ -452,8 +497,8 @@
                         <div class="counter-box">
                             <div class="icon">
                                 <img src="{{ asset('assets/img/icon/award.svg') }}" alt="">
-                    </div>
-                    <div>
+                            </div>
+                            <div>
                                 <span class="counter" data-count="+" data-to="{{ $totalSarpras }}"
                                     data-speed="3000">{{ $totalSarpras }}</span>
                                 <h6 class="title">+ Item Sarpras</h6>
@@ -520,7 +565,7 @@
                             <div class="portfolio-item">
                                 <div class="portfolio-img">
                                     <img src="{{ $post['image'] }}" alt="{{ $post['title'] }}">
-                    </div>
+                                </div>
                                 <div class="portfolio-content">
                                     <div class="portfolio-info">
                                         <div class="portfolio-title-info">
@@ -529,13 +574,13 @@
                                             <a href="{{ route('instagram.activities') }}">
                                                 <h4 class="portfolio-title">{{ $post['title'] }}</h4>
                                             </a>
-                    </div>
+                                        </div>
                                         <a href="{{ route('instagram.activities') }}" class="portfolio-btn"><i
                                                 class="far fa-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
                 </div>
             </div>
@@ -569,43 +614,76 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-2">
-                        <div class="footer-widget-box list">
-                            <h4 class="footer-widget-title">Menu Utama</h4>
-                            <ul class="footer-list">
-                                <li><a href="{{ route('pages.index') }}"><i class="fas fa-caret-right"></i>
-                                        Halaman</a></li>
-                                <li><a href="{{ route('guru.index') }}"><i class="fas fa-caret-right"></i> Tenaga
-                                        Pendidik</a></li>
-                                <li><a href="{{ route('siswa.index') }}"><i class="fas fa-caret-right"></i> Data
-                                        Siswa</a></li>
-                                <li><a href="{{ route('instagram.activities') }}"><i class="fas fa-caret-right"></i>
-                                        Galeri</a></li>
-                            </ul>
+                    <!-- Dynamic Footer Menus -->
+                    @if ($footerMenus->count() > 0)
+                        @foreach ($footerMenus as $menu)
+                            <div class="col-md-6 col-lg-2">
+                                <div class="footer-widget-box list">
+                                    <h4 class="footer-widget-title">{{ $menu->menu_title }}</h4>
+                                    <ul class="footer-list">
+                                        @if ($menu->children->count() > 0)
+                                            @foreach ($menu->children as $submenu)
+                                                <li>
+                                                    <a href="{{ $submenu->menu_url }}"
+                                                        @if ($submenu->menu_target_blank) target="_blank" @endif>
+                                                        <i class="fas fa-caret-right"></i>
+                                                        {{ $submenu->menu_title }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        @else
+                                            <li>
+                                                <a href="{{ $menu->menu_url }}"
+                                                    @if ($menu->menu_target_blank) target="_blank" @endif>
+                                                    <i class="fas fa-caret-right"></i>
+                                                    {{ $menu->menu_title }}
+                                                </a>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <!-- Fallback Footer Menus -->
+                        <div class="col-md-6 col-lg-2">
+                            <div class="footer-widget-box list">
+                                <h4 class="footer-widget-title">Menu Utama</h4>
+                                <ul class="footer-list">
+                                    <li><a href="{{ route('pages.index') }}"><i class="fas fa-caret-right"></i>
+                                            Halaman</a></li>
+                                    <li><a href="{{ route('guru.index') }}"><i class="fas fa-caret-right"></i> Tenaga
+                                            Pendidik</a></li>
+                                    <li><a href="{{ route('siswa.index') }}"><i class="fas fa-caret-right"></i> Data
+                                            Siswa</a></li>
+                                    <li><a href="{{ route('instagram.activities') }}"><i
+                                                class="fas fa-caret-right"></i> Galeri</a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="footer-widget-box list">
-                            <h4 class="footer-widget-title">Layanan Digital</h4>
-                            <ul class="footer-list">
-                                @php
-                                    $user = Auth::user();
-                                    $siswa = $user ? \App\Models\Siswa::where('user_id', $user->id)->first() : null;
-                                    $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
-                                @endphp
-                                @if ($isGrade12)
-                                    <li><a href="{{ route('kelulusan.check') }}"><i class="fas fa-caret-right"></i>
-                                            E-Lulus</a></li>
-                                @endif
-                                <li><a href="{{ route('osis.voting') }}"><i class="fas fa-caret-right"></i>
-                                        E-OSIS</a></li>
-                                <li><a href="{{ route('sarpras.index') }}"><i class="fas fa-caret-right"></i>
-                                        E-Sarpras</a></li>
-                                <li><a href="{{ route('instagram.activities') }}"><i class="fas fa-caret-right"></i>
-                                        E-Galeri</a></li>
-                            </ul>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="footer-widget-box list">
+                                <h4 class="footer-widget-title">Layanan Digital</h4>
+                                <ul class="footer-list">
+                                    @php
+                                        $user = Auth::user();
+                                        $siswa = $user ? \App\Models\Siswa::where('user_id', $user->id)->first() : null;
+                                        $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
+                                    @endphp
+                                    @if ($isGrade12)
+                                        <li><a href="{{ route('kelulusan.check') }}"><i
+                                                    class="fas fa-caret-right"></i> E-Lulus</a></li>
+                                    @endif
+                                    <li><a href="{{ route('osis.voting') }}"><i class="fas fa-caret-right"></i>
+                                            E-OSIS</a></li>
+                                    <li><a href="{{ route('sarpras.index') }}"><i class="fas fa-caret-right"></i>
+                                            E-Sarpras</a></li>
+                                    <li><a href="{{ route('instagram.activities') }}"><i
+                                                class="fas fa-caret-right"></i> E-Galeri</a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                     <div class="col-md-6 col-lg-3">
                         <div class="footer-widget-box list">
                             <h4 class="footer-widget-title">Akses Sistem</h4>
@@ -623,10 +701,10 @@
                                             </a>
                                         @endauth
                                     @endif
-                </div>
+                                </div>
+                            </div>
                         </div>
-                        </div>
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -638,8 +716,8 @@
                             <p class="copyright-text">
                                 &copy; Copyright <span id="date"></span> <a href="#"> Portal Digital
                                     Pendidikan </a> All Rights Reserved.
-                    </p>
-                </div>
+                            </p>
+                        </div>
                         <div class="col-md-6 align-self-center">
                             <ul class="footer-social">
                                 <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
@@ -647,8 +725,8 @@
                                             class="fab fa-instagram"></i></a></li>
                                 <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
                                 <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>
-                    </ul>
-                </div>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -686,8 +764,8 @@
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     target.scrollIntoView({
-                    behavior: 'smooth'
-                });
+                        behavior: 'smooth'
+                    });
                 }
             });
         });
