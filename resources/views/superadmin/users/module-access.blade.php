@@ -38,8 +38,44 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h4 class="text-lg font-semibold text-slate-900">{{ ucfirst($module) }} Module</h4>
-                                    <p class="text-sm text-slate-600">Control access to {{ $module }}
-                                        functionality</p>
+                                    <p class="text-sm text-slate-600">
+                                        @switch($module)
+                                            @case('instagram')
+                                                Control access to Instagram integration and activities management
+                                            @break
+
+                                            @case('pages')
+                                                Control access to page management and content creation
+                                            @break
+
+                                            @case('guru')
+                                                Control access to teacher and staff management
+                                            @break
+
+                                            @case('siswa')
+                                                Control access to student data management
+                                            @break
+
+                                            @case('osis')
+                                                Control access to OSIS election and management
+                                            @break
+
+                                            @case('lulus')
+                                                Control access to graduation and certificate management
+                                            @break
+
+                                            @case('sarpras')
+                                                Control access to facilities and infrastructure management
+                                            @break
+
+                                            @case('settings')
+                                                Control access to system settings, landing page, and SEO configuration
+                                            @break
+
+                                            @default
+                                                Control access to {{ $module }} functionality
+                                        @endswitch
+                                    </p>
                                 </div>
                                 <label class="flex items-center">
                                     <input type="checkbox" name="modules[{{ $module }}][can_access]"

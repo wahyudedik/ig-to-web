@@ -29,10 +29,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="jenis_maintenance" class="form-label">Jenis Maintenance</label>
-                            <input type="text" id="jenis_maintenance" name="jenis_maintenance"
-                                value="{{ old('jenis_maintenance') }}"
+                            <select id="jenis_maintenance" name="jenis_maintenance"
                                 class="form-input @error('jenis_maintenance') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan jenis maintenance" required>
+                                required>
+                                <option value="">Pilih Jenis Maintenance</option>
+                                <option value="rutin" {{ old('jenis_maintenance') == 'rutin' ? 'selected' : '' }}>Rutin
+                                </option>
+                                <option value="perbaikan"
+                                    {{ old('jenis_maintenance') == 'perbaikan' ? 'selected' : '' }}>Perbaikan</option>
+                                <option value="pembersihan"
+                                    {{ old('jenis_maintenance') == 'pembersihan' ? 'selected' : '' }}>Pembersihan
+                                </option>
+                                <option value="inspeksi" {{ old('jenis_maintenance') == 'inspeksi' ? 'selected' : '' }}>
+                                    Inspeksi</option>
+                            </select>
                             @error('jenis_maintenance')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
@@ -50,17 +60,17 @@
                         </div>
 
                         <div>
-                            <label for="item_type" class="form-label">Tipe Item</label>
-                            <select id="item_type" name="item_type"
-                                class="form-input @error('item_type') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            <label for="jenis_item" class="form-label">Tipe Item</label>
+                            <select id="jenis_item" name="jenis_item"
+                                class="form-input @error('jenis_item') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                 required>
                                 <option value="">Pilih Tipe Item</option>
-                                <option value="barang" {{ old('item_type') == 'barang' ? 'selected' : '' }}>Barang
+                                <option value="barang" {{ old('jenis_item') == 'barang' ? 'selected' : '' }}>Barang
                                 </option>
-                                <option value="ruang" {{ old('item_type') == 'ruang' ? 'selected' : '' }}>Ruang
+                                <option value="ruang" {{ old('jenis_item') == 'ruang' ? 'selected' : '' }}>Ruang
                                 </option>
                             </select>
-                            @error('item_type')
+                            @error('jenis_item')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -90,12 +100,17 @@
                                 class="form-input @error('status') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                 required>
                                 <option value="">Pilih Status</option>
-                                <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending
+                                <option value="dijadwalkan" {{ old('status') == 'dijadwalkan' ? 'selected' : '' }}>
+                                    Dijadwalkan</option>
+                                <option value="sedang_dikerjakan"
+                                    {{ old('status') == 'sedang_dikerjakan' ? 'selected' : '' }}>Sedang Dikerjakan
                                 </option>
                                 <option value="dalam_proses" {{ old('status') == 'dalam_proses' ? 'selected' : '' }}>
                                     Dalam Proses</option>
                                 <option value="selesai" {{ old('status') == 'selesai' ? 'selected' : '' }}>Selesai
                                 </option>
+                                <option value="dibatalkan" {{ old('status') == 'dibatalkan' ? 'selected' : '' }}>
+                                    Dibatalkan</option>
                             </select>
                             @error('status')
                                 <p class="form-error">{{ $message }}</p>
@@ -112,21 +127,21 @@
                             @enderror
                         </div>
 
+
                         <div>
-                            <label for="durasi" class="form-label">Durasi (jam)</label>
-                            <input type="number" id="durasi" name="durasi" value="{{ old('durasi') }}"
-                                class="form-input @error('durasi') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan durasi maintenance" min="0" step="0.5">
-                            @error('durasi')
+                            <label for="foto_sebelum" class="form-label">Foto Sebelum</label>
+                            <input type="file" id="foto_sebelum" name="foto_sebelum" accept="image/*"
+                                class="form-input @error('foto_sebelum') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            @error('foto_sebelum')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="photo" class="form-label">Foto Maintenance</label>
-                            <input type="file" id="photo" name="photo" accept="image/*"
-                                class="form-input @error('photo') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                            @error('photo')
+                            <label for="foto_sesudah" class="form-label">Foto Sesudah</label>
+                            <input type="file" id="foto_sesudah" name="foto_sesudah" accept="image/*"
+                                class="form-input @error('foto_sesudah') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            @error('foto_sesudah')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -137,11 +152,21 @@
                 <div class="border-b border-slate-200 pb-6">
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Deskripsi</h3>
                     <div>
-                        <label for="deskripsi" class="form-label">Deskripsi Maintenance</label>
-                        <textarea id="deskripsi" name="deskripsi" rows="4"
-                            class="form-input @error('deskripsi') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Masukkan deskripsi maintenance">{{ old('deskripsi') }}</textarea>
-                        @error('deskripsi')
+                        <label for="deskripsi_masalah" class="form-label">Deskripsi Masalah</label>
+                        <textarea id="deskripsi_masalah" name="deskripsi_masalah" rows="4"
+                            class="form-input @error('deskripsi_masalah') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            placeholder="Masukkan deskripsi masalah">{{ old('deskripsi_masalah') }}</textarea>
+                        @error('deskripsi_masalah')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mt-4">
+                        <label for="tindakan_perbaikan" class="form-label">Tindakan Perbaikan</label>
+                        <textarea id="tindakan_perbaikan" name="tindakan_perbaikan" rows="4"
+                            class="form-input @error('tindakan_perbaikan') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            placeholder="Masukkan tindakan perbaikan">{{ old('tindakan_perbaikan') }}</textarea>
+                        @error('tindakan_perbaikan')
                             <p class="form-error">{{ $message }}</p>
                         @enderror
                     </div>
@@ -169,7 +194,11 @@
     </div>
 
     <script>
-        document.getElementById('item_type').addEventListener('change', function() {
+        // Data untuk dropdown
+        const barangs = @json($barangs);
+        const ruangs = @json($ruangs);
+
+        document.getElementById('jenis_item').addEventListener('change', function() {
             const itemType = this.value;
             const itemSelect = document.getElementById('item_id');
 
@@ -177,15 +206,21 @@
             itemSelect.innerHTML = '<option value="">Pilih Item</option>';
 
             if (itemType === 'barang') {
-                @foreach ($barangs as $barang)
-                    itemSelect.innerHTML +=
-                        '<option value="{{ $barang->id }}">{{ $barang->nama_barang }}</option>';
-                @endforeach
+                barangs.forEach(function(barang) {
+                    itemSelect.innerHTML += '<option value="' + barang.id + '">' + barang.nama_barang + '</option>';
+                });
             } else if (itemType === 'ruang') {
-                @foreach ($ruangs as $ruang)
-                    itemSelect.innerHTML +=
-                        '<option value="{{ $ruang->id }}">{{ $ruang->nama_ruang }}</option>';
-                @endforeach
+                ruangs.forEach(function(ruang) {
+                    itemSelect.innerHTML += '<option value="' + ruang.id + '">' + ruang.nama_ruang + '</option>';
+                });
+            }
+        });
+
+        // Trigger change event on page load if jenis_item has a value
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemTypeSelect = document.getElementById('jenis_item');
+            if (itemTypeSelect.value) {
+                itemTypeSelect.dispatchEvent(new Event('change'));
             }
         });
     </script>

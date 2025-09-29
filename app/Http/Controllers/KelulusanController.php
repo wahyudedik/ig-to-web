@@ -290,10 +290,22 @@ class KelulusanController extends Controller
      */
     public function generateCertificate(Kelulusan $kelulusan)
     {
-        // This would integrate with a PDF generation library
-        // For now, we'll return a success message
-        return redirect()->back()
-            ->with('success', 'Sertifikat kelulusan akan segera dibuat untuk ' . $kelulusan->nama);
+        try {
+            // Generate PDF using DomPDF
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('lulus.certificate', compact('kelulusan'));
+
+            // Set paper size and orientation
+            $pdf->setPaper('A4', 'landscape');
+
+            // Generate filename
+            $filename = 'Sertifikat_Kelulusan_' . $kelulusan->nama . '_' . $kelulusan->tahun_ajaran . '.pdf';
+
+            // Return PDF download
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal membuat sertifikat: ' . $e->getMessage());
+        }
     }
 
     /**

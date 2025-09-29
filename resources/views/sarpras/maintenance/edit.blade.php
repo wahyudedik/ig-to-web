@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Storage; @endphp
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
@@ -40,18 +41,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Item Type -->
                         <div>
-                            <label for="item_type" class="form-label">Item Type</label>
-                            <select id="item_type" name="item_type" required
-                                class="form-input @error('item_type') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            <label for="jenis_item" class="form-label">Item Type</label>
+                            <select id="jenis_item" name="jenis_item" required
+                                class="form-input @error('jenis_item') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
                                 <option value="">Select item type</option>
                                 <option value="barang"
-                                    {{ old('item_type', $maintenance->item_type) === 'barang' ? 'selected' : '' }}>
+                                    {{ old('jenis_item', $maintenance->jenis_item) === 'barang' ? 'selected' : '' }}>
                                     Barang</option>
                                 <option value="ruang"
-                                    {{ old('item_type', $maintenance->item_type) === 'ruang' ? 'selected' : '' }}>Ruang
+                                    {{ old('jenis_item', $maintenance->jenis_item) === 'ruang' ? 'selected' : '' }}>
+                                    Ruang
                                 </option>
                             </select>
-                            @error('item_type')
+                            @error('jenis_item')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -62,18 +64,18 @@
                             <select id="item_id" name="item_id" required
                                 class="form-input @error('item_id') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
                                 <option value="">Select item</option>
-                                @if ($maintenance->item_type === 'barang')
-                                    @foreach (\App\Models\Barang::all() as $barang)
+                                @if ($maintenance->jenis_item === 'barang')
+                                    @foreach ($barangs as $barang)
                                         <option value="{{ $barang->id }}"
                                             {{ old('item_id', $maintenance->item_id) == $barang->id ? 'selected' : '' }}>
-                                            {{ $barang->nama }}
+                                            {{ $barang->nama_barang }}
                                         </option>
                                     @endforeach
-                                @elseif($maintenance->item_type === 'ruang')
-                                    @foreach (\App\Models\Ruang::all() as $ruang)
+                                @elseif($maintenance->jenis_item === 'ruang')
+                                    @foreach ($ruangs as $ruang)
                                         <option value="{{ $ruang->id }}"
                                             {{ old('item_id', $maintenance->item_id) == $ruang->id ? 'selected' : '' }}>
-                                            {{ $ruang->nama }}
+                                            {{ $ruang->nama_ruang }}
                                         </option>
                                     @endforeach
                                 @endif
@@ -85,21 +87,24 @@
 
                         <!-- Maintenance Type -->
                         <div>
-                            <label for="maintenance_type" class="form-label">Maintenance Type</label>
-                            <select id="maintenance_type" name="maintenance_type" required
-                                class="form-input @error('maintenance_type') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            <label for="jenis_maintenance" class="form-label">Maintenance Type</label>
+                            <select id="jenis_maintenance" name="jenis_maintenance" required
+                                class="form-input @error('jenis_maintenance') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
                                 <option value="">Select maintenance type</option>
-                                <option value="preventive"
-                                    {{ old('maintenance_type', $maintenance->maintenance_type) === 'preventive' ? 'selected' : '' }}>
-                                    Preventive</option>
-                                <option value="corrective"
-                                    {{ old('maintenance_type', $maintenance->maintenance_type) === 'corrective' ? 'selected' : '' }}>
-                                    Corrective</option>
-                                <option value="emergency"
-                                    {{ old('maintenance_type', $maintenance->maintenance_type) === 'emergency' ? 'selected' : '' }}>
-                                    Emergency</option>
+                                <option value="rutin"
+                                    {{ old('jenis_maintenance', $maintenance->jenis_maintenance) === 'rutin' ? 'selected' : '' }}>
+                                    Rutin</option>
+                                <option value="perbaikan"
+                                    {{ old('jenis_maintenance', $maintenance->jenis_maintenance) === 'perbaikan' ? 'selected' : '' }}>
+                                    Perbaikan</option>
+                                <option value="pembersihan"
+                                    {{ old('jenis_maintenance', $maintenance->jenis_maintenance) === 'pembersihan' ? 'selected' : '' }}>
+                                    Pembersihan</option>
+                                <option value="inspeksi"
+                                    {{ old('jenis_maintenance', $maintenance->jenis_maintenance) === 'inspeksi' ? 'selected' : '' }}>
+                                    Inspeksi</option>
                             </select>
-                            @error('maintenance_type')
+                            @error('jenis_maintenance')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -110,142 +115,147 @@
                             <select id="status" name="status" required
                                 class="form-input @error('status') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
                                 <option value="">Select status</option>
-                                <option value="pending"
-                                    {{ old('status', $maintenance->status) === 'pending' ? 'selected' : '' }}>Pending
+                                <option value="dijadwalkan"
+                                    {{ old('status', $maintenance->status) === 'dijadwalkan' ? 'selected' : '' }}>
+                                    Dijadwalkan</option>
+                                <option value="sedang_dikerjakan"
+                                    {{ old('status', $maintenance->status) === 'sedang_dikerjakan' ? 'selected' : '' }}>
+                                    Sedang Dikerjakan</option>
+                                <option value="dalam_proses"
+                                    {{ old('status', $maintenance->status) === 'dalam_proses' ? 'selected' : '' }}>
+                                    Dalam Proses</option>
+                                <option value="selesai"
+                                    {{ old('status', $maintenance->status) === 'selesai' ? 'selected' : '' }}>Selesai
                                 </option>
-                                <option value="in_progress"
-                                    {{ old('status', $maintenance->status) === 'in_progress' ? 'selected' : '' }}>In
-                                    Progress</option>
-                                <option value="completed"
-                                    {{ old('status', $maintenance->status) === 'completed' ? 'selected' : '' }}>
-                                    Completed</option>
-                                <option value="cancelled"
-                                    {{ old('status', $maintenance->status) === 'cancelled' ? 'selected' : '' }}>
-                                    Cancelled</option>
+                                <option value="dibatalkan"
+                                    {{ old('status', $maintenance->status) === 'dibatalkan' ? 'selected' : '' }}>
+                                    Dibatalkan</option>
                             </select>
                             @error('status')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Priority -->
-                        <div>
-                            <label for="priority" class="form-label">Priority</label>
-                            <select id="priority" name="priority" required
-                                class="form-input @error('priority') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                                <option value="">Select priority</option>
-                                <option value="low"
-                                    {{ old('priority', $maintenance->priority) === 'low' ? 'selected' : '' }}>Low
-                                </option>
-                                <option value="medium"
-                                    {{ old('priority', $maintenance->priority) === 'medium' ? 'selected' : '' }}>Medium
-                                </option>
-                                <option value="high"
-                                    {{ old('priority', $maintenance->priority) === 'high' ? 'selected' : '' }}>High
-                                </option>
-                            </select>
-                            @error('priority')
-                                <p class="form-error">{{ $message }}</p>
-                            @enderror
-                        </div>
 
                         <!-- Cost -->
                         <div>
-                            <label for="cost" class="form-label">Cost (Rp)</label>
-                            <input type="number" id="cost" name="cost"
-                                value="{{ old('cost', $maintenance->cost) }}"
-                                class="form-input @error('cost') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Enter maintenance cost">
-                            @error('cost')
+                            <label for="biaya" class="form-label">Cost (Rp)</label>
+                            <input type="number" id="biaya" name="biaya"
+                                value="{{ old('biaya', $maintenance->biaya) }}"
+                                class="form-input @error('biaya') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                placeholder="Enter maintenance cost" min="0">
+                            @error('biaya')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Duration -->
+                        <!-- Technician -->
                         <div>
-                            <label for="duration_hours" class="form-label">Duration (Hours)</label>
-                            <input type="number" id="duration_hours" name="duration_hours"
-                                value="{{ old('duration_hours', $maintenance->duration_hours) }}"
-                                class="form-input @error('duration_hours') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Enter duration in hours">
-                            @error('duration_hours')
+                            <label for="teknisi" class="form-label">Technician</label>
+                            <input type="text" id="teknisi" name="teknisi"
+                                value="{{ old('teknisi', $maintenance->teknisi) }}"
+                                class="form-input @error('teknisi') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                placeholder="Enter technician name">
+                            @error('teknisi')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Scheduled Date -->
+                        <!-- Maintenance Date -->
                         <div>
-                            <label for="scheduled_date" class="form-label">Scheduled Date</label>
-                            <input type="date" id="scheduled_date" name="scheduled_date"
-                                value="{{ old('scheduled_date', $maintenance->scheduled_date?->format('Y-m-d')) }}"
-                                class="form-input @error('scheduled_date') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                            @error('scheduled_date')
+                            <label for="tanggal_maintenance" class="form-label">Maintenance Date</label>
+                            <input type="date" id="tanggal_maintenance" name="tanggal_maintenance"
+                                value="{{ old('tanggal_maintenance', $maintenance->tanggal_maintenance?->format('Y-m-d')) }}"
+                                class="form-input @error('tanggal_maintenance') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            @error('tanggal_maintenance')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Completed Date -->
+                        <!-- Completion Date -->
                         <div>
-                            <label for="completed_date" class="form-label">Completed Date</label>
-                            <input type="date" id="completed_date" name="completed_date"
-                                value="{{ old('completed_date', $maintenance->completed_date?->format('Y-m-d')) }}"
-                                class="form-input @error('completed_date') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                            @error('completed_date')
+                            <label for="tanggal_selesai" class="form-label">Completion Date</label>
+                            <input type="date" id="tanggal_selesai" name="tanggal_selesai"
+                                value="{{ old('tanggal_selesai', $maintenance->tanggal_selesai?->format('Y-m-d')) }}"
+                                class="form-input @error('tanggal_selesai') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            @error('tanggal_selesai')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
 
-                    <!-- Description -->
+                    <!-- Problem Description -->
                     <div>
-                        <label for="description" class="form-label">Description</label>
-                        <textarea id="description" name="description" rows="4"
-                            class="form-input @error('description') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter maintenance description">{{ old('description', $maintenance->description) }}</textarea>
-                        @error('description')
+                        <label for="deskripsi_masalah" class="form-label">Problem Description</label>
+                        <textarea id="deskripsi_masalah" name="deskripsi_masalah" rows="4"
+                            class="form-input @error('deskripsi_masalah') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            placeholder="Enter problem description">{{ old('deskripsi_masalah', $maintenance->deskripsi_masalah) }}</textarea>
+                        @error('deskripsi_masalah')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Repair Action -->
+                    <div>
+                        <label for="tindakan_perbaikan" class="form-label">Repair Action</label>
+                        <textarea id="tindakan_perbaikan" name="tindakan_perbaikan" rows="4"
+                            class="form-input @error('tindakan_perbaikan') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            placeholder="Enter repair action taken">{{ old('tindakan_perbaikan', $maintenance->tindakan_perbaikan) }}</textarea>
+                        @error('tindakan_perbaikan')
                             <p class="form-error">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Notes -->
                     <div>
-                        <label for="notes" class="form-label">Notes</label>
-                        <textarea id="notes" name="notes" rows="3"
-                            class="form-input @error('notes') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                            placeholder="Enter maintenance notes">{{ old('notes', $maintenance->notes) }}</textarea>
-                        @error('notes')
+                        <label for="catatan" class="form-label">Notes</label>
+                        <textarea id="catatan" name="catatan" rows="3"
+                            class="form-input @error('catatan') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            placeholder="Enter maintenance notes">{{ old('catatan', $maintenance->catatan) }}</textarea>
+                        @error('catatan')
                             <p class="form-error">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Photos -->
+                    <!-- Before Photo -->
                     <div>
-                        <label for="photos" class="form-label">Photos</label>
-                        <input type="file" id="photos" name="photos[]" multiple accept="image/*"
-                            class="form-input @error('photos') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                        <p class="text-sm text-slate-500 mt-1">You can select multiple photos. Existing photos will be
-                            replaced.</p>
-                        @error('photos')
+                        <label for="foto_sebelum" class="form-label">Before Photo</label>
+                        <input type="file" id="foto_sebelum" name="foto_sebelum" accept="image/*"
+                            class="form-input @error('foto_sebelum') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                        @error('foto_sebelum')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- After Photo -->
+                    <div>
+                        <label for="foto_sesudah" class="form-label">After Photo</label>
+                        <input type="file" id="foto_sesudah" name="foto_sesudah" accept="image/*"
+                            class="form-input @error('foto_sesudah') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                        @error('foto_sesudah')
                             <p class="form-error">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Current Photos -->
-                    @if ($maintenance->photos && count($maintenance->photos) > 0)
+                    @if ($maintenance->foto_sebelum || $maintenance->foto_sesudah)
                         <div>
                             <label class="form-label">Current Photos</label>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                @foreach ($maintenance->photos as $photo)
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @if ($maintenance->foto_sebelum)
                                     <div class="relative">
-                                        <img src="{{ $maintenance->getPhotoUrl($photo) }}" alt="Current photo"
-                                            class="w-full h-24 object-cover rounded-lg">
-                                        <button type="button"
-                                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
-                                            onclick="removePhoto('{{ $photo }}')">
-                                            ×
-                                        </button>
+                                        <img src="{{ Storage::url($maintenance->foto_sebelum) }}" alt="Before photo"
+                                            class="w-full h-32 object-cover rounded-lg">
+                                        <p class="text-sm text-slate-500 mt-1">Before Photo</p>
                                     </div>
-                                @endforeach
+                                @endif
+                                @if ($maintenance->foto_sesudah)
+                                    <div class="relative">
+                                        <img src="{{ Storage::url($maintenance->foto_sesudah) }}" alt="After photo"
+                                            class="w-full h-32 object-cover rounded-lg">
+                                        <p class="text-sm text-slate-500 mt-1">After Photo</p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @endif
@@ -269,8 +279,12 @@
     </div>
 
     <script>
+        // Data untuk dropdown
+        const barangs = @json($barangs);
+        const ruangs = @json($ruangs);
+
         // Update item options based on item type
-        document.getElementById('item_type').addEventListener('change', function() {
+        document.getElementById('jenis_item').addEventListener('change', function() {
             const itemType = this.value;
             const itemSelect = document.getElementById('item_id');
 
@@ -278,13 +292,34 @@
             itemSelect.innerHTML = '<option value="">Select item</option>';
 
             if (itemType === 'barang') {
-                // Add barang options (this would be populated via AJAX in a real implementation)
-                itemSelect.innerHTML += '<option value="1">Sample Barang 1</option>';
-                itemSelect.innerHTML += '<option value="2">Sample Barang 2</option>';
+                barangs.forEach(function(barang) {
+                    itemSelect.innerHTML += '<option value="' + barang.id + '">' + barang.nama_barang +
+                        '</option>';
+                });
             } else if (itemType === 'ruang') {
-                // Add ruang options (this would be populated via AJAX in a real implementation)
-                itemSelect.innerHTML += '<option value="1">Sample Ruang 1</option>';
-                itemSelect.innerHTML += '<option value="2">Sample Ruang 2</option>';
+                ruangs.forEach(function(ruang) {
+                    itemSelect.innerHTML += '<option value="' + ruang.id + '">' + ruang.nama_ruang +
+                        '</option>';
+                });
+            }
+        });
+
+        // Trigger change event on page load if jenis_item has a value
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemTypeSelect = document.getElementById('jenis_item');
+            const itemSelect = document.getElementById('item_id');
+            const currentItemId = itemSelect.value; // Get current selected item ID
+
+            if (itemTypeSelect.value) {
+                // Trigger change event to populate dropdown
+                itemTypeSelect.dispatchEvent(new Event('change'));
+
+                // After a short delay, set the selected value
+                setTimeout(function() {
+                    if (currentItemId) {
+                        itemSelect.value = currentItemId;
+                    }
+                }, 100);
             }
         });
 

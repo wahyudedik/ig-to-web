@@ -39,7 +39,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Pemilih</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $pemilih->count() }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $pemilihs->total() }}</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,8 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Sudah Memilih</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $pemilih->where('has_voted', true)->count() }}
+                        <p class="text-2xl font-bold text-slate-900">
+                            {{ $pemilihs->where('status', 'sudah_memilih')->count() }}
                         </p>
                     </div>
                 </div>
@@ -76,7 +77,8 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Belum Memilih</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $pemilih->where('has_voted', false)->count() }}
+                        <p class="text-2xl font-bold text-slate-900">
+                            {{ $pemilihs->where('status', 'belum_memilih')->count() }}
                         </p>
                     </div>
                 </div>
@@ -96,7 +98,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Persentase</p>
                         <p class="text-2xl font-bold text-slate-900">
-                            {{ $pemilih->count() > 0 ? round(($pemilih->where('has_voted', true)->count() / $pemilih->count()) * 100, 1) : 0 }}%
+                            {{ $pemilihs->total() > 0 ? round(($pemilihs->where('status', 'sudah_memilih')->count() / $pemilihs->total()) * 100, 1) : 0 }}%
                         </p>
                     </div>
                 </div>
@@ -144,9 +146,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($pemilih as $index => $p)
+                        @forelse($pemilihs as $index => $p)
                             <tr>
-                                <td>{{ $pemilih->firstItem() + $index }}</td>
+                                <td>{{ $pemilihs->firstItem() + $index }}</td>
                                 <td>
                                     <div class="flex items-center space-x-3">
                                         <div
@@ -170,7 +172,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    @if ($p->has_voted)
+                                    @if ($p->status === 'sudah_memilih')
                                         <span class="badge badge-success">
                                             <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd"
@@ -191,9 +193,9 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if ($p->has_voted && $p->voted_at)
+                                    @if ($p->status === 'sudah_memilih' && $p->waktu_memilih)
                                         <span
-                                            class="text-sm text-slate-600">{{ $p->voted_at->format('d M Y, H:i') }}</span>
+                                            class="text-sm text-slate-600">{{ $p->waktu_memilih->format('d M Y, H:i') }}</span>
                                     @else
                                         <span class="text-sm text-slate-400">-</span>
                                     @endif
@@ -252,9 +254,9 @@
             </div>
 
             <!-- Pagination -->
-            @if ($pemilih->hasPages())
+            @if ($pemilihs->hasPages())
                 <div class="px-6 py-4 border-t border-slate-200">
-                    {{ $pemilih->links() }}
+                    {{ $pemilihs->links() }}
                 </div>
             @endif
         </div>

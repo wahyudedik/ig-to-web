@@ -41,50 +41,57 @@
                             <div>
                                 <dt class="text-sm font-medium text-slate-500">Status</dt>
                                 <dd class="mt-1">
-                                    <span class="badge {{ $maintenance->status_badge_color }}">
-                                        {{ ucfirst($maintenance->status) }}
+                                    <span class="badge badge-{{ $maintenance->status_badge_color }}">
+                                        {{ $maintenance->status_display }}
                                     </span>
                                 </dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-slate-500">Item Type</dt>
-                                <dd class="mt-1 text-sm text-slate-900">{{ ucfirst($maintenance->item_type) }}</dd>
+                                <dd class="mt-1 text-sm text-slate-900">{{ $maintenance->item_type_display }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-slate-500">Item Name</dt>
-                                <dd class="mt-1 text-sm text-slate-900">{{ $maintenance->item->nama ?? 'N/A' }}</dd>
+                                <dd class="mt-1 text-sm text-slate-900">{{ $maintenance->item_name }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-slate-500">Maintenance Type</dt>
-                                <dd class="mt-1 text-sm text-slate-900">{{ ucfirst($maintenance->maintenance_type) }}
+                                <dd class="mt-1 text-sm text-slate-900">{{ ucfirst($maintenance->jenis_maintenance) }}
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-slate-500">Priority</dt>
-                                <dd class="mt-1">
-                                    <span
-                                        class="badge {{ $maintenance->priority === 'high' ? 'badge-danger' : ($maintenance->priority === 'medium' ? 'badge-warning' : 'badge-info') }}">
-                                        {{ ucfirst($maintenance->priority) }}
-                                    </span>
-                                </dd>
+                                <dt class="text-sm font-medium text-slate-500">Technician</dt>
+                                <dd class="mt-1 text-sm text-slate-900">{{ $maintenance->teknisi ?? 'N/A' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-slate-500">Cost</dt>
-                                <dd class="mt-1 text-sm text-slate-900">{{ $maintenance->formatted_cost }}</dd>
+                                <dd class="mt-1 text-sm text-slate-900">{{ $maintenance->formatted_biaya }}</dd>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-slate-500">Duration</dt>
-                                <dd class="mt-1 text-sm text-slate-900">{{ $maintenance->formatted_duration }}</dd>
+                                <dt class="text-sm font-medium text-slate-500">Maintenance Date</dt>
+                                <dd class="mt-1 text-sm text-slate-900">
+                                    {{ $maintenance->tanggal_maintenance->format('d M Y') }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-slate-500">Completion Date</dt>
+                                <dd class="mt-1 text-sm text-slate-900">
+                                    {{ $maintenance->tanggal_selesai ? $maintenance->tanggal_selesai->format('d M Y') : 'Not completed' }}
+                                </dd>
                             </div>
                             <div class="sm:col-span-2">
-                                <dt class="text-sm font-medium text-slate-500">Description</dt>
+                                <dt class="text-sm font-medium text-slate-500">Problem Description</dt>
                                 <dd class="mt-1 text-sm text-slate-900">
-                                    {{ $maintenance->description ?? 'No description provided' }}</dd>
+                                    {{ $maintenance->deskripsi_masalah ?? 'No description provided' }}</dd>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <dt class="text-sm font-medium text-slate-500">Repair Action</dt>
+                                <dd class="mt-1 text-sm text-slate-900">
+                                    {{ $maintenance->tindakan_perbaikan ?? 'No repair action provided' }}</dd>
                             </div>
                             <div class="sm:col-span-2">
                                 <dt class="text-sm font-medium text-slate-500">Notes</dt>
                                 <dd class="mt-1 text-sm text-slate-900">
-                                    {{ $maintenance->notes ?? 'No notes provided' }}</dd>
+                                    {{ $maintenance->catatan ?? 'No notes provided' }}</dd>
                             </div>
                         </dl>
                     </div>

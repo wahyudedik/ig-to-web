@@ -21,22 +21,27 @@ class MenuServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Share menu data with all views
+        // Share menu data with all views (with caching for performance)
         View::composer(['*'], function ($view) {
             try {
-                $headerMenus = Page::menu()
-                    ->menuPosition('header')
-                    ->mainMenu()
-                    ->orderBy('menu_sort_order')
-                    ->with('children')
-                    ->get();
+                // Cache menu data for 1 hour to reduce database queries
+                $headerMenus = cache()->remember('header_menus', 3600, function () {
+                    return Page::menu()
+                        ->menuPosition('header')
+                        ->mainMenu()
+                        ->orderBy('menu_sort_order')
+                        ->with('children')
+                        ->get();
+                });
 
-                $footerMenus = Page::menu()
-                    ->menuPosition('footer')
-                    ->mainMenu()
-                    ->orderBy('menu_sort_order')
-                    ->with('children')
-                    ->get();
+                $footerMenus = cache()->remember('footer_menus', 3600, function () {
+                    return Page::menu()
+                        ->menuPosition('footer')
+                        ->mainMenu()
+                        ->orderBy('menu_sort_order')
+                        ->with('children')
+                        ->get();
+                });
 
                 $view->with([
                     'headerMenus' => $headerMenus,

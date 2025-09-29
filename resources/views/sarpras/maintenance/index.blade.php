@@ -160,8 +160,7 @@
                                 </td>
                                 <td>
                                     <div>
-                                        <p class="font-medium text-slate-900">
-                                            {{ $m->item->nama_barang ?? ($m->item->nama_ruang ?? '-') }}</p>
+                                        <p class="font-medium text-slate-900">{{ $m->item_name }}</p>
                                         <p class="text-sm text-slate-500">{{ $m->item_type_display }}</p>
                                     </div>
                                 </td>

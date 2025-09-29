@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\User;
+use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -59,8 +60,15 @@ class GuruController extends Controller
      */
     public function create()
     {
-        $subjects = $this->getAvailableSubjects();
-        $users = User::where('user_type', 'guru')->get();
+        // Get subjects from database first, fallback to hardcoded if empty
+        $dbSubjects = MataPelajaran::pluck('nama')->toArray();
+        $subjects = !empty($dbSubjects) ? $dbSubjects : $this->getAvailableSubjects();
+
+        // Get users that are not already assigned to any teacher
+        $usedUserIds = Guru::whereNotNull('user_id')->pluck('user_id')->toArray();
+        $users = User::where('user_type', 'guru')
+            ->whereNotIn('id', $usedUserIds)
+            ->get();
 
         return view('guru.create', compact('subjects', 'users'));
     }
@@ -96,7 +104,7 @@ class GuruController extends Controller
             'mata_pelajaran.*' => 'required|string',
             'prestasi' => 'nullable|string',
             'catatan' => 'nullable|string',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable|exists:users,id|unique:gurus,user_id',
         ]);
 
         $data = $request->all();
@@ -126,8 +134,21 @@ class GuruController extends Controller
      */
     public function edit(Guru $guru)
     {
-        $subjects = $this->getAvailableSubjects();
-        $users = User::where('user_type', 'guru')->get();
+        // Get subjects from database first, fallback to hardcoded if empty
+        $dbSubjects = MataPelajaran::pluck('nama')->toArray();
+        $subjects = !empty($dbSubjects) ? $dbSubjects : $this->getAvailableSubjects();
+
+        // Get users that are not already assigned to any teacher, plus the current teacher's user
+        $usedUserIds = Guru::whereNotNull('user_id')
+            ->where('id', '!=', $guru->id)
+            ->pluck('user_id')
+            ->toArray();
+        $users = User::where('user_type', 'guru')
+            ->where(function ($query) use ($usedUserIds, $guru) {
+                $query->whereNotIn('id', $usedUserIds)
+                    ->orWhere('id', $guru->user_id);
+            })
+            ->get();
 
         return view('guru.edit', compact('guru', 'subjects', 'users'));
     }
@@ -163,7 +184,7 @@ class GuruController extends Controller
             'mata_pelajaran.*' => 'required|string',
             'prestasi' => 'nullable|string',
             'catatan' => 'nullable|string',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable|exists:users,id|unique:gurus,user_id,' . $guru->id,
         ]);
 
         $data = $request->all();

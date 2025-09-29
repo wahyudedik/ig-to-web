@@ -237,10 +237,24 @@ class OSISController extends Controller
             'nama' => 'required|string|max:255',
             'nis' => 'required|string|unique:pemilihs,nis',
             'kelas' => 'required|string|max:50',
+            'email' => 'nullable|email|max:255',
+            'nomor_hp' => 'nullable|regex:/^[\d+\-\s()]+$/|min:10|max:20',
+            'alamat' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
 
-        Pemilih::create($request->all());
+        // Handle status checkbox
+        $data = $request->all();
+        if ($request->has('status_sudah_memilih') && $request->status_sudah_memilih == '1') {
+            $data['status'] = 'sudah_memilih';
+            $data['waktu_memilih'] = now();
+        } else {
+            $data['status'] = 'belum_memilih';
+            $data['waktu_memilih'] = null;
+        }
+        unset($data['status_sudah_memilih']); // Remove the checkbox field
+
+        Pemilih::create($data);
 
         return redirect()->route('osis.pemilih.index')
             ->with('success', 'Pemilih berhasil ditambahkan.');
@@ -273,10 +287,24 @@ class OSISController extends Controller
             'nama' => 'required|string|max:255',
             'nis' => 'required|string|unique:pemilihs,nis,' . $pemilih->id,
             'kelas' => 'required|string|max:50',
+            'email' => 'nullable|email|max:255',
+            'nomor_hp' => 'nullable|regex:/^[\d+\-\s()]+$/|min:10|max:20',
+            'alamat' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
 
-        $pemilih->update($request->all());
+        // Handle status checkbox
+        $data = $request->all();
+        if ($request->has('status_sudah_memilih') && $request->status_sudah_memilih == '1') {
+            $data['status'] = 'sudah_memilih';
+            $data['waktu_memilih'] = now();
+        } else {
+            $data['status'] = 'belum_memilih';
+            $data['waktu_memilih'] = null;
+        }
+        unset($data['status_sudah_memilih']); // Remove the checkbox field
+
+        $pemilih->update($data);
 
         return redirect()->route('osis.pemilih.index')
             ->with('success', 'Pemilih berhasil diperbarui.');
@@ -301,15 +329,15 @@ class OSISController extends Controller
         // Check if user is a student
         $user = Auth::user();
         if ($user->user_type !== 'siswa') {
-            return redirect()->route('dashboard')
-                ->with('error', 'Hanya siswa yang dapat memilih.');
+            return redirect()->route('osis.index')
+                ->with('error', 'Hanya siswa yang dapat memilih. Silakan login sebagai siswa untuk melakukan voting.');
         }
 
         // Get student data
         $siswa = Siswa::where('user_id', $user->id)->first();
         if (!$siswa) {
-            return redirect()->route('dashboard')
-                ->with('error', 'Data siswa tidak ditemukan.');
+            return redirect()->route('osis.index')
+                ->with('error', 'Data siswa tidak ditemukan. Silakan hubungi administrator.');
         }
 
         // Check if student has already voted
@@ -394,9 +422,16 @@ class OSISController extends Controller
         $calons = Calon::active()->ordered()->withCount('votings')->get();
         $totalVotes = Voting::valid()->count();
         $totalPemilih = Pemilih::active()->count();
+        $sudahMemilih = Pemilih::sudahMemilih()->count();
+        $belumMemilih = Pemilih::belumMemilih()->count();
         $votingPercentage = $totalPemilih > 0 ? round(($totalVotes / $totalPemilih) * 100, 2) : 0;
+        $recentVotes = Voting::with(['calon', 'pemilih'])
+            ->valid()
+            ->latest()
+            ->limit(5)
+            ->get();
 
-        return view('osis.results', compact('calons', 'totalVotes', 'totalPemilih', 'votingPercentage'));
+        return view('osis.results', compact('calons', 'totalVotes', 'totalPemilih', 'sudahMemilih', 'belumMemilih', 'votingPercentage', 'recentVotes'));
     }
 
     /**

@@ -197,7 +197,7 @@ class SuperadminController extends Controller
      */
     public function moduleAccess(User $user)
     {
-        $modules = ['instagram', 'pages', 'guru', 'siswa', 'osis', 'lulus', 'sarpras'];
+        $modules = ['instagram', 'pages', 'guru', 'siswa', 'osis', 'lulus', 'sarpras', 'settings'];
         $user->load('moduleAccess');
 
         return view('superadmin.users.module-access', compact('user', 'modules'));

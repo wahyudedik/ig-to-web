@@ -46,18 +46,47 @@ class Maintenance extends Model
     }
 
     /**
-     * Get the related item (barang or ruang).
+     * Get the related barang.
+     */
+    public function barang(): BelongsTo
+    {
+        return $this->belongsTo(Barang::class, 'item_id');
+    }
+
+    /**
+     * Get the related ruang.
+     */
+    public function ruang(): BelongsTo
+    {
+        return $this->belongsTo(Ruang::class, 'item_id');
+    }
+
+    /**
+     * Get the related item (barang or ruang) based on jenis_item.
      */
     public function item()
     {
         if ($this->jenis_item === 'barang') {
-            return $this->belongsTo(Barang::class, 'item_id');
+            return $this->barang();
         } elseif ($this->jenis_item === 'ruang') {
-            return $this->belongsTo(Ruang::class, 'item_id');
+            return $this->ruang();
         }
 
-        // Return a dummy relationship for null cases to avoid eager loading issues
-        return $this->belongsTo(Barang::class, 'item_id')->whereRaw('1 = 0');
+        return null;
+    }
+
+    /**
+     * Get the item name based on jenis_item.
+     */
+    public function getItemNameAttribute(): string
+    {
+        if ($this->jenis_item === 'barang' && $this->barang) {
+            return $this->barang->nama_barang;
+        } elseif ($this->jenis_item === 'ruang' && $this->ruang) {
+            return $this->ruang->nama_ruang;
+        }
+
+        return 'Item tidak ditemukan';
     }
 
     /**
@@ -148,6 +177,7 @@ class Maintenance extends Model
         return match ($this->status) {
             'dijadwalkan' => 'blue',
             'sedang_dikerjakan' => 'yellow',
+            'dalam_proses' => 'yellow',
             'selesai' => 'green',
             'dibatalkan' => 'red',
             default => 'gray'
@@ -162,6 +192,7 @@ class Maintenance extends Model
         return match ($this->status) {
             'dijadwalkan' => 'Dijadwalkan',
             'sedang_dikerjakan' => 'Sedang Dikerjakan',
+            'dalam_proses' => 'Dalam Proses',
             'selesai' => 'Selesai',
             'dibatalkan' => 'Dibatalkan',
             default => 'Unknown'

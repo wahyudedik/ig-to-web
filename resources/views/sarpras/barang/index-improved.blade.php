@@ -182,7 +182,7 @@
                                         @if ($b->foto)
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <img class="h-10 w-10 rounded-lg object-cover"
-                                                    src="{{ Storage::url($b->foto) }}" alt="{{ $b->nama_barang }}">
+                                                    src="{{ $b->photo_url }}" alt="{{ $b->nama_barang }}">
                                             </div>
                                         @else
                                             <div

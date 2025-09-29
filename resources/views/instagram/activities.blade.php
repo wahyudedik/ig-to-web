@@ -6,14 +6,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Kegiatan Sekolah - Galeri Kegiatan Terbaru">
-    <meta name="keywords" content="kegiatan, sekolah, galeri, instagram, aktivitas">
+    <meta name="description"
+        content="{{ cache('site_setting_site_description', 'Kegiatan Sekolah - Galeri Kegiatan Terbaru') }}">
+    <meta name="keywords"
+        content="{{ cache('site_setting_site_keywords', 'kegiatan, sekolah, galeri, instagram, aktivitas') }}">
 
     <!-- title -->
-    <title>Kegiatan Sekolah - Galeri Kegiatan Terbaru</title>
+    <title>E-Galeri - {{ cache('site_setting_site_name', 'Website Sekolah - Portal Digital Pendidikan') }}</title>
 
     <!-- favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/favicon.png') }}">
+    @if (cache('site_setting_favicon'))
+        <link rel="icon" type="image/x-icon" href="{{ Storage::url(cache('site_setting_favicon')) }}">
+    @else
+        <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/favicon.png') }}">
+    @endif
 
     <!-- css -->
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
@@ -50,16 +56,18 @@
                         <div class="header-top-contact">
                             <ul>
                                 <li>
-                                    <a href="#" target="_blank"><i class="far fa-location-dot"></i> Jl. Pendidikan
-                                        No. 123, Jakarta</a>
+                                    <a href="#" target="_blank"><i class="far fa-location-dot"></i>
+                                        {{ cache('site_setting_contact_address', 'Jl. Pendidikan No. 123, Jakarta') }}</a>
                                 </li>
                                 <li>
-                                    <a href="mailto:info@sekolahdigital.com" target="_blank"><i
-                                            class="far fa-envelopes"></i> info@sekolahdigital.com</a>
+                                    <a href="mailto:{{ cache('site_setting_contact_email', 'info@sekolahdigital.com') }}"
+                                        target="_blank"><i class="far fa-envelopes"></i>
+                                        {{ cache('site_setting_contact_email', 'info@sekolahdigital.com') }}</a>
                                 </li>
                                 <li>
-                                    <a href="tel:+62123456789" target="_blank"><i class="far fa-phone-volume"></i> +62
-                                        123 456 789</a>
+                                    <a href="tel:{{ str_replace([' ', '-', '(', ')'], '', cache('site_setting_contact_phone', '+62123456789')) }}"
+                                        target="_blank"><i class="far fa-phone-volume"></i>
+                                        {{ cache('site_setting_contact_phone', '+62 123 456 789') }}</a>
                                 </li>
                             </ul>
                         </div>
@@ -72,7 +80,11 @@
             <nav class="navbar navbar-expand-lg">
                 <div class="container position-relative">
                     <a class="navbar-brand" href="/">
-                        <img src="{{ asset('assets/img/logo/logo.png') }}" alt="logo">
+                        @if (cache('site_setting_logo'))
+                            <img src="{{ Storage::url(cache('site_setting_logo')) }}" alt="logo">
+                        @else
+                            <img src="{{ asset('assets/img/logo/logo.png') }}" alt="logo">
+                        @endif
                     </a>
                     <div class="mobile-menu-right">
                         <div class="search-btn">
@@ -366,17 +378,27 @@
                     <div class="col-md-6 col-lg-4">
                         <div class="footer-widget-box about-us">
                             <a href="/" class="footer-logo">
-                                <img src="{{ asset('assets/img/logo/logo-light.png') }}" alt="">
+                                @if (cache('site_setting_logo'))
+                                    <img src="{{ Storage::url(cache('site_setting_logo')) }}" alt="">
+                                @else
+                                    <img src="{{ asset('assets/img/logo/logo-light.png') }}" alt="">
+                                @endif
                             </a>
                             <p class="mb-3">
-                                Portal Digital Pendidikan yang mengintegrasikan semua layanan sekolah
-                                dalam satu platform modern dan terpadu.
+                                {{ cache('site_setting_site_description', 'Portal Digital Pendidikan yang mengintegrasikan semua layanan sekolah dalam satu platform modern dan terpadu.') }}
                             </p>
                             <ul class="footer-contact">
-                                <li><a href="#"><i class="fab fa-whatsapp"></i>+62 123 456 789</a></li>
-                                <li><i class="far fa-map-marker-alt"></i>Jl. Pendidikan No. 123, Jakarta</li>
-                                <li><a href="mailto:info@sekolahdigital.com"><i
-                                            class="far fa-envelope"></i>info@sekolahdigital.com</a></li>
+                                <li><a
+                                        href="tel:{{ str_replace([' ', '-', '(', ')'], '', cache('site_setting_contact_phone', '+62123456789')) }}"><i
+                                            class="fab fa-whatsapp"></i>{{ cache('site_setting_contact_phone', '+62 123 456 789') }}</a>
+                                </li>
+                                <li><i
+                                        class="far fa-map-marker-alt"></i>{{ cache('site_setting_contact_address', 'Jl. Pendidikan No. 123, Jakarta') }}
+                                </li>
+                                <li><a
+                                        href="mailto:{{ cache('site_setting_contact_email', 'info@sekolahdigital.com') }}"><i
+                                            class="far fa-envelope"></i>{{ cache('site_setting_contact_email', 'info@sekolahdigital.com') }}</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -432,8 +454,7 @@
                     <div class="row">
                         <div class="col-md-6 align-self-center">
                             <p class="copyright-text">
-                                &copy; Copyright <span id="date"></span> <a href="#">Website Sekolah</a>
-                                All Rights Reserved.
+                                {{ cache('site_setting_footer_text', '&copy; Copyright <span id="date"></span> <a href="#">Website Sekolah</a> All Rights Reserved.') }}
                             </p>
                         </div>
                         <div class="col-md-6 align-self-center">

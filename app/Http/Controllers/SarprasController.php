@@ -31,7 +31,7 @@ class SarprasController extends Controller
             'maintenance_selesai' => Maintenance::where('status', 'selesai')->count(),
         ];
 
-        $recent_maintenance = Maintenance::with('user')
+        $recent_maintenance = Maintenance::with(['user', 'barang', 'ruang'])
             ->latest()
             ->limit(5)
             ->get();
@@ -234,6 +234,7 @@ class SarprasController extends Controller
             'status' => 'required|in:tersedia,dipinjam,rusak,hilang',
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $data = $request->all();
@@ -245,10 +246,13 @@ class SarprasController extends Controller
         $data['model'] = strip_tags($data['model'] ?? '');
         $data['catatan'] = strip_tags($data['catatan'] ?? '');
 
-        // Handle photo upload - move to private storage
+        // Handle photo upload - move to public storage
         if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('private/barang');
+            $data['foto'] = $request->file('foto')->store('barang', 'public');
         }
+
+        // Handle is_active checkbox
+        $data['is_active'] = $request->has('is_active') && $request->is_active == '1';
 
         Barang::create($data);
 
@@ -296,6 +300,7 @@ class SarprasController extends Controller
             'status' => 'required|in:tersedia,dipinjam,rusak,hilang',
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $data = $request->all();
@@ -307,14 +312,17 @@ class SarprasController extends Controller
         $data['model'] = strip_tags($data['model'] ?? '');
         $data['catatan'] = strip_tags($data['catatan'] ?? '');
 
-        // Handle photo upload - move to private storage
+        // Handle photo upload - move to public storage
         if ($request->hasFile('foto')) {
             // Delete old photo
             if ($barang->foto) {
-                Storage::disk('local')->delete($barang->foto);
+                Storage::disk('public')->delete($barang->foto);
             }
-            $data['foto'] = $request->file('foto')->store('private/barang');
+            $data['foto'] = $request->file('foto')->store('barang', 'public');
         }
+
+        // Handle is_active checkbox
+        $data['is_active'] = $request->has('is_active') && $request->is_active == '1';
 
         $barang->update($data);
 
@@ -329,7 +337,7 @@ class SarprasController extends Controller
     {
         // Delete photo
         if ($barang->foto) {
-            Storage::disk('local')->delete($barang->foto);
+            Storage::disk('public')->delete($barang->foto);
         }
 
         $barang->delete();
@@ -411,9 +419,13 @@ class SarprasController extends Controller
             'fasilitas' => 'nullable|string',
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $data = $request->all();
+
+        // Handle checkbox value
+        $data['is_active'] = $request->has('is_active') && $request->is_active == '1';
 
         // Sanitize input data
         $data['nama_ruang'] = strip_tags($data['nama_ruang']);
@@ -427,9 +439,9 @@ class SarprasController extends Controller
             $data['fasilitas'] = [];
         }
 
-        // Handle photo upload - move to private storage
+        // Handle photo upload - move to public storage
         if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('private/ruang');
+            $data['foto'] = $request->file('foto')->store('ruang', 'public');
         }
 
         Ruang::create($data);
@@ -474,9 +486,13 @@ class SarprasController extends Controller
             'fasilitas' => 'nullable|string',
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $data = $request->all();
+
+        // Handle checkbox value
+        $data['is_active'] = $request->has('is_active') && $request->is_active == '1';
 
         // Sanitize input data
         $data['nama_ruang'] = strip_tags($data['nama_ruang']);
@@ -490,13 +506,13 @@ class SarprasController extends Controller
             $data['fasilitas'] = [];
         }
 
-        // Handle photo upload - move to private storage
+        // Handle photo upload - move to public storage
         if ($request->hasFile('foto')) {
             // Delete old photo
             if ($ruang->foto) {
-                Storage::disk('local')->delete($ruang->foto);
+                Storage::disk('public')->delete($ruang->foto);
             }
-            $data['foto'] = $request->file('foto')->store('private/ruang');
+            $data['foto'] = $request->file('foto')->store('ruang', 'public');
         }
 
         $ruang->update($data);
@@ -512,7 +528,7 @@ class SarprasController extends Controller
     {
         // Delete photo
         if ($ruang->foto) {
-            Storage::disk('local')->delete($ruang->foto);
+            Storage::disk('public')->delete($ruang->foto);
         }
 
         $ruang->delete();
@@ -528,7 +544,7 @@ class SarprasController extends Controller
      */
     public function maintenanceIndex(Request $request)
     {
-        $query = Maintenance::with(['user', 'item']);
+        $query = Maintenance::with(['user', 'barang', 'ruang']);
 
         // Filter by status
         if ($request->filled('status')) {
@@ -626,7 +642,7 @@ class SarprasController extends Controller
      */
     public function showMaintenance(Maintenance $maintenance)
     {
-        $maintenance->load(['user', 'item']);
+        $maintenance->load(['user', 'barang', 'ruang']);
         return view('sarpras.maintenance.show', compact('maintenance'));
     }
 
@@ -756,7 +772,7 @@ class SarprasController extends Controller
             'maintenance_cost_year' => Maintenance::whereYear('tanggal_maintenance', now()->year)->sum('biaya') ?? 0,
             'maintenance_cost_total' => Maintenance::sum('biaya') ?? 0,
             'maintenance_cost_average' => Maintenance::count() > 0 ? round(Maintenance::avg('biaya'), 0) : 0,
-            'recent_activities' => Maintenance::with('user')->latest()->limit(10)->get(),
+            'recent_activities' => Maintenance::with(['user', 'barang', 'ruang'])->latest()->limit(10)->get(),
         ];
 
         return view('sarpras.reports', compact('stats', 'kategori_stats', 'maintenance_by_month', 'analytics'));

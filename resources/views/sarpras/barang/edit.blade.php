@@ -108,12 +108,11 @@
                                 <option value="">Pilih Kondisi</option>
                                 <option value="baik"
                                     {{ old('kondisi', $barang->kondisi) == 'baik' ? 'selected' : '' }}>Baik</option>
-                                <option value="rusak_ringan"
-                                    {{ old('kondisi', $barang->kondisi) == 'rusak_ringan' ? 'selected' : '' }}>Rusak
-                                    Ringan</option>
-                                <option value="rusak_berat"
-                                    {{ old('kondisi', $barang->kondisi) == 'rusak_berat' ? 'selected' : '' }}>Rusak
-                                    Berat</option>
+                                <option value="rusak"
+                                    {{ old('kondisi', $barang->kondisi) == 'rusak' ? 'selected' : '' }}>Rusak</option>
+                                <option value="hilang"
+                                    {{ old('kondisi', $barang->kondisi) == 'hilang' ? 'selected' : '' }}>Hilang
+                                </option>
                             </select>
                             @error('kondisi')
                                 <p class="form-error">{{ $message }}</p>
@@ -121,32 +120,54 @@
                         </div>
 
                         <div>
-                            <label for="harga" class="form-label">Harga (Rp)</label>
-                            <input type="number" id="harga" name="harga"
-                                value="{{ old('harga', $barang->harga) }}"
-                                class="form-input @error('harga') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                            <label for="status" class="form-label">Status</label>
+                            <select id="status" name="status"
+                                class="form-input @error('status') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                required>
+                                <option value="">Pilih Status</option>
+                                <option value="tersedia"
+                                    {{ old('status', $barang->status) == 'tersedia' ? 'selected' : '' }}>Tersedia
+                                </option>
+                                <option value="dipinjam"
+                                    {{ old('status', $barang->status) == 'dipinjam' ? 'selected' : '' }}>Dipinjam
+                                </option>
+                                <option value="rusak"
+                                    {{ old('status', $barang->status) == 'rusak' ? 'selected' : '' }}>Rusak</option>
+                                <option value="hilang"
+                                    {{ old('status', $barang->status) == 'hilang' ? 'selected' : '' }}>Hilang</option>
+                            </select>
+                            @error('status')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="harga_beli" class="form-label">Harga (Rp)</label>
+                            <input type="number" id="harga_beli" name="harga_beli"
+                                value="{{ old('harga_beli', $barang->harga_beli) }}"
+                                class="form-input @error('harga_beli') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                 placeholder="Masukkan harga barang">
-                            @error('harga')
+                            @error('harga_beli')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="tahun_pembelian" class="form-label">Tahun Pembelian</label>
-                            <input type="number" id="tahun_pembelian" name="tahun_pembelian"
-                                value="{{ old('tahun_pembelian', $barang->tahun_pembelian) }}"
-                                class="form-input @error('tahun_pembelian') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan tahun pembelian" min="1900" max="{{ date('Y') }}">
-                            @error('tahun_pembelian')
+                            <label for="tanggal_pembelian" class="form-label">Tanggal Pembelian</label>
+                            <input type="date" id="tanggal_pembelian" name="tanggal_pembelian"
+                                value="{{ old('tanggal_pembelian', $barang->tanggal_pembelian ? $barang->tanggal_pembelian->format('Y-m-d') : '') }}"
+                                class="form-input @error('tanggal_pembelian') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                placeholder="Masukkan tanggal pembelian">
+                            @error('tanggal_pembelian')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="photo" class="form-label">Foto Barang</label>
-                            <input type="file" id="photo" name="photo" accept="image/*"
-                                class="form-input @error('photo') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                            @error('photo')
+                            <label for="foto" class="form-label">Foto Barang</label>
+                            <input type="file" id="foto" name="foto" accept="image/*"
+                                class="form-input @error('foto') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            @error('foto')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                             @if ($barang->photo_url)
@@ -178,6 +199,7 @@
                 <div>
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Pengaturan</h3>
                     <div class="flex items-center">
+                        <input type="hidden" name="is_active" value="0">
                         <input type="checkbox" id="is_active" name="is_active" value="1"
                             {{ old('is_active', $barang->is_active) ? 'checked' : '' }}
                             class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">

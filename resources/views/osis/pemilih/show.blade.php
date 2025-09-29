@@ -73,7 +73,7 @@
 
                         <div>
                             <h4 class="text-sm font-medium text-slate-600 mb-2">Nomor HP</h4>
-                            <p class="text-lg font-semibold text-slate-900">{{ $pemilih->no_hp ?? '-' }}</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ $pemilih->nomor_hp ?? '-' }}</p>
                         </div>
 
                         <div>

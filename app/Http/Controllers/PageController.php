@@ -36,8 +36,9 @@ class PageController extends Controller
 
         $pages = $query->paginate(15);
         $categories = Page::distinct()->pluck('category')->filter();
+        $statuses = ['published', 'draft', 'archived'];
 
-        return view('pages.index', compact('pages', 'categories'));
+        return view('pages.index', compact('pages', 'categories', 'statuses'));
     }
 
     /**

@@ -79,7 +79,7 @@ class Barang extends Model
         static::deleting(function ($barang) {
             // Delete photo when barang is deleted
             if ($barang->foto) {
-                Storage::disk('local')->delete($barang->foto);
+                Storage::disk('public')->delete($barang->foto);
             }
         });
     }
@@ -171,6 +171,27 @@ class Barang extends Model
             return 'Rp ' . number_format((float) $this->harga_beli, 0, ',', '.');
         }
         return 'Tidak ada data';
+    }
+
+    /**
+     * Get formatted harga (alias for formatted_price).
+     */
+    public function getFormattedHargaAttribute(): string
+    {
+        return $this->getFormattedPriceAttribute();
+    }
+
+    /**
+     * Get kondisi display.
+     */
+    public function getKondisiDisplayAttribute(): string
+    {
+        return match ($this->kondisi) {
+            'baik' => 'Baik',
+            'rusak' => 'Rusak',
+            'hilang' => 'Hilang',
+            default => 'Tidak Diketahui'
+        };
     }
 
     /**

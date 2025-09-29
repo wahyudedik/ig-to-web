@@ -13,6 +13,8 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\OSISController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\SarprasController;
+use App\Http\Controllers\DataManagementController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -108,13 +110,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // E-Lulus Management Routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('lulus', KelulusanController::class);
+    // Specific routes must come BEFORE resource routes
     Route::get('/lulus/import', [KelulusanController::class, 'import'])->name('lulus.import');
     Route::post('/lulus/import', [KelulusanController::class, 'processImport'])->name('lulus.processImport');
     Route::get('/lulus/export', [KelulusanController::class, 'export'])->name('lulus.export');
     Route::get('/lulus/check', [KelulusanController::class, 'checkStatus'])->name('lulus.check');
     Route::post('/lulus/check', [KelulusanController::class, 'processCheck'])->name('lulus.processCheck');
     Route::get('/lulus/{kelulusan}/certificate', [KelulusanController::class, 'generateCertificate'])->name('lulus.certificate');
+
+    // Resource routes come last
+    Route::resource('lulus', KelulusanController::class)->parameters(['lulus' => 'kelulusan']);
 });
 
 // Public E-Lulus Routes (tanpa auth)
@@ -245,5 +250,45 @@ Route::post('/email/verify/resend', [App\Http\Controllers\Auth\EmailVerification
 // Registration Routes
 Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+
+// Data Management AJAX Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Kelas Management
+    Route::post('/api/kelas', [DataManagementController::class, 'addKelas'])->name('api.kelas.add');
+    Route::put('/api/kelas/{id}', [DataManagementController::class, 'updateKelas'])->name('api.kelas.update');
+    Route::delete('/api/kelas/{id}', [DataManagementController::class, 'deleteKelas'])->name('api.kelas.delete');
+
+    // Jurusan Management
+    Route::post('/api/jurusan', [DataManagementController::class, 'addJurusan'])->name('api.jurusan.add');
+    Route::put('/api/jurusan/{id}', [DataManagementController::class, 'updateJurusan'])->name('api.jurusan.update');
+    Route::delete('/api/jurusan/{id}', [DataManagementController::class, 'deleteJurusan'])->name('api.jurusan.delete');
+
+    // Ekstrakurikuler Management
+    Route::post('/api/ekstrakurikuler', [DataManagementController::class, 'addEkstrakurikuler'])->name('api.ekstrakurikuler.add');
+    Route::put('/api/ekstrakurikuler/{id}', [DataManagementController::class, 'updateEkstrakurikuler'])->name('api.ekstrakurikuler.update');
+    Route::delete('/api/ekstrakurikuler/{id}', [DataManagementController::class, 'deleteEkstrakurikuler'])->name('api.ekstrakurikuler.delete');
+
+    // User Management
+    Route::post('/api/users', [DataManagementController::class, 'addUser'])->name('api.users.add');
+    Route::put('/api/users/{id}', [DataManagementController::class, 'updateUser'])->name('api.users.update');
+    Route::delete('/api/users/{id}', [DataManagementController::class, 'deleteUser'])->name('api.users.delete');
+
+    // Mata Pelajaran Management
+    Route::post('/api/mata-pelajaran', [DataManagementController::class, 'addMataPelajaran'])->name('api.mata-pelajaran.add');
+    Route::put('/api/mata-pelajaran/{id}', [DataManagementController::class, 'updateMataPelajaran'])->name('api.mata-pelajaran.update');
+    Route::delete('/api/mata-pelajaran/{id}', [DataManagementController::class, 'deleteMataPelajaran'])->name('api.mata-pelajaran.delete');
+
+    // Settings Routes
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::get('/settings/data-management', [SettingsController::class, 'dataManagement'])->name('settings.data-management');
+    Route::get('/settings/kelas-jurusan', [SettingsController::class, 'kelasJurusan'])->name('settings.kelas-jurusan');
+
+    // Landing Page Management Routes
+    Route::get('/settings/landing-page', [SettingsController::class, 'landingPage'])->name('settings.landing-page');
+    Route::post('/settings/landing-page', [SettingsController::class, 'updateLandingPage'])->name('settings.landing-page.update');
+    Route::post('/settings/landing-page/reset', [SettingsController::class, 'resetLandingPage'])->name('settings.landing-page.reset');
+    Route::get('/settings/seo', [SettingsController::class, 'seoSettings'])->name('settings.seo');
+    Route::post('/settings/seo', [SettingsController::class, 'updateSeoSettings'])->name('settings.seo.update');
+});
 
 require __DIR__ . '/auth.php';

@@ -6,14 +6,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portal Digital Pendidikan - Website Sekolah Terintegrasi">
-    <meta name="keywords" content="sekolah, pendidikan, digital, portal, e-learning, e-osis, e-lulus, sarpras">
+    <meta name="description"
+        content="{{ cache('site_setting_site_description', 'Portal Digital Pendidikan - Website Sekolah Terintegrasi') }}">
+    <meta name="keywords"
+        content="{{ cache('site_setting_site_keywords', 'sekolah, pendidikan, digital, portal, e-learning, e-osis, e-lulus, sarpras') }}">
 
     <!-- title -->
-    <title>Website Sekolah - Portal Digital Pendidikan</title>
+    <title>{{ cache('site_setting_site_name', 'Website Sekolah - Portal Digital Pendidikan') }}</title>
 
     <!-- favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/favicon.png') }}">
+    @if (cache('site_setting_favicon'))
+        <link rel="icon" type="image/x-icon" href="{{ Storage::url(cache('site_setting_favicon')) }}">
+    @else
+        <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/favicon.png') }}">
+    @endif
 
     <!-- css -->
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
@@ -72,7 +78,12 @@
             <nav class="navbar navbar-expand-lg">
                 <div class="container position-relative">
                     <a class="navbar-brand" href="/">
-                        <img src="{{ asset('assets/img/logo/logo.png') }}" alt="logo">
+                        @if (cache('site_setting_logo'))
+                            <img src="{{ Storage::url(cache('site_setting_logo')) }}"
+                                alt="{{ cache('site_setting_site_name', 'MAUDU REJOSO') }}" style="max-height: 50px;">
+                        @else
+                            <img src="{{ asset('assets/img/logo/logo.png') }}" alt="logo">
+                        @endif
                     </a>
                     <div class="mobile-menu-right">
                         <div class="search-btn">
@@ -210,66 +221,9 @@
 
     <main class="main">
 
-        <!-- hero slider -->
-        <div class="hero-section">
-            <div class="hero-slider owl-carousel owl-theme">
-                @php
-                    // Ambil data dari Instagram atau Pages untuk slider
-                    $sliderItems = [
-                        [
-                            'image' => asset('assets/img/slider/slider-1.jpg'),
-                            'subtitle' => 'Portal Digital Pendidikan',
-                            'title' => 'Website <span>Sekolah</span> Terintegrasi',
-                            'description' =>
-                                'Mengintegrasikan semua layanan sekolah dalam satu platform digital yang modern dan efisien',
-                        ],
-                        [
-                            'image' => asset('assets/img/slider/slider-2.jpg'),
-                            'subtitle' => 'Sistem E-Learning',
-                            'title' => 'Pembelajaran <span>Digital</span> Modern',
-                            'description' =>
-                                'Platform pembelajaran online dengan fitur lengkap untuk mendukung kegiatan belajar mengajar',
-                        ],
-                        [
-                            'image' => asset('assets/img/slider/slider-3.jpg'),
-                            'subtitle' => 'Manajemen Sekolah',
-                            'title' => 'Administrasi <span>Sekolah</span> Digital',
-                            'description' =>
-                                'Sistem manajemen sekolah yang komprehensif untuk semua kebutuhan administratif',
-                        ],
-                    ];
-                @endphp
-
-                @foreach ($sliderItems as $item)
-                    <div class="hero-single" style="background: url({{ $item['image'] }})">
-                        <div class="container">
-                            <div class="row align-items-center">
-                                <div class="col-md-12 col-lg-7">
-                                    <div class="hero-content">
-                                        <h6 class="hero-sub-title" data-animation="fadeInDown" data-delay=".25s">
-                                            <i class="far fa-book-open-reader"></i>{{ $item['subtitle'] }}
-                                        </h6>
-                                        <h1 class="hero-title" data-animation="fadeInRight" data-delay=".50s">
-                                            {!! $item['title'] !!}
-                                        </h1>
-                                        <p data-animation="fadeInLeft" data-delay=".75s">
-                                            {{ $item['description'] }}
-                                        </p>
-                                        <div class="hero-btn" data-animation="fadeInUp" data-delay="1s">
-                                            <a href="#features" class="theme-btn">Jelajahi Fitur<i
-                                                    class="fas fa-arrow-right-long"></i></a>
-                                            <a href="#contact" class="theme-btn theme-btn2">Hubungi Kami<i
-                                                    class="fas fa-arrow-right-long"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-        <!-- hero slider end -->
+        <!-- hero carousel -->
+        @include('components.hero-carousel')
+        <!-- hero carousel end -->
 
         <!-- feature area -->
         <div class="feature-area fa-negative">
@@ -600,17 +554,33 @@
                     <div class="col-md-6 col-lg-4">
                         <div class="footer-widget-box about-us">
                             <a href="#" class="footer-logo">
-                                <img src="{{ asset('assets/img/logo/logo-light.png') }}" alt="">
+                                @if (cache('site_setting_logo'))
+                                    <img src="{{ Storage::url(cache('site_setting_logo')) }}"
+                                        alt="{{ cache('site_setting_site_name', 'MAUDU REJOSO') }}"
+                                        style="max-height: 50px; filter: brightness(0) invert(1);">
+                                @else
+                                    <img src="{{ asset('assets/img/logo/logo-light.png') }}" alt="">
+                                @endif
                             </a>
                             <p class="mb-3">
-                                Portal Digital Pendidikan yang mengintegrasikan semua layanan sekolah dalam satu
-                                platform modern dan efisien
+                                {{ cache('site_setting_site_description', 'Portal Digital Pendidikan yang mengintegrasikan semua layanan sekolah dalam satu platform modern dan efisien') }}
                             </p>
                             <ul class="footer-contact">
-                                <li><a href="tel:+62123456789"><i class="fab fa-whatsapp"></i>+62 123 456 789</a></li>
-                                <li><i class="far fa-map-marker-alt"></i>Jl. Pendidikan No. 123, Jakarta</li>
-                                <li><a href="mailto:info@sekolahdigital.com"><i
-                                            class="far fa-envelope"></i>info@sekolahdigital.com</a></li>
+                                @if (cache('site_setting_contact_phone'))
+                                    <li><a href="tel:{{ cache('site_setting_contact_phone') }}"><i
+                                                class="fab fa-whatsapp"></i>{{ cache('site_setting_contact_phone') }}</a>
+                                    </li>
+                                @endif
+                                @if (cache('site_setting_contact_address'))
+                                    <li><i
+                                            class="far fa-map-marker-alt"></i>{{ cache('site_setting_contact_address') }}
+                                    </li>
+                                @endif
+                                @if (cache('site_setting_contact_email'))
+                                    <li><a href="mailto:{{ cache('site_setting_contact_email') }}"><i
+                                                class="far fa-envelope"></i>{{ cache('site_setting_contact_email') }}</a>
+                                    </li>
+                                @endif
                             </ul>
                         </div>
                     </div>
@@ -714,8 +684,12 @@
                     <div class="row">
                         <div class="col-md-6 align-self-center">
                             <p class="copyright-text">
-                                &copy; Copyright <span id="date"></span> <a href="#"> Portal Digital
-                                    Pendidikan </a> All Rights Reserved.
+                                &copy; Copyright <span id="date"></span> <a
+                                    href="#">{{ cache('site_setting_site_name', 'Portal Digital Pendidikan') }}</a>
+                                All Rights Reserved.
+                                @if (cache('site_setting_footer_text'))
+                                    <br>{{ cache('site_setting_footer_text') }}
+                                @endif
                             </p>
                         </div>
                         <div class="col-md-6 align-self-center">

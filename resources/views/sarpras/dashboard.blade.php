@@ -263,7 +263,7 @@
                                         </div>
                                         <div class="ml-3">
                                             <p class="text-sm font-medium text-slate-900">
-                                                {{ $maintenance->item->nama ?? 'Unknown Item' }}
+                                                {{ $maintenance->item_name }}
                                             </p>
                                             <p class="text-xs text-slate-500">
                                                 {{ $maintenance->created_at->diffForHumans() }}

@@ -63,7 +63,12 @@ class SiswaController extends Controller
         $kelas = $this->getAvailableClasses();
         $jurusan = $this->getAvailableMajors();
         $ekstrakurikuler = $this->getAvailableExtracurriculars();
-        $users = User::where('user_type', 'siswa')->get();
+
+        // Get users that are not already assigned to any student
+        $usedUserIds = Siswa::whereNotNull('user_id')->pluck('user_id')->toArray();
+        $users = User::where('user_type', 'siswa')
+            ->whereNotIn('id', $usedUserIds)
+            ->get();
 
         return view('siswa.create', compact('kelas', 'jurusan', 'ekstrakurikuler', 'users'));
     }
@@ -100,7 +105,7 @@ class SiswaController extends Controller
             'catatan' => 'nullable|string',
             'ekstrakurikuler' => 'nullable|array',
             'ekstrakurikuler.*' => 'string',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable|exists:users,id|unique:siswas,user_id',
         ]);
 
         $data = $request->all();
@@ -133,7 +138,18 @@ class SiswaController extends Controller
         $kelas = $this->getAvailableClasses();
         $jurusan = $this->getAvailableMajors();
         $ekstrakurikuler = $this->getAvailableExtracurriculars();
-        $users = User::where('user_type', 'siswa')->get();
+
+        // Get users that are not already assigned to any student, plus the current student's user
+        $usedUserIds = Siswa::whereNotNull('user_id')
+            ->where('id', '!=', $siswa->id)
+            ->pluck('user_id')
+            ->toArray();
+        $users = User::where('user_type', 'siswa')
+            ->where(function ($query) use ($usedUserIds, $siswa) {
+                $query->whereNotIn('id', $usedUserIds)
+                    ->orWhere('id', $siswa->user_id);
+            })
+            ->get();
 
         return view('siswa.edit', compact('siswa', 'kelas', 'jurusan', 'ekstrakurikuler', 'users'));
     }
@@ -170,7 +186,7 @@ class SiswaController extends Controller
             'catatan' => 'nullable|string',
             'ekstrakurikuler' => 'nullable|array',
             'ekstrakurikuler.*' => 'string',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable|exists:users,id|unique:siswas,user_id,' . $siswa->id,
         ]);
 
         $data = $request->all();
@@ -211,26 +227,33 @@ class SiswaController extends Controller
      */
     private function getAvailableClasses()
     {
-        return [
-            'X IPA 1',
-            'X IPA 2',
-            'X IPA 3',
-            'X IPS 1',
-            'X IPS 2',
-            'X IPS 3',
-            'XI IPA 1',
-            'XI IPA 2',
-            'XI IPA 3',
-            'XI IPS 1',
-            'XI IPS 2',
-            'XI IPS 3',
-            'XII IPA 1',
-            'XII IPA 2',
-            'XII IPA 3',
-            'XII IPS 1',
-            'XII IPS 2',
-            'XII IPS 3',
-        ];
+        // Get from database first, fallback to hardcoded if empty
+        $dbClasses = \DB::table('kelas')->pluck('nama')->toArray();
+
+        if (empty($dbClasses)) {
+            return [
+                'X IPA 1',
+                'X IPA 2',
+                'X IPA 3',
+                'X IPS 1',
+                'X IPS 2',
+                'X IPS 3',
+                'XI IPA 1',
+                'XI IPA 2',
+                'XI IPA 3',
+                'XI IPS 1',
+                'XI IPS 2',
+                'XI IPS 3',
+                'XII IPA 1',
+                'XII IPA 2',
+                'XII IPA 3',
+                'XII IPS 1',
+                'XII IPS 2',
+                'XII IPS 3',
+            ];
+        }
+
+        return $dbClasses;
     }
 
     /**
@@ -238,17 +261,24 @@ class SiswaController extends Controller
      */
     private function getAvailableMajors()
     {
-        return [
-            'IPA (Ilmu Pengetahuan Alam)',
-            'IPS (Ilmu Pengetahuan Sosial)',
-            'Bahasa',
-            'Teknik Informatika',
-            'Teknik Mesin',
-            'Teknik Elektro',
-            'Akuntansi',
-            'Administrasi Perkantoran',
-            'Pemasaran',
-        ];
+        // Get from database first, fallback to hardcoded if empty
+        $dbMajors = \DB::table('jurusan')->pluck('nama')->toArray();
+
+        if (empty($dbMajors)) {
+            return [
+                'IPA (Ilmu Pengetahuan Alam)',
+                'IPS (Ilmu Pengetahuan Sosial)',
+                'Bahasa',
+                'Teknik Informatika',
+                'Teknik Mesin',
+                'Teknik Elektro',
+                'Akuntansi',
+                'Administrasi Perkantoran',
+                'Pemasaran',
+            ];
+        }
+
+        return $dbMajors;
     }
 
     /**
@@ -256,24 +286,31 @@ class SiswaController extends Controller
      */
     private function getAvailableExtracurriculars()
     {
-        return [
-            'Basket',
-            'Futsal',
-            'Voli',
-            'Badminton',
-            'Paduan Suara',
-            'Tari Tradisional',
-            'Teater',
-            'Fotografi',
-            'Debat Bahasa Inggris',
-            'Matematika Club',
-            'Science Club',
-            'Literasi Digital',
-            'Pramuka',
-            'Paskibra',
-            'OSIS',
-            'PMR',
-            'KIR',
-        ];
+        // Get from database first, fallback to hardcoded if empty
+        $dbExtracurriculars = \DB::table('ekstrakurikuler')->pluck('nama')->toArray();
+
+        if (empty($dbExtracurriculars)) {
+            return [
+                'Basket',
+                'Futsal',
+                'Voli',
+                'Badminton',
+                'Paduan Suara',
+                'Tari Tradisional',
+                'Teater',
+                'Fotografi',
+                'Debat Bahasa Inggris',
+                'Matematika Club',
+                'Science Club',
+                'Literasi Digital',
+                'Pramuka',
+                'Paskibra',
+                'OSIS',
+                'PMR',
+                'KIR',
+            ];
+        }
+
+        return $dbExtracurriculars;
     }
 }

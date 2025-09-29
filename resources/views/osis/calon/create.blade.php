@@ -106,19 +106,12 @@
                 <!-- Status -->
                 <div>
                     <label for="is_active" class="form-label">Status</label>
-                    <div class="flex items-center space-x-4">
-                        <label class="flex items-center">
-                            <input type="radio" name="is_active" value="1"
-                                {{ old('is_active', '1') === '1' ? 'checked' : '' }}
-                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
-                            <span class="ml-2 text-sm text-slate-700">Aktif</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="is_active" value="0"
-                                {{ old('is_active') === '0' ? 'checked' : '' }}
-                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300">
-                            <span class="ml-2 text-sm text-slate-700">Tidak Aktif</span>
-                        </label>
+                    <div class="flex items-center">
+                        <input type="hidden" name="is_active" value="0">
+                        <input type="checkbox" id="is_active" name="is_active" value="1"
+                            {{ old('is_active', true) ? 'checked' : '' }}
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
+                        <label for="is_active" class="ml-2 text-sm text-slate-700">Aktif dalam pemilihan</label>
                     </div>
                     @error('is_active')
                         <p class="form-error">{{ $message }}</p>

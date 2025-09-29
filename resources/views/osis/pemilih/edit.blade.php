@@ -86,12 +86,12 @@
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Informasi Tambahan</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="no_hp" class="form-label">Nomor HP</label>
-                            <input type="text" id="no_hp" name="no_hp"
-                                value="{{ old('no_hp', $pemilih->no_hp) }}"
-                                class="form-input @error('no_hp') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan nomor HP">
-                            @error('no_hp')
+                            <label for="nomor_hp" class="form-label">Nomor HP</label>
+                            <input type="text" id="nomor_hp" name="nomor_hp"
+                                value="{{ old('nomor_hp', $pemilih->nomor_hp) }}"
+                                class="form-input @error('nomor_hp') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                placeholder="Masukkan nomor HP (hanya angka)">
+                            @error('nomor_hp')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -113,6 +113,7 @@
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Pengaturan Status</h3>
                     <div class="space-y-4">
                         <div class="flex items-center">
+                            <input type="hidden" name="is_active" value="0">
                             <input type="checkbox" id="is_active" name="is_active" value="1"
                                 {{ old('is_active', $pemilih->is_active) ? 'checked' : '' }}
                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
@@ -120,10 +121,12 @@
                         </div>
 
                         <div class="flex items-center">
-                            <input type="checkbox" id="has_voted" name="has_voted" value="1"
-                                {{ old('has_voted', $pemilih->has_voted) ? 'checked' : '' }}
+                            <input type="checkbox" id="status_sudah_memilih" name="status_sudah_memilih"
+                                value="1"
+                                {{ old('status_sudah_memilih', $pemilih->status === 'sudah_memilih') ? 'checked' : '' }}
                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
-                            <label for="has_voted" class="ml-2 text-sm text-slate-700">Sudah memilih</label>
+                            <label for="status_sudah_memilih" class="ml-2 text-sm text-slate-700">Sudah
+                                memilih</label>
                         </div>
                     </div>
                 </div>

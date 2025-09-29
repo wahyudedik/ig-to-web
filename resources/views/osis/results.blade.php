@@ -6,13 +6,24 @@
                 <p class="text-slate-600 mt-1">Statistik dan hasil pemilihan ketua dan wakil ketua OSIS</p>
             </div>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('osis.voting') }}" class="btn btn-secondary">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Voting
-                </a>
+                @if (Auth::user()->user_type === 'siswa')
+                    <a href="{{ route('osis.voting') }}" class="btn btn-primary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Voting
+                    </a>
+                @else
+                    <a href="{{ route('osis.voting') }}" class="btn btn-secondary"
+                        title="Hanya siswa yang dapat memilih">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Voting (Siswa)
+                    </a>
+                @endif
                 <a href="{{ route('osis.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -39,7 +50,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Pemilih</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $total_pemilih }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $totalPemilih }}</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +68,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Sudah Memilih</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $sudah_memilih }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $sudahMemilih }}</p>
                     </div>
                 </div>
             </div>
@@ -75,7 +86,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Belum Memilih</p>
-                        <p class="text-2xl font-bold text-slate-900">{{ $belum_memilih }}</p>
+                        <p class="text-2xl font-bold text-slate-900">{{ $belumMemilih }}</p>
                     </div>
                 </div>
             </div>
@@ -94,7 +105,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Partisipasi</p>
                         <p class="text-2xl font-bold text-slate-900">
-                            {{ $total_pemilih > 0 ? round(($sudah_memilih / $total_pemilih) * 100, 1) : 0 }}%</p>
+                            {{ $totalPemilih > 0 ? round(($sudahMemilih / $totalPemilih) * 100, 1) : 0 }}%</p>
                     </div>
                 </div>
             </div>
@@ -104,9 +115,9 @@
         <div class="space-y-6">
             <h2 class="text-xl font-semibold text-slate-900">Hasil Pemilihan</h2>
 
-            @if ($calon->count() > 0)
+            @if ($calons->count() > 0)
                 <div class="space-y-4">
-                    @foreach ($calon as $index => $candidate)
+                    @foreach ($calons as $index => $candidate)
                         <div class="bg-white rounded-xl border border-slate-200 p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center space-x-4">
@@ -196,12 +207,12 @@
         </div>
 
         <!-- Recent Votes -->
-        @if ($recent_votes->count() > 0)
+        @if ($recentVotes->count() > 0)
             <div class="mt-8">
                 <h2 class="text-xl font-semibold text-slate-900 mb-4">Voting Terbaru</h2>
                 <div class="bg-white rounded-xl border border-slate-200 p-6">
                     <div class="space-y-3">
-                        @foreach ($recent_votes as $vote)
+                        @foreach ($recentVotes as $vote)
                             <div class="flex items-center space-x-3 p-3 hover:bg-slate-50 rounded-lg">
                                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                                     <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor"

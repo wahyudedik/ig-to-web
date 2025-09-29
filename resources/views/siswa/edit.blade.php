@@ -36,7 +36,7 @@
                                         *</label>
                                     <input type="text" name="nis" id="nis"
                                         value="{{ old('nis', $siswa->nis) }}"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nis') border-red-500 @enderror"
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nis') border-red-500 @else border-gray-300 @enderror"
                                         required>
                                     @error('nis')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -49,7 +49,7 @@
                                         *</label>
                                     <input type="text" name="nisn" id="nisn"
                                         value="{{ old('nisn', $siswa->nisn) }}"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nisn') border-red-500 @enderror"
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nisn') border-red-500 @else border-gray-300 @enderror"
                                         required>
                                     @error('nisn')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -62,7 +62,7 @@
                                         Lengkap *</label>
                                     <input type="text" name="nama_lengkap" id="nama_lengkap"
                                         value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nama_lengkap') border-red-500 @enderror"
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nama_lengkap') border-red-500 @else border-gray-300 @enderror"
                                         required>
                                     @error('nama_lengkap')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -98,7 +98,7 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir *</label>
                                         <input type="date" name="tanggal_lahir" id="tanggal_lahir"
                                             value="{{ old('tanggal_lahir', $siswa->tanggal_lahir->format('Y-m-d')) }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal_lahir') border-red-500 @enderror"
+                                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal_lahir') border-red-500 @else border-gray-300 @enderror"
                                             required>
                                         @error('tanggal_lahir')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -109,7 +109,7 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">Tempat Lahir *</label>
                                         <input type="text" name="tempat_lahir" id="tempat_lahir"
                                             value="{{ old('tempat_lahir', $siswa->tempat_lahir) }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tempat_lahir') border-red-500 @enderror"
+                                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tempat_lahir') border-red-500 @else border-gray-300 @enderror"
                                             required>
                                         @error('tempat_lahir')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -122,7 +122,7 @@
                                     <label for="alamat" class="block text-sm font-medium text-gray-700 mb-1">Alamat
                                         *</label>
                                     <textarea name="alamat" id="alamat" rows="3"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('alamat') border-red-500 @enderror"
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('alamat') border-red-500 @else border-gray-300 @enderror"
                                         required>{{ old('alamat', $siswa->alamat) }}</textarea>
                                     @error('alamat')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -136,7 +136,7 @@
                                             Telepon</label>
                                         <input type="text" name="no_telepon" id="no_telepon"
                                             value="{{ old('no_telepon', $siswa->no_telepon) }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('no_telepon') border-red-500 @enderror">
+                                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('no_telepon') border-red-500 @else border-gray-300 @enderror">
                                         @error('no_telepon')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -146,7 +146,7 @@
                                             WhatsApp</label>
                                         <input type="text" name="no_wa" id="no_wa"
                                             value="{{ old('no_wa', $siswa->no_wa) }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('no_wa') border-red-500 @enderror">
+                                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('no_wa') border-red-500 @else border-gray-300 @enderror">
                                         @error('no_wa')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -159,7 +159,7 @@
                                         class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                                     <input type="email" name="email" id="email"
                                         value="{{ old('email', $siswa->email) }}"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('email') border-red-500 @enderror">
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('email') border-red-500 @else border-gray-300 @enderror">
                                     @error('email')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
@@ -191,7 +191,7 @@
                                         {{ $siswa->foto ? 'Ganti Foto' : 'Foto' }}
                                     </label>
                                     <input type="file" name="foto" id="foto" accept="image/*"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('foto') border-red-500 @enderror">
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('foto') border-red-500 @else border-gray-300 @enderror">
                                     <p class="text-gray-500 text-xs mt-1">Max size: 2MB, Formats: JPEG, PNG, JPG, GIF
                                     </p>
                                     @error('foto')
@@ -209,7 +209,7 @@
                                     <label for="kelas"
                                         class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
                                     <select name="kelas" id="kelas"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('kelas') border-red-500 @enderror">
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('kelas') border-red-500 @else border-gray-300 @enderror">
                                         <option value="">Pilih Kelas</option>
                                         @foreach ($kelas as $k)
                                             <option value="{{ $k }}"
@@ -227,7 +227,7 @@
                                     <label for="jurusan"
                                         class="block text-sm font-medium text-gray-700 mb-1">Jurusan</label>
                                     <select name="jurusan" id="jurusan"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('jurusan') border-red-500 @enderror">
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('jurusan') border-red-500 @else border-gray-300 @enderror">
                                         <option value="">Pilih Jurusan</option>
                                         @foreach ($jurusan as $j)
                                             <option value="{{ $j }}"
@@ -247,7 +247,7 @@
                                     <input type="number" name="tahun_masuk" id="tahun_masuk"
                                         value="{{ old('tahun_masuk', $siswa->tahun_masuk) }}" min="2000"
                                         max="{{ date('Y') }}"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tahun_masuk') border-red-500 @enderror"
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tahun_masuk') border-red-500 @else border-gray-300 @enderror"
                                         required>
                                     @error('tahun_masuk')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -261,7 +261,7 @@
                                     <input type="number" name="tahun_lulus" id="tahun_lulus"
                                         value="{{ old('tahun_lulus', $siswa->tahun_lulus) }}" min="2000"
                                         max="{{ date('Y') }}"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tahun_lulus') border-red-500 @enderror">
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tahun_lulus') border-red-500 @else border-gray-300 @enderror">
                                     @error('tahun_lulus')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
@@ -272,7 +272,7 @@
                                     <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status
                                         *</label>
                                     <select name="status" id="status"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('status') border-red-500 @enderror"
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('status') border-red-500 @else border-gray-300 @enderror"
                                         required>
                                         <option value="">Pilih Status</option>
                                         <option value="aktif"
@@ -299,8 +299,7 @@
                                 <!-- Ekstrakurikuler -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Ekstrakurikuler</label>
-                                    <div
-                                        class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded-md p-2">
+                                    <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-2">
                                         @foreach ($ekstrakurikuler as $eks)
                                             <label class="flex items-center">
                                                 <input type="checkbox" name="ekstrakurikuler[]"
@@ -330,7 +329,7 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">Nama Ayah</label>
                                         <input type="text" name="nama_ayah" id="nama_ayah"
                                             value="{{ old('nama_ayah', $siswa->nama_ayah) }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nama_ayah') border-red-500 @enderror">
+                                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nama_ayah') border-red-500 @else border-gray-300 @enderror">
                                         @error('nama_ayah')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -340,7 +339,7 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">Pekerjaan Ayah</label>
                                         <input type="text" name="pekerjaan_ayah" id="pekerjaan_ayah"
                                             value="{{ old('pekerjaan_ayah', $siswa->pekerjaan_ayah) }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('pekerjaan_ayah') border-red-500 @enderror">
+                                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('pekerjaan_ayah') border-red-500 @else border-gray-300 @enderror">
                                         @error('pekerjaan_ayah')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -355,7 +354,7 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">Nama Ibu</label>
                                         <input type="text" name="nama_ibu" id="nama_ibu"
                                             value="{{ old('nama_ibu', $siswa->nama_ibu) }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nama_ibu') border-red-500 @enderror">
+                                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nama_ibu') border-red-500 @else border-gray-300 @enderror">
                                         @error('nama_ibu')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -365,7 +364,7 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">Pekerjaan Ibu</label>
                                         <input type="text" name="pekerjaan_ibu" id="pekerjaan_ibu"
                                             value="{{ old('pekerjaan_ibu', $siswa->pekerjaan_ibu) }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('pekerjaan_ibu') border-red-500 @enderror">
+                                            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('pekerjaan_ibu') border-red-500 @else border-gray-300 @enderror">
                                         @error('pekerjaan_ibu')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -381,7 +380,7 @@
                                         Tua</label>
                                     <input type="text" name="no_telepon_ortu" id="no_telepon_ortu"
                                         value="{{ old('no_telepon_ortu', $siswa->no_telepon_ortu) }}"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('no_telepon_ortu') border-red-500 @enderror">
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('no_telepon_ortu') border-red-500 @else border-gray-300 @enderror">
                                     @error('no_telepon_ortu')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
@@ -390,7 +389,7 @@
                                     <label for="alamat_ortu"
                                         class="block text-sm font-medium text-gray-700 mb-1">Alamat Orang Tua</label>
                                     <textarea name="alamat_ortu" id="alamat_ortu" rows="2"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('alamat_ortu') border-red-500 @enderror">{{ old('alamat_ortu', $siswa->alamat_ortu) }}</textarea>
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('alamat_ortu') border-red-500 @else border-gray-300 @enderror">{{ old('alamat_ortu', $siswa->alamat_ortu) }}</textarea>
                                     @error('alamat_ortu')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
@@ -407,7 +406,7 @@
                                     <label for="prestasi"
                                         class="block text-sm font-medium text-gray-700 mb-1">Prestasi</label>
                                     <textarea name="prestasi" id="prestasi" rows="3"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('prestasi') border-red-500 @enderror">{{ old('prestasi', $siswa->prestasi) }}</textarea>
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('prestasi') border-red-500 @else border-gray-300 @enderror">{{ old('prestasi', $siswa->prestasi) }}</textarea>
                                     @error('prestasi')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
@@ -418,7 +417,7 @@
                                     <label for="catatan"
                                         class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
                                     <textarea name="catatan" id="catatan" rows="3"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('catatan') border-red-500 @enderror">{{ old('catatan', $siswa->catatan) }}</textarea>
+                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('catatan') border-red-500 @else border-gray-300 @enderror">{{ old('catatan', $siswa->catatan) }}</textarea>
                                     @error('catatan')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
@@ -430,18 +429,26 @@
                                 <label for="user_id" class="block text-sm font-medium text-gray-700 mb-1">User
                                     Account</label>
                                 <select name="user_id" id="user_id"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('user_id') border-red-500 @enderror">
+                                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('user_id') border-red-500 @else border-gray-300 @enderror">
                                     <option value="">Pilih User Account (Opsional)</option>
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}"
-                                            {{ old('user_id', $siswa->user_id) == $user->id ? 'selected' : '' }}>
-                                            {{ $user->name }} ({{ $user->email }})
-                                        </option>
-                                    @endforeach
+                                    @if ($users->count() > 0)
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->id }}"
+                                                {{ old('user_id', $siswa->user_id) == $user->id ? 'selected' : '' }}>
+                                                {{ $user->name }} ({{ $user->email }})
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        <option value="" disabled>Tidak ada user tersedia</option>
+                                    @endif
                                 </select>
                                 @error('user_id')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
+                                <p class="text-xs text-gray-500 mt-1">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Hanya menampilkan user yang belum digunakan oleh siswa lain
+                                </p>
                             </div>
                         </div>
 

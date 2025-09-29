@@ -101,7 +101,8 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-sm font-medium text-slate-600">Total Value</p>
-                            <p class="text-2xl font-bold text-slate-900">{{ $analytics['total_value'] }}</p>
+                            <p class="text-2xl font-bold text-slate-900">Rp
+                                {{ number_format($analytics['total_value'], 0, ',', '.') }}</p>
                         </div>
                     </div>
                 </div>
@@ -121,13 +122,21 @@
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                    <span class="text-sm font-medium text-slate-900">{{ $category['name'] }}</span>
+                                    <span
+                                        class="text-sm font-medium text-slate-900">{{ $category->nama_kategori }}</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-slate-600">{{ $category['count'] }} items</span>
+                                    <span class="text-sm text-slate-600">{{ $category->barang_count }} items</span>
                                     <div class="w-20 bg-slate-200 rounded-full h-2">
-                                        <div class="bg-blue-500 h-2 rounded-full"
-                                            style="width: {{ $category['percentage'] }}%"></div>
+                                        @php
+                                            $totalItems = $analytics['total_items'];
+                                            $percentage =
+                                                $totalItems > 0
+                                                    ? round(($category->barang_count / $totalItems) * 100, 1)
+                                                    : 0;
+                                        @endphp
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: {{ $percentage }}%">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -230,24 +239,24 @@
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-600">This Month</span>
-                            <span
-                                class="text-sm font-medium text-slate-900">{{ $analytics['maintenance_cost_month'] }}</span>
+                            <span class="text-sm font-medium text-slate-900">Rp
+                                {{ number_format($analytics['maintenance_cost_month'], 0, ',', '.') }}</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-600">This Year</span>
-                            <span
-                                class="text-sm font-medium text-slate-900">{{ $analytics['maintenance_cost_year'] }}</span>
+                            <span class="text-sm font-medium text-slate-900">Rp
+                                {{ number_format($analytics['maintenance_cost_year'], 0, ',', '.') }}</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-600">Total Spent</span>
-                            <span
-                                class="text-sm font-medium text-slate-900">{{ $analytics['maintenance_cost_total'] }}</span>
+                            <span class="text-sm font-medium text-slate-900">Rp
+                                {{ number_format($analytics['maintenance_cost_total'], 0, ',', '.') }}</span>
                         </div>
                         <div class="pt-4 border-t border-slate-200">
                             <div class="flex items-center justify-between">
                                 <span class="text-sm font-medium text-slate-900">Average per Item</span>
-                                <span
-                                    class="text-sm font-medium text-slate-900">{{ $analytics['maintenance_cost_average'] }}</span>
+                                <span class="text-sm font-medium text-slate-900">Rp
+                                    {{ number_format($analytics['maintenance_cost_average'], 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
@@ -275,11 +284,11 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm text-slate-900">
-                                    <span class="font-medium">{{ $activity['user'] }}</span>
-                                    {{ $activity['action'] }}
-                                    <span class="font-medium">{{ $activity['item'] }}</span>
+                                    <span class="font-medium">{{ $activity->user->name ?? 'Unknown User' }}</span>
+                                    created maintenance for
+                                    <span class="font-medium">{{ $activity->item_name }}</span>
                                 </p>
-                                <p class="text-xs text-slate-500">{{ $activity['time'] }}</p>
+                                <p class="text-xs text-slate-500">{{ $activity->created_at->diffForHumans() }}</p>
                             </div>
                         </div>
                     @empty
