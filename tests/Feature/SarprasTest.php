@@ -47,7 +47,7 @@ class SarprasTest extends TestCase
     /** @test */
     public function user_can_view_sarpras_dashboard()
     {
-        $response = $this->actingAs($this->user)->get('/sarpras');
+        $response = $this->actingAs($this->user)->get('/admin/sarpras');
 
         $response->assertStatus(200);
         $response->assertViewIs('sarpras.dashboard');
@@ -56,7 +56,7 @@ class SarprasTest extends TestCase
     /** @test */
     public function user_can_view_kategori_index()
     {
-        $response = $this->actingAs($this->user)->get('/sarpras/kategori');
+        $response = $this->actingAs($this->user)->get('/admin/sarpras/kategori');
 
         $response->assertStatus(200);
         $response->assertViewIs('sarpras.kategori.index');
@@ -74,9 +74,9 @@ class SarprasTest extends TestCase
             'sort_order' => 1
         ];
 
-        $response = $this->actingAs($this->user)->post('/sarpras/kategori', $kategoriData);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/kategori', $kategoriData);
 
-        $response->assertRedirect('/sarpras/kategori');
+        $response->assertRedirect('/admin/sarpras/kategori');
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('kategori_sarpras', [
@@ -88,7 +88,7 @@ class SarprasTest extends TestCase
     /** @test */
     public function kategori_creation_requires_required_fields()
     {
-        $response = $this->actingAs($this->user)->post('/sarpras/kategori', []);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/kategori', []);
 
         $response->assertSessionHasErrors(['nama_kategori', 'kode_kategori']);
     }
@@ -102,7 +102,7 @@ class SarprasTest extends TestCase
             'is_active' => true
         ];
 
-        $response = $this->actingAs($this->user)->post('/sarpras/kategori', $kategoriData);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/kategori', $kategoriData);
 
         $response->assertSessionHasErrors(['kode_kategori']);
     }
@@ -118,9 +118,9 @@ class SarprasTest extends TestCase
             'sort_order' => 2
         ];
 
-        $response = $this->actingAs($this->user)->put("/sarpras/kategori/{$this->kategori->id}", $updateData);
+        $response = $this->actingAs($this->user)->put("/admin/sarpras/kategori/{$this->kategori->id}", $updateData);
 
-        $response->assertRedirect('/sarpras/kategori');
+        $response->assertRedirect('/admin/sarpras/kategori');
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('kategori_sarpras', [
@@ -132,9 +132,9 @@ class SarprasTest extends TestCase
     /** @test */
     public function user_can_delete_kategori()
     {
-        $response = $this->actingAs($this->user)->delete("/sarpras/kategori/{$this->kategori->id}");
+        $response = $this->actingAs($this->user)->delete("/admin/sarpras/kategori/{$this->kategori->id}");
 
-        $response->assertRedirect('/sarpras/kategori');
+        $response->assertRedirect('/admin/sarpras/kategori');
         $response->assertSessionHas('success');
 
         $this->assertDatabaseMissing('kategori_sarpras', [
@@ -145,7 +145,7 @@ class SarprasTest extends TestCase
     /** @test */
     public function user_can_view_barang_index()
     {
-        $response = $this->actingAs($this->user)->get('/sarpras/barang');
+        $response = $this->actingAs($this->user)->get('/admin/sarpras/barang');
 
         $response->assertStatus(200);
         $response->assertViewIs('sarpras.barang.index');
@@ -176,9 +176,9 @@ class SarprasTest extends TestCase
             'foto' => UploadedFile::fake()->image('test.jpg', 100, 100)
         ];
 
-        $response = $this->actingAs($this->user)->post('/sarpras/barang', $barangData);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/barang', $barangData);
 
-        $response->assertRedirect('/sarpras/barang');
+        $response->assertRedirect('/admin/sarpras/barang');
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('barang', [
@@ -194,7 +194,7 @@ class SarprasTest extends TestCase
     /** @test */
     public function barang_creation_requires_required_fields()
     {
-        $response = $this->actingAs($this->user)->post('/sarpras/barang', []);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/barang', []);
 
         $response->assertSessionHasErrors(['kode_barang', 'nama_barang', 'kategori_id', 'kondisi', 'status']);
     }
@@ -215,7 +215,7 @@ class SarprasTest extends TestCase
             'status' => 'tersedia'
         ];
 
-        $response = $this->actingAs($this->user)->post('/sarpras/barang', $barangData);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/barang', $barangData);
 
         $response->assertSessionHasErrors(['kode_barang']);
     }
@@ -237,9 +237,9 @@ class SarprasTest extends TestCase
             'merk' => 'Updated Brand'
         ];
 
-        $response = $this->actingAs($this->user)->put("/sarpras/barang/{$barang->id}", $updateData);
+        $response = $this->actingAs($this->user)->put("/admin/sarpras/barang/{$barang->id}", $updateData);
 
-        $response->assertRedirect('/sarpras/barang');
+        $response->assertRedirect('/admin/sarpras/barang');
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('barang', [
@@ -262,9 +262,9 @@ class SarprasTest extends TestCase
         // Create fake file
         Storage::disk('local')->put('private/barang/test.jpg', 'fake content');
 
-        $response = $this->actingAs($this->user)->delete("/sarpras/barang/{$barang->id}");
+        $response = $this->actingAs($this->user)->delete("/admin/sarpras/barang/{$barang->id}");
 
-        $response->assertRedirect('/sarpras/barang');
+        $response->assertRedirect('/admin/sarpras/barang');
         $response->assertSessionHas('success');
 
         $this->assertDatabaseMissing('barang', [
@@ -285,9 +285,9 @@ class SarprasTest extends TestCase
             'is_active' => true
         ];
 
-        $response = $this->actingAs($this->user)->post('/sarpras/kategori', $kategoriData);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/kategori', $kategoriData);
 
-        $response->assertRedirect('/sarpras/kategori');
+        $response->assertRedirect('/admin/sarpras/kategori');
 
         // Get the created kategori to check sanitized content
         $kategori = KategoriSarpras::where('kode_kategori', 'TEST-SANITIZE')->first();
@@ -310,7 +310,7 @@ class SarprasTest extends TestCase
             'foto' => UploadedFile::fake()->create('test.txt', 100) // Wrong file type
         ];
 
-        $response = $this->actingAs($this->user)->post('/sarpras/barang', $barangData);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/barang', $barangData);
 
         $response->assertSessionHasErrors(['foto']);
     }
@@ -327,7 +327,7 @@ class SarprasTest extends TestCase
             'foto' => UploadedFile::fake()->image('test.jpg', 100, 100)->size(3000) // Too large
         ];
 
-        $response = $this->actingAs($this->user)->post('/sarpras/barang', $barangData);
+        $response = $this->actingAs($this->user)->post('/admin/sarpras/barang', $barangData);
 
         $response->assertSessionHasErrors(['foto']);
     }
@@ -339,7 +339,7 @@ class SarprasTest extends TestCase
             'user_type' => 'siswa'
         ]);
 
-        $response = $this->actingAs($unauthorizedUser)->get('/sarpras');
+        $response = $this->actingAs($unauthorizedUser)->get('/admin/sarpras');
 
         $response->assertStatus(403);
     }
@@ -347,7 +347,7 @@ class SarprasTest extends TestCase
     /** @test */
     public function unauthenticated_user_cannot_access_sarpras()
     {
-        $response = $this->get('/sarpras');
+        $response = $this->get('/admin/sarpras');
 
         $response->assertRedirect('/login');
     }

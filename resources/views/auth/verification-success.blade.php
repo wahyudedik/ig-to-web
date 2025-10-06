@@ -96,7 +96,7 @@
                                 Login Sekarang
                             </a>
 
-                            <a href="{{ route('pages.index') }}" class="btn btn-outline-secondary">
+                            <a href="{{ route('pages.public.index') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-home me-2"></i>
                                 Kembali ke Beranda
                             </a>

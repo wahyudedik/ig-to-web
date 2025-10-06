@@ -46,7 +46,7 @@
                         <div class="header-top-social">
                             <span>Follow Us: </span>
                             <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                            <a href="{{ route('instagram.activities') }}" target="_blank"><i
+                            <a href="{{ route('public.instagram') }}" target="_blank"><i
                                     class="fab fa-instagram"></i></a>
                             <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
                             <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
@@ -149,11 +149,13 @@
                                     <a class="nav-link dropdown-toggle active" href="#"
                                         data-bs-toggle="dropdown">PROFIL</a>
                                     <ul class="dropdown-menu fade-down">
-                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('pages.public.index') }}">HALAMAN</a>
                                         </li>
                                         <li><a class="dropdown-item"
-                                                href="{{ route('instagram.activities') }}">GALERI</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a>
+                                                href="{{ route('public.instagram') }}">GALERI</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.siswa.index') }}">DATA
+                                                SISWA</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -161,12 +163,13 @@
                                     <a class="nav-link dropdown-toggle" href="#"
                                         data-bs-toggle="dropdown">AKADEMIK</a>
                                     <ul class="dropdown-menu fade-down">
-                                        <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA
+                                        <li><a class="dropdown-item" href="{{ route('admin.guru.index') }}">TENAGA
                                                 PENDIDIK</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('pages.public.index') }}">KURIKULUM</a>
                                         </li>
                                         <li><a class="dropdown-item"
-                                                href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                                                href="{{ route('public.kegiatan') }}">KEGIATAN</a></li>
                                     </ul>
                                 </li>
                                 <li class="nav-item dropdown">
@@ -181,14 +184,15 @@
                                             $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
                                         @endphp
                                         @if ($isGrade12)
-                                            <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
+                                            <li><a class="dropdown-item" href="{{ route('admin.lulus.check') }}">🎓
                                                     E-LULUS</a></li>
                                         @endif
-                                        <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
+                                        <li><a class="dropdown-item" href="{{ route('admin.osis.voting') }}">🗳️
+                                                E-OSIS</a>
                                         </li>
-                                        <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢
+                                        <li><a class="dropdown-item" href="{{ route('admin.sarpras.index') }}">🏢
                                                 E-SARPRAS</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
+                                        <li><a class="dropdown-item" href="{{ route('public.instagram') }}">📸
                                                 E-GALERI</a></li>
                                     </ul>
                                 </li>
@@ -199,7 +203,7 @@
                             <div class="nav-right-btn mt-2">
                                 @if (Route::has('login'))
                                     @auth
-                                        <a href="{{ url('/dashboard') }}" class="theme-btn"><span
+                                        <a href="{{ route('admin.dashboard') }}" class="theme-btn"><span
                                                 class="fal fa-user"></span> DASHBOARD</a>
                                     @else
                                         <a href="{{ route('login') }}" class="theme-btn"><span
@@ -317,7 +321,7 @@
                                 <button type="submit" class="theme-btn me-3">
                                     <i class="fas fa-search me-2"></i>Filter
                                 </button>
-                                <a href="{{ route('pages.index') }}" class="theme-btn theme-btn-2">
+                                <a href="{{ route('pages.public.index') }}" class="theme-btn theme-btn-2">
                                     <i class="fas fa-times me-2"></i>Clear
                                 </a>
                             </div>
@@ -368,7 +372,7 @@
                                         </div>
 
                                         <h5 class="card-title">
-                                            <a href="{{ route('pages.show', $page->slug) }}"
+                                            <a href="{{ route('admin.pages.show', $page->slug) }}"
                                                 class="text-decoration-none">
                                                 {{ $page->title }}
                                             </a>
@@ -383,7 +387,7 @@
                                                 <i class="fas fa-calendar me-1"></i>
                                                 {{ $page->updated_at->format('M d, Y') }}
                                             </small>
-                                            <a href="{{ route('pages.show', $page->slug) }}"
+                                            <a href="{{ route('admin.pages.show', $page->slug) }}"
                                                 class="btn btn-outline-primary btn-sm">
                                                 Baca Selengkapnya <i class="fas fa-arrow-right ms-1"></i>
                                             </a>
@@ -507,11 +511,14 @@
                             <div class="footer-widget-box list">
                                 <h4 class="footer-widget-title">Link Terkait</h4>
                                 <ul class="footer-list">
-                                    <li><a href="{{ route('pages.index') }}"><i class="fas fa-caret-right"></i>
+                                    <li><a href="{{ route('pages.public.index') }}"><i
+                                                class="fas fa-caret-right"></i>
                                             Halaman</a></li>
-                                    <li><a href="{{ route('guru.index') }}"><i class="fas fa-caret-right"></i> Tenaga
+                                    <li><a href="{{ route('admin.guru.index') }}"><i class="fas fa-caret-right"></i>
+                                            Tenaga
                                             Pendidik</a></li>
-                                    <li><a href="{{ route('siswa.index') }}"><i class="fas fa-caret-right"></i> Data
+                                    <li><a href="{{ route('admin.siswa.index') }}"><i class="fas fa-caret-right"></i>
+                                            Data
                                             Siswa</a></li>
                                 </ul>
                             </div>
@@ -520,14 +527,15 @@
                             <div class="footer-widget-box list">
                                 <h4 class="footer-widget-title">Layanan Digital</h4>
                                 <ul class="footer-list">
-                                    <li><a href="{{ route('kelulusan.check') }}"><i class="fas fa-caret-right"></i>
+                                    <li><a href="{{ route('admin.lulus.check') }}"><i class="fas fa-caret-right"></i>
                                             E-Lulus</a></li>
-                                    <li><a href="{{ route('osis.voting') }}"><i class="fas fa-caret-right"></i>
+                                    <li><a href="{{ route('admin.osis.voting') }}"><i class="fas fa-caret-right"></i>
                                             E-OSIS</a></li>
-                                    <li><a href="{{ route('sarpras.index') }}"><i class="fas fa-caret-right"></i>
+                                    <li><a href="{{ route('admin.sarpras.index') }}"><i
+                                                class="fas fa-caret-right"></i>
                                             E-Sarpras</a></li>
-                                    <li><a href="{{ route('instagram.activities') }}"><i
-                                                class="fas fa-caret-right"></i> E-Galeri</a></li>
+                                    <li><a href="{{ route('public.instagram') }}"><i class="fas fa-caret-right"></i>
+                                            E-Galeri</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -538,7 +546,7 @@
                             <div class="footer-newsletter">
                                 <p>Pendidikan Digital, Masa Depan Cerah</p>
                                 <div class="subscribe-form">
-                                    <form action="{{ route('pages.index') }}">
+                                    <form action="{{ route('pages.public.index') }}">
                                         <button class="theme-btn" type="submit">
                                             LIHAT HALAMAN <i class="far fa-file-alt"></i>
                                         </button>
@@ -563,7 +571,7 @@
                         <div class="col-md-6 align-self-center">
                             <ul class="footer-social">
                                 <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                <li><a href="{{ route('instagram.activities') }}" target="_blank"><i
+                                <li><a href="{{ route('public.instagram') }}" target="_blank"><i
                                             class="fab fa-instagram"></i></a></li>
                                 <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
                                 <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>

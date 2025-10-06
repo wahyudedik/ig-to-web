@@ -20,7 +20,7 @@ class EmailVerificationController extends Controller
         $user = Auth::user();
 
         if (!$user || $user->hasVerifiedEmail()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         return view('auth.verify-email', compact('user'));
@@ -66,7 +66,7 @@ class EmailVerificationController extends Controller
         $user = Auth::user();
 
         if (!$user || $user->hasVerifiedEmail()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         // Generate new token and send notification

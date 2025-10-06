@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">Create a new page or menu item</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('pages.admin') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.pages.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -18,7 +18,7 @@
     </x-slot>
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <form action="{{ route('pages.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.pages.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -274,7 +274,7 @@
 
             <!-- Action Buttons -->
             <div class="flex items-center justify-end space-x-4 mt-8">
-                <a href="{{ route('pages.admin') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.pages.index') }}" class="btn btn-secondary">
                     Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">

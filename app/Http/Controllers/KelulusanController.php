@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KelulusanImport;
 use App\Exports\KelulusanExport;
@@ -108,7 +109,7 @@ class KelulusanController extends Controller
 
         Kelulusan::create($data);
 
-        return redirect()->route('lulus.index')
+        return redirect()->route('admin.lulus.index')
             ->with('success', 'Data kelulusan berhasil ditambahkan.');
     }
 
@@ -169,7 +170,7 @@ class KelulusanController extends Controller
 
         $kelulusan->update($data);
 
-        return redirect()->route('lulus.index')
+        return redirect()->route('admin.lulus.index')
             ->with('success', 'Data kelulusan berhasil diperbarui.');
     }
 
@@ -185,7 +186,7 @@ class KelulusanController extends Controller
 
         $kelulusan->delete();
 
-        return redirect()->route('lulus.index')
+        return redirect()->route('admin.lulus.index')
             ->with('success', 'Data kelulusan berhasil dihapus.');
     }
 
@@ -198,6 +199,120 @@ class KelulusanController extends Controller
     }
 
     /**
+     * Download template Excel for import.
+     */
+    public function downloadTemplate()
+    {
+        // Create sample data for template
+        $sampleData = [
+            [
+                'nama' => 'Ahmad Rizki',
+                'nisn' => '1234567890',
+                'nis' => '2024001',
+                'jurusan' => 'IPA (Ilmu Pengetahuan Alam)',
+                'tahun_ajaran' => '2024',
+                'status' => 'lulus',
+                'tempat_kuliah' => 'Universitas Indonesia',
+                'tempat_kerja' => '',
+                'jurusan_kuliah' => 'Teknik Informatika',
+                'jabatan_kerja' => '',
+                'no_hp' => '08123456789',
+                'no_wa' => '08123456789',
+                'alamat' => 'Jl. Contoh No. 123, Jakarta',
+                'prestasi' => 'Juara 1 Olimpiade Matematika',
+                'catatan' => 'Siswa berprestasi',
+                'tanggal_lulus' => '2024-06-15'
+            ],
+            [
+                'nama' => 'Siti Nurhaliza',
+                'nisn' => '0987654321',
+                'nis' => '2024002',
+                'jurusan' => 'IPS (Ilmu Pengetahuan Sosial)',
+                'tahun_ajaran' => '2024',
+                'status' => 'lulus',
+                'tempat_kuliah' => '',
+                'tempat_kerja' => 'PT Contoh',
+                'jurusan_kuliah' => '',
+                'jabatan_kerja' => 'Staff Admin',
+                'no_hp' => '08987654321',
+                'no_wa' => '08987654321',
+                'alamat' => 'Jl. Contoh No. 456, Bandung',
+                'prestasi' => 'Juara 2 Lomba Debat',
+                'catatan' => 'Siswa aktif',
+                'tanggal_lulus' => '2024-06-15'
+            ]
+        ];
+
+        // Create a new export class for template
+        $templateExport = new class($sampleData) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            protected $data;
+
+            public function __construct($data)
+            {
+                $this->data = $data;
+            }
+
+            public function array(): array
+            {
+                return $this->data;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'nama',
+                    'nisn',
+                    'nis',
+                    'jurusan',
+                    'tahun_ajaran',
+                    'status',
+                    'tempat_kuliah',
+                    'tempat_kerja',
+                    'jurusan_kuliah',
+                    'jabatan_kerja',
+                    'no_hp',
+                    'no_wa',
+                    'alamat',
+                    'prestasi',
+                    'catatan',
+                    'tanggal_lulus',
+                ];
+            }
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => ['font' => ['bold' => true]],
+                ];
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 25,
+                    'B' => 15,
+                    'C' => 15,
+                    'D' => 20,
+                    'E' => 15,
+                    'F' => 15,
+                    'G' => 25,
+                    'H' => 25,
+                    'I' => 20,
+                    'J' => 20,
+                    'K' => 15,
+                    'L' => 15,
+                    'M' => 30,
+                    'N' => 20,
+                    'O' => 30,
+                    'P' => 15,
+                ];
+            }
+        };
+
+        return Excel::download($templateExport, 'template-import-kelulusan.xlsx');
+    }
+
+    /**
      * Process import.
      */
     public function processImport(Request $request)
@@ -207,12 +322,88 @@ class KelulusanController extends Controller
         ]);
 
         try {
-            Excel::import(new KelulusanImport, $request->file('file'));
-            return redirect()->route('lulus.index')
-                ->with('success', 'Data kelulusan berhasil diimpor.');
-        } catch (\Exception $e) {
+            // Get file info for logging
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+
+            Log::info("Starting import process", [
+                'file_name' => $fileName,
+                'file_size' => $fileSize,
+                'user_id' => Auth::id()
+            ]);
+
+            // Create import instance
+            $import = new KelulusanImport();
+
+            // Import the file
+            Excel::import($import, $file);
+
+            // Get import results
+            $importedCount = $import->getRowCount() ?? 0;
+            $errors = $import->errors();
+            $failures = $import->failures();
+
+            Log::info("Import completed", [
+                'imported_count' => $importedCount,
+                'errors_count' => count($errors),
+                'failures_count' => count($failures)
+            ]);
+
+            // Prepare success message with details
+            $message = "Data kelulusan berhasil diimpor!";
+            $details = [];
+
+            if ($importedCount > 0) {
+                $details[] = "Berhasil mengimpor {$importedCount} data";
+            }
+
+            if (count($failures) > 0) {
+                $details[] = count($failures) . " data gagal diimpor (cek log untuk detail)";
+            }
+
+            if (count($errors) > 0) {
+                $details[] = count($errors) . " data memiliki error validasi";
+            }
+
+            if (!empty($details)) {
+                $message .= " (" . implode(', ', $details) . ")";
+            }
+
+            return redirect()->route('admin.lulus.index')
+                ->with('success', $message);
+        } catch (\Maatwebsite\Excel\Exceptions\SheetNotFoundException $e) {
+            Log::error("Sheet not found in Excel file", ['error' => $e->getMessage()]);
             return redirect()->back()
-                ->with('error', 'Error importing data: ' . $e->getMessage());
+                ->with('error', 'File Excel tidak memiliki sheet yang valid. Pastikan file Excel memiliki data di sheet pertama.');
+        } catch (\Maatwebsite\Excel\Exceptions\NoTypeDetectedException $e) {
+            Log::error("File type not detected", ['error' => $e->getMessage()]);
+            return redirect()->back()
+                ->with('error', 'Format file tidak dikenali. Pastikan file dalam format Excel (.xlsx, .xls) atau CSV (.csv).');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error("Validation failed during import", [
+                'errors' => $e->errors(),
+                'file_name' => $request->file('file')->getClientOriginalName()
+            ]);
+
+            $errorMessages = [];
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errorMessages[] = $message;
+                }
+            }
+
+            return redirect()->back()
+                ->with('error', 'Validasi gagal: ' . implode(', ', array_slice($errorMessages, 0, 3)) . (count($errorMessages) > 3 ? '...' : ''));
+        } catch (\Exception $e) {
+            Log::error("Import failed", [
+                'error' => $e->getMessage(),
+                'file' => $request->file('file')->getClientOriginalName(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
         }
     }
 

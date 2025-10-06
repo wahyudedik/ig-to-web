@@ -55,11 +55,16 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/kegiatan"
+                    <a href="{{ route('public.instagram') }}"
                         class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
                         Kegiatan
                     </a>
-                    <a href="/dashboard" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    <a href="{{ route('docs.instagram-setup') }}"
+                        class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
+                        Dokumentasi
+                    </a>
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         Dashboard
                     </a>
                 </div>
@@ -237,7 +242,7 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 Website Sekolah. Semua hak cipta dilindungi.</p>
+            <p>&copy; {{ date('Y') }} Website Sekolah. Semua hak cipta dilindungi.</p>
         </div>
     </footer>
 
@@ -282,7 +287,8 @@
                     labels: ['Likes', 'Comments'],
                     datasets: [{
                         data: [{{ $analytics['total_likes'] }},
-                            {{ $analytics['total_comments'] }}],
+                            {{ $analytics['total_comments'] }}
+                        ],
                         backgroundColor: [
                             'rgba(239, 68, 68, 0.5)',
                             'rgba(59, 130, 246, 0.5)'

@@ -5,11 +5,11 @@
                 {{ __('Edit Data Siswa') }}
             </h2>
             <div class="flex space-x-2">
-                <a href="{{ route('siswa.show', $siswa) }}"
+                <a href="{{ route('admin.siswa.show', $siswa) }}"
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                     Lihat Detail
                 </a>
-                <a href="{{ route('siswa.index') }}"
+                <a href="{{ route('admin.siswa.index') }}"
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                     Kembali
                 </a>
@@ -21,7 +21,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('siswa.update', $siswa) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('admin.siswa.update', $siswa) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -454,7 +454,7 @@
 
                         <!-- Submit Button -->
                         <div class="mt-8 flex justify-end space-x-4">
-                            <a href="{{ route('siswa.show', $siswa) }}"
+                            <a href="{{ route('admin.siswa.show', $siswa) }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                 Batal
                             </a>

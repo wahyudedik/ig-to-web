@@ -7,7 +7,7 @@
             </div>
             <div class="flex items-center space-x-2">
                 @if (Auth::user()->user_type === 'siswa')
-                    <a href="{{ route('osis.voting') }}" class="btn btn-primary">
+                    <a href="{{ route('admin.osis.voting') }}" class="btn btn-primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -15,7 +15,7 @@
                         Voting
                     </a>
                 @else
-                    <a href="{{ route('osis.voting') }}" class="btn btn-secondary"
+                    <a href="{{ route('admin.osis.voting') }}" class="btn btn-secondary"
                         title="Hanya siswa yang dapat memilih">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -24,7 +24,7 @@
                         Voting (Siswa)
                     </a>
                 @endif
-                <a href="{{ route('osis.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.osis.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />

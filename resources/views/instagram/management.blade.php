@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Instagram Management - Website Sekolah</title>
 
     <!-- Fonts -->
@@ -52,11 +53,16 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/kegiatan"
+                    <a href="{{ route('public.instagram') }}"
                         class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
                         Kegiatan
                     </a>
-                    <a href="/dashboard" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    <a href="{{ route('docs.instagram-setup') }}"
+                        class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
+                        Dokumentasi
+                    </a>
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         Dashboard
                     </a>
                 </div>
@@ -303,7 +309,7 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 Website Sekolah. Semua hak cipta dilindungi.</p>
+            <p>&copy; {{ date('Y') }} Website Sekolah. Semua hak cipta dilindungi.</p>
         </div>
     </footer>
 
@@ -344,7 +350,7 @@
 
             // Test Connection
             document.getElementById('testConnection').addEventListener('click', function() {
-                fetch('/instagram/management/test-connection')
+                fetch('/admin/instagram/management/test-connection')
                     .then(response => response.json())
                     .then(data => {
                         showNotification(data.message, data.success ? 'success' : 'error');
@@ -360,7 +366,7 @@
                 e.preventDefault();
                 const formData = new FormData(this);
 
-                fetch('/instagram/management/update-config', {
+                fetch('/admin/instagram/management/update-config', {
                         method: 'POST',
                         body: formData,
                         headers: {
@@ -383,7 +389,7 @@
                 e.preventDefault();
                 const formData = new FormData(this);
 
-                fetch('/instagram/management/filter-posts', {
+                fetch('/admin/instagram/management/filter-posts', {
                         method: 'POST',
                         body: formData,
                         headers: {
@@ -409,7 +415,7 @@
                 e.preventDefault();
                 const formData = new FormData(this);
 
-                fetch('/instagram/management/schedule-content', {
+                fetch('/admin/instagram/management/schedule-content', {
                         method: 'POST',
                         body: formData,
                         headers: {
@@ -470,7 +476,7 @@
             }
 
             function loadScheduledContent() {
-                fetch('/instagram/management/scheduled-content')
+                fetch('/admin/instagram/management/scheduled-content')
                     .then(response => response.json())
                     .then(data => {
                         const container = document.getElementById('scheduledContent');
@@ -498,7 +504,7 @@
             }
 
             function loadInsights() {
-                fetch('/instagram/management/insights')
+                fetch('/admin/instagram/management/insights')
                     .then(response => response.json())
                     .then(data => {
                         const container = document.getElementById('insightsContent');
@@ -524,7 +530,7 @@
             }
 
             function cancelScheduled(postId) {
-                fetch('/instagram/management/cancel-scheduled', {
+                fetch('/admin/instagram/management/cancel-scheduled', {
                         method: 'POST',
                         body: JSON.stringify({
                             post_id: postId

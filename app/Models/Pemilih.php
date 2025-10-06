@@ -15,6 +15,7 @@ class Pemilih extends Model
         'nis',
         'nisn',
         'kelas',
+        'jenis_kelamin',
         'email',
         'nomor_hp',
         'alamat',
@@ -23,6 +24,8 @@ class Pemilih extends Model
         'ip_address',
         'user_agent',
         'is_active',
+        'user_id', // Added for relation to User
+        'user_type', // Added to track if pemilih is from siswa or guru
     ];
 
     protected $casts = [
@@ -36,6 +39,32 @@ class Pemilih extends Model
     public function votings(): HasMany
     {
         return $this->hasMany(Voting::class);
+    }
+
+    /**
+     * Get the user that owns the pemilih.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the siswa if pemilih is from siswa.
+     */
+    public function siswa()
+    {
+        return $this->hasOneThrough(Siswa::class, User::class, 'id', 'user_id')
+            ->where('users.user_type', 'siswa');
+    }
+
+    /**
+     * Get the guru if pemilih is from guru.
+     */
+    public function guru()
+    {
+        return $this->hasOneThrough(Guru::class, User::class, 'id', 'user_id')
+            ->where('users.user_type', 'guru');
     }
 
     /**
@@ -129,5 +158,25 @@ class Pemilih extends Model
     public function getVotingTimeFormattedAttribute(): ?string
     {
         return $this->waktu_memilih ? $this->waktu_memilih->format('d/m/Y H:i') : null;
+    }
+
+    /**
+     * Get gender display attribute.
+     */
+    public function getGenderDisplayAttribute(): string
+    {
+        return match ($this->jenis_kelamin) {
+            'L' => 'Laki-laki',
+            'P' => 'Perempuan',
+            default => 'Tidak Diketahui'
+        };
+    }
+
+    /**
+     * Scope to filter by gender.
+     */
+    public function scopeByGender($query, string $gender)
+    {
+        return $query->where('jenis_kelamin', $gender);
     }
 }

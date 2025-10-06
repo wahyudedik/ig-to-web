@@ -13,7 +13,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('settings.seo.update') }}" method="POST" enctype="multipart/form-data"
+            <form action="{{ route('admin.settings.seo.update') }}" method="POST" enctype="multipart/form-data"
                 class="space-y-8">
                 @csrf
 

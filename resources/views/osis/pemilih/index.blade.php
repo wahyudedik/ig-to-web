@@ -13,6 +13,17 @@
                     </svg>
                     Tambah Pemilih
                 </a>
+                <form action="{{ route('osis.pemilih.generate-from-users') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="btn btn-success"
+                        onclick="return confirm('Apakah Anda yakin ingin membuat pemilih dari data guru dan siswa yang sudah ada?')">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Generate Pemilih
+                    </button>
+                </form>
                 <a href="{{ route('osis.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -117,7 +128,8 @@
                         <option value="">Semua Status</option>
                         <option value="voted" {{ request('status') == 'voted' ? 'selected' : '' }}>Sudah Memilih
                         </option>
-                        <option value="not_voted" {{ request('status') == 'not_voted' ? 'selected' : '' }}>Belum Memilih
+                        <option value="not_voted" {{ request('status') == 'not_voted' ? 'selected' : '' }}>Belum
+                            Memilih
                         </option>
                     </select>
                     <button type="submit" class="btn btn-primary">

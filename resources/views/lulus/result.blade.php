@@ -166,7 +166,7 @@
 
                     <!-- Actions -->
                     <div class="mt-8 flex justify-center space-x-4">
-                        <a href="{{ route('lulus.check') }}"
+                        <a href="{{ route('admin.lulus.check') }}"
                             class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
                             Cek Status Lain
                         </a>

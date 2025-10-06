@@ -10,6 +10,10 @@ use App\Models\OsisElection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\CalonImport;
+use App\Exports\CalonExport;
 
 class OSISController extends Controller
 {
@@ -89,6 +93,7 @@ class OSISController extends Controller
             'foto_ketua' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'nama_wakil' => 'nullable|string|max:255',
             'foto_wakil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'jenis_kelamin' => 'required|in:L,P',
             'visi_misi' => 'required|string',
             'jenis_pencalonan' => 'required|in:ketua,wakil,pasangan',
             'is_active' => 'boolean',
@@ -106,7 +111,7 @@ class OSISController extends Controller
 
         Calon::create($data);
 
-        return redirect()->route('osis.calon.index')
+        return redirect()->route('admin.osis.calon.index')
             ->with('success', 'Calon berhasil ditambahkan.');
     }
 
@@ -137,6 +142,7 @@ class OSISController extends Controller
             'foto_ketua' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'nama_wakil' => 'nullable|string|max:255',
             'foto_wakil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'jenis_kelamin' => 'required|in:L,P',
             'visi_misi' => 'required|string',
             'jenis_pencalonan' => 'required|in:ketua,wakil,pasangan',
             'is_active' => 'boolean',
@@ -160,7 +166,7 @@ class OSISController extends Controller
 
         $calon->update($data);
 
-        return redirect()->route('osis.calon.index')
+        return redirect()->route('admin.osis.calon.index')
             ->with('success', 'Calon berhasil diperbarui.');
     }
 
@@ -179,7 +185,7 @@ class OSISController extends Controller
 
         $calon->delete();
 
-        return redirect()->route('osis.calon.index')
+        return redirect()->route('admin.osis.calon.index')
             ->with('success', 'Calon berhasil dihapus.');
     }
 
@@ -237,6 +243,7 @@ class OSISController extends Controller
             'nama' => 'required|string|max:255',
             'nis' => 'required|string|unique:pemilihs,nis',
             'kelas' => 'required|string|max:50',
+            'jenis_kelamin' => 'required|in:L,P',
             'email' => 'nullable|email|max:255',
             'nomor_hp' => 'nullable|regex:/^[\d+\-\s()]+$/|min:10|max:20',
             'alamat' => 'nullable|string',
@@ -256,7 +263,7 @@ class OSISController extends Controller
 
         Pemilih::create($data);
 
-        return redirect()->route('osis.pemilih.index')
+        return redirect()->route('admin.osis.pemilih.index')
             ->with('success', 'Pemilih berhasil ditambahkan.');
     }
 
@@ -287,6 +294,7 @@ class OSISController extends Controller
             'nama' => 'required|string|max:255',
             'nis' => 'required|string|unique:pemilihs,nis,' . $pemilih->id,
             'kelas' => 'required|string|max:50',
+            'jenis_kelamin' => 'required|in:L,P',
             'email' => 'nullable|email|max:255',
             'nomor_hp' => 'nullable|regex:/^[\d+\-\s()]+$/|min:10|max:20',
             'alamat' => 'nullable|string',
@@ -306,7 +314,7 @@ class OSISController extends Controller
 
         $pemilih->update($data);
 
-        return redirect()->route('osis.pemilih.index')
+        return redirect()->route('admin.osis.pemilih.index')
             ->with('success', 'Pemilih berhasil diperbarui.');
     }
 
@@ -317,7 +325,7 @@ class OSISController extends Controller
     {
         $pemilih->delete();
 
-        return redirect()->route('osis.pemilih.index')
+        return redirect()->route('admin.osis.pemilih.index')
             ->with('success', 'Pemilih berhasil dihapus.');
     }
 
@@ -329,37 +337,45 @@ class OSISController extends Controller
         // Check if user is a student
         $user = Auth::user();
         if ($user->user_type !== 'siswa') {
-            return redirect()->route('osis.index')
+            return redirect()->route('admin.osis.index')
                 ->with('error', 'Hanya siswa yang dapat memilih. Silakan login sebagai siswa untuk melakukan voting.');
         }
 
         // Get student data
         $siswa = Siswa::where('user_id', $user->id)->first();
         if (!$siswa) {
-            return redirect()->route('osis.index')
+            return redirect()->route('admin.osis.index')
                 ->with('error', 'Data siswa tidak ditemukan. Silakan hubungi administrator.');
         }
 
         // Check if student has already voted
         if ($siswa->hasVotedOsis()) {
-            return redirect()->route('osis.results')
+            return redirect()->route('admin.osis.results')
                 ->with('info', 'Anda sudah memilih dalam pemilihan OSIS ini.');
         }
 
         // Get active election
         $election = OsisElection::active()->first();
         if (!$election) {
-            return redirect()->route('osis.index')
+            return redirect()->route('admin.osis.index')
                 ->with('error', 'Tidak ada pemilihan OSIS yang sedang berlangsung.');
         }
 
         // Check if student's class is allowed to vote
         if ($election->allowed_classes && !in_array($siswa->kelas, $election->allowed_classes)) {
-            return redirect()->route('osis.index')
+            return redirect()->route('admin.osis.index')
                 ->with('error', 'Kelas Anda tidak diizinkan untuk memilih dalam pemilihan ini.');
         }
 
-        $calons = $election->candidates()->active()->ordered()->get();
+        // Filter candidates based on student's gender
+        $query = $election->candidates()->active()->ordered();
+
+        // For students, filter by gender (calon cewek tampil untuk siswa cewek, calon cowok untuk siswa cowok)
+        if ($siswa->jenis_kelamin) {
+            $calons = $query->byGender($siswa->jenis_kelamin)->get();
+        } else {
+            $calons = $query->get();
+        }
 
         return view('osis.voting', compact('calons', 'siswa', 'election'));
     }
@@ -377,23 +393,29 @@ class OSISController extends Controller
         $siswa = Siswa::where('user_id', $user->id)->first();
 
         if (!$siswa) {
-            return redirect()->route('dashboard')
+            return redirect()->route('admin.dashboard')
                 ->with('error', 'Data siswa tidak ditemukan.');
         }
 
         if ($siswa->hasVotedOsis()) {
-            return redirect()->route('osis.voting')
+            return redirect()->route('admin.osis.voting')
                 ->with('error', 'Anda sudah memilih dalam pemilihan OSIS ini.');
         }
 
         // Get active election
         $election = OsisElection::active()->first();
         if (!$election) {
-            return redirect()->route('osis.index')
+            return redirect()->route('admin.osis.index')
                 ->with('error', 'Tidak ada pemilihan OSIS yang sedang berlangsung.');
         }
 
         $calon = Calon::findOrFail($request->calon_id);
+
+        // Validate gender for students (guru can vote for any candidate, siswa can only vote for same gender)
+        if ($user->user_type === 'siswa' && $calon->jenis_kelamin && $siswa->jenis_kelamin !== $calon->jenis_kelamin) {
+            return redirect()->route('admin.osis.voting')
+                ->with('error', 'Anda hanya dapat memilih calon yang sesuai dengan jenis kelamin Anda.');
+        }
 
         // Create vote record
         Voting::create([
@@ -410,7 +432,7 @@ class OSISController extends Controller
         // Mark student as voted
         $siswa->markAsVoted($request->ip(), $request->userAgent());
 
-        return redirect()->route('osis.results')
+        return redirect()->route('admin.osis.results')
             ->with('success', 'Terima kasih! Suara Anda telah tercatat.');
     }
 
@@ -432,6 +454,31 @@ class OSISController extends Controller
             ->get();
 
         return view('osis.results', compact('calons', 'totalVotes', 'totalPemilih', 'sudahMemilih', 'belumMemilih', 'votingPercentage', 'recentVotes'));
+    }
+
+    /**
+     * Display all candidates for teachers (no gender filter).
+     */
+    public function teacherView()
+    {
+        // Check if user is a teacher or admin
+        $user = Auth::user();
+        if (!in_array($user->user_type, ['guru', 'admin', 'superadmin'])) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Hanya guru dan admin yang dapat mengakses halaman ini.');
+        }
+
+        // Get active election
+        $election = OsisElection::active()->first();
+        if (!$election) {
+            return redirect()->route('admin.osis.index')
+                ->with('error', 'Tidak ada pemilihan OSIS yang sedang berlangsung.');
+        }
+
+        // Get all candidates (no gender filter for teachers and admins)
+        $calons = $election->candidates()->active()->ordered()->get();
+
+        return view('osis.teacher-view', compact('calons', 'election'));
     }
 
     /**
@@ -496,5 +543,288 @@ class OSISController extends Controller
         }
 
         return round(($totalVotes / $totalPemilih) * 100, 2);
+    }
+
+    /**
+     * Show import form for calon.
+     */
+    public function importCalon()
+    {
+        return view('osis.calon.import');
+    }
+
+    /**
+     * Download template Excel for calon import.
+     */
+    public function downloadCalonTemplate()
+    {
+        // Create sample data for template
+        $sampleData = [
+            [
+                'nama_ketua' => 'Ahmad Rizki',
+                'nama_wakil' => 'Siti Nurhaliza',
+                'jenis_kelamin' => 'L',
+                'visi_misi' => 'Mewujudkan OSIS yang berprestasi dan berkarakter. Misi: 1. Meningkatkan prestasi akademik 2. Mengembangkan bakat dan minat siswa 3. Menjalin kerjasama yang baik dengan semua pihak',
+                'jenis_pencalonan' => 'pasangan',
+                'status_aktif' => 'aktif'
+            ],
+            [
+                'nama_ketua' => 'Budi Santoso',
+                'nama_wakil' => '',
+                'jenis_kelamin' => 'L',
+                'visi_misi' => 'Menjadi ketua OSIS yang melayani dengan hati. Misi: 1. Melayani kebutuhan siswa 2. Menjadi contoh yang baik 3. Membangun komunikasi yang efektif',
+                'jenis_pencalonan' => 'ketua',
+                'status_aktif' => 'aktif'
+            ],
+            [
+                'nama_ketua' => 'Sari Indah',
+                'nama_wakil' => '',
+                'jenis_kelamin' => 'P',
+                'visi_misi' => 'Menjadi wakil ketua OSIS yang kreatif dan inovatif. Misi: 1. Mengembangkan program kreatif 2. Mendorong inovasi siswa 3. Membangun teamwork yang solid',
+                'jenis_pencalonan' => 'wakil',
+                'status_aktif' => 'aktif'
+            ]
+        ];
+
+        // Create a new export class for template
+        $templateExport = new class($sampleData) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            protected $data;
+
+            public function __construct($data)
+            {
+                $this->data = $data;
+            }
+
+            public function array(): array
+            {
+                return $this->data;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'nama_ketua',
+                    'nama_wakil',
+                    'jenis_kelamin',
+                    'visi_misi',
+                    'jenis_pencalonan',
+                    'status_aktif'
+                ];
+            }
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => ['font' => ['bold' => true]],
+                ];
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 15,
+                    'D' => 50,
+                    'E' => 20,
+                    'F' => 15,
+                ];
+            }
+        };
+
+        return Excel::download($templateExport, 'template-import-calon.xlsx');
+    }
+
+    /**
+     * Process calon import.
+     */
+    public function processCalonImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            // Get file info for logging
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+
+            Log::info("Starting calon import process", [
+                'file_name' => $fileName,
+                'file_size' => $fileSize,
+                'user_id' => Auth::id()
+            ]);
+
+            // Create import instance
+            $import = new CalonImport();
+
+            // Import the file
+            Excel::import($import, $file);
+
+            // Get import results
+            $importedCount = $import->getRowCount() ?? 0;
+            $errors = $import->errors();
+            $failures = $import->failures();
+
+            Log::info("Calon import completed", [
+                'imported_count' => $importedCount,
+                'errors_count' => count($errors),
+                'failures_count' => count($failures)
+            ]);
+
+            // Prepare success message with details
+            $message = "Data calon OSIS berhasil diimpor!";
+            $details = [];
+
+            if ($importedCount > 0) {
+                $details[] = "Berhasil mengimpor {$importedCount} calon";
+            }
+
+            if (count($failures) > 0) {
+                $details[] = count($failures) . " calon gagal diimpor (cek log untuk detail)";
+            }
+
+            if (count($errors) > 0) {
+                $details[] = count($errors) . " calon memiliki error validasi";
+            }
+
+            if (!empty($details)) {
+                $message .= " (" . implode(', ', $details) . ")";
+            }
+
+            return redirect()->route('admin.osis.calon.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            Log::error("Calon import failed", [
+                'error' => $e->getMessage(),
+                'file' => $request->file('file')->getClientOriginalName(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export calon data.
+     */
+    public function exportCalon(Request $request)
+    {
+        $query = Calon::withCount('votings');
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            if ($request->status === 'aktif') {
+                $query->where('is_active', true);
+            } elseif ($request->status === 'tidak_aktif') {
+                $query->where('is_active', false);
+            }
+        }
+
+        if ($request->has('jenis_pencalonan') && $request->jenis_pencalonan !== '') {
+            $query->where('jenis_pencalonan', $request->jenis_pencalonan);
+        }
+
+        $calons = $query->get();
+
+        return Excel::download(new CalonExport($calons), 'calon-osis-' . date('Y-m-d') . '.xlsx');
+    }
+
+
+    /**
+     * Auto-generate pemilih from existing guru and siswa.
+     */
+    public function generatePemilihFromUsers()
+    {
+        try {
+            $createdCount = 0;
+            $updatedCount = 0;
+
+            // Import from Siswa
+            $siswas = \App\Models\Siswa::with('user')->get();
+            foreach ($siswas as $siswa) {
+                if ($siswa->user) {
+                    $existingPemilih = Pemilih::where('user_id', $siswa->user->id)->first();
+
+                    if (!$existingPemilih) {
+                        Pemilih::create([
+                            'user_id' => $siswa->user->id,
+                            'user_type' => 'siswa',
+                            'nama' => $siswa->nama_lengkap,
+                            'nis' => $siswa->nis,
+                            'nisn' => $siswa->nisn,
+                            'kelas' => $siswa->kelas,
+                            'jenis_kelamin' => $siswa->jenis_kelamin,
+                            'email' => $siswa->email,
+                            'nomor_hp' => $siswa->no_telepon,
+                            'alamat' => $siswa->alamat,
+                            'status' => 'belum_memilih',
+                            'is_active' => true,
+                        ]);
+                        $createdCount++;
+                    } else {
+                        // Update existing pemilih data
+                        $existingPemilih->update([
+                            'nama' => $siswa->nama_lengkap,
+                            'nis' => $siswa->nis,
+                            'nisn' => $siswa->nisn,
+                            'kelas' => $siswa->kelas,
+                            'jenis_kelamin' => $siswa->jenis_kelamin,
+                            'email' => $siswa->email,
+                            'nomor_hp' => $siswa->no_telepon,
+                            'alamat' => $siswa->alamat,
+                        ]);
+                        $updatedCount++;
+                    }
+                }
+            }
+
+            // Import from Guru
+            $gurus = \App\Models\Guru::with('user')->get();
+            foreach ($gurus as $guru) {
+                if ($guru->user) {
+                    $existingPemilih = Pemilih::where('user_id', $guru->user->id)->first();
+
+                    if (!$existingPemilih) {
+                        Pemilih::create([
+                            'user_id' => $guru->user->id,
+                            'user_type' => 'guru',
+                            'nama' => $guru->nama_lengkap,
+                            'nis' => $guru->nip, // Guru menggunakan NIP sebagai identifier
+                            'nisn' => null,
+                            'kelas' => 'Guru', // Guru tidak punya kelas, set default
+                            'jenis_kelamin' => $guru->jenis_kelamin,
+                            'email' => $guru->email,
+                            'nomor_hp' => $guru->no_telepon,
+                            'alamat' => $guru->alamat,
+                            'status' => 'belum_memilih',
+                            'is_active' => true,
+                        ]);
+                        $createdCount++;
+                    } else {
+                        // Update existing pemilih data
+                        $existingPemilih->update([
+                            'nama' => $guru->nama_lengkap,
+                            'nis' => $guru->nip,
+                            'kelas' => 'Guru',
+                            'jenis_kelamin' => $guru->jenis_kelamin,
+                            'email' => $guru->email,
+                            'nomor_hp' => $guru->no_telepon,
+                            'alamat' => $guru->alamat,
+                        ]);
+                        $updatedCount++;
+                    }
+                }
+            }
+
+            return redirect()->route('admin.osis.pemilih.index')
+                ->with('success', "Pemilih berhasil dibuat otomatis! Dibuat: {$createdCount}, Diupdate: {$updatedCount}");
+        } catch (\Exception $e) {
+            Log::error('Error generating pemilih from users: ' . $e->getMessage());
+            return redirect()->route('admin.osis.pemilih.index')
+                ->with('error', 'Terjadi kesalahan saat membuat pemilih: ' . $e->getMessage());
+        }
     }
 }

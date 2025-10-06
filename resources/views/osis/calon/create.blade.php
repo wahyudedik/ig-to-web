@@ -39,6 +39,22 @@
                     @enderror
                 </div>
 
+                <!-- Gender -->
+                <div>
+                    <label for="jenis_kelamin" class="form-label">Jenis Kelamin *</label>
+                    <select name="jenis_kelamin" id="jenis_kelamin" required
+                        class="form-input @error('jenis_kelamin') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                        <option value="">Pilih Jenis Kelamin</option>
+                        <option value="L" {{ old('jenis_kelamin') === 'L' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="P" {{ old('jenis_kelamin') === 'P' ? 'selected' : '' }}>Perempuan</option>
+                    </select>
+                    @error('jenis_kelamin')
+                        <p class="form-error">{{ $message }}</p>
+                    @enderror
+                    <p class="text-sm text-slate-600 mt-1">Pilih jenis kelamin calon (untuk filter pemilihan berdasarkan
+                        gender siswa)</p>
+                </div>
+
                 <!-- Ketua OSIS -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="space-y-4">

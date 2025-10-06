@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">{{ $page->title }}</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('pages.show', $page) }}" class="btn btn-secondary">
+                <a href="{{ route('pages.public.show', $page->slug) }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -43,7 +43,8 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <a href="{{ route('pages.show', $page) }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('pages.public.show', $page->slug) }}"
+                                        class="btn btn-sm btn-secondary">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -52,7 +53,7 @@
                                         View
                                     </a>
                                     <form method="POST"
-                                        action="{{ route('pages.versions.restore', [$page, $version]) }}" class="inline"
+                                        action="{{ route('admin.pages.versions.restore', [$page, $version]) }}" class="inline"
                                         onsubmit="return confirm('Are you sure you want to restore this version?')">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-primary">

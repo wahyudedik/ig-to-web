@@ -168,7 +168,7 @@ class Page extends Model
      */
     public function getUrlAttribute(): string
     {
-        return route('pages.show', $this->slug);
+        return route('public.pages.show', $this->slug);
     }
 
     /**
@@ -180,7 +180,7 @@ class Page extends Model
             return $this->getRawOriginal('menu_url');
         }
 
-        return route('pages.show', $this->slug);
+        return route('public.pages.show', $this->slug);
     }
 
     /**

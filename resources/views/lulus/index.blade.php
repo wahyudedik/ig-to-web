@@ -10,21 +10,21 @@
             <!-- Header Actions -->
             <div class="mb-6 flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
-                    <a href="{{ route('lulus.create') }}"
+                    <a href="{{ route('admin.lulus.create') }}"
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Tambah Data Kelulusan
                     </a>
-                    <a href="{{ route('lulus.import') }}"
+                    <a href="{{ route('admin.lulus.import') }}"
                         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2">
                         Import Data
                     </a>
-                    <a href="{{ route('lulus.export', request()->query()) }}"
+                    <a href="{{ route('admin.lulus.export', request()->query()) }}"
                         class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded ml-2">
                         Export Data
                     </a>
                 </div>
                 <div class="flex-1">
-                    <a href="{{ route('lulus.check') }}"
+                    <a href="{{ route('admin.lulus.check') }}"
                         class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                         Cek Status Kelulusan
                     </a>
@@ -86,7 +86,7 @@
                                 class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
                                 Filter
                             </button>
-                            <a href="{{ route('lulus.index') }}"
+                            <a href="{{ route('admin.lulus.index') }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-2">
                                 Reset
                             </a>
@@ -176,12 +176,12 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div class="flex space-x-2">
-                                                    <a href="{{ route('lulus.show', $kelulusan) }}"
+                                                    <a href="{{ route('admin.lulus.show', $kelulusan) }}"
                                                         class="text-indigo-600 hover:text-indigo-900">Lihat</a>
-                                                    <a href="{{ route('lulus.edit', $kelulusan) }}"
+                                                    <a href="{{ route('admin.lulus.edit', $kelulusan) }}"
                                                         class="text-yellow-600 hover:text-yellow-900">Edit</a>
                                                     <form method="POST"
-                                                        action="{{ route('lulus.destroy', $kelulusan) }}"
+                                                        action="{{ route('admin.lulus.destroy', $kelulusan) }}"
                                                         class="inline"
                                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                                         @csrf
@@ -204,7 +204,7 @@
                     @else
                         <div class="text-center py-12">
                             <div class="text-gray-500 text-lg">Tidak ada data kelulusan ditemukan.</div>
-                            <a href="{{ route('lulus.create') }}"
+                            <a href="{{ route('admin.lulus.create') }}"
                                 class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Tambah Data Pertama
                             </a>

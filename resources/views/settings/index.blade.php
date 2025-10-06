@@ -77,7 +77,7 @@
 
                     <!-- Quick Actions -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <a href="{{ route('settings.data-management') }}"
+                        <a href="{{ route('admin.settings.data-management') }}"
                             class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
@@ -89,29 +89,13 @@
                                 </div>
                                 <div class="ml-4">
                                     <h3 class="text-lg font-medium text-gray-900">Data Management</h3>
-                                    <p class="text-sm text-gray-600">Kelola data kelas, jurusan, dan ekstrakurikuler</p>
+                                    <p class="text-sm text-gray-600">Kelola data kelas, jurusan, ekstrakurikuler, dan
+                                        mata pelajaran</p>
                                 </div>
                             </div>
                         </a>
 
-                        <a href="{{ route('settings.kelas-jurusan') }}"
-                            class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-                                    </svg>
-                                </div>
-                                <div class="ml-4">
-                                    <h3 class="text-lg font-medium text-gray-900">Kelas & Jurusan</h3>
-                                    <p class="text-sm text-gray-600">Kelola data kelas dan jurusan secara detail</p>
-                                </div>
-                            </div>
-                        </a>
-
-                        <a href="{{ route('settings.landing-page') }}"
+                        <a href="{{ route('admin.settings.landing-page') }}"
                             class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
@@ -128,7 +112,7 @@
                             </div>
                         </a>
 
-                        <a href="{{ route('settings.seo') }}"
+                        <a href="{{ route('admin.settings.seo') }}"
                             class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">

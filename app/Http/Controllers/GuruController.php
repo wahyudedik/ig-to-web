@@ -8,6 +8,10 @@ use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\GuruImport;
+use App\Exports\GuruExport;
 
 class GuruController extends Controller
 {
@@ -116,7 +120,7 @@ class GuruController extends Controller
 
         $guru = Guru::create($data);
 
-        return redirect()->route('guru.index')
+        return redirect()->route('admin.guru.index')
             ->with('success', 'Data guru berhasil ditambahkan.');
     }
 
@@ -200,7 +204,7 @@ class GuruController extends Controller
 
         $guru->update($data);
 
-        return redirect()->route('guru.index')
+        return redirect()->route('admin.guru.index')
             ->with('success', 'Data guru berhasil diperbarui.');
     }
 
@@ -216,7 +220,7 @@ class GuruController extends Controller
 
         $guru->delete();
 
-        return redirect()->route('guru.index')
+        return redirect()->route('admin.guru.index')
             ->with('success', 'Data guru berhasil dihapus.');
     }
 
@@ -225,27 +229,271 @@ class GuruController extends Controller
      */
     private function getAvailableSubjects()
     {
-        return [
-            'Matematika',
-            'Bahasa Indonesia',
-            'Bahasa Inggris',
-            'Fisika',
-            'Kimia',
-            'Biologi',
-            'Sejarah',
-            'Geografi',
-            'Ekonomi',
-            'Sosiologi',
-            'PPKn',
-            'Pendidikan Agama',
-            'Seni Budaya',
-            'PJOK',
-            'TIK',
-            'Bahasa Arab',
-            'Bahasa Mandarin',
-            'Bahasa Jepang',
-            'Prakarya',
-            'Bimbingan Konseling',
+        return MataPelajaran::orderBy('nama')->pluck('nama')->toArray();
+    }
+
+    /**
+     * Add new subject.
+     */
+    public function addSubject(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255|unique:mata_pelajaran,nama'
+        ]);
+
+        MataPelajaran::create([
+            'nama' => $request->nama
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Mata pelajaran berhasil ditambahkan.',
+            'data' => [
+                'nama' => $request->nama
+            ]
+        ]);
+    }
+
+    /**
+     * Show import form.
+     */
+    public function import()
+    {
+        return view('guru.import');
+    }
+
+    /**
+     * Download template Excel for import.
+     */
+    public function downloadTemplate()
+    {
+        // Create sample data for template
+        $sampleData = [
+            [
+                'nip' => '196501011990031001',
+                'nama_lengkap' => 'Dr. Ahmad Rizki, M.Pd',
+                'gelar_depan' => 'Dr.',
+                'gelar_belakang' => 'M.Pd',
+                'jenis_kelamin' => 'L',
+                'tanggal_lahir' => '1965-01-01',
+                'tempat_lahir' => 'Jakarta',
+                'alamat' => 'Jl. Pendidikan No. 123, Jakarta',
+                'no_telepon' => '08123456789',
+                'no_wa' => '08123456789',
+                'email' => 'ahmad.rizki@sekolah.com',
+                'status_kepegawaian' => 'PNS',
+                'jabatan' => 'Kepala Sekolah',
+                'tanggal_masuk' => '1990-03-01',
+                'tanggal_keluar' => '',
+                'status_aktif' => 'aktif',
+                'pendidikan_terakhir' => 'S3 Pendidikan',
+                'universitas' => 'Universitas Pendidikan Indonesia',
+                'tahun_lulus' => '2010',
+                'sertifikasi' => 'Sertifikasi Guru Profesional',
+                'mata_pelajaran' => 'Matematika, Fisika',
+                'prestasi' => 'Guru Berprestasi Nasional 2020',
+                'catatan' => 'Guru senior dengan pengalaman 30 tahun'
+            ],
+            [
+                'nip' => '197803151999032002',
+                'nama_lengkap' => 'Siti Nurhaliza, S.Pd',
+                'gelar_depan' => '',
+                'gelar_belakang' => 'S.Pd',
+                'jenis_kelamin' => 'P',
+                'tanggal_lahir' => '1978-03-15',
+                'tempat_lahir' => 'Bandung',
+                'alamat' => 'Jl. Guru No. 456, Bandung',
+                'no_telepon' => '08987654321',
+                'no_wa' => '08987654321',
+                'email' => 'siti.nurhaliza@sekolah.com',
+                'status_kepegawaian' => 'PNS',
+                'jabatan' => 'Guru Mata Pelajaran',
+                'tanggal_masuk' => '1999-03-01',
+                'tanggal_keluar' => '',
+                'status_aktif' => 'aktif',
+                'pendidikan_terakhir' => 'S1 Pendidikan Bahasa Indonesia',
+                'universitas' => 'Universitas Pendidikan Indonesia',
+                'tahun_lulus' => '2000',
+                'sertifikasi' => 'Sertifikasi Guru Profesional',
+                'mata_pelajaran' => 'Bahasa Indonesia, Bahasa Inggris',
+                'prestasi' => 'Guru Berprestasi Tingkat Kota 2019',
+                'catatan' => 'Guru kreatif dan inovatif'
+            ]
         ];
+
+        // Create a new export class for template
+        $templateExport = new class($sampleData) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            protected $data;
+
+            public function __construct($data)
+            {
+                $this->data = $data;
+            }
+
+            public function array(): array
+            {
+                return $this->data;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'nip',
+                    'nama_lengkap',
+                    'gelar_depan',
+                    'gelar_belakang',
+                    'jenis_kelamin',
+                    'tanggal_lahir',
+                    'tempat_lahir',
+                    'alamat',
+                    'no_telepon',
+                    'no_wa',
+                    'email',
+                    'status_kepegawaian',
+                    'jabatan',
+                    'tanggal_masuk',
+                    'tanggal_keluar',
+                    'status_aktif',
+                    'pendidikan_terakhir',
+                    'universitas',
+                    'tahun_lulus',
+                    'sertifikasi',
+                    'mata_pelajaran',
+                    'prestasi',
+                    'catatan'
+                ];
+            }
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => ['font' => ['bold' => true]],
+                ];
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 20,
+                    'B' => 25,
+                    'C' => 15,
+                    'D' => 15,
+                    'E' => 15,
+                    'F' => 15,
+                    'G' => 20,
+                    'H' => 30,
+                    'I' => 15,
+                    'J' => 15,
+                    'K' => 25,
+                    'L' => 15,
+                    'M' => 20,
+                    'N' => 15,
+                    'O' => 15,
+                    'P' => 15,
+                    'Q' => 20,
+                    'R' => 25,
+                    'S' => 15,
+                    'T' => 30,
+                    'U' => 30,
+                    'V' => 30,
+                    'W' => 30
+                ];
+            }
+        };
+
+        return Excel::download($templateExport, 'template-import-guru.xlsx');
+    }
+
+    /**
+     * Process import.
+     */
+    public function processImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            // Get file info for logging
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+
+            Log::info("Starting guru import process", [
+                'file_name' => $fileName,
+                'file_size' => $fileSize,
+                'user_id' => Auth::id()
+            ]);
+
+            // Create import instance
+            $import = new GuruImport();
+
+            // Import the file
+            Excel::import($import, $file);
+
+            // Get import results
+            $importedCount = $import->getRowCount() ?? 0;
+            $errors = $import->errors();
+            $failures = $import->failures();
+
+            Log::info("Guru import completed", [
+                'imported_count' => $importedCount,
+                'errors_count' => count($errors),
+                'failures_count' => count($failures)
+            ]);
+
+            // Prepare success message with details
+            $message = "Data guru berhasil diimpor!";
+            $details = [];
+
+            if ($importedCount > 0) {
+                $details[] = "Berhasil mengimpor {$importedCount} guru";
+            }
+
+            if (count($failures) > 0) {
+                $details[] = count($failures) . " guru gagal diimpor (cek log untuk detail)";
+            }
+
+            if (count($errors) > 0) {
+                $details[] = count($errors) . " guru memiliki error validasi";
+            }
+
+            if (!empty($details)) {
+                $message .= " (" . implode(', ', $details) . ")";
+            }
+
+            return redirect()->route('admin.guru.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            Log::error("Guru import failed", [
+                'error' => $e->getMessage(),
+                'file' => $request->file('file')->getClientOriginalName(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export data.
+     */
+    public function export(Request $request)
+    {
+        $query = Guru::query();
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status_aktif', $request->status);
+        }
+
+        if ($request->has('employment_status') && $request->employment_status !== '') {
+            $query->where('status_kepegawaian', $request->employment_status);
+        }
+
+        $gurus = $query->get();
+
+        return Excel::download(new GuruExport($gurus), 'guru-' . date('Y-m-d') . '.xlsx');
     }
 }

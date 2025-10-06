@@ -7,6 +7,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\SiswaImport;
+use App\Exports\SiswaExport;
 
 class SiswaController extends Controller
 {
@@ -117,7 +122,7 @@ class SiswaController extends Controller
 
         $siswa = Siswa::create($data);
 
-        return redirect()->route('siswa.index')
+        return redirect()->route('admin.siswa.index')
             ->with('success', 'Data siswa berhasil ditambahkan.');
     }
 
@@ -202,7 +207,7 @@ class SiswaController extends Controller
 
         $siswa->update($data);
 
-        return redirect()->route('siswa.index')
+        return redirect()->route('admin.siswa.index')
             ->with('success', 'Data siswa berhasil diperbarui.');
     }
 
@@ -218,7 +223,7 @@ class SiswaController extends Controller
 
         $siswa->delete();
 
-        return redirect()->route('siswa.index')
+        return redirect()->route('admin.siswa.index')
             ->with('success', 'Data siswa berhasil dihapus.');
     }
 
@@ -228,7 +233,7 @@ class SiswaController extends Controller
     private function getAvailableClasses()
     {
         // Get from database first, fallback to hardcoded if empty
-        $dbClasses = \DB::table('kelas')->pluck('nama')->toArray();
+        $dbClasses = DB::table('kelas')->pluck('nama')->toArray();
 
         if (empty($dbClasses)) {
             return [
@@ -262,7 +267,7 @@ class SiswaController extends Controller
     private function getAvailableMajors()
     {
         // Get from database first, fallback to hardcoded if empty
-        $dbMajors = \DB::table('jurusan')->pluck('nama')->toArray();
+        $dbMajors = DB::table('jurusan')->pluck('nama')->toArray();
 
         if (empty($dbMajors)) {
             return [
@@ -287,7 +292,7 @@ class SiswaController extends Controller
     private function getAvailableExtracurriculars()
     {
         // Get from database first, fallback to hardcoded if empty
-        $dbExtracurriculars = \DB::table('ekstrakurikuler')->pluck('nama')->toArray();
+        $dbExtracurriculars = DB::table('ekstrakurikuler')->pluck('nama')->toArray();
 
         if (empty($dbExtracurriculars)) {
             return [
@@ -312,5 +317,252 @@ class SiswaController extends Controller
         }
 
         return $dbExtracurriculars;
+    }
+
+    /**
+     * Show import form.
+     */
+    public function import()
+    {
+        return view('siswa.import');
+    }
+
+    /**
+     * Download template Excel for import.
+     */
+    public function downloadTemplate()
+    {
+        // Create sample data for template
+        $sampleData = [
+            [
+                'nis' => '2024001',
+                'nisn' => '1234567890',
+                'nama_lengkap' => 'Ahmad Rizki',
+                'jenis_kelamin' => 'L',
+                'tanggal_lahir' => '2006-05-15',
+                'tempat_lahir' => 'Jakarta',
+                'alamat' => 'Jl. Pendidikan No. 123, Jakarta',
+                'no_telepon' => '08123456789',
+                'no_wa' => '08123456789',
+                'email' => 'ahmad.rizki@siswa.com',
+                'kelas' => 'X IPA 1',
+                'jurusan' => 'IPA',
+                'tahun_masuk' => '2024',
+                'tahun_lulus' => '',
+                'status' => 'aktif',
+                'nama_ayah' => 'Budi Rizki',
+                'pekerjaan_ayah' => 'PNS',
+                'nama_ibu' => 'Siti Rizki',
+                'pekerjaan_ibu' => 'Ibu Rumah Tangga',
+                'no_telepon_ortu' => '08123456788',
+                'alamat_ortu' => 'Jl. Pendidikan No. 123, Jakarta',
+                'prestasi' => 'Juara 1 Olimpiade Matematika',
+                'catatan' => 'Siswa berprestasi'
+            ],
+            [
+                'nis' => '2024002',
+                'nisn' => '0987654321',
+                'nama_lengkap' => 'Siti Nurhaliza',
+                'jenis_kelamin' => 'P',
+                'tanggal_lahir' => '2006-08-20',
+                'tempat_lahir' => 'Bandung',
+                'alamat' => 'Jl. Siswa No. 456, Bandung',
+                'no_telepon' => '08987654321',
+                'no_wa' => '08987654321',
+                'email' => 'siti.nurhaliza@siswa.com',
+                'kelas' => 'X IPS 1',
+                'jurusan' => 'IPS',
+                'tahun_masuk' => '2024',
+                'tahun_lulus' => '',
+                'status' => 'aktif',
+                'nama_ayah' => 'Ahmad Nurhaliza',
+                'pekerjaan_ayah' => 'Wiraswasta',
+                'nama_ibu' => 'Fatimah Nurhaliza',
+                'pekerjaan_ibu' => 'Guru',
+                'no_telepon_ortu' => '08987654320',
+                'alamat_ortu' => 'Jl. Siswa No. 456, Bandung',
+                'prestasi' => 'Juara 2 Lomba Debat',
+                'catatan' => 'Siswa aktif dan kreatif'
+            ]
+        ];
+
+        // Create a new export class for template
+        $templateExport = new class($sampleData) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            protected $data;
+
+            public function __construct($data)
+            {
+                $this->data = $data;
+            }
+
+            public function array(): array
+            {
+                return $this->data;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'nis',
+                    'nisn',
+                    'nama_lengkap',
+                    'jenis_kelamin',
+                    'tanggal_lahir',
+                    'tempat_lahir',
+                    'alamat',
+                    'no_telepon',
+                    'no_wa',
+                    'email',
+                    'kelas',
+                    'jurusan',
+                    'tahun_masuk',
+                    'tahun_lulus',
+                    'status',
+                    'nama_ayah',
+                    'pekerjaan_ayah',
+                    'nama_ibu',
+                    'pekerjaan_ibu',
+                    'no_telepon_ortu',
+                    'alamat_ortu',
+                    'prestasi',
+                    'catatan'
+                ];
+            }
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => ['font' => ['bold' => true]],
+                ];
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 15,
+                    'C' => 25,
+                    'D' => 15,
+                    'E' => 15,
+                    'F' => 20,
+                    'G' => 30,
+                    'H' => 15,
+                    'I' => 15,
+                    'J' => 25,
+                    'K' => 15,
+                    'L' => 20,
+                    'M' => 15,
+                    'N' => 15,
+                    'O' => 15,
+                    'P' => 20,
+                    'Q' => 20,
+                    'R' => 20,
+                    'S' => 20,
+                    'T' => 15,
+                    'U' => 30,
+                    'V' => 30,
+                    'W' => 30
+                ];
+            }
+        };
+
+        return Excel::download($templateExport, 'template-import-siswa.xlsx');
+    }
+
+    /**
+     * Process import.
+     */
+    public function processImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            // Get file info for logging
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+
+            Log::info("Starting siswa import process", [
+                'file_name' => $fileName,
+                'file_size' => $fileSize,
+                'user_id' => Auth::id()
+            ]);
+
+            // Create import instance
+            $import = new SiswaImport();
+
+            // Import the file
+            Excel::import($import, $file);
+
+            // Get import results
+            $importedCount = $import->getRowCount() ?? 0;
+            $errors = $import->errors();
+            $failures = $import->failures();
+
+            Log::info("Siswa import completed", [
+                'imported_count' => $importedCount,
+                'errors_count' => count($errors),
+                'failures_count' => count($failures)
+            ]);
+
+            // Prepare success message with details
+            $message = "Data siswa berhasil diimpor!";
+            $details = [];
+
+            if ($importedCount > 0) {
+                $details[] = "Berhasil mengimpor {$importedCount} siswa";
+            }
+
+            if (count($failures) > 0) {
+                $details[] = count($failures) . " siswa gagal diimpor (cek log untuk detail)";
+            }
+
+            if (count($errors) > 0) {
+                $details[] = count($errors) . " siswa memiliki error validasi";
+            }
+
+            if (!empty($details)) {
+                $message .= " (" . implode(', ', $details) . ")";
+            }
+
+            return redirect()->route('admin.siswa.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            Log::error("Siswa import failed", [
+                'error' => $e->getMessage(),
+                'file' => $request->file('file')->getClientOriginalName(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export data.
+     */
+    public function export(Request $request)
+    {
+        $query = Siswa::query();
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('kelas') && $request->kelas !== '') {
+            $query->where('kelas', $request->kelas);
+        }
+
+        if ($request->has('jurusan') && $request->jurusan !== '') {
+            $query->where('jurusan', $request->jurusan);
+        }
+
+        $siswas = $query->get();
+
+        return Excel::download(new SiswaExport($siswas), 'siswa-' . date('Y-m-d') . '.xlsx');
     }
 }

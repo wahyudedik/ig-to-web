@@ -5,11 +5,11 @@
                 {{ __('Detail Data Siswa') }}
             </h2>
             <div class="flex space-x-2">
-                <a href="{{ route('siswa.edit', $siswa) }}"
+                <a href="{{ route('admin.siswa.edit', $siswa) }}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Edit
                 </a>
-                <a href="{{ route('siswa.index') }}"
+                <a href="{{ route('admin.siswa.index') }}"
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                     Kembali
                 </a>
@@ -266,11 +266,11 @@
 
                     <!-- Action Buttons -->
                     <div class="flex justify-end space-x-4 pt-6 border-t">
-                        <a href="{{ route('siswa.edit', $siswa) }}"
+                        <a href="{{ route('admin.siswa.edit', $siswa) }}"
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Edit Data
                         </a>
-                        <form method="POST" action="{{ route('siswa.destroy', $siswa) }}"
+                        <form method="POST" action="{{ route('admin.siswa.destroy', $siswa) }}"
                             onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini?')"
                             class="inline">
                             @csrf

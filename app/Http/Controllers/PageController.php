@@ -136,7 +136,7 @@ class PageController extends Controller
         // Create initial version
         PageVersion::createFromPage($page, 'Initial version');
 
-        return redirect()->route('pages.index')
+        return redirect()->route('admin.pages.index')
             ->with('success', 'Page created successfully.');
     }
 
@@ -240,7 +240,7 @@ class PageController extends Controller
             PageVersion::createFromPage($page, $request->change_summary ?? 'Page updated');
         }
 
-        return redirect()->route('pages.index')
+        return redirect()->route('admin.pages.index')
             ->with('success', 'Page updated successfully.');
     }
 
@@ -256,7 +256,7 @@ class PageController extends Controller
 
         $page->delete();
 
-        return redirect()->route('pages.index')
+        return redirect()->route('admin.pages.index')
             ->with('success', 'Page deleted successfully.');
     }
 
@@ -294,7 +294,7 @@ class PageController extends Controller
         $newPage->published_at = null;
         $newPage->save();
 
-        return redirect()->route('pages.edit', $newPage)
+        return redirect()->route('admin.pages.edit', $newPage)
             ->with('success', 'Page duplicated successfully.');
     }
 
@@ -314,7 +314,7 @@ class PageController extends Controller
     {
         $version->restoreToPage();
 
-        return redirect()->route('pages.show', $page)
+        return redirect()->route('admin.pages.show', $page)
             ->with('success', "Page restored to version {$version->version_number}.");
     }
 

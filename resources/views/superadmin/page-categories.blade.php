@@ -30,7 +30,8 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="/dashboard" class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="text-2xl font-bold text-gray-900 dark:text-white">
                             <i class="fas fa-graduation-cap text-blue-600 mr-2"></i>
                             Superadmin Dashboard
                         </a>
@@ -252,7 +253,7 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 Website Sekolah. Semua hak cipta dilindungi.</p>
+            <p>&copy; {{ date('Y') }} Website Sekolah. Semua hak cipta dilindungi.</p>
         </div>
     </footer>
 

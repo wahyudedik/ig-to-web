@@ -217,7 +217,18 @@ class InstagramService
     public function validateToken()
     {
         try {
-            // Mock validation
+            // Check if we have valid access token and user ID
+            if (empty($this->accessToken) || empty($this->userId)) {
+                return false;
+            }
+
+            // Check if token is not expired (basic validation)
+            if (strlen($this->accessToken) < 10) {
+                return false;
+            }
+
+            // For now, return true if we have valid-looking credentials
+            // In production, uncomment the real API validation below
             return true;
 
             // Real validation (uncomment when ready)

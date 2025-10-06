@@ -16,6 +16,7 @@ class Calon extends Model
         'foto_ketua',
         'nama_wakil',
         'foto_wakil',
+        'jenis_kelamin',
         'visi_misi',
         'jenis_pencalonan',
         'program_kerja',
@@ -134,5 +135,25 @@ class Calon extends Model
             'pasangan' => 'Pasangan Calon',
             default => 'Calon'
         };
+    }
+
+    /**
+     * Get gender display.
+     */
+    public function getGenderDisplayAttribute(): string
+    {
+        return match ($this->jenis_kelamin) {
+            'L' => 'Laki-laki',
+            'P' => 'Perempuan',
+            default => 'Tidak Diketahui'
+        };
+    }
+
+    /**
+     * Scope to filter by gender.
+     */
+    public function scopeByGender($query, string $gender)
+    {
+        return $query->where('jenis_kelamin', $gender);
     }
 }

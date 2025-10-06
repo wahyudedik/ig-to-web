@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">Voting statistics and insights</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('osis.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.osis.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />

@@ -14,7 +14,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('settings.landing-page.update') }}" method="POST" enctype="multipart/form-data"
+            <form action="{{ route('admin.settings.landing-page.update') }}" method="POST" enctype="multipart/form-data"
                 class="space-y-8">
                 @csrf
 
@@ -191,7 +191,7 @@
                                             <span class="text-sm text-gray-500 ml-2">({{ $menu->slug }})</span>
                                         </div>
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('pages.edit', $menu->id) }}"
+                                            <a href="{{ route('admin.pages.edit', $menu->id) }}"
                                                 class="text-blue-600 hover:text-blue-800 text-sm">Edit</a>
                                             <span class="text-gray-300">|</span>
                                             <span class="text-sm text-gray-500">Order:
@@ -201,7 +201,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <p class="text-gray-500">No header menus found. <a href="{{ route('pages.create') }}"
+                            <p class="text-gray-500">No header menus found. <a href="{{ route('admin.pages.create') }}"
                                     class="text-blue-600 hover:text-blue-800">Create a new page</a></p>
                         @endif
                     </div>
@@ -218,7 +218,7 @@
                                             <span class="text-sm text-gray-500 ml-2">({{ $menu->slug }})</span>
                                         </div>
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('pages.edit', $menu->id) }}"
+                                            <a href="{{ route('admin.pages.edit', $menu->id) }}"
                                                 class="text-blue-600 hover:text-blue-800 text-sm">Edit</a>
                                             <span class="text-gray-300">|</span>
                                             <span class="text-sm text-gray-500">Order:
@@ -228,13 +228,13 @@
                                 @endforeach
                             </div>
                         @else
-                            <p class="text-gray-500">No footer menus found. <a href="{{ route('pages.create') }}"
+                            <p class="text-gray-500">No footer menus found. <a href="{{ route('admin.pages.create') }}"
                                     class="text-blue-600 hover:text-blue-800">Create a new page</a></p>
                         @endif
                     </div>
 
                     <div class="mt-4">
-                        <a href="{{ route('pages.create') }}"
+                        <a href="{{ route('admin.pages.create') }}"
                             class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -248,7 +248,7 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex justify-between">
-                    <form action="{{ route('settings.landing-page.reset') }}" method="POST" class="inline">
+                    <form action="{{ route('admin.settings.landing-page.reset') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit"
                             class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"

@@ -68,18 +68,18 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="/" class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <a href="{{ url('/') }}" class="text-2xl font-bold text-gray-900 dark:text-white">
                             <i class="fas fa-graduation-cap text-blue-600 mr-2"></i>
                             Website Sekolah
                         </a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/kegiatan"
+                    <a href="{{ route('public.kegiatan') }}"
                         class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
                         Instagram Feed
                     </a>
-                    <a href="/superadmin/instagram-settings"
+                    <a href="{{ route('admin.instagram.management') }}"
                         class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         Settings
                     </a>
@@ -353,12 +353,12 @@
                         <i class="fas fa-book mr-2"></i>
                         Instagram API Docs
                     </a>
-                    <a href="/superadmin/instagram-settings"
+                    <a href="{{ route('admin.instagram.management') }}"
                         class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-300">
                         <i class="fas fa-cog mr-2"></i>
                         Settings Page
                     </a>
-                    <a href="/kegiatan"
+                    <a href="{{ route('public.kegiatan') }}"
                         class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-300">
                         <i class="fab fa-instagram mr-2"></i>
                         View Feed
@@ -371,7 +371,7 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 Website Sekolah. Semua hak cipta dilindungi.</p>
+            <p>&copy; {{ date('Y') }} Website Sekolah. Semua hak cipta dilindungi.</p>
         </div>
     </footer>
 </body>

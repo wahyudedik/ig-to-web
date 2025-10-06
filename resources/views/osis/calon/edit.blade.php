@@ -140,6 +140,25 @@
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Pengaturan</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
+                            <label for="jenis_kelamin" class="form-label">Jenis Kelamin *</label>
+                            <select name="jenis_kelamin" id="jenis_kelamin" required
+                                class="form-input @error('jenis_kelamin') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L"
+                                    {{ old('jenis_kelamin', $calon->jenis_kelamin) === 'L' ? 'selected' : '' }}>
+                                    Laki-laki</option>
+                                <option value="P"
+                                    {{ old('jenis_kelamin', $calon->jenis_kelamin) === 'P' ? 'selected' : '' }}>
+                                    Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                            <p class="text-sm text-slate-600 mt-1">Pilih jenis kelamin calon (untuk filter pemilihan
+                                berdasarkan gender siswa)</p>
+                        </div>
+
+                        <div>
                             <label for="pencalonan_type" class="form-label">Jenis Pencalonan</label>
                             <select id="pencalonan_type" name="pencalonan_type"
                                 class="form-input @error('pencalonan_type') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">

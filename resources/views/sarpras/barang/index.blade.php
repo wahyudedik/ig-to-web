@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">Kelola data barang sarana dan prasarana sekolah</p>
             </div>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('sarpras.barang.create') }}" class="btn btn-primary">
+                <a href="{{ route('admin.sarpras.barang.create') }}" class="btn btn-primary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

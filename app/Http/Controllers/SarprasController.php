@@ -9,9 +9,13 @@ use App\Models\Maintenance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Milon\Barcode\Facades\DNS1DFacade;
 use Milon\Barcode\Facades\DNS2DFacade;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\BarangImport;
+use App\Exports\BarangExport;
 
 class SarprasController extends Controller
 {
@@ -101,7 +105,7 @@ class SarprasController extends Controller
 
         KategoriSarpras::create($data);
 
-        return redirect()->route('sarpras.kategori.index')
+        return redirect()->route('admin.sarpras.kategori.index')
             ->with('success', 'Kategori berhasil ditambahkan.');
     }
 
@@ -135,7 +139,7 @@ class SarprasController extends Controller
 
         $kategori->update($data);
 
-        return redirect()->route('sarpras.kategori.index')
+        return redirect()->route('admin.sarpras.kategori.index')
             ->with('success', 'Kategori berhasil diperbarui.');
     }
 
@@ -145,13 +149,13 @@ class SarprasController extends Controller
     public function destroyKategori(KategoriSarpras $kategori)
     {
         if ($kategori->barang()->count() > 0) {
-            return redirect()->route('sarpras.kategori.index')
+            return redirect()->route('admin.sarpras.kategori.index')
                 ->with('error', 'Tidak dapat menghapus kategori yang memiliki barang.');
         }
 
         $kategori->delete();
 
-        return redirect()->route('sarpras.kategori.index')
+        return redirect()->route('admin.sarpras.kategori.index')
             ->with('success', 'Kategori berhasil dihapus.');
     }
 
@@ -256,7 +260,7 @@ class SarprasController extends Controller
 
         Barang::create($data);
 
-        return redirect()->route('sarpras.barang.index')
+        return redirect()->route('admin.sarpras.barang.index')
             ->with('success', 'Barang berhasil ditambahkan.');
     }
 
@@ -326,7 +330,7 @@ class SarprasController extends Controller
 
         $barang->update($data);
 
-        return redirect()->route('sarpras.barang.index')
+        return redirect()->route('admin.sarpras.barang.index')
             ->with('success', 'Barang berhasil diperbarui.');
     }
 
@@ -342,7 +346,7 @@ class SarprasController extends Controller
 
         $barang->delete();
 
-        return redirect()->route('sarpras.barang.index')
+        return redirect()->route('admin.sarpras.barang.index')
             ->with('success', 'Barang berhasil dihapus.');
     }
 
@@ -389,7 +393,7 @@ class SarprasController extends Controller
             ->orderBy('nama_ruang')
             ->paginate(15);
 
-        return view('sarpras.ruang.index', compact('ruangs'));
+        return view('admin.sarpras.ruang.index', compact('ruangs'));
     }
 
     /**
@@ -446,7 +450,7 @@ class SarprasController extends Controller
 
         Ruang::create($data);
 
-        return redirect()->route('sarpras.ruang.index')
+        return redirect()->route('admin.sarpras.ruang.index')
             ->with('success', 'Ruang berhasil ditambahkan.');
     }
 
@@ -517,7 +521,7 @@ class SarprasController extends Controller
 
         $ruang->update($data);
 
-        return redirect()->route('sarpras.ruang.index')
+        return redirect()->route('admin.sarpras.ruang.index')
             ->with('success', 'Ruang berhasil diperbarui.');
     }
 
@@ -533,7 +537,7 @@ class SarprasController extends Controller
 
         $ruang->delete();
 
-        return redirect()->route('sarpras.ruang.index')
+        return redirect()->route('admin.sarpras.ruang.index')
             ->with('success', 'Ruang berhasil dihapus.');
     }
 
@@ -583,7 +587,7 @@ class SarprasController extends Controller
 
         $maintenances = $query->orderBy('tanggal_maintenance', 'desc')->paginate(15);
 
-        return view('sarpras.maintenance.index', compact('maintenances'));
+        return view('admin.sarpras.maintenance.index', compact('maintenances'));
     }
 
     /**
@@ -633,7 +637,7 @@ class SarprasController extends Controller
 
         Maintenance::create($data);
 
-        return redirect()->route('sarpras.maintenance.index')
+        return redirect()->route('admin.sarpras.maintenance.index')
             ->with('success', 'Maintenance berhasil ditambahkan.');
     }
 
@@ -699,7 +703,7 @@ class SarprasController extends Controller
 
         $maintenance->update($data);
 
-        return redirect()->route('sarpras.maintenance.index')
+        return redirect()->route('admin.sarpras.maintenance.index')
             ->with('success', 'Maintenance berhasil diperbarui.');
     }
 
@@ -718,7 +722,7 @@ class SarprasController extends Controller
 
         $maintenance->delete();
 
-        return redirect()->route('sarpras.maintenance.index')
+        return redirect()->route('admin.sarpras.maintenance.index')
             ->with('success', 'Maintenance berhasil dihapus.');
     }
 
@@ -876,5 +880,216 @@ class SarprasController extends Controller
             ->get();
 
         return view('sarpras.bulk-print-barcode', compact('barangs'));
+    }
+
+    /**
+     * Show import form for barang.
+     */
+    public function importBarang()
+    {
+        return view('sarpras.barang.import');
+    }
+
+    /**
+     * Download template Excel for barang import.
+     */
+    public function downloadBarangTemplate()
+    {
+        // Create sample data for template
+        $sampleData = [
+            [
+                'nama' => 'Laptop Dell Inspiron',
+                'kode_barang' => 'LPT-001',
+                'kategori' => 'Elektronik',
+                'ruang' => 'Lab Komputer',
+                'jumlah' => '1',
+                'kondisi' => 'baik',
+                'status' => 'aktif',
+                'harga' => '5000000',
+                'tanggal_pembelian' => '2024-01-15',
+                'supplier' => 'PT Teknologi',
+                'deskripsi' => 'Laptop untuk pembelajaran komputer',
+                'barcode' => '',
+                'qr_code' => ''
+            ],
+            [
+                'nama' => 'Meja Guru',
+                'kode_barang' => 'MJG-001',
+                'kategori' => 'Furnitur',
+                'ruang' => 'Ruang Guru',
+                'jumlah' => '1',
+                'kondisi' => 'baik',
+                'status' => 'aktif',
+                'harga' => '800000',
+                'tanggal_pembelian' => '2024-02-01',
+                'supplier' => 'CV Furniture',
+                'deskripsi' => 'Meja kerja untuk guru',
+                'barcode' => '',
+                'qr_code' => ''
+            ]
+        ];
+
+        // Create a new export class for template
+        $templateExport = new class($sampleData) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            protected $data;
+
+            public function __construct($data)
+            {
+                $this->data = $data;
+            }
+
+            public function array(): array
+            {
+                return $this->data;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'nama',
+                    'kode_barang',
+                    'kategori',
+                    'ruang',
+                    'jumlah',
+                    'kondisi',
+                    'status',
+                    'harga',
+                    'tanggal_pembelian',
+                    'supplier',
+                    'deskripsi',
+                    'barcode',
+                    'qr_code'
+                ];
+            }
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => ['font' => ['bold' => true]],
+                ];
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 25,
+                    'B' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 10,
+                    'F' => 15,
+                    'G' => 15,
+                    'H' => 15,
+                    'I' => 15,
+                    'J' => 20,
+                    'K' => 30,
+                    'L' => 15,
+                    'M' => 15
+                ];
+            }
+        };
+
+        return Excel::download($templateExport, 'template-import-barang.xlsx');
+    }
+
+    /**
+     * Process barang import.
+     */
+    public function processBarangImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            // Get file info for logging
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+
+            Log::info("Starting barang import process", [
+                'file_name' => $fileName,
+                'file_size' => $fileSize,
+                'user_id' => Auth::id()
+            ]);
+
+            // Create import instance
+            $import = new BarangImport();
+
+            // Import the file
+            Excel::import($import, $file);
+
+            // Get import results
+            $importedCount = $import->getRowCount() ?? 0;
+            $errors = $import->errors();
+            $failures = $import->failures();
+
+            Log::info("Barang import completed", [
+                'imported_count' => $importedCount,
+                'errors_count' => count($errors),
+                'failures_count' => count($failures)
+            ]);
+
+            // Prepare success message with details
+            $message = "Data barang berhasil diimpor!";
+            $details = [];
+
+            if ($importedCount > 0) {
+                $details[] = "Berhasil mengimpor {$importedCount} barang";
+            }
+
+            if (count($failures) > 0) {
+                $details[] = count($failures) . " barang gagal diimpor (cek log untuk detail)";
+            }
+
+            if (count($errors) > 0) {
+                $details[] = count($errors) . " barang memiliki error validasi";
+            }
+
+            if (!empty($details)) {
+                $message .= " (" . implode(', ', $details) . ")";
+            }
+
+            return redirect()->route('admin.sarpras.barang.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            Log::error("Barang import failed", [
+                'error' => $e->getMessage(),
+                'file' => $request->file('file')->getClientOriginalName(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export barang data.
+     */
+    public function exportBarang(Request $request)
+    {
+        $query = Barang::with(['kategori', 'ruang']);
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('kondisi') && $request->kondisi !== '') {
+            $query->where('kondisi', $request->kondisi);
+        }
+
+        if ($request->has('kategori_id') && $request->kategori_id !== '') {
+            $query->where('kategori_id', $request->kategori_id);
+        }
+
+        if ($request->has('ruang_id') && $request->ruang_id !== '') {
+            $query->where('ruang_id', $request->ruang_id);
+        }
+
+        $barangs = $query->get();
+
+        return Excel::download(new BarangExport($barangs), 'barang-sarpras-' . date('Y-m-d') . '.xlsx');
     }
 }

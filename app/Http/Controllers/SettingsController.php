@@ -27,11 +27,8 @@ class SettingsController extends Controller
      */
     public function dataManagement()
     {
-        $kelas = DB::table('kelas')->orderBy('nama')->get();
-        $jurusan = DB::table('jurusan')->orderBy('nama')->get();
-        $ekstrakurikuler = DB::table('ekstrakurikuler')->orderBy('nama')->get();
-
-        return view('settings.data-management', compact('kelas', 'jurusan', 'ekstrakurikuler'));
+        // Redirect to DataManagementController
+        return app(DataManagementController::class)->index();
     }
 
     /**

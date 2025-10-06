@@ -9,7 +9,7 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form method="POST" action="{{ route('lulus.update', $kelulusan) }}" enctype="multipart/form-data"
+                    <form method="POST" action="{{ route('admin.lulus.update', $kelulusan) }}" enctype="multipart/form-data"
                         class="space-y-6">
                         @csrf
                         @method('PUT')
@@ -252,7 +252,7 @@
 
                         <!-- Submit Buttons -->
                         <div class="border-t pt-6 flex justify-end space-x-3">
-                            <a href="{{ route('lulus.show', $kelulusan) }}"
+                            <a href="{{ route('admin.lulus.show', $kelulusan) }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                 Batal
                             </a>

@@ -5,11 +5,11 @@
                 {{ __('Detail Data Guru') }}
             </h2>
             <div class="flex space-x-2">
-                <a href="{{ route('guru.edit', $guru) }}"
+                <a href="{{ route('admin.guru.edit', $guru) }}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Edit
                 </a>
-                <a href="{{ route('guru.index') }}"
+                <a href="{{ route('admin.guru.index') }}"
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                     Kembali
                 </a>

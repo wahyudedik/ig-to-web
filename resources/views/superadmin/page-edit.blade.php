@@ -71,7 +71,8 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="/dashboard" class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="text-2xl font-bold text-gray-900 dark:text-white">
                             <i class="fas fa-graduation-cap text-blue-600 mr-2"></i>
                             Superadmin Dashboard
                         </a>
@@ -111,7 +112,7 @@
                         <i class="fas fa-arrow-left mr-2"></i>
                         Back to Pages
                     </a>
-                    <a href="{{ route('pages.show', $page->slug) }}" target="_blank"
+                    <a href="{{ route('pages.public.show', $page->slug) }}" target="_blank"
                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-300">
                         <i class="fas fa-external-link-alt mr-2"></i>
                         View Page
@@ -353,7 +354,7 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 Website Sekolah. Semua hak cipta dilindungi.</p>
+            <p>&copy; {{ date('Y') }} Website Sekolah. Semua hak cipta dilindungi.</p>
         </div>
     </footer>
 

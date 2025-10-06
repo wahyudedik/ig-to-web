@@ -1,0 +1,462 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\Permission;
+use Spatie\Permission\Models\Role;
+
+class PermissionSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $permissions = [
+            // Dashboard permissions
+            [
+                'name' => 'dashboard.view',
+                'display_name' => 'Dashboard - Lihat Data',
+                'description' => 'Permission untuk melihat dashboard utama',
+                'module' => 'dashboard',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'dashboard.manage',
+                'display_name' => 'Dashboard - Kelola Penuh',
+                'description' => 'Permission untuk mengelola dashboard sepenuhnya',
+                'module' => 'dashboard',
+                'action' => 'manage',
+                'guard_name' => 'web'
+            ],
+
+            // User Management permissions
+            [
+                'name' => 'users.view',
+                'display_name' => 'User Management - Lihat Data',
+                'description' => 'Permission untuk melihat data user',
+                'module' => 'users',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'users.create',
+                'display_name' => 'User Management - Tambah Data',
+                'description' => 'Permission untuk menambah user baru',
+                'module' => 'users',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'users.edit',
+                'display_name' => 'User Management - Edit Data',
+                'description' => 'Permission untuk mengedit data user',
+                'module' => 'users',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'users.delete',
+                'display_name' => 'User Management - Hapus Data',
+                'description' => 'Permission untuk menghapus user',
+                'module' => 'users',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'users.export',
+                'display_name' => 'User Management - Export Data',
+                'description' => 'Permission untuk export data user',
+                'module' => 'users',
+                'action' => 'export',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'users.import',
+                'display_name' => 'User Management - Import Data',
+                'description' => 'Permission untuk import data user',
+                'module' => 'users',
+                'action' => 'import',
+                'guard_name' => 'web'
+            ],
+
+            // Guru Management permissions
+            [
+                'name' => 'guru.view',
+                'display_name' => 'Guru Management - Lihat Data',
+                'description' => 'Permission untuk melihat data guru',
+                'module' => 'guru',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'guru.create',
+                'display_name' => 'Guru Management - Tambah Data',
+                'description' => 'Permission untuk menambah data guru',
+                'module' => 'guru',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'guru.edit',
+                'display_name' => 'Guru Management - Edit Data',
+                'description' => 'Permission untuk mengedit data guru',
+                'module' => 'guru',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'guru.delete',
+                'display_name' => 'Guru Management - Hapus Data',
+                'description' => 'Permission untuk menghapus data guru',
+                'module' => 'guru',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'guru.export',
+                'display_name' => 'Guru Management - Export Data',
+                'description' => 'Permission untuk export data guru',
+                'module' => 'guru',
+                'action' => 'export',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'guru.import',
+                'display_name' => 'Guru Management - Import Data',
+                'description' => 'Permission untuk import data guru',
+                'module' => 'guru',
+                'action' => 'import',
+                'guard_name' => 'web'
+            ],
+
+            // Siswa Management permissions
+            [
+                'name' => 'siswa.view',
+                'display_name' => 'Siswa Management - Lihat Data',
+                'description' => 'Permission untuk melihat data siswa',
+                'module' => 'siswa',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'siswa.create',
+                'display_name' => 'Siswa Management - Tambah Data',
+                'description' => 'Permission untuk menambah data siswa',
+                'module' => 'siswa',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'siswa.edit',
+                'display_name' => 'Siswa Management - Edit Data',
+                'description' => 'Permission untuk mengedit data siswa',
+                'module' => 'siswa',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'siswa.delete',
+                'display_name' => 'Siswa Management - Hapus Data',
+                'description' => 'Permission untuk menghapus data siswa',
+                'module' => 'siswa',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'siswa.export',
+                'display_name' => 'Siswa Management - Export Data',
+                'description' => 'Permission untuk export data siswa',
+                'module' => 'siswa',
+                'action' => 'export',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'siswa.import',
+                'display_name' => 'Siswa Management - Import Data',
+                'description' => 'Permission untuk import data siswa',
+                'module' => 'siswa',
+                'action' => 'import',
+                'guard_name' => 'web'
+            ],
+
+            // OSIS System permissions
+            [
+                'name' => 'osis.view',
+                'display_name' => 'OSIS System - Lihat Data',
+                'description' => 'Permission untuk melihat sistem OSIS',
+                'module' => 'osis',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'osis.create',
+                'display_name' => 'OSIS System - Tambah Data',
+                'description' => 'Permission untuk menambah data OSIS',
+                'module' => 'osis',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'osis.edit',
+                'display_name' => 'OSIS System - Edit Data',
+                'description' => 'Permission untuk mengedit data OSIS',
+                'module' => 'osis',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'osis.delete',
+                'display_name' => 'OSIS System - Hapus Data',
+                'description' => 'Permission untuk menghapus data OSIS',
+                'module' => 'osis',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'osis.manage',
+                'display_name' => 'OSIS System - Kelola Penuh',
+                'description' => 'Permission untuk mengelola sistem OSIS sepenuhnya',
+                'module' => 'osis',
+                'action' => 'manage',
+                'guard_name' => 'web'
+            ],
+
+            // Sarpras Management permissions
+            [
+                'name' => 'sarpras.view',
+                'display_name' => 'Sarpras Management - Lihat Data',
+                'description' => 'Permission untuk melihat data sarpras',
+                'module' => 'sarpras',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'sarpras.create',
+                'display_name' => 'Sarpras Management - Tambah Data',
+                'description' => 'Permission untuk menambah data sarpras',
+                'module' => 'sarpras',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'sarpras.edit',
+                'display_name' => 'Sarpras Management - Edit Data',
+                'description' => 'Permission untuk mengedit data sarpras',
+                'module' => 'sarpras',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'sarpras.delete',
+                'display_name' => 'Sarpras Management - Hapus Data',
+                'description' => 'Permission untuk menghapus data sarpras',
+                'module' => 'sarpras',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'sarpras.export',
+                'display_name' => 'Sarpras Management - Export Data',
+                'description' => 'Permission untuk export data sarpras',
+                'module' => 'sarpras',
+                'action' => 'export',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'sarpras.import',
+                'display_name' => 'Sarpras Management - Import Data',
+                'description' => 'Permission untuk import data sarpras',
+                'module' => 'sarpras',
+                'action' => 'import',
+                'guard_name' => 'web'
+            ],
+
+            // Page Management permissions
+            [
+                'name' => 'pages.view',
+                'display_name' => 'Page Management - Lihat Data',
+                'description' => 'Permission untuk melihat halaman',
+                'module' => 'pages',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'pages.create',
+                'display_name' => 'Page Management - Tambah Data',
+                'description' => 'Permission untuk membuat halaman baru',
+                'module' => 'pages',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'pages.edit',
+                'display_name' => 'Page Management - Edit Data',
+                'description' => 'Permission untuk mengedit halaman',
+                'module' => 'pages',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'pages.delete',
+                'display_name' => 'Page Management - Hapus Data',
+                'description' => 'Permission untuk menghapus halaman',
+                'module' => 'pages',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'pages.publish',
+                'display_name' => 'Page Management - Publish',
+                'description' => 'Permission untuk publish halaman',
+                'module' => 'pages',
+                'action' => 'publish',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'pages.unpublish',
+                'display_name' => 'Page Management - Unpublish',
+                'description' => 'Permission untuk unpublish halaman',
+                'module' => 'pages',
+                'action' => 'unpublish',
+                'guard_name' => 'web'
+            ],
+
+            // Instagram Integration permissions
+            [
+                'name' => 'instagram.view',
+                'display_name' => 'Instagram Integration - Lihat Data',
+                'description' => 'Permission untuk melihat integrasi Instagram',
+                'module' => 'instagram',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'instagram.manage',
+                'display_name' => 'Instagram Integration - Kelola Penuh',
+                'description' => 'Permission untuk mengelola integrasi Instagram',
+                'module' => 'instagram',
+                'action' => 'manage',
+                'guard_name' => 'web'
+            ],
+
+            // Settings permissions
+            [
+                'name' => 'settings.view',
+                'display_name' => 'Settings - Lihat Data',
+                'description' => 'Permission untuk melihat pengaturan',
+                'module' => 'settings',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'settings.manage',
+                'display_name' => 'Settings - Kelola Penuh',
+                'description' => 'Permission untuk mengelola pengaturan sistem',
+                'module' => 'settings',
+                'action' => 'manage',
+                'guard_name' => 'web'
+            ],
+
+            // Permission Management permissions
+            [
+                'name' => 'permissions.view',
+                'display_name' => 'Permission Management - Lihat Data',
+                'description' => 'Permission untuk melihat data permission',
+                'module' => 'permissions',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'permissions.create',
+                'display_name' => 'Permission Management - Tambah Data',
+                'description' => 'Permission untuk membuat permission baru',
+                'module' => 'permissions',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'permissions.edit',
+                'display_name' => 'Permission Management - Edit Data',
+                'description' => 'Permission untuk mengedit permission',
+                'module' => 'permissions',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'permissions.delete',
+                'display_name' => 'Permission Management - Hapus Data',
+                'description' => 'Permission untuk menghapus permission',
+                'module' => 'permissions',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+        ];
+
+        foreach ($permissions as $permissionData) {
+            Permission::updateOrCreate(
+                ['name' => $permissionData['name']],
+                $permissionData
+            );
+        }
+
+        // Assign permissions to roles
+        $superadminRole = Role::where('name', 'superadmin')->first();
+        if ($superadminRole) {
+            $superadminRole->givePermissionTo(Permission::all());
+        }
+
+        $adminRole = Role::where('name', 'admin')->first();
+        if ($adminRole) {
+            // Admin gets most permissions except superadmin-only ones
+            $adminPermissions = Permission::whereNotIn('name', [
+                'permissions.create',
+                'permissions.edit',
+                'permissions.delete',
+                'settings.manage'
+            ])->get();
+            $adminRole->givePermissionTo($adminPermissions);
+        }
+
+        $guruRole = Role::where('name', 'guru')->first();
+        if ($guruRole) {
+            $guruPermissions = Permission::whereIn('name', [
+                'dashboard.view',
+                'profile.view',
+                'guru.view',
+                'guru.edit',
+                'osis.view',
+                'pages.view'
+            ])->get();
+            $guruRole->givePermissionTo($guruPermissions);
+        }
+
+        $siswaRole = Role::where('name', 'siswa')->first();
+        if ($siswaRole) {
+            $siswaPermissions = Permission::whereIn('name', [
+                'dashboard.view',
+                'profile.view',
+                'osis.view',
+                'pages.view'
+            ])->get();
+            $siswaRole->givePermissionTo($siswaPermissions);
+        }
+
+        $sarprasRole = Role::where('name', 'sarpras')->first();
+        if ($sarprasRole) {
+            $sarprasPermissions = Permission::whereIn('name', [
+                'dashboard.view',
+                'profile.view',
+                'sarpras.view',
+                'sarpras.create',
+                'sarpras.edit',
+                'sarpras.delete',
+                'sarpras.export',
+                'sarpras.import'
+            ])->get();
+            $sarprasRole->givePermissionTo($sarprasPermissions);
+        }
+    }
+}

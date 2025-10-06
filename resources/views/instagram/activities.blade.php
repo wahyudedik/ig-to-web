@@ -46,7 +46,7 @@
                         <div class="header-top-social">
                             <span>Follow Us: </span>
                             <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                            <a href="{{ route('instagram.activities') }}" target="_blank"><i
+                            <a href="{{ route('public.instagram') }}" target="_blank"><i
                                     class="fab fa-instagram"></i></a>
                             <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
                             <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
@@ -142,11 +142,13 @@
                                     <a class="nav-link dropdown-toggle" href="#"
                                         data-bs-toggle="dropdown">PROFIL</a>
                                     <ul class="dropdown-menu fade-down">
-                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('pages.public.index') }}">HALAMAN</a>
                                         </li>
                                         <li><a class="dropdown-item"
-                                                href="{{ route('instagram.activities') }}">GALERI</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a>
+                                                href="{{ route('public.instagram') }}">GALERI</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.siswa.index') }}">DATA
+                                                SISWA</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -154,12 +156,13 @@
                                     <a class="nav-link dropdown-toggle" href="#"
                                         data-bs-toggle="dropdown">AKADEMIK</a>
                                     <ul class="dropdown-menu fade-down">
-                                        <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA
+                                        <li><a class="dropdown-item" href="{{ route('admin.guru.index') }}">TENAGA
                                                 PENDIDIK</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('pages.public.index') }}">KURIKULUM</a>
                                         </li>
                                         <li><a class="dropdown-item"
-                                                href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                                                href="{{ route('public.kegiatan') }}">KEGIATAN</a></li>
                                     </ul>
                                 </li>
                                 <li class="nav-item dropdown">
@@ -174,26 +177,26 @@
                                             $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
                                         @endphp
                                         @if ($isGrade12)
-                                            <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
+                                            <li><a class="dropdown-item" href="{{ route('admin.lulus.check') }}">🎓
                                                     E-LULUS</a></li>
                                         @endif
-                                        <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
+                                        <li><a class="dropdown-item" href="{{ route('admin.osis.voting') }}">🗳️
+                                                E-OSIS</a>
                                         </li>
-                                        <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢
+                                        <li><a class="dropdown-item" href="{{ route('admin.sarpras.index') }}">🏢
                                                 E-SARPRAS</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
+                                        <li><a class="dropdown-item" href="{{ route('public.instagram') }}">📸
                                                 E-GALERI</a></li>
                                     </ul>
                                 </li>
-                                <li class="nav-item"><a class="nav-link active"
-                                        href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#contact">KONTAK</a></li>
                             @endif
                         </ul>
                         <div class="nav-right">
                             <div class="nav-right-btn mt-2">
                                 @if (Route::has('login'))
                                     @auth
-                                        <a href="{{ url('/dashboard') }}" class="theme-btn"><span
+                                        <a href="{{ route('admin.dashboard') }}" class="theme-btn"><span
                                                 class="fal fa-user"></span> DASHBOARD</a>
                                     @else
                                         <a href="{{ route('login') }}" class="theme-btn"><span
@@ -245,7 +248,8 @@
             </div>
         @endif
 
-        <!-- Instagram Activities Section -->
+        <!-- Event Sections -->
+        <!-- KOMPASS Event -->
         <div class="campus-tour pt-120 pb-80">
             <div class="container">
                 <div class="row align-items-center">
@@ -253,40 +257,142 @@
                         <div class="content-info wow fadeInUp" data-wow-delay=".25s">
                             <div class="site-heading mb-3">
                                 <h2 class="site-title">
-                                    KEGIATAN SEKOLAH
+                                    KOMPASS
                                 </h2>
                             </div>
                             <p class="content-text">
-                                Dokumentasi kegiatan dan aktivitas sekolah yang terintegrasi dengan Instagram.
-                                Semua momen berharga, prestasi siswa, dan kegiatan pembelajaran dapat dilihat
-                                secara real-time melalui galeri digital ini.
+                                {{ cache('event_kompass_description', 'Kompetisi Agama, Sains, dan Seni yang menjadi ajang unjuk kemampuan siswa dalam berbagai bidang. Event ini menampilkan kreativitas dan prestasi siswa dalam mengintegrasikan ilmu agama, sains, dan seni.') }}
                             </p>
                             <p class="content-text mt-2">
-                                Platform ini memungkinkan orang tua, siswa, dan masyarakat untuk mengikuti
-                                perkembangan kegiatan sekolah secara langsung dan transparan.
+                                {{ cache('event_kompass_detail', 'KOMPASS merupakan program unggulan yang mengasah kemampuan siswa dalam berbagai kompetensi, mulai dari keagamaan, sains, hingga seni budaya.') }}
                             </p>
-                            <div class="mt-4">
-                                <button id="refreshBtn" class="theme-btn">
-                                    <i class="fas fa-sync-alt mr-2"></i>
-                                    <span id="refreshText">Perbarui Data</span>
-                                </button>
-                                <div class="mt-2 text-sm text-muted">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    Terakhir diperbarui: <span
-                                        id="lastUpdated">{{ now()->format('d M Y H:i') }}</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="content-img wow fadeInRight" data-wow-delay=".25s">
-                            <img src="{{ asset('assets/img/campus-tour/01.jpg') }}" alt="Kegiatan Sekolah">
+                            <img src="{{ asset('assets/img/campus-tour/01.jpg') }}" alt="KOMPASS">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Instagram Activities Section end -->
+        <!-- KOMPASS end -->
+
+        <!-- MHW Event -->
+        <div class="campus-life pt-120 pb-80">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="content-img wow fadeInLeft" data-wow-delay=".25s">
+                            <img src="{{ asset('assets/img/campus-life/01.jpg') }}" alt="MHW">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="content-info wow fadeInUp" data-wow-delay=".25s">
+                            <div class="site-heading mb-3">
+                                <h2 class="site-title">
+                                    MHW <span>: MAUDU</span> Healthy Work
+                                </h2>
+                            </div>
+                            <p class="content-text">
+                                {{ cache('event_mhw_description', 'Program kesehatan dan kebugaran yang mengintegrasikan nilai-nilai keislaman dengan gaya hidup sehat. MHW membentuk karakter siswa yang sehat jasmani dan rohani.') }}
+                            </p>
+                            <p class="content-text mt-2">
+                                {{ cache('event_mhw_detail', 'MAUDU Healthy Work mengajarkan pentingnya menjaga kesehatan sebagai bagian dari ibadah dan tanggung jawab sebagai muslim yang baik.') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- MHW end -->
+
+        <!-- MAUDUFEST Event -->
+        <div class="campus-tour pt-120 pb-80">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="content-info wow fadeInUp" data-wow-delay=".25s">
+                            <div class="site-heading mb-3">
+                                <h2 class="site-title">
+                                    MAUDUFEST
+                                </h2>
+                            </div>
+                            <p class="content-text">
+                                {{ cache('event_maudufest_description', 'Festival tahunan yang menampilkan berbagai prestasi dan kreativitas siswa MAUDU. Event ini menjadi puncak dari semua kegiatan pembelajaran sepanjang tahun.') }}
+                            </p>
+                            <p class="content-text mt-2">
+                                {{ cache('event_maudufest_detail', 'MAUDUFEST adalah ajang apresiasi bagi semua pencapaian siswa dalam bidang akademik, seni, olahraga, dan keagamaan.') }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="content-img wow fadeInRight" data-wow-delay=".25s">
+                            <img src="{{ asset('assets/img/campus-tour/01.jpg') }}" alt="MAUDUFEST">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- MAUDUFEST end -->
+
+        <!-- MANASIK HAJI Event -->
+        <div class="campus-life pt-120 pb-80">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="content-img wow fadeInLeft" data-wow-delay=".25s">
+                            <img src="{{ asset('assets/img/campus-life/01.jpg') }}" alt="Manasik Haji">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="content-info wow fadeInUp" data-wow-delay=".25s">
+                            <div class="site-heading mb-3">
+                                <h2 class="site-title">
+                                    MANASIK<span> HAJI</span>
+                                </h2>
+                            </div>
+                            <p class="content-text">
+                                {{ cache('event_manasik_description', 'Praktik ibadah haji yang dilakukan di lingkungan sekolah untuk memberikan pengalaman langsung kepada siswa tentang tata cara pelaksanaan haji yang benar.') }}
+                            </p>
+                            <p class="content-text mt-2">
+                                {{ cache('event_manasik_detail', 'Manasik Haji mengajarkan siswa tentang rukun dan sunnah haji, serta nilai-nilai spiritual yang terkandung dalam ibadah haji.') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- MANASIK HAJI end -->
+
+        <!-- RUKYATUL HILAL Event -->
+        <div class="campus-tour pt-120 pb-80">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="content-info wow fadeInUp" data-wow-delay=".25s">
+                            <div class="site-heading mb-3">
+                                <h2 class="site-title">
+                                    RUKYATUL HILAL
+                                </h2>
+                            </div>
+                            <p class="content-text">
+                                {{ cache('event_rukyatul_description', 'Kegiatan pengamatan hilal (bulan sabit) untuk menentukan awal bulan hijriyah. Siswa diajak untuk memahami aspek astronomi dalam penentuan kalender Islam.') }}
+                            </p>
+                            <p class="content-text mt-2">
+                                {{ cache('event_rukyatul_detail', 'Rukyatul Hilal mengintegrasikan ilmu falak dengan pembelajaran agama, memberikan pemahaman yang mendalam tentang sistem kalender Islam.') }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="content-img wow fadeInRight" data-wow-delay=".25s">
+                            <img src="{{ asset('assets/img/campus-tour/01.jpg') }}" alt="Rukyatul Hilal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- RUKYATUL HILAL end -->
 
         <!-- Instagram Feed Gallery -->
         <div class="campus-life pt-120 pb-80">
@@ -406,11 +512,13 @@
                         <div class="footer-widget-box list">
                             <h4 class="footer-widget-title">Link Terkait</h4>
                             <ul class="footer-list">
-                                <li><a href="{{ route('pages.index') }}"><i class="fas fa-caret-right"></i>
+                                <li><a href="{{ route('pages.public.index') }}"><i class="fas fa-caret-right"></i>
                                         Halaman</a></li>
-                                <li><a href="{{ route('guru.index') }}"><i class="fas fa-caret-right"></i> Tenaga
+                                <li><a href="{{ route('admin.guru.index') }}"><i class="fas fa-caret-right"></i>
+                                        Tenaga
                                         Pendidik</a></li>
-                                <li><a href="{{ route('siswa.index') }}"><i class="fas fa-caret-right"></i> Data
+                                <li><a href="{{ route('admin.siswa.index') }}"><i class="fas fa-caret-right"></i>
+                                        Data
                                         Siswa</a></li>
                             </ul>
                         </div>
@@ -419,13 +527,13 @@
                         <div class="footer-widget-box list">
                             <h4 class="footer-widget-title">Layanan Digital</h4>
                             <ul class="footer-list">
-                                <li><a href="{{ route('kelulusan.check') }}"><i class="fas fa-caret-right"></i>
+                                <li><a href="{{ route('admin.lulus.check') }}"><i class="fas fa-caret-right"></i>
                                         E-Lulus</a></li>
-                                <li><a href="{{ route('osis.voting') }}"><i class="fas fa-caret-right"></i>
+                                <li><a href="{{ route('admin.osis.voting') }}"><i class="fas fa-caret-right"></i>
                                         E-OSIS</a></li>
-                                <li><a href="{{ route('sarpras.index') }}"><i class="fas fa-caret-right"></i>
+                                <li><a href="{{ route('admin.sarpras.index') }}"><i class="fas fa-caret-right"></i>
                                         E-Sarpras</a></li>
-                                <li><a href="{{ route('instagram.activities') }}"><i class="fas fa-caret-right"></i>
+                                <li><a href="{{ route('public.instagram') }}"><i class="fas fa-caret-right"></i>
                                         E-Galeri</a></li>
                             </ul>
                         </div>
@@ -436,7 +544,7 @@
                             <div class="footer-newsletter">
                                 <p>Pendidikan Digital, Masa Depan Cerah</p>
                                 <div class="subscribe-form">
-                                    <form action="{{ route('instagram.activities') }}">
+                                    <form action="{{ route('public.instagram') }}">
                                         <button class="theme-btn" type="submit">
                                             LIHAT KEGIATAN <i class="far fa-camera"></i>
                                         </button>
@@ -460,7 +568,7 @@
                         <div class="col-md-6 align-self-center">
                             <ul class="footer-social">
                                 <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                <li><a href="{{ route('instagram.activities') }}" target="_blank"><i
+                                <li><a href="{{ route('public.instagram') }}" target="_blank"><i
                                             class="fab fa-instagram"></i></a></li>
                                 <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
                                 <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>

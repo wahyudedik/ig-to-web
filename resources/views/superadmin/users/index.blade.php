@@ -5,13 +5,29 @@
                 <h1 class="text-2xl font-bold text-slate-900">User Management</h1>
                 <p class="text-slate-600 mt-1">Manage system users and permissions</p>
             </div>
-            <a href="{{ route('superadmin.users.create') }}" class="btn btn-primary">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Add New User
-            </a>
+            <div class="flex items-center space-x-2">
+                <a href="{{ route('admin.superadmin.users.import') }}" class="btn btn-secondary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    Import
+                </a>
+                <a href="{{ route('admin.superadmin.users.export') }}" class="btn btn-secondary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export
+                </a>
+                <a href="{{ route('admin.superadmin.users.create') }}" class="btn btn-primary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add New User
+                </a>
+            </div>
         </div>
     </x-slot>
 
@@ -73,7 +89,7 @@
                                     </td>
                                     <td>
                                         <div class="flex items-center space-x-2">
-                                            <a href="{{ route('superadmin.users.show', $user) }}"
+                                            <a href="{{ route('admin.superadmin.users.show', $user) }}"
                                                 class="text-blue-600 hover:text-blue-800">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -84,7 +100,7 @@
                                                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                 </svg>
                                             </a>
-                                            <a href="{{ route('superadmin.users.edit', $user) }}"
+                                            <a href="{{ route('admin.superadmin.users.edit', $user) }}"
                                                 class="text-green-600 hover:text-green-800">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -93,7 +109,7 @@
                                                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </a>
-                                            <a href="{{ route('superadmin.users.module-access', $user) }}"
+                                            <a href="{{ route('admin.superadmin.users.module-access', $user) }}"
                                                 class="text-purple-600 hover:text-purple-800">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -104,7 +120,7 @@
                                             </a>
                                             @if ($user->user_type !== 'superadmin')
                                                 <form method="POST"
-                                                    action="{{ route('superadmin.users.destroy', $user) }}"
+                                                    action="{{ route('admin.superadmin.users.destroy', $user) }}"
                                                     class="inline"
                                                     onsubmit="return confirm('Are you sure you want to delete this user?')">
                                                     @csrf

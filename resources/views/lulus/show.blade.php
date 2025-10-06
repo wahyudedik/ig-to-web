@@ -10,18 +10,18 @@
             <!-- Header Actions -->
             <div class="mb-6 flex justify-between items-center">
                 <div>
-                    <a href="{{ route('lulus.index') }}"
+                    <a href="{{ route('admin.lulus.index') }}"
                         class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                         Kembali ke Daftar
                     </a>
                 </div>
                 <div class="flex space-x-2">
-                    <a href="{{ route('lulus.edit', $kelulusan) }}"
+                    <a href="{{ route('admin.lulus.edit', $kelulusan) }}"
                         class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                         Edit Data
                     </a>
                     @if ($kelulusan->status === 'lulus')
-                        <a href="{{ route('lulus.certificate', $kelulusan) }}"
+                        <a href="{{ route('admin.lulus.certificate', $kelulusan) }}"
                             class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                             Generate Sertifikat
                         </a>

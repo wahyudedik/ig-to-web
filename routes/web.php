@@ -17,34 +17,71 @@ use App\Http\Controllers\DataManagementController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
+// ========================================
+// PUBLIC ROUTES (Landing Page & Public Features)
+// ========================================
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome'); // Landing page - fully customizable
+})->name('landing');
+
+// Public graduation check
+Route::get('/check-graduation', [KelulusanController::class, 'checkStatus'])->name('public.graduation.check');
+Route::post('/check-graduation', [KelulusanController::class, 'processCheck'])->name('public.graduation.check.process');
+
+// Public Instagram activities (Kegiatan Instagram untuk publik)
+Route::get('/instagram', [InstagramController::class, 'index'])->name('public.instagram');
+Route::get('/instagram/refresh', [InstagramController::class, 'refresh'])->name('public.instagram.refresh');
+Route::get('/instagram/posts', [InstagramController::class, 'getPosts'])->name('public.instagram.posts');
+
+// Alternative route for kegiatan (clean URL)
+Route::get('/kegiatan', [InstagramController::class, 'index'])->name('public.kegiatan');
+
+// Custom pages example
+Route::get('/custom-example', function () {
+    return view('pages.custom-example');
+})->name('public.custom.example');
+
+// ========================================
+// ADMIN PANEL (All authenticated users)
+// ========================================
+
+// Single admin dashboard - redirects based on user role
+Route::get('/admin', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email'])->name('admin.dashboard');
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email'])->name('admin.dashboard.redirect');
+
+// Admin profile management
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('admin.profile.edit');
+    Route::patch('/admin/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
+    Route::delete('/admin/profile', [ProfileController::class, 'destroy'])->name('admin.profile.destroy');
 });
 
-// Main dashboard route - redirects based on user role
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email'])->name('dashboard');
+// ========================================
+// SUPERADMIN ROUTES (Superadmin only)
+// ========================================
 
-// Role-specific dashboard routes
-Route::get('/superadmin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:superadmin'])->name('superadmin.dashboard');
-Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:admin'])->name('admin.dashboard');
-Route::get('/guru/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:guru'])->name('guru.dashboard');
-Route::get('/siswa/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:siswa'])->name('siswa.dashboard');
-Route::get('/sarpras/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified.email', 'role:sarpras'])->name('sarpras.dashboard');
-
-// Superadmin Routes
-Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
-    Route::get('/', [SuperadminController::class, 'dashboard'])->name('index');
+Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('admin/superadmin')->name('admin.superadmin.')->group(function () {
+    Route::get('/', [SuperadminController::class, 'dashboard'])->name('dashboard');
 
     // User Management
     Route::get('/users', [SuperadminController::class, 'users'])->name('users');
     Route::get('/users/create', [SuperadminController::class, 'createUser'])->name('users.create');
     Route::post('/users', [SuperadminController::class, 'storeUser'])->name('users.store');
+
+    // User Import/Export (must be before {user} routes to avoid conflicts)
+    Route::get('/users/import', [SuperadminController::class, 'importUsers'])->name('users.import');
+    Route::get('/users/import/template', [SuperadminController::class, 'downloadUserTemplate'])->name('users.downloadTemplate');
+    Route::post('/users/import', [SuperadminController::class, 'processUserImport'])->name('users.processImport');
+    Route::get('/users/export', [SuperadminController::class, 'exportUsers'])->name('users.export');
+
+    // User CRUD with model binding (must be after specific routes)
     Route::get('/users/{user}', [SuperadminController::class, 'showUser'])->name('users.show');
     Route::get('/users/{user}/edit', [SuperadminController::class, 'editUser'])->name('users.edit');
     Route::put('/users/{user}', [SuperadminController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{user}', [SuperadminController::class, 'destroyUser'])->name('users.destroy');
 
-    // Module Access Management
+    // Module Access Management (must be after other {user} routes)
     Route::get('/users/{user}/module-access', [SuperadminController::class, 'moduleAccess'])->name('users.module-access');
     Route::put('/users/{user}/module-access', [SuperadminController::class, 'updateModuleAccess'])->name('users.module-access.update');
 
@@ -57,167 +94,219 @@ Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')
     Route::get('/instagram-settings/current', [InstagramSettingController::class, 'getSettings'])->name('instagram-settings.current');
 });
 
-// Page Management Routes
-Route::middleware(['auth', 'verified'])->group(function () {
+// Permission Management Routes
+Route::middleware(['auth', 'verified', 'role:superadmin|admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('permissions', App\Http\Controllers\PermissionController::class);
+    Route::get('permissions/bulk-create', [App\Http\Controllers\PermissionController::class, 'bulkCreate'])->name('permissions.bulk-create');
+    Route::post('permissions/bulk-create', [App\Http\Controllers\PermissionController::class, 'bulkStore'])->name('permissions.bulk-store');
+});
+
+// Page Management (Access: admin, superadmin)
+Route::middleware(['auth', 'verified'])->prefix('admin/pages')->name('admin.pages.')->group(function () {
     // Page CRUD Routes
-    Route::resource('pages', PageController::class);
+    Route::get('/', [PageController::class, 'admin'])->name('index');
+    Route::get('/create', [PageController::class, 'create'])->name('create');
+    Route::post('/', [PageController::class, 'store'])->name('store');
+    Route::get('/{page}', [PageController::class, 'show'])->name('show');
+    Route::get('/{page}/edit', [PageController::class, 'edit'])->name('edit');
+    Route::put('/{page}', [PageController::class, 'update'])->name('update');
+    Route::delete('/{page}', [PageController::class, 'destroy'])->name('destroy');
 
     // Page Additional Actions
-    Route::post('/pages/{page}/publish', [PageController::class, 'publish'])->name('pages.publish');
-    Route::post('/pages/{page}/unpublish', [PageController::class, 'unpublish'])->name('pages.unpublish');
-    Route::post('/pages/{page}/duplicate', [PageController::class, 'duplicate'])->name('pages.duplicate');
+    Route::post('/{page}/publish', [PageController::class, 'publish'])->name('publish');
+    Route::post('/{page}/unpublish', [PageController::class, 'unpublish'])->name('unpublish');
+    Route::post('/{page}/duplicate', [PageController::class, 'duplicate'])->name('duplicate');
 
     // Page Versioning Routes
-    Route::get('/pages/{page}/versions', [PageController::class, 'versions'])->name('pages.versions');
-    Route::post('/pages/{page}/versions/{version}/restore', [PageController::class, 'restoreVersion'])->name('pages.versions.restore');
-    Route::get('/pages/{page}/versions/{version1}/compare/{version2}', [PageController::class, 'compareVersions'])->name('pages.versions.compare');
+    Route::get('/{page}/versions', [PageController::class, 'versions'])->name('versions');
+    Route::post('/{page}/versions/{version}/restore', [PageController::class, 'restoreVersion'])->name('versions.restore');
+    Route::get('/{page}/versions/{version1}/compare/{version2}', [PageController::class, 'compareVersions'])->name('versions.compare');
 });
 
-// Guru Management Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('guru', GuruController::class);
+// ========================================
+// MODULE MANAGEMENT ROUTES (Role-based access)
+// ========================================
+
+// Guru Management (Access: guru, admin, superadmin)
+Route::middleware(['auth', 'verified'])->prefix('admin/guru')->name('admin.guru.')->group(function () {
+    // Import/Export routes (must be before resource routes)
+    Route::get('/import', [GuruController::class, 'import'])->name('import');
+    Route::get('/import/template', [GuruController::class, 'downloadTemplate'])->name('downloadTemplate');
+    Route::post('/import', [GuruController::class, 'processImport'])->name('processImport');
+    Route::get('/export', [GuruController::class, 'export'])->name('export');
+
+    // Subject management routes
+    Route::post('/add-subject', [GuruController::class, 'addSubject'])->name('addSubject');
+
+    // CRUD routes
+    Route::get('/', [GuruController::class, 'index'])->name('index');
+    Route::get('/create', [GuruController::class, 'create'])->name('create');
+    Route::post('/', [GuruController::class, 'store'])->name('store');
+    Route::get('/{guru}', [GuruController::class, 'show'])->name('show');
+    Route::get('/{guru}/edit', [GuruController::class, 'edit'])->name('edit');
+    Route::put('/{guru}', [GuruController::class, 'update'])->name('update');
+    Route::delete('/{guru}', [GuruController::class, 'destroy'])->name('destroy');
 });
 
-// Siswa Management Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('siswa', SiswaController::class);
+// Siswa Management (Access: siswa, admin, superadmin)
+Route::middleware(['auth', 'verified'])->prefix('admin/siswa')->name('admin.siswa.')->group(function () {
+    // Import/Export routes (must be before resource routes)
+    Route::get('/import', [SiswaController::class, 'import'])->name('import');
+    Route::get('/import/template', [SiswaController::class, 'downloadTemplate'])->name('downloadTemplate');
+    Route::post('/import', [SiswaController::class, 'processImport'])->name('processImport');
+    Route::get('/export', [SiswaController::class, 'export'])->name('export');
+
+    // CRUD routes
+    Route::get('/', [SiswaController::class, 'index'])->name('index');
+    Route::get('/create', [SiswaController::class, 'create'])->name('create');
+    Route::post('/', [SiswaController::class, 'store'])->name('store');
+    Route::get('/{siswa}', [SiswaController::class, 'show'])->name('show');
+    Route::get('/{siswa}/edit', [SiswaController::class, 'edit'])->name('edit');
+    Route::put('/{siswa}', [SiswaController::class, 'update'])->name('update');
+    Route::delete('/{siswa}', [SiswaController::class, 'destroy'])->name('destroy');
 });
 
-// OSIS Management Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/osis', [OSISController::class, 'index'])->name('osis.index');
-    Route::get('/osis/calon', [OSISController::class, 'calonIndex'])->name('osis.calon.index');
-    Route::get('/osis/calon/create', [OSISController::class, 'createCalon'])->name('osis.calon.create');
-    Route::post('/osis/calon', [OSISController::class, 'storeCalon'])->name('osis.calon.store');
-    Route::get('/osis/calon/{calon}', [OSISController::class, 'showCalon'])->name('osis.calon.show');
-    Route::get('/osis/calon/{calon}/edit', [OSISController::class, 'editCalon'])->name('osis.calon.edit');
-    Route::put('/osis/calon/{calon}', [OSISController::class, 'updateCalon'])->name('osis.calon.update');
-    Route::delete('/osis/calon/{calon}', [OSISController::class, 'destroyCalon'])->name('osis.calon.destroy');
+// OSIS Management (Access: admin, superadmin)
+Route::middleware(['auth', 'verified'])->prefix('admin/osis')->name('admin.osis.')->group(function () {
+    Route::get('/', [OSISController::class, 'index'])->name('index');
 
-    Route::get('/osis/pemilih', [OSISController::class, 'pemilihIndex'])->name('osis.pemilih.index');
-    Route::get('/osis/pemilih/create', [OSISController::class, 'createPemilih'])->name('osis.pemilih.create');
-    Route::post('/osis/pemilih', [OSISController::class, 'storePemilih'])->name('osis.pemilih.store');
-    Route::get('/osis/pemilih/{pemilih}', [OSISController::class, 'showPemilih'])->name('osis.pemilih.show');
-    Route::get('/osis/pemilih/{pemilih}/edit', [OSISController::class, 'editPemilih'])->name('osis.pemilih.edit');
-    Route::put('/osis/pemilih/{pemilih}', [OSISController::class, 'updatePemilih'])->name('osis.pemilih.update');
-    Route::delete('/osis/pemilih/{pemilih}', [OSISController::class, 'destroyPemilih'])->name('osis.pemilih.destroy');
+    // Calon Import/Export routes
+    Route::get('/calon/import', [OSISController::class, 'importCalon'])->name('calon.import');
+    Route::get('/calon/import/template', [OSISController::class, 'downloadCalonTemplate'])->name('calon.downloadTemplate');
+    Route::post('/calon/import', [OSISController::class, 'processCalonImport'])->name('calon.processImport');
+    Route::get('/calon/export', [OSISController::class, 'exportCalon'])->name('calon.export');
 
-    Route::get('/osis/voting', [OSISController::class, 'voting'])->name('osis.voting');
-    Route::post('/osis/vote', [OSISController::class, 'processVote'])->name('osis.vote');
-    Route::get('/osis/results', [OSISController::class, 'results'])->name('osis.results');
-    Route::get('/osis/analytics', [OSISController::class, 'analytics'])->name('osis.analytics');
+    Route::get('/calon', [OSISController::class, 'calonIndex'])->name('calon.index');
+    Route::get('/calon/create', [OSISController::class, 'createCalon'])->name('calon.create');
+    Route::post('/calon', [OSISController::class, 'storeCalon'])->name('calon.store');
+    Route::get('/calon/{calon}', [OSISController::class, 'showCalon'])->name('calon.show');
+    Route::get('/calon/{calon}/edit', [OSISController::class, 'editCalon'])->name('calon.edit');
+    Route::put('/calon/{calon}', [OSISController::class, 'updateCalon'])->name('calon.update');
+    Route::delete('/calon/{calon}', [OSISController::class, 'destroyCalon'])->name('calon.destroy');
+
+    Route::get('/pemilih', [OSISController::class, 'pemilihIndex'])->name('pemilih.index');
+    Route::get('/pemilih/create', [OSISController::class, 'createPemilih'])->name('pemilih.create');
+    Route::post('/pemilih', [OSISController::class, 'storePemilih'])->name('pemilih.store');
+    Route::post('/pemilih/generate-from-users', [OSISController::class, 'generatePemilihFromUsers'])->name('pemilih.generate-from-users');
+
+    // Pemilih CRUD with model binding (must be after specific routes)
+    Route::get('/pemilih/{pemilih}', [OSISController::class, 'showPemilih'])->name('pemilih.show');
+    Route::get('/pemilih/{pemilih}/edit', [OSISController::class, 'editPemilih'])->name('pemilih.edit');
+    Route::put('/pemilih/{pemilih}', [OSISController::class, 'updatePemilih'])->name('pemilih.update');
+    Route::delete('/pemilih/{pemilih}', [OSISController::class, 'destroyPemilih'])->name('pemilih.destroy');
+
+    Route::get('/voting', [OSISController::class, 'voting'])->name('voting');
+    Route::post('/vote', [OSISController::class, 'processVote'])->name('vote');
+    Route::get('/results', [OSISController::class, 'results'])->name('results');
+    Route::get('/analytics', [OSISController::class, 'analytics'])->name('analytics');
+    Route::get('/teacher-view', [OSISController::class, 'teacherView'])->name('teacher-view');
 });
 
-// E-Lulus Management Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    // Specific routes must come BEFORE resource routes
-    Route::get('/lulus/import', [KelulusanController::class, 'import'])->name('lulus.import');
-    Route::post('/lulus/import', [KelulusanController::class, 'processImport'])->name('lulus.processImport');
-    Route::get('/lulus/export', [KelulusanController::class, 'export'])->name('lulus.export');
-    Route::get('/lulus/check', [KelulusanController::class, 'checkStatus'])->name('lulus.check');
-    Route::post('/lulus/check', [KelulusanController::class, 'processCheck'])->name('lulus.processCheck');
-    Route::get('/lulus/{kelulusan}/certificate', [KelulusanController::class, 'generateCertificate'])->name('lulus.certificate');
+// E-Lulus Management (Access: admin, superadmin)
+Route::middleware(['auth', 'verified'])->prefix('admin/lulus')->name('admin.lulus.')->group(function () {
+    // Import/Export routes (must be before resource routes)
+    Route::get('/import', [KelulusanController::class, 'import'])->name('import');
+    Route::get('/import/template', [KelulusanController::class, 'downloadTemplate'])->name('downloadTemplate');
+    Route::post('/import', [KelulusanController::class, 'processImport'])->name('processImport');
+    Route::get('/export', [KelulusanController::class, 'export'])->name('export');
+    Route::get('/check', [KelulusanController::class, 'checkStatus'])->name('check');
+    Route::post('/check', [KelulusanController::class, 'processCheck'])->name('check.process');
 
-    // Resource routes come last
-    Route::resource('lulus', KelulusanController::class)->parameters(['lulus' => 'kelulusan']);
+    // CRUD routes
+    Route::get('/', [KelulusanController::class, 'index'])->name('index');
+    Route::get('/create', [KelulusanController::class, 'create'])->name('create');
+    Route::post('/', [KelulusanController::class, 'store'])->name('store');
+    Route::get('/{kelulusan}', [KelulusanController::class, 'show'])->name('show');
+    Route::get('/{kelulusan}/edit', [KelulusanController::class, 'edit'])->name('edit');
+    Route::put('/{kelulusan}', [KelulusanController::class, 'update'])->name('update');
+    Route::delete('/{kelulusan}', [KelulusanController::class, 'destroy'])->name('destroy');
+    Route::get('/{kelulusan}/certificate', [KelulusanController::class, 'generateCertificate'])->name('certificate');
 });
 
-// Public E-Lulus Routes (tanpa auth)
-Route::get('/kelulusan/check', [KelulusanController::class, 'checkStatus'])->name('kelulusan.check');
-Route::post('/kelulusan/check', [KelulusanController::class, 'processCheck'])->name('kelulusan.processCheck');
-
-// Sarpras Management Routes
-Route::middleware(['auth', 'verified', 'role:sarpras'])->group(function () {
-    Route::get('/sarpras', [SarprasController::class, 'index'])->name('sarpras.index');
-    Route::get('/sarpras/reports', [SarprasController::class, 'reports'])->name('sarpras.reports');
+// Sarpras Management (Access: sarpras, admin, superadmin)
+Route::middleware(['auth', 'verified'])->prefix('admin/sarpras')->name('admin.sarpras.')->group(function () {
+    Route::get('/', [SarprasController::class, 'index'])->name('index');
+    Route::get('/reports', [SarprasController::class, 'reports'])->name('reports');
 
     // Kategori Management
-    Route::get('/sarpras/kategori', [SarprasController::class, 'kategoriIndex'])->name('sarpras.kategori.index');
-    Route::get('/sarpras/kategori/create', [SarprasController::class, 'createKategori'])->name('sarpras.kategori.create');
-    Route::post('/sarpras/kategori', [SarprasController::class, 'storeKategori'])->name('sarpras.kategori.store');
-    Route::get('/sarpras/kategori/{kategori}/edit', [SarprasController::class, 'editKategori'])->name('sarpras.kategori.edit');
-    Route::put('/sarpras/kategori/{kategori}', [SarprasController::class, 'updateKategori'])->name('sarpras.kategori.update');
-    Route::delete('/sarpras/kategori/{kategori}', [SarprasController::class, 'destroyKategori'])->name('sarpras.kategori.destroy');
+    Route::get('/kategori', [SarprasController::class, 'kategoriIndex'])->name('kategori.index');
+    Route::get('/kategori/create', [SarprasController::class, 'createKategori'])->name('kategori.create');
+    Route::post('/kategori', [SarprasController::class, 'storeKategori'])->name('kategori.store');
+    Route::get('/kategori/{kategori}/edit', [SarprasController::class, 'editKategori'])->name('kategori.edit');
+    Route::put('/kategori/{kategori}', [SarprasController::class, 'updateKategori'])->name('kategori.update');
+    Route::delete('/kategori/{kategori}', [SarprasController::class, 'destroyKategori'])->name('kategori.destroy');
 
     // Barang Management
-    Route::get('/sarpras/barang', [SarprasController::class, 'barangIndex'])->name('sarpras.barang.index');
-    Route::get('/sarpras/barang/create', [SarprasController::class, 'createBarang'])->name('sarpras.barang.create');
-    Route::post('/sarpras/barang', [SarprasController::class, 'storeBarang'])->name('sarpras.barang.store');
-    Route::get('/sarpras/barang/{barang}', [SarprasController::class, 'showBarang'])->name('sarpras.barang.show');
-    Route::get('/sarpras/barang/{barang}/edit', [SarprasController::class, 'editBarang'])->name('sarpras.barang.edit');
-    Route::put('/sarpras/barang/{barang}', [SarprasController::class, 'updateBarang'])->name('sarpras.barang.update');
-    Route::delete('/sarpras/barang/{barang}', [SarprasController::class, 'destroyBarang'])->name('sarpras.barang.destroy');
+    Route::get('/barang', [SarprasController::class, 'barangIndex'])->name('barang.index');
+    Route::get('/barang/create', [SarprasController::class, 'createBarang'])->name('barang.create');
+    Route::post('/barang', [SarprasController::class, 'storeBarang'])->name('barang.store');
+
+    // Barang Import/Export (must be before {barang} routes to avoid conflicts)
+    Route::get('/barang/import', [SarprasController::class, 'importBarang'])->name('barang.import');
+    Route::get('/barang/import/template', [SarprasController::class, 'downloadBarangTemplate'])->name('barang.downloadTemplate');
+    Route::post('/barang/import', [SarprasController::class, 'processBarangImport'])->name('barang.processImport');
+    Route::get('/barang/export', [SarprasController::class, 'exportBarang'])->name('barang.export');
+
+    // Barang CRUD with model binding (must be after specific routes)
+    Route::get('/barang/{barang}', [SarprasController::class, 'showBarang'])->name('barang.show');
+    Route::get('/barang/{barang}/edit', [SarprasController::class, 'editBarang'])->name('barang.edit');
+    Route::put('/barang/{barang}', [SarprasController::class, 'updateBarang'])->name('barang.update');
+    Route::delete('/barang/{barang}', [SarprasController::class, 'destroyBarang'])->name('barang.destroy');
 
     // Ruang Management
-    Route::get('/sarpras/ruang', [SarprasController::class, 'ruangIndex'])->name('sarpras.ruang.index');
-    Route::get('/sarpras/ruang/create', [SarprasController::class, 'createRuang'])->name('sarpras.ruang.create');
-    Route::post('/sarpras/ruang', [SarprasController::class, 'storeRuang'])->name('sarpras.ruang.store');
-    Route::get('/sarpras/ruang/{ruang}', [SarprasController::class, 'showRuang'])->name('sarpras.ruang.show');
-    Route::get('/sarpras/ruang/{ruang}/edit', [SarprasController::class, 'editRuang'])->name('sarpras.ruang.edit');
-    Route::put('/sarpras/ruang/{ruang}', [SarprasController::class, 'updateRuang'])->name('sarpras.ruang.update');
-    Route::delete('/sarpras/ruang/{ruang}', [SarprasController::class, 'destroyRuang'])->name('sarpras.ruang.destroy');
+    Route::get('/ruang', [SarprasController::class, 'ruangIndex'])->name('ruang.index');
+    Route::get('/ruang/create', [SarprasController::class, 'createRuang'])->name('ruang.create');
+    Route::post('/ruang', [SarprasController::class, 'storeRuang'])->name('ruang.store');
+    Route::get('/ruang/{ruang}', [SarprasController::class, 'showRuang'])->name('ruang.show');
+    Route::get('/ruang/{ruang}/edit', [SarprasController::class, 'editRuang'])->name('ruang.edit');
+    Route::put('/ruang/{ruang}', [SarprasController::class, 'updateRuang'])->name('ruang.update');
+    Route::delete('/ruang/{ruang}', [SarprasController::class, 'destroyRuang'])->name('ruang.destroy');
 
     // Maintenance Management
-    Route::get('/sarpras/maintenance', [SarprasController::class, 'maintenanceIndex'])->name('sarpras.maintenance.index');
-    Route::get('/sarpras/maintenance/create', [SarprasController::class, 'createMaintenance'])->name('sarpras.maintenance.create');
-    Route::post('/sarpras/maintenance', [SarprasController::class, 'storeMaintenance'])->name('sarpras.maintenance.store');
-    Route::get('/sarpras/maintenance/{maintenance}', [SarprasController::class, 'showMaintenance'])->name('sarpras.maintenance.show');
-    Route::get('/sarpras/maintenance/{maintenance}/edit', [SarprasController::class, 'editMaintenance'])->name('sarpras.maintenance.edit');
-    Route::put('/sarpras/maintenance/{maintenance}', [SarprasController::class, 'updateMaintenance'])->name('sarpras.maintenance.update');
-    Route::delete('/sarpras/maintenance/{maintenance}', [SarprasController::class, 'destroyMaintenance'])->name('sarpras.maintenance.destroy');
+    Route::get('/maintenance', [SarprasController::class, 'maintenanceIndex'])->name('maintenance.index');
+    Route::get('/maintenance/create', [SarprasController::class, 'createMaintenance'])->name('maintenance.create');
+    Route::post('/maintenance', [SarprasController::class, 'storeMaintenance'])->name('maintenance.store');
+    Route::get('/maintenance/{maintenance}', [SarprasController::class, 'showMaintenance'])->name('maintenance.show');
+    Route::get('/maintenance/{maintenance}/edit', [SarprasController::class, 'editMaintenance'])->name('maintenance.edit');
+    Route::put('/maintenance/{maintenance}', [SarprasController::class, 'updateMaintenance'])->name('maintenance.update');
+    Route::delete('/maintenance/{maintenance}', [SarprasController::class, 'destroyMaintenance'])->name('maintenance.destroy');
 });
 
-// Instagram Activities Routes
-Route::get('/kegiatan', [InstagramController::class, 'index'])->name('instagram.activities');
-Route::get('/kegiatan/refresh', [InstagramController::class, 'refresh'])->name('instagram.refresh');
-Route::get('/kegiatan/posts', [InstagramController::class, 'getPosts'])->name('instagram.posts');
-Route::get('/kegiatan/account', [InstagramController::class, 'getAccountInfo'])->name('instagram.account');
-Route::get('/kegiatan/validate', [InstagramController::class, 'validateConnection'])->name('instagram.validate');
+// ========================================
+// INSTAGRAM MANAGEMENT ROUTES (Admin only)
+// ========================================
 
-// Instagram Analytics Routes
-Route::get('/instagram/analytics', [InstagramAnalyticsController::class, 'index'])->name('instagram.analytics');
-Route::get('/instagram/analytics/data', [InstagramAnalyticsController::class, 'getAnalytics'])->name('instagram.analytics.data');
-Route::get('/instagram/analytics/engagement', [InstagramAnalyticsController::class, 'getEngagementMetrics'])->name('instagram.analytics.engagement');
-Route::get('/instagram/analytics/top-posts', [InstagramAnalyticsController::class, 'getTopPosts'])->name('instagram.analytics.top-posts');
-Route::post('/instagram/analytics/refresh', [InstagramAnalyticsController::class, 'refreshAnalytics'])->name('instagram.analytics.refresh');
+Route::middleware(['auth', 'verified'])->prefix('admin/instagram')->name('admin.instagram.')->group(function () {
+    // Instagram Management (Admin only - untuk pengaturan, bukan kegiatan publik)
+    Route::get('/management', [InstagramManagementController::class, 'index'])->name('management');
+    Route::post('/management/update-config', [InstagramManagementController::class, 'updateConfig'])->name('management.update-config');
+    Route::get('/management/test-connection', [InstagramManagementController::class, 'testConnection'])->name('management.test-connection');
+    Route::post('/management/filter-posts', [InstagramManagementController::class, 'filterPosts'])->name('management.filter-posts');
+    Route::post('/management/schedule-content', [InstagramManagementController::class, 'scheduleContent'])->name('management.schedule-content');
+    Route::get('/management/scheduled-content', [InstagramManagementController::class, 'getScheduledContent'])->name('management.scheduled-content');
+    Route::post('/management/cancel-scheduled', [InstagramManagementController::class, 'cancelScheduledContent'])->name('management.cancel-scheduled');
+    Route::get('/management/insights', [InstagramManagementController::class, 'getInsights'])->name('management.insights');
 
-// Instagram Management Routes
-Route::get('/instagram/management', [InstagramManagementController::class, 'index'])->name('instagram.management');
-Route::post('/instagram/management/update-config', [InstagramManagementController::class, 'updateConfig'])->name('instagram.management.update-config');
-Route::get('/instagram/management/test-connection', [InstagramManagementController::class, 'testConnection'])->name('instagram.management.test-connection');
-Route::post('/instagram/management/filter-posts', [InstagramManagementController::class, 'filterPosts'])->name('instagram.management.filter-posts');
-Route::post('/instagram/management/schedule-content', [InstagramManagementController::class, 'scheduleContent'])->name('instagram.management.schedule-content');
-Route::get('/instagram/management/scheduled-content', [InstagramManagementController::class, 'getScheduledContent'])->name('instagram.management.scheduled-content');
-Route::post('/instagram/management/cancel-scheduled', [InstagramManagementController::class, 'cancelScheduledContent'])->name('instagram.management.cancel-scheduled');
-Route::get('/instagram/management/insights', [InstagramManagementController::class, 'getInsights'])->name('instagram.management.insights');
+    // Instagram Analytics (Admin only)
+    Route::get('/analytics', [InstagramAnalyticsController::class, 'index'])->name('analytics');
+    Route::get('/analytics/data', [InstagramAnalyticsController::class, 'getAnalyticsData'])->name('analytics.data');
+    Route::get('/analytics/engagement', [InstagramAnalyticsController::class, 'getEngagementData'])->name('analytics.engagement');
+    Route::post('/analytics/refresh', [InstagramAnalyticsController::class, 'refreshAnalytics'])->name('analytics.refresh');
+    Route::get('/analytics/top-posts', [InstagramAnalyticsController::class, 'getTopPosts'])->name('analytics.top-posts');
 
-// Page Management Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    // Page CRUD Routes
-    Route::resource('pages', PageController::class);
-    Route::post('pages/{page}/publish', [PageController::class, 'publish'])->name('pages.publish');
-    Route::post('pages/{page}/unpublish', [PageController::class, 'unpublish'])->name('pages.unpublish');
-    Route::post('pages/{page}/duplicate', [PageController::class, 'duplicate'])->name('pages.duplicate');
-    Route::get('pages/{page}/versions', [PageController::class, 'versions'])->name('pages.versions');
-    Route::post('pages/{page}/versions/{version}/restore', [PageController::class, 'restoreVersion'])->name('pages.versions.restore');
-    Route::get('pages/{page}/versions/{version1}/compare/{version2}', [PageController::class, 'compareVersions'])->name('pages.versions.compare');
+    // Instagram Account Info (Admin only)
+    Route::get('/account', [InstagramController::class, 'getAccountInfo'])->name('account');
+    Route::get('/validate', [InstagramController::class, 'validateConnection'])->name('validate');
+    Route::get('/posts', [InstagramController::class, 'getPosts'])->name('posts');
+    Route::get('/refresh', [InstagramController::class, 'refresh'])->name('refresh');
 });
 
-// Public Page Routes
-Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
-Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show');
+// ========================================
+// PUBLIC PAGE ROUTES (Must be last to avoid conflicts)
+// ========================================
 
-// Admin Page Routes (Superadmin only)
-Route::middleware(['auth', 'verified', 'role:superadmin'])->group(function () {
-    Route::get('/admin/pages', [PageController::class, 'admin'])->name('pages.admin');
-    Route::resource('admin/pages', PageController::class)->except(['index', 'show']);
-    Route::post('/admin/pages/{page}/publish', [PageController::class, 'publish'])->name('pages.publish');
-    Route::post('/admin/pages/{page}/unpublish', [PageController::class, 'unpublish'])->name('pages.unpublish');
-    Route::post('/admin/pages/{page}/duplicate', [PageController::class, 'duplicate'])->name('pages.duplicate');
-    Route::get('/admin/pages/{page}/versions', [PageController::class, 'versions'])->name('pages.versions');
-    Route::post('/admin/pages/{page}/versions/{version}/restore', [PageController::class, 'restoreVersion'])->name('pages.versions.restore');
-    Route::get('/admin/pages/{page}/versions/{version1}/compare/{version2}', [PageController::class, 'compareVersions'])->name('pages.versions.compare');
-});
+Route::get('/pages', [PageController::class, 'publicIndex'])->name('pages.public.index');
+Route::get('/page/{slug}', [PageController::class, 'publicShow'])->name('pages.public.show');
 
 // Documentation Routes
 Route::get('/docs/instagram-setup', function () {
@@ -228,60 +317,64 @@ Route::get('/docs/instagram-setup', function () {
 Route::get('/barcode/{code}', [SarprasController::class, 'generateBarcode'])->name('sarpras.barcode');
 Route::get('/qrcode/{code}', [SarprasController::class, 'generateQRCode'])->name('sarpras.qrcode');
 
+// Additional Barcode Routes (for authenticated users)
+Route::middleware(['auth', 'verified', 'role:sarpras'])->group(function () {
+    Route::post('/sarpras/barcode/generate-all', [SarprasController::class, 'generateAllBarcodes'])->name('sarpras.barcode.generate-all');
+    Route::get('/sarpras/barcode/print/{barang}', [SarprasController::class, 'printBarcode'])->name('sarpras.barcode.print');
+    Route::post('/sarpras/barcode/bulk-print', [SarprasController::class, 'bulkPrintBarcodes'])->name('sarpras.barcode.bulk-print');
+    Route::post('/sarpras/barcode/scan', [SarprasController::class, 'scanBarcode'])->name('sarpras.barcode.scan');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Email Verification Routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/email/verify', [App\Http\Controllers\Auth\EmailVerificationController::class, 'show'])->name('verification.notice');
-    Route::post('/email/verify/resend', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])->name('verification.resend');
-});
-
-Route::get('/email/verify/{id}/{hash}/{token}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verifyRegistration'])
-    ->middleware(['signed'])
-    ->name('verification.verify');
+// Email Verification Routes - handled in routes/auth.php
 
 Route::get('/email/verify/resend', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resendForGuest'])->name('verification.resend-guest');
 Route::post('/email/verify/resend', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resendForGuest'])->name('verification.resend-guest.post');
 
+// Email Verification for Authenticated Users (moved from auth.php)
+Route::post('/email/verify/resend-auth', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])->name('verification.resend')->middleware('auth');
+
 // Registration Routes
-Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+// Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+// Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
-// Data Management AJAX Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    // Kelas Management
-    Route::post('/api/kelas', [DataManagementController::class, 'addKelas'])->name('api.kelas.add');
-    Route::put('/api/kelas/{id}', [DataManagementController::class, 'updateKelas'])->name('api.kelas.update');
-    Route::delete('/api/kelas/{id}', [DataManagementController::class, 'deleteKelas'])->name('api.kelas.delete');
+// ========================================
+// SETTINGS & API ROUTES (Admin only)
+// ========================================
 
-    // Jurusan Management
-    Route::post('/api/jurusan', [DataManagementController::class, 'addJurusan'])->name('api.jurusan.add');
-    Route::put('/api/jurusan/{id}', [DataManagementController::class, 'updateJurusan'])->name('api.jurusan.update');
-    Route::delete('/api/jurusan/{id}', [DataManagementController::class, 'deleteJurusan'])->name('api.jurusan.delete');
-
-    // Ekstrakurikuler Management
-    Route::post('/api/ekstrakurikuler', [DataManagementController::class, 'addEkstrakurikuler'])->name('api.ekstrakurikuler.add');
-    Route::put('/api/ekstrakurikuler/{id}', [DataManagementController::class, 'updateEkstrakurikuler'])->name('api.ekstrakurikuler.update');
-    Route::delete('/api/ekstrakurikuler/{id}', [DataManagementController::class, 'deleteEkstrakurikuler'])->name('api.ekstrakurikuler.delete');
-
-    // User Management
-    Route::post('/api/users', [DataManagementController::class, 'addUser'])->name('api.users.add');
-    Route::put('/api/users/{id}', [DataManagementController::class, 'updateUser'])->name('api.users.update');
-    Route::delete('/api/users/{id}', [DataManagementController::class, 'deleteUser'])->name('api.users.delete');
-
-    // Mata Pelajaran Management
-    Route::post('/api/mata-pelajaran', [DataManagementController::class, 'addMataPelajaran'])->name('api.mata-pelajaran.add');
-    Route::put('/api/mata-pelajaran/{id}', [DataManagementController::class, 'updateMataPelajaran'])->name('api.mata-pelajaran.update');
-    Route::delete('/api/mata-pelajaran/{id}', [DataManagementController::class, 'deleteMataPelajaran'])->name('api.mata-pelajaran.delete');
-
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     // Settings Routes
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::get('/settings/data-management', [SettingsController::class, 'dataManagement'])->name('settings.data-management');
     Route::get('/settings/kelas-jurusan', [SettingsController::class, 'kelasJurusan'])->name('settings.kelas-jurusan');
+
+    // Data Management CRUD Routes
+    Route::prefix('settings/data-management')->name('settings.data-management.')->group(function () {
+        // Kelas routes
+        Route::post('/kelas', [DataManagementController::class, 'storeKelas'])->name('kelas.store');
+        Route::put('/kelas/{id}', [DataManagementController::class, 'updateKelas'])->name('kelas.update');
+        Route::delete('/kelas/{id}', [DataManagementController::class, 'deleteKelas'])->name('kelas.delete');
+
+        // Jurusan routes
+        Route::post('/jurusan', [DataManagementController::class, 'storeJurusan'])->name('jurusan.store');
+        Route::put('/jurusan/{id}', [DataManagementController::class, 'updateJurusan'])->name('jurusan.update');
+        Route::delete('/jurusan/{id}', [DataManagementController::class, 'deleteJurusan'])->name('jurusan.delete');
+
+        // Ekstrakurikuler routes
+        Route::post('/ekstrakurikuler', [DataManagementController::class, 'storeEkstrakurikuler'])->name('ekstrakurikuler.store');
+        Route::put('/ekstrakurikuler/{id}', [DataManagementController::class, 'updateEkstrakurikuler'])->name('ekstrakurikuler.update');
+        Route::delete('/ekstrakurikuler/{id}', [DataManagementController::class, 'deleteEkstrakurikuler'])->name('ekstrakurikuler.delete');
+
+        // Mata Pelajaran routes
+        Route::post('/mata-pelajaran', [DataManagementController::class, 'storeMataPelajaran'])->name('mata-pelajaran.store');
+        Route::put('/mata-pelajaran/{id}', [DataManagementController::class, 'updateMataPelajaran'])->name('mata-pelajaran.update');
+        Route::delete('/mata-pelajaran/{id}', [DataManagementController::class, 'deleteMataPelajaran'])->name('mata-pelajaran.delete');
+    });
 
     // Landing Page Management Routes
     Route::get('/settings/landing-page', [SettingsController::class, 'landingPage'])->name('settings.landing-page');
@@ -289,6 +382,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/settings/landing-page/reset', [SettingsController::class, 'resetLandingPage'])->name('settings.landing-page.reset');
     Route::get('/settings/seo', [SettingsController::class, 'seoSettings'])->name('settings.seo');
     Route::post('/settings/seo', [SettingsController::class, 'updateSeoSettings'])->name('settings.seo.update');
+
+
+    // Premium API Routes for Envato
+    // Dashboard Analytics API
+    Route::get('/api/dashboard/analytics', [App\Http\Controllers\API\DashboardAnalyticsController::class, 'index'])->name('api.dashboard.analytics');
+
+    // System Health API
+    Route::get('/api/system/health', [App\Http\Controllers\API\SystemHealthController::class, 'index'])->name('api.system.health');
+    Route::get('/api/system/metrics', [App\Http\Controllers\API\SystemHealthController::class, 'metrics'])->name('api.system.metrics');
+
+    // Notification API
+    Route::prefix('api/notifications')->group(function () {
+        Route::get('/', [App\Http\Controllers\API\NotificationController::class, 'getUserNotifications'])->name('api.notifications.index');
+        Route::get('/stats', [App\Http\Controllers\API\NotificationController::class, 'getNotificationStats'])->name('api.notifications.stats');
+        Route::get('/templates', [App\Http\Controllers\API\NotificationController::class, 'getNotificationTemplates'])->name('api.notifications.templates');
+        Route::post('/mark-read', [App\Http\Controllers\API\NotificationController::class, 'markAsRead'])->name('api.notifications.mark-read');
+        Route::post('/mark-all-read', [App\Http\Controllers\API\NotificationController::class, 'markAllAsRead'])->name('api.notifications.mark-all-read');
+        Route::delete('/{id}', [App\Http\Controllers\API\NotificationController::class, 'deleteNotification'])->name('api.notifications.delete');
+    });
+
+    // Admin-only System Notifications
+    Route::post('/api/admin/notifications/send', [App\Http\Controllers\API\NotificationController::class, 'sendSystemNotification'])->name('api.admin.notifications.send');
+    Route::post('/api/admin/notifications/bulk-send', [App\Http\Controllers\API\NotificationController::class, 'sendBulkNotifications'])->name('api.admin.notifications.bulk-send');
 });
 
 require __DIR__ . '/auth.php';

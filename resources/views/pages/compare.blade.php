@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">{{ $page->title }}</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('pages.versions', $page) }}" class="btn btn-secondary">
+                <a href="{{ route('admin.pages.versions', $page) }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -90,7 +90,7 @@
         <div class="mt-8 bg-white rounded-xl border border-slate-200 p-6">
             <h3 class="text-lg font-semibold text-slate-900 mb-4">Actions</h3>
             <div class="flex items-center space-x-4">
-                <form method="POST" action="{{ route('pages.versions.restore', [$page, $version1]) }}" class="inline"
+                <form method="POST" action="{{ route('admin.pages.versions.restore', [$page, $version1]) }}" class="inline"
                     onsubmit="return confirm('Are you sure you want to restore version {{ $version1->version_number }}?')">
                     @csrf
                     <button type="submit" class="btn btn-primary">
@@ -101,7 +101,7 @@
                         Restore Version {{ $version1->version_number }}
                     </button>
                 </form>
-                <form method="POST" action="{{ route('pages.versions.restore', [$page, $version2]) }}" class="inline"
+                <form method="POST" action="{{ route('admin.pages.versions.restore', [$page, $version2]) }}" class="inline"
                     onsubmit="return confirm('Are you sure you want to restore version {{ $version2->version_number }}?')">
                     @csrf
                     <button type="submit" class="btn btn-secondary">

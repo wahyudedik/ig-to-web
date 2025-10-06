@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Tambah Data Guru') }}
             </h2>
-            <a href="{{ route('guru.index') }}"
+            <a href="{{ route('admin.guru.index') }}"
                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                 Kembali
             </a>
@@ -15,7 +15,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('guru.store') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('admin.guru.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -337,8 +337,7 @@
                                             Tambah
                                         </button>
                                     </div>
-                                    <div
-                                        class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-2">
+                                    <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-2">
                                         @if (count($subjects) > 0)
                                             @foreach ($subjects as $subject)
                                                 <label class="flex items-center">
@@ -429,7 +428,7 @@
 
                         <!-- Submit Button -->
                         <div class="mt-8 flex justify-end space-x-4">
-                            <a href="{{ route('guru.index') }}"
+                            <a href="{{ route('admin.guru.index') }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                 Batal
                             </a>
@@ -544,7 +543,7 @@
                 button.textContent = 'Loading...';
                 button.disabled = true;
 
-                fetch('/api/mata-pelajaran', {
+                fetch('{{ route('admin.guru.addSubject') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

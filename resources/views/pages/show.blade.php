@@ -134,7 +134,7 @@
                             @endif
                             <div class="p-6">
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                                    <a href="{{ route('pages.show', $relatedPage->slug) }}"
+                                    <a href="{{ route('pages.public.show', $relatedPage->slug) }}"
                                         class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                                         {{ $relatedPage->title }}
                                     </a>
@@ -189,7 +189,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                <p>&copy; 2024 {{ config('app.name') }}. Semua hak cipta dilindungi.</p>
+                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. Semua hak cipta dilindungi.</p>
             </div>
         </div>
     </footer>

@@ -51,14 +51,14 @@
                     <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
                         <h4 class="text-lg font-semibold text-green-900 mb-4">Template File</h4>
                         <p class="text-green-800 mb-4">Download template file Excel untuk memudahkan pengisian data:</p>
-                        <a href="#"
-                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        <a href="{{ route('admin.lulus.downloadTemplate') }}"
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-block">
                             Download Template Excel
                         </a>
                     </div>
 
                     <!-- Upload Form -->
-                    <form method="POST" action="{{ route('lulus.processImport') }}" enctype="multipart/form-data"
+                    <form method="POST" action="{{ route('admin.lulus.processImport') }}" enctype="multipart/form-data"
                         class="space-y-6">
                         @csrf
 
@@ -112,7 +112,7 @@
 
                         <!-- Submit Buttons -->
                         <div class="flex justify-end space-x-3">
-                            <a href="{{ route('lulus.index') }}"
+                            <a href="{{ route('admin.lulus.index') }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                 Batal
                             </a>

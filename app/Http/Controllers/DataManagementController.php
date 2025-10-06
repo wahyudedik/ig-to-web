@@ -5,444 +5,413 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use App\Models\MataPelajaran;
 
 class DataManagementController extends Controller
 {
-    // Kelas Management
-    public function addKelas(Request $request)
+    /**
+     * Display the data management dashboard.
+     */
+    public function index()
     {
-        $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255|unique:kelas,nama'
-        ]);
+        // Get counts for statistics
+        $kelasCount = DB::table('kelas')->count();
+        $jurusanCount = DB::table('jurusan')->count();
+        $ekstrakurikulerCount = DB::table('ekstrakurikuler')->count();
+        $mataPelajaranCount = DB::table('mata_pelajaran')->count();
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
-        }
+        // Get data for tables
+        $kelas = DB::table('kelas')->orderBy('nama')->get();
+        $jurusan = DB::table('jurusan')->orderBy('nama')->get();
+        $ekstrakurikuler = DB::table('ekstrakurikuler')->orderBy('nama')->get();
+        $mataPelajaran = DB::table('mata_pelajaran')->orderBy('nama')->get();
 
+        return view('settings.data-management', compact(
+            'kelasCount',
+            'jurusanCount',
+            'ekstrakurikulerCount',
+            'mataPelajaranCount',
+            'kelas',
+            'jurusan',
+            'ekstrakurikuler',
+            'mataPelajaran'
+        ));
+    }
+
+    /**
+     * Store a new kelas.
+     */
+    public function storeKelas(Request $request)
+    {
         try {
-            $kelas = DB::table('kelas')->insertGetId([
+            $validator = Validator::make($request->all(), [
+                'nama' => 'required|string|max:255|unique:kelas,nama',
+                'deskripsi' => 'nullable|string|max:500',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $id = DB::table('kelas')->insertGetId([
                 'nama' => $request->nama,
+                'deskripsi' => $request->deskripsi,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Kelas berhasil ditambahkan',
-                'data' => ['id' => $kelas, 'nama' => $request->nama]
+                'message' => 'Kelas berhasil ditambahkan.',
+                'data' => [
+                    'id' => $id,
+                    'nama' => $request->nama,
+                    'deskripsi' => $request->deskripsi
+                ]
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error in storeKelas: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menambahkan kelas: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
     }
 
+    /**
+     * Update a kelas.
+     */
     public function updateKelas(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255|unique:kelas,nama,' . $id
+            'nama' => 'required|string|max:255|unique:kelas,nama,' . $id,
+            'deskripsi' => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        try {
-            DB::table('kelas')->where('id', $id)->update([
+        DB::table('kelas')->where('id', $id)->update([
+            'nama' => $request->nama,
+            'deskripsi' => $request->deskripsi,
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kelas berhasil diperbarui.',
+            'data' => [
+                'id' => $id,
                 'nama' => $request->nama,
-                'updated_at' => now()
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Kelas berhasil diupdate',
-                'data' => ['id' => $id, 'nama' => $request->nama]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate kelas: ' . $e->getMessage()
-            ], 500);
-        }
+                'deskripsi' => $request->deskripsi
+            ]
+        ]);
     }
 
+    /**
+     * Delete a kelas.
+     */
     public function deleteKelas($id)
     {
-        try {
-            DB::table('kelas')->where('id', $id)->delete();
+        // Check if kelas is being used by students
+        $siswaCount = DB::table('siswas')->where('kelas', DB::table('kelas')->where('id', $id)->value('nama'))->count();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Kelas berhasil dihapus'
-            ]);
-        } catch (\Exception $e) {
+        if ($siswaCount > 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus kelas: ' . $e->getMessage()
-            ], 500);
+                'message' => "Tidak dapat menghapus kelas karena masih digunakan oleh {$siswaCount} siswa."
+            ], 400);
         }
+
+        DB::table('kelas')->where('id', $id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kelas berhasil dihapus.'
+        ]);
     }
 
-    // Jurusan Management
-    public function addJurusan(Request $request)
+    /**
+     * Store a new jurusan.
+     */
+    public function storeJurusan(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255|unique:jurusan,nama'
+            'nama' => 'required|string|max:255|unique:jurusan,nama',
+            'deskripsi' => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        try {
-            $jurusan = DB::table('jurusan')->insertGetId([
+        $id = DB::table('jurusan')->insertGetId([
+            'nama' => $request->nama,
+            'deskripsi' => $request->deskripsi,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jurusan berhasil ditambahkan.',
+            'data' => [
+                'id' => $id,
                 'nama' => $request->nama,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Jurusan berhasil ditambahkan',
-                'data' => ['id' => $jurusan, 'nama' => $request->nama]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menambahkan jurusan: ' . $e->getMessage()
-            ], 500);
-        }
+                'deskripsi' => $request->deskripsi
+            ]
+        ]);
     }
 
+    /**
+     * Update a jurusan.
+     */
     public function updateJurusan(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255|unique:jurusan,nama,' . $id
+            'nama' => 'required|string|max:255|unique:jurusan,nama,' . $id,
+            'deskripsi' => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        try {
-            DB::table('jurusan')->where('id', $id)->update([
+        DB::table('jurusan')->where('id', $id)->update([
+            'nama' => $request->nama,
+            'deskripsi' => $request->deskripsi,
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jurusan berhasil diperbarui.',
+            'data' => [
+                'id' => $id,
                 'nama' => $request->nama,
-                'updated_at' => now()
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Jurusan berhasil diupdate',
-                'data' => ['id' => $id, 'nama' => $request->nama]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate jurusan: ' . $e->getMessage()
-            ], 500);
-        }
+                'deskripsi' => $request->deskripsi
+            ]
+        ]);
     }
 
+    /**
+     * Delete a jurusan.
+     */
     public function deleteJurusan($id)
     {
-        try {
-            DB::table('jurusan')->where('id', $id)->delete();
+        // Check if jurusan is being used by students
+        $siswaCount = DB::table('siswas')->where('jurusan', DB::table('jurusan')->where('id', $id)->value('nama'))->count();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Jurusan berhasil dihapus'
-            ]);
-        } catch (\Exception $e) {
+        if ($siswaCount > 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus jurusan: ' . $e->getMessage()
-            ], 500);
+                'message' => "Tidak dapat menghapus jurusan karena masih digunakan oleh {$siswaCount} siswa."
+            ], 400);
         }
+
+        DB::table('jurusan')->where('id', $id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jurusan berhasil dihapus.'
+        ]);
     }
 
-    // Ekstrakurikuler Management
-    public function addEkstrakurikuler(Request $request)
+    /**
+     * Store a new ekstrakurikuler.
+     */
+    public function storeEkstrakurikuler(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255|unique:ekstrakurikuler,nama'
+            'nama' => 'required|string|max:255|unique:ekstrakurikuler,nama',
+            'deskripsi' => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        try {
-            $ekstrakurikuler = DB::table('ekstrakurikuler')->insertGetId([
+        $id = DB::table('ekstrakurikuler')->insertGetId([
+            'nama' => $request->nama,
+            'deskripsi' => $request->deskripsi,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ekstrakurikuler berhasil ditambahkan.',
+            'data' => [
+                'id' => $id,
                 'nama' => $request->nama,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Ekstrakurikuler berhasil ditambahkan',
-                'data' => ['id' => $ekstrakurikuler, 'nama' => $request->nama]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menambahkan ekstrakurikuler: ' . $e->getMessage()
-            ], 500);
-        }
+                'deskripsi' => $request->deskripsi
+            ]
+        ]);
     }
 
+    /**
+     * Update an ekstrakurikuler.
+     */
     public function updateEkstrakurikuler(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255|unique:ekstrakurikuler,nama,' . $id
+            'nama' => 'required|string|max:255|unique:ekstrakurikuler,nama,' . $id,
+            'deskripsi' => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        try {
-            DB::table('ekstrakurikuler')->where('id', $id)->update([
+        DB::table('ekstrakurikuler')->where('id', $id)->update([
+            'nama' => $request->nama,
+            'deskripsi' => $request->deskripsi,
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ekstrakurikuler berhasil diperbarui.',
+            'data' => [
+                'id' => $id,
                 'nama' => $request->nama,
-                'updated_at' => now()
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Ekstrakurikuler berhasil diupdate',
-                'data' => ['id' => $id, 'nama' => $request->nama]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate ekstrakurikuler: ' . $e->getMessage()
-            ], 500);
-        }
+                'deskripsi' => $request->deskripsi
+            ]
+        ]);
     }
 
+    /**
+     * Delete an ekstrakurikuler.
+     */
     public function deleteEkstrakurikuler($id)
     {
-        try {
-            DB::table('ekstrakurikuler')->where('id', $id)->delete();
+        // Check if ekstrakurikuler is being used by students
+        $siswaCount = DB::table('siswas')->whereJsonContains('ekstrakurikuler', DB::table('ekstrakurikuler')->where('id', $id)->value('nama'))->count();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Ekstrakurikuler berhasil dihapus'
-            ]);
-        } catch (\Exception $e) {
+        if ($siswaCount > 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus ekstrakurikuler: ' . $e->getMessage()
-            ], 500);
+                'message' => "Tidak dapat menghapus ekstrakurikuler karena masih digunakan oleh {$siswaCount} siswa."
+            ], 400);
         }
+
+        DB::table('ekstrakurikuler')->where('id', $id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ekstrakurikuler berhasil dihapus.'
+        ]);
     }
 
-    // User Management
-    public function addUser(Request $request)
+    /**
+     * Store a new mata pelajaran.
+     */
+    public function storeMataPelajaran(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'user_type' => 'required|in:siswa,guru,admin'
+            'nama' => 'required|string|max:255|unique:mata_pelajaran,nama',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        try {
-            $user = \App\Models\User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'user_type' => $request->user_type,
-                'email_verified_at' => now()
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'User berhasil ditambahkan',
-                'data' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'user_type' => $user->user_type
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menambahkan user: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function updateUser(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'user_type' => 'required|in:siswa,guru,admin'
+        $id = DB::table('mata_pelajaran')->insertGetId([
+            'nama' => $request->nama,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
-        }
-
-        try {
-            $user = \App\Models\User::findOrFail($id);
-            $user->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'user_type' => $request->user_type
-            ]);
-
-            if ($request->password) {
-                $user->update(['password' => bcrypt($request->password)]);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'User berhasil diupdate',
-                'data' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'user_type' => $user->user_type
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate user: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function deleteUser($id)
-    {
-        try {
-            \App\Models\User::findOrFail($id)->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'User berhasil dihapus'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus user: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    // Mata Pelajaran Management
-    public function addMataPelajaran(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255|unique:mata_pelajaran,nama'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first()
-            ], 400);
-        }
-
-        try {
-            $mataPelajaran = MataPelajaran::create([
+        return response()->json([
+            'success' => true,
+            'message' => 'Mata pelajaran berhasil ditambahkan.',
+            'data' => [
+                'id' => $id,
                 'nama' => $request->nama
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Mata pelajaran berhasil ditambahkan.',
-                'data' => $mataPelajaran
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menambahkan mata pelajaran: ' . $e->getMessage()
-            ], 500);
-        }
+            ]
+        ]);
     }
 
+    /**
+     * Update a mata pelajaran.
+     */
     public function updateMataPelajaran(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255|unique:mata_pelajaran,nama,' . $id
+            'nama' => 'required|string|max:255|unique:mata_pelajaran,nama,' . $id,
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first()
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        DB::table('mata_pelajaran')->where('id', $id)->update([
+            'nama' => $request->nama,
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Mata pelajaran berhasil diperbarui.',
+            'data' => [
+                'id' => $id,
+                'nama' => $request->nama
+            ]
+        ]);
+    }
+
+    /**
+     * Delete a mata pelajaran.
+     */
+    public function deleteMataPelajaran($id)
+    {
+        // Check if mata pelajaran is being used by teachers
+        $guruCount = DB::table('gurus')->whereJsonContains('mata_pelajaran', DB::table('mata_pelajaran')->where('id', $id)->value('nama'))->count();
+
+        if ($guruCount > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => "Tidak dapat menghapus mata pelajaran karena masih digunakan oleh {$guruCount} guru."
             ], 400);
         }
 
-        try {
-            $mataPelajaran = MataPelajaran::findOrFail($id);
-            $mataPelajaran->update([
-                'nama' => $request->nama
-            ]);
+        DB::table('mata_pelajaran')->where('id', $id)->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Mata pelajaran berhasil diperbarui.',
-                'data' => $mataPelajaran
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memperbarui mata pelajaran: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function deleteMataPelajaran($id)
-    {
-        try {
-            $mataPelajaran = MataPelajaran::findOrFail($id);
-            $mataPelajaran->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Mata pelajaran berhasil dihapus.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus mata pelajaran: ' . $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Mata pelajaran berhasil dihapus.'
+        ]);
     }
 }

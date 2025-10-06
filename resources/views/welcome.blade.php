@@ -46,7 +46,7 @@
                         <div class="header-top-social">
                             <span>Follow Us: </span>
                             <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                            <a href="{{ route('instagram.activities') }}" target="_blank"><i
+                            <a href="{{ route('public.instagram') }}" target="_blank"><i
                                     class="fab fa-instagram"></i></a>
                             <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
                             <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
@@ -141,11 +141,13 @@
                                     <a class="nav-link dropdown-toggle active" href="#"
                                         data-bs-toggle="dropdown">PROFIL</a>
                                     <ul class="dropdown-menu fade-down">
-                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">HALAMAN</a>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('pages.public.index') }}">HALAMAN</a>
                                         </li>
                                         <li><a class="dropdown-item"
-                                                href="{{ route('instagram.activities') }}">GALERI</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('siswa.index') }}">DATA SISWA</a>
+                                                href="{{ route('public.instagram') }}">GALERI</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('pages.public.show', 'data-siswa') }}">DATA SISWA</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -153,12 +155,14 @@
                                     <a class="nav-link dropdown-toggle" href="#"
                                         data-bs-toggle="dropdown">AKADEMIK</a>
                                     <ul class="dropdown-menu fade-down">
-                                        <li><a class="dropdown-item" href="{{ route('guru.index') }}">TENAGA
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('pages.public.show', 'tenaga-pendidik') }}">TENAGA
                                                 PENDIDIK</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('pages.index') }}">KURIKULUM</a>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('pages.public.show', 'kurikulum') }}">KURIKULUM</a>
                                         </li>
                                         <li><a class="dropdown-item"
-                                                href="{{ route('instagram.activities') }}">KEGIATAN</a></li>
+                                                href="{{ route('public.instagram') }}">KEGIATAN</a></li>
                                     </ul>
                                 </li>
                                 <li class="nav-item dropdown">
@@ -173,14 +177,16 @@
                                             $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
                                         @endphp
                                         @if ($isGrade12)
-                                            <li><a class="dropdown-item" href="{{ route('kelulusan.check') }}">🎓
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('public.graduation.check') }}">🎓
                                                     E-LULUS</a></li>
                                         @endif
-                                        <li><a class="dropdown-item" href="{{ route('osis.voting') }}">🗳️ E-OSIS</a>
+                                        <li><a class="dropdown-item" href="{{ route('public.instagram') }}">🗳️
+                                                E-OSIS</a>
                                         </li>
-                                        <li><a class="dropdown-item" href="{{ route('sarpras.index') }}">🏢
+                                        <li><a class="dropdown-item" href="{{ route('public.instagram') }}">🏢
                                                 E-SARPRAS</a></li>
-                                        <li><a class="dropdown-item" href="{{ route('instagram.activities') }}">📸
+                                        <li><a class="dropdown-item" href="{{ route('public.instagram') }}">📸
                                                 E-GALERI</a></li>
                                     </ul>
                                 </li>
@@ -191,7 +197,7 @@
                             <div class="nav-right-btn mt-2">
                                 @if (Route::has('login'))
                                     @auth
-                                        <a href="{{ url('/dashboard') }}" class="theme-btn"><span
+                                        <a href="{{ route('admin.dashboard') }}" class="theme-btn"><span
                                                 class="fal fa-user"></span> DASHBOARD</a>
                                     @else
                                         <a href="{{ route('login') }}" class="theme-btn"><span
@@ -237,7 +243,8 @@
                                     <img src="{{ asset('assets/img/icon/library.svg') }}" alt="">
                                 </div>
                                 <div class="feature-content">
-                                    <h4 class="feature-title"><a href="{{ route('pages.index') }}">E-PAGES</a></h4>
+                                    <h4 class="feature-title"><a href="{{ route('pages.public.index') }}">E-PAGES</a>
+                                    </h4>
                                     <p>Sistem manajemen konten untuk membuat halaman informasi sekolah</p>
                                 </div>
                             </div>
@@ -249,7 +256,9 @@
                                     <img src="{{ asset('assets/img/icon/teacher-2.svg') }}" alt="">
                                 </div>
                                 <div class="feature-content">
-                                    <h4 class="feature-title"><a href="{{ route('guru.index') }}">TENAGA PENDIDIK</a>
+                                    <h4 class="feature-title"><a
+                                            href="{{ route('pages.public.show', 'tenaga-pendidik') }}">TENAGA
+                                            PENDIDIK</a>
                                     </h4>
                                     <p>Database lengkap informasi guru dan tenaga kependidikan</p>
                                 </div>
@@ -262,8 +271,8 @@
                                     <img src="{{ asset('assets/img/icon/course.svg') }}" alt="">
                                 </div>
                                 <div class="feature-content">
-                                    <h4 class="feature-title"><a
-                                            href="{{ route('instagram.activities') }}">E-GALERI</a></h4>
+                                    <h4 class="feature-title"><a href="{{ route('public.instagram') }}">E-GALERI</a>
+                                    </h4>
                                     <p>Integrasi dengan Instagram sekolah untuk menampilkan kegiatan terbaru</p>
                                 </div>
                             </div>
@@ -275,7 +284,8 @@
                                     <img src="{{ asset('assets/img/icon/graduation.svg') }}" alt="">
                                 </div>
                                 <div class="feature-content">
-                                    <h4 class="feature-title"><a href="{{ route('siswa.index') }}">DATA SISWA</a>
+                                    <h4 class="feature-title"><a
+                                            href="{{ route('pages.public.show', 'data-siswa') }}">DATA SISWA</a>
                                     </h4>
                                     <p>Manajemen data siswa aktif dan alumni dengan informasi lengkap</p>
                                 </div>
@@ -286,6 +296,55 @@
             </div>
         </div>
         <!-- feature area end -->
+
+        <!-- campus life -->
+        <div class="campus-life pt-120 pb-80">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="content-img wow fadeInLeft" data-wow-delay=".25s">
+                            <img src="{{ asset('assets/img/campus-life/01.jpg') }}" alt="">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="content-info wow fadeInUp" data-wow-delay=".25s">
+                            <div class="site-heading mb-3">
+                                <h4 class="site-title">
+                                    Kepala Madrasah <span>:
+                                        {{ cache('site_setting_headmaster_name', 'Khoiruddinul Qoyyum,S.S.,M.Pd') }}</span>
+                                </h4>
+                            </div>
+                            <p class="content-text">
+                                {{ cache('site_setting_headmaster_description', 'Sebagai kepala madrasah yang berpengalaman, kami berkomitmen untuk memberikan pendidikan terbaik bagi para siswa dengan mengintegrasikan nilai-nilai keislaman dan pengetahuan modern.') }}
+                            </p>
+                            <p class="content-text mt-2">
+                                {{ cache('site_setting_headmaster_vision', 'Visi kami adalah menciptakan generasi yang unggul dalam akademik, berakhlak mulia, dan siap menghadapi tantangan masa depan dengan bekal ilmu pengetahuan yang komprehensif.') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- campus life end-->
+
+        <!-- video-area -->
+        <div class="video-area py-120">
+            <div class="container">
+                <div class="video-content" style="background-image: url({{ asset('assets/img/video/01.jpg') }});">
+                    <div class="row align-items-center">
+                        <div class="col-lg-12">
+                            <div class="video-wrapper">
+                                <a class="play-btn popup-youtube"
+                                    href="{{ cache('site_setting_video_url', 'https://www.youtube.com/watch?v=ckHzmP1evNU') }}">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- video-area end -->
 
         <!-- about area -->
         <div class="about-area py-120">
@@ -404,11 +463,30 @@
             <div class="container">
                 <div class="row">
                     @php
-                        // Ambil data statistik dari database
-                        $totalGuru = \App\Models\Guru::count();
-                        $totalSiswa = \App\Models\Siswa::count();
-                        $totalPages = \App\Models\Page::where('status', 'published')->count();
-                        $totalSarpras = \App\Models\Barang::count();
+                        // Ambil data statistik dari database dengan error handling
+                        try {
+                            $totalGuru = \App\Models\Guru::count();
+                        } catch (Exception $e) {
+                            $totalGuru = 0;
+                        }
+
+                        try {
+                            $totalSiswa = \App\Models\Siswa::count();
+                        } catch (Exception $e) {
+                            $totalSiswa = 0;
+                        }
+
+                        try {
+                            $totalPages = \App\Models\Page::where('status', 'published')->count();
+                        } catch (Exception $e) {
+                            $totalPages = 0;
+                        }
+
+                        try {
+                            $totalSarpras = \App\Models\Barang::count();
+                        } catch (Exception $e) {
+                            $totalSarpras = 0;
+                        }
                     @endphp
 
                     <div class="col-lg-3 col-sm-6">
@@ -463,6 +541,74 @@
             </div>
         </div>
         <!-- counter area end -->
+
+        <!-- choose-area -->
+        <div class="choose-area pt-80 pb-80">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="choose-content wow fadeInUp" data-wow-delay=".25s">
+                            <div class="choose-content-info">
+                                <div class="site-heading mb-0">
+                                    <span class="site-title-tagline"><i class="far fa-book-open-reader"></i> Program
+                                        Peminatan</span>
+                                    <h2 class="site-title text-white mb-10">3 <span>Program </span> Peminatan</h2>
+                                </div>
+                                <div class="choose-content-wrap">
+                                    <div class="row g-4">
+                                        <div class="col-md-6">
+                                            <div class="choose-item">
+                                                <div class="choose-item-icon">
+                                                    <img src="{{ asset('assets/img/icon/course.svg') }}"
+                                                        alt="">
+                                                </div>
+                                                <div class="choose-item-info">
+                                                    <h4>PEMINATAN ILMU PENGETAHUAN ALAM (IPA)</h4>
+                                                    <p>{{ cache('site_setting_ipa_description', 'Menyiapkan peserta didik yang handal dalam kajian ilmiah dan alamiah dengan berlandaskan kepada ayat-ayat qauliyah dan kauniyah.') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="choose-item">
+                                                <div class="choose-item-icon">
+                                                    <img src="{{ asset('assets/img/icon/course.svg') }}"
+                                                        alt="">
+                                                </div>
+                                                <div class="choose-item-info">
+                                                    <h4>PEMINATAN ILMU PENGETAHUAN SOSIAL (IPS)</h4>
+                                                    <p>{{ cache('site_setting_ips_description', 'Menyiapkan peserta didik yang dapat menguasai ilmu-ilmu sosial secara terpadu antara keislaman dan pengetahuan sehingga menjadi insan yang sosialis-agamis.') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="choose-item">
+                                                <div class="choose-item-icon">
+                                                    <img src="{{ asset('assets/img/icon/course.svg') }}"
+                                                        alt="">
+                                                </div>
+                                                <div class="choose-item-info">
+                                                    <h4>PEMINATAN KEAGAMAAN</h4>
+                                                    <p>{{ cache('site_setting_religion_description', 'Menyiapkan peserta didik yang lebih mampu menguasai ilmu-ilmu agama dengan mengkaji sumber aslinya serta mengkolaborasikan dengan perkembangan IPTEK.') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="choose-img wow fadeInRight" data-wow-delay=".25s">
+                            <img src="{{ asset('assets/img/choose/01.jpg') }}" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- choose-area end -->
 
         <!-- portfolio-area -->
         <div class="portfolio-area py-120">
@@ -525,11 +671,11 @@
                                         <div class="portfolio-title-info">
                                             <h5 class="portfolio-subtitle"><span>//</span> {{ $post['category'] }}
                                             </h5>
-                                            <a href="{{ route('instagram.activities') }}">
+                                            <a href="{{ route('public.instagram') }}">
                                                 <h4 class="portfolio-title">{{ $post['title'] }}</h4>
                                             </a>
                                         </div>
-                                        <a href="{{ route('instagram.activities') }}" class="portfolio-btn"><i
+                                        <a href="{{ route('public.instagram') }}" class="portfolio-btn"><i
                                                 class="far fa-arrow-right"></i></a>
                                     </div>
                                 </div>
@@ -540,6 +686,106 @@
             </div>
         </div>
         <!-- portfolio-area end -->
+
+        <!-- testimonial area -->
+        <div class="testimonial-area ts-bg pt-80 pb-80">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 mx-auto">
+                        <div class="site-heading text-center">
+                            <span class="site-title-tagline"><i class="far fa-book-open-reader"></i>
+                                Testimonials</span>
+                            <h2 class="site-title text-white">Apa Kata<span> Alumni ?</span></h2>
+                            <p class="text-white">Alumni kuliah di dalam Negeri dan di luar Negeri</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-slider owl-carousel owl-theme">
+                    <div class="testimonial-item">
+                        <div class="testimonial-rate">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="testimonial-quote">
+                            <p>
+                                Di Madrasah ini, kita tidak hanya diajarkan ilmu umum, dan agama, tapi juga ditempa
+                                dengan pengamalan akhlak yang sangat luar biasa. Belajar di Madrasah Aliyah Unggulan
+                                Darul Ulum adalah pengalaman yang sangat berharga untuk saya. Terimakasih kepada segenap
+                                Bapak Ibu guru, berkat ajaran doa beliau, saya sampai pada titik ini.
+                            </p>
+                        </div>
+                        <div class="testimonial-content">
+                            <div class="testimonial-author-img">
+                                <img src="{{ asset('assets/img/testimonial/01.jpg') }}" alt="">
+                            </div>
+                            <div class="testimonial-author-info">
+                                <h4>Riza Azkia (2012)</h4>
+                                <p>Al-Azhar Kairo - Staff KBRI di Baghdad, Iraq</p>
+                            </div>
+                        </div>
+                        <span class="testimonial-quote-icon"><i class="far fa-quote-right"></i></span>
+                    </div>
+                    <div class="testimonial-item">
+                        <div class="testimonial-rate">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="testimonial-quote">
+                            <p>
+                                Setelah sampai di Tunisia, saya semakin menyadari bahwa pembelajaran di MAU tidak hanya
+                                berorientasi pada akademik semata. MAU juga membentuk kepribadian kami agar siap
+                                menghadapi berbagai situasi. Kami dilatih untuk berpikir kritis, menyampaikan pendapat
+                                dengan percaya diri, dan menjaga adab dalam setiap interaksi.
+                            </p>
+                        </div>
+                        <div class="testimonial-content">
+                            <div class="testimonial-author-img">
+                                <img src="{{ asset('assets/img/testimonial/02.jpg') }}" alt="">
+                            </div>
+                            <div class="testimonial-author-info">
+                                <h4>NAILA KHAIRUN NAJWA (2024)</h4>
+                                <p>Universitas Az-Zaitunah Tunisia</p>
+                            </div>
+                        </div>
+                        <span class="testimonial-quote-icon"><i class="far fa-quote-right"></i></span>
+                    </div>
+                    <div class="testimonial-item">
+                        <div class="testimonial-rate">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="testimonial-quote">
+                            <p>
+                                حاجنلا قيرط ىلإ انيدهي رون ملعلا "Ilmu adalah cahaya yang membimbing kita menuju jalan
+                                kesuksesan". (Pepatah Arab) Sukses yang hendak digapai bukan semata duniawiyah tetapi
+                                berkelanjutan Ukhrawiyah. Bak asa dalam pelangitan doa yg dikenal sebagai doa sapujagat:
+                                (Khasanah Fiddunya Khasanah Fil akhirah) tentu semua butuh piranti keilmuan.
+                            </p>
+                        </div>
+                        <div class="testimonial-content">
+                            <div class="testimonial-author-img">
+                                <img src="{{ asset('assets/img/testimonial/03.jpg') }}" alt="">
+                            </div>
+                            <div class="testimonial-author-info">
+                                <h4>Naura Bya Sakan Naja (2024)</h4>
+                                <p>Ushuluddin - Yarmouk University, Yordania</p>
+                            </div>
+                        </div>
+                        <span class="testimonial-quote-icon"><i class="far fa-quote-right"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- testimonial area end -->
 
     </main>
 
@@ -620,14 +866,17 @@
                             <div class="footer-widget-box list">
                                 <h4 class="footer-widget-title">Menu Utama</h4>
                                 <ul class="footer-list">
-                                    <li><a href="{{ route('pages.index') }}"><i class="fas fa-caret-right"></i>
+                                    <li><a href="{{ route('pages.public.index') }}"><i
+                                                class="fas fa-caret-right"></i>
                                             Halaman</a></li>
-                                    <li><a href="{{ route('guru.index') }}"><i class="fas fa-caret-right"></i> Tenaga
+                                    <li><a href="{{ route('pages.public.show', 'tenaga-pendidik') }}"><i
+                                                class="fas fa-caret-right"></i> Tenaga
                                             Pendidik</a></li>
-                                    <li><a href="{{ route('siswa.index') }}"><i class="fas fa-caret-right"></i> Data
+                                    <li><a href="{{ route('pages.public.show', 'data-siswa') }}"><i
+                                                class="fas fa-caret-right"></i> Data
                                             Siswa</a></li>
-                                    <li><a href="{{ route('instagram.activities') }}"><i
-                                                class="fas fa-caret-right"></i> Galeri</a></li>
+                                    <li><a href="{{ route('public.instagram') }}"><i class="fas fa-caret-right"></i>
+                                            Galeri</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -641,15 +890,15 @@
                                         $isGrade12 = $siswa && str_contains($siswa->kelas, 'XII');
                                     @endphp
                                     @if ($isGrade12)
-                                        <li><a href="{{ route('kelulusan.check') }}"><i
+                                        <li><a href="{{ route('public.graduation.check') }}"><i
                                                     class="fas fa-caret-right"></i> E-Lulus</a></li>
                                     @endif
-                                    <li><a href="{{ route('osis.voting') }}"><i class="fas fa-caret-right"></i>
+                                    <li><a href="{{ route('public.instagram') }}"><i class="fas fa-caret-right"></i>
                                             E-OSIS</a></li>
-                                    <li><a href="{{ route('sarpras.index') }}"><i class="fas fa-caret-right"></i>
+                                    <li><a href="{{ route('public.instagram') }}"><i class="fas fa-caret-right"></i>
                                             E-Sarpras</a></li>
-                                    <li><a href="{{ route('instagram.activities') }}"><i
-                                                class="fas fa-caret-right"></i> E-Galeri</a></li>
+                                    <li><a href="{{ route('public.instagram') }}"><i class="fas fa-caret-right"></i>
+                                            E-Galeri</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -662,7 +911,7 @@
                                 <div class="subscribe-form">
                                     @if (Route::has('login'))
                                         @auth
-                                            <a href="{{ url('/dashboard') }}" class="theme-btn">
+                                            <a href="{{ route('admin.dashboard') }}" class="theme-btn">
                                                 DASHBOARD <i class="far fa-user"></i>
                                             </a>
                                         @else
@@ -695,7 +944,7 @@
                         <div class="col-md-6 align-self-center">
                             <ul class="footer-social">
                                 <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                <li><a href="{{ route('instagram.activities') }}" target="_blank"><i
+                                <li><a href="{{ route('public.instagram') }}" target="_blank"><i
                                             class="fab fa-instagram"></i></a></li>
                                 <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
                                 <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>

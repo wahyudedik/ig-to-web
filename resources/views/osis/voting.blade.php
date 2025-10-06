@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">Pilih calon ketua dan wakil ketua OSIS yang terbaik</p>
             </div>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('osis.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.osis.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -50,6 +50,19 @@
                             <h3 class="text-lg font-semibold text-blue-900">Silakan pilih calon OSIS</h3>
                             <p class="text-blue-700">Pilih calon ketua dan wakil ketua OSIS yang menurut Anda terbaik
                                 untuk memimpin organisasi.</p>
+                            @if ($siswa->jenis_kelamin)
+                                <div class="mt-2 text-sm text-blue-600">
+                                    <span class="inline-flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Anda melihat calon
+                                        {{ $siswa->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                    </span>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -58,7 +71,7 @@
 
         @if (!$pemilih->has_voted)
             <!-- Voting Form -->
-            <form method="POST" action="{{ route('osis.vote') }}" class="space-y-8">
+            <form method="POST" action="{{ route('admin.osis.vote') }}" class="space-y-8">
                 @csrf
 
                 <!-- Candidates List -->
@@ -138,8 +151,8 @@
                             </div>
                         @empty
                             <div class="col-span-2 text-center py-8">
-                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                                 </svg>
@@ -173,7 +186,7 @@
                 </svg>
                 <h3 class="text-xl font-semibold text-slate-900 mb-2">Terima kasih telah berpartisipasi!</h3>
                 <p class="text-slate-600 mb-6">Anda telah berhasil memilih dalam pemilihan OSIS.</p>
-                <a href="{{ route('osis.results') }}" class="btn btn-primary">
+                <a href="{{ route('admin.osis.results') }}" class="btn btn-primary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />

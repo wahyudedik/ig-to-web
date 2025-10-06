@@ -57,6 +57,22 @@
                         </div>
 
                         <div>
+                            <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                            <select id="jenis_kelamin" name="jenis_kelamin"
+                                class="form-select @error('jenis_kelamin') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
+                                required>
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki
+                                </option>
+                                <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan
+                                </option>
+                            </select>
+                            @error('jenis_kelamin')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
                             <label for="email" class="form-label">Email</label>
                             <input type="email" id="email" name="email" value="{{ old('email') }}"
                                 class="form-input @error('email') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
@@ -107,10 +123,11 @@
                         </div>
 
                         <div class="flex items-center">
-                            <input type="checkbox" id="status_sudah_memilih" name="status_sudah_memilih" value="1"
-                                {{ old('status_sudah_memilih', false) ? 'checked' : '' }}
+                            <input type="checkbox" id="status_sudah_memilih" name="status_sudah_memilih"
+                                value="1" {{ old('status_sudah_memilih', false) ? 'checked' : '' }}
                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
-                            <label for="status_sudah_memilih" class="ml-2 text-sm text-slate-700">Sudah memilih</label>
+                            <label for="status_sudah_memilih" class="ml-2 text-sm text-slate-700">Sudah
+                                memilih</label>
                         </div>
                     </div>
                 </div>
