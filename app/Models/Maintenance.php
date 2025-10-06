@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class Maintenance extends Model
 {
@@ -205,7 +206,7 @@ class Maintenance extends Model
     public function getFormattedCostAttribute(): string
     {
         if ($this->biaya) {
-            return 'Rp ' . number_format($this->biaya, 0, ',', '.');
+            return 'Rp ' . number_format((float)$this->biaya, 0, ',', '.');
         }
         return 'Tidak ada biaya';
     }
@@ -235,10 +236,17 @@ class Maintenance extends Model
      */
     public function getDurationAttribute(): int
     {
-        if ($this->tanggal_selesai) {
-            return $this->tanggal_maintenance->diffInDays($this->tanggal_selesai);
+        if (!$this->tanggal_maintenance) {
+            return 0;
         }
-        return $this->tanggal_maintenance->diffInDays(now());
+
+        /** @var Carbon $tanggalMaintenance */
+        $tanggalMaintenance = $this->tanggal_maintenance;
+
+        if ($this->tanggal_selesai) {
+            return $tanggalMaintenance->diffInDays($this->tanggal_selesai); // @phpstan-ignore-line
+        }
+        return $tanggalMaintenance->diffInDays(now()); // @phpstan-ignore-line
     }
 
     /**

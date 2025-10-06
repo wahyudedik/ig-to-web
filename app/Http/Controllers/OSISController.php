@@ -743,7 +743,7 @@ class OSISController extends Controller
             $updatedCount = 0;
 
             // Import from Siswa
-            $siswas = \App\Models\Siswa::with('user')->get();
+            $siswas = Siswa::with('user')->get();
             foreach ($siswas as $siswa) {
                 if ($siswa->user) {
                     $existingPemilih = Pemilih::where('user_id', $siswa->user->id)->first();

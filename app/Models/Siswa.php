@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class Siswa extends Model
 {
@@ -65,18 +66,18 @@ class Siswa extends Model
     /**
      * Get the siswa's academic records.
      */
-    public function academicRecords(): HasMany
-    {
-        return $this->hasMany(SiswaAcademic::class);
-    }
+    // public function academicRecords(): HasMany
+    // {
+    //     return $this->hasMany(SiswaAcademic::class);
+    // }
 
     /**
      * Get the siswa's attendance records.
      */
-    public function attendanceRecords(): HasMany
-    {
-        return $this->hasMany(SiswaAttendance::class);
-    }
+    // public function attendanceRecords(): HasMany
+    // {
+    //     return $this->hasMany(SiswaAttendance::class);
+    // }
 
     /**
      * Boot the model.
@@ -138,7 +139,7 @@ class Siswa extends Model
      */
     public function getAgeAttribute(): int
     {
-        return $this->tanggal_lahir->age;
+        return $this->tanggal_lahir?->age ?? 0;
     }
 
     /**

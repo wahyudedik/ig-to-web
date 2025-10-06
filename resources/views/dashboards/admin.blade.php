@@ -326,22 +326,24 @@
                         <h3 class="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h3>
                         <div class="space-y-4">
                             @forelse($recentActivities ?? [] as $activity)
-                                <div class="flex items-start space-x-3">
-                                    <div
-                                        class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
+                                @if ($activity)
+                                    <div class="flex items-start space-x-3">
+                                        <div
+                                            class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm text-slate-900">
+                                                {{ $activity?->description ?? 'User activity logged' }}</p>
+                                            <p class="text-xs text-slate-500 mt-1">
+                                                {{ $activity?->created_at?->diffForHumans() ?? 'Just now' }}</p>
+                                        </div>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm text-slate-900">
-                                            {{ $activity->description ?? 'User activity logged' }}</p>
-                                        <p class="text-xs text-slate-500 mt-1">
-                                            {{ $activity->created_at->diffForHumans() ?? 'Just now' }}</p>
-                                    </div>
-                                </div>
+                                @endif
                             @empty
                                 <div class="text-center py-8">
                                     <svg class="mx-auto h-12 w-12 text-slate-400" fill="none"

@@ -70,7 +70,7 @@ class SiswaExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             $siswa->nisn,
             $siswa->nama_lengkap,
             $siswa->jenis_kelamin,
-            $siswa->tanggal_lahir ? $siswa->tanggal_lahir->format('Y-m-d') : '',
+            $siswa->tanggal_lahir ? $siswa->tanggal_lahir->format('Y-m-d') : '', // @phpstan-ignore-line
             $siswa->tempat_lahir,
             $siswa->alamat,
             $siswa->no_telepon,

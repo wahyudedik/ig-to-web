@@ -66,7 +66,7 @@ class BarangExport implements FromCollection, WithHeadings, WithMapping, WithSty
             $barang->kondisi,
             $barang->status,
             $barang->harga,
-            $barang->tanggal_pembelian ? $barang->tanggal_pembelian->format('Y-m-d') : '',
+            $barang->tanggal_pembelian ? $barang->tanggal_pembelian->format('Y-m-d') : '', // @phpstan-ignore-line
             $barang->supplier,
             $barang->deskripsi,
             $barang->barcode,

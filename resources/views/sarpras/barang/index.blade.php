@@ -13,6 +13,99 @@
                     </svg>
                     Tambah Barang
                 </a>
+
+                <!-- Import/Export Buttons -->
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="btn btn-secondary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        Import/Export
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                        <div class="py-1">
+                            <a href="{{ route('admin.sarpras.barang.import') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                                Import Data
+                            </a>
+                            <a href="{{ route('admin.sarpras.barang.export') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Export Data
+                            </a>
+                            <a href="{{ route('admin.sarpras.barang.downloadTemplate') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Download Template
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barcode Operations -->
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="btn btn-secondary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                        </svg>
+                        Barcode
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div x-show="open" @click.away="open = false"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                        <div class="py-1">
+                            <a href="{{ route('admin.sarpras.barcode.scan') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                </svg>
+                                Scan Barcode
+                            </a>
+                            <button onclick="generateAllBarcodes()"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Generate All Barcodes
+                            </button>
+                            <button onclick="bulkPrintBarcodes()"
+                                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                </svg>
+                                Bulk Print Barcodes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <a href="{{ route('sarpras.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,7 +124,8 @@
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                             </svg>
@@ -86,7 +180,8 @@
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -103,7 +198,8 @@
 
         <!-- Filters and Search -->
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <form method="GET" action="{{ route('sarpras.barang.index') }}" class="flex flex-col sm:flex-row gap-4">
+            <form method="GET" action="{{ route('sarpras.barang.index') }}"
+                class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}"
                         placeholder="Cari nama barang..." class="form-input">
@@ -112,7 +208,8 @@
                     <select name="kategori" class="form-input">
                         <option value="">Semua Kategori</option>
                         @foreach ($kategoris as $k)
-                            <option value="{{ $k->id }}" {{ request('kategori') == $k->id ? 'selected' : '' }}>
+                            <option value="{{ $k->id }}"
+                                {{ request('kategori') == $k->id ? 'selected' : '' }}>
                                 {{ $k->nama_kategori }}</option>
                         @endforeach
                     </select>
@@ -196,7 +293,7 @@
                                 <td>
                                     <div class="flex items-center space-x-2">
                                         <a href="{{ route('sarpras.barang.show', $b) }}"
-                                            class="text-blue-600 hover:text-blue-700">
+                                            class="text-blue-600 hover:text-blue-700" title="Lihat Detail">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -206,11 +303,20 @@
                                             </svg>
                                         </a>
                                         <a href="{{ route('sarpras.barang.edit', $b) }}"
-                                            class="text-amber-600 hover:text-amber-700">
+                                            class="text-amber-600 hover:text-amber-700" title="Edit">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                        <a href="{{ route('admin.sarpras.barcode.print', $b) }}"
+                                            class="text-green-600 hover:text-green-700" title="Print Barcode"
+                                            target="_blank">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                                             </svg>
                                         </a>
                                         <form method="POST" action="{{ route('sarpras.barang.destroy', $b) }}"
@@ -218,7 +324,8 @@
                                             onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-700">
+                                            <button type="submit" class="text-red-600 hover:text-red-700"
+                                                title="Hapus">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -254,4 +361,115 @@
             @endif
         </div>
     </div>
+
+    <!-- JavaScript for Barcode Operations -->
+    <script>
+        function generateAllBarcodes() {
+            if (confirm('Apakah Anda yakin ingin generate barcode untuk semua barang?')) {
+                fetch('{{ route('admin.sarpras.barcode.generate-all') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat generate barcode');
+                    });
+            }
+        }
+
+        function bulkPrintBarcodes() {
+            // Get selected items (you can implement checkbox selection)
+            const selectedItems = [];
+            // For now, we'll show a modal to select items
+            showBulkPrintModal();
+        }
+
+        function showBulkPrintModal() {
+            // Create a simple modal for bulk print selection
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+            modal.innerHTML = `
+                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                    <div class="mt-3">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Bulk Print Barcodes</h3>
+                        <p class="text-sm text-gray-600 mb-4">Pilih barang yang akan di-print barcodenya:</p>
+                        <div class="space-y-2 max-h-60 overflow-y-auto">
+                            @foreach ($barangs as $item)
+                                <label class="flex items-center">
+                                    <input type="checkbox" value="{{ $item->id }}" class="mr-2">
+                                    <span class="text-sm">{{ $item->nama_barang }} ({{ $item->kode_barang }})</span>
+                                </label>
+                            @endforeach
+                        </div>
+                        <div class="flex justify-end space-x-3 mt-4">
+                            <button onclick="closeBulkPrintModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                Batal
+                            </button>
+                            <button onclick="processBulkPrint()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                Print Selected
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeBulkPrintModal() {
+            const modal = document.querySelector('.fixed.inset-0.bg-gray-600');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function processBulkPrint() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+
+            if (selectedIds.length === 0) {
+                alert('Pilih minimal satu barang untuk di-print');
+                return;
+            }
+
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route('admin.sarpras.barcode.bulk-print') }}';
+            form.target = '_blank';
+
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            form.appendChild(csrfInput);
+
+            // Add selected IDs
+            selectedIds.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'barang_ids[]';
+                input.value = id;
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+
+            closeBulkPrintModal();
+        }
+    </script>
 </x-app-layout>

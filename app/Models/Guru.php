@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class Guru extends Model
 {
@@ -60,18 +61,18 @@ class Guru extends Model
     /**
      * Get the guru's performance records.
      */
-    public function performanceRecords(): HasMany
-    {
-        return $this->hasMany(GuruPerformance::class);
-    }
+    // public function performanceRecords(): HasMany
+    // {
+    //     return $this->hasMany(GuruPerformance::class);
+    // }
 
     /**
      * Get the guru's schedule records.
      */
-    public function scheduleRecords(): HasMany
-    {
-        return $this->hasMany(GuruSchedule::class);
-    }
+    // public function scheduleRecords(): HasMany
+    // {
+    //     return $this->hasMany(GuruSchedule::class);
+    // }
 
     /**
      * Boot the model.
@@ -140,7 +141,7 @@ class Guru extends Model
      */
     public function getAgeAttribute(): int
     {
-        return $this->tanggal_lahir->age;
+        return $this->tanggal_lahir?->age ?? 0;
     }
 
     /**
@@ -148,7 +149,12 @@ class Guru extends Model
      */
     public function getYearsOfServiceAttribute(): int
     {
-        return $this->tanggal_masuk->diffInYears(now());
+        if (!$this->tanggal_masuk) {
+            return 0;
+        }
+        /** @var Carbon $tanggalMasuk */
+        $tanggalMasuk = $this->tanggal_masuk;
+        return $tanggalMasuk->diffInYears(now()); // @phpstan-ignore-line
     }
 
     /**

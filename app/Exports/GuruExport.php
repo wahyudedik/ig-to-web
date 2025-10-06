@@ -71,7 +71,7 @@ class GuruExport implements FromCollection, WithHeadings, WithMapping, WithStyle
             $guru->gelar_depan,
             $guru->gelar_belakang,
             $guru->jenis_kelamin,
-            $guru->tanggal_lahir ? $guru->tanggal_lahir->format('Y-m-d') : '',
+            $guru->tanggal_lahir ? $guru->tanggal_lahir->format('Y-m-d') : '', // @phpstan-ignore-line
             $guru->tempat_lahir,
             $guru->alamat,
             $guru->no_telepon,
@@ -79,8 +79,8 @@ class GuruExport implements FromCollection, WithHeadings, WithMapping, WithStyle
             $guru->email,
             $guru->status_kepegawaian,
             $guru->jabatan,
-            $guru->tanggal_masuk ? $guru->tanggal_masuk->format('Y-m-d') : '',
-            $guru->tanggal_keluar ? $guru->tanggal_keluar->format('Y-m-d') : '',
+            $guru->tanggal_masuk ? $guru->tanggal_masuk->format('Y-m-d') : '', // @phpstan-ignore-line
+            $guru->tanggal_keluar ? $guru->tanggal_keluar->format('Y-m-d') : '', // @phpstan-ignore-line
             $guru->status_aktif,
             $guru->pendidikan_terakhir,
             $guru->universitas,

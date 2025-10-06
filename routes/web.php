@@ -322,7 +322,8 @@ Route::middleware(['auth', 'verified', 'role:sarpras'])->group(function () {
     Route::post('/sarpras/barcode/generate-all', [SarprasController::class, 'generateAllBarcodes'])->name('sarpras.barcode.generate-all');
     Route::get('/sarpras/barcode/print/{barang}', [SarprasController::class, 'printBarcode'])->name('sarpras.barcode.print');
     Route::post('/sarpras/barcode/bulk-print', [SarprasController::class, 'bulkPrintBarcodes'])->name('sarpras.barcode.bulk-print');
-    Route::post('/sarpras/barcode/scan', [SarprasController::class, 'scanBarcode'])->name('sarpras.barcode.scan');
+    Route::get('/sarpras/barcode/scan', [SarprasController::class, 'showScanPage'])->name('sarpras.barcode.scan');
+    Route::post('/sarpras/barcode/scan', [SarprasController::class, 'processScan'])->name('sarpras.barcode.scan.process');
 });
 
 Route::middleware('auth')->group(function () {
@@ -386,20 +387,57 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     // Premium API Routes for Envato
     // Dashboard Analytics API
+    // Analytics Dashboard
+    Route::get('/analytics', function () {
+        return view('analytics.dashboard');
+    })->name('admin.analytics');
+
     Route::get('/api/dashboard/analytics', [App\Http\Controllers\API\DashboardAnalyticsController::class, 'index'])->name('api.dashboard.analytics');
+
+    // System Health Dashboard
+    Route::get('/system/health', function () {
+        return view('system.health');
+    })->name('admin.system.health');
 
     // System Health API
     Route::get('/api/system/health', [App\Http\Controllers\API\SystemHealthController::class, 'index'])->name('api.system.health');
     Route::get('/api/system/metrics', [App\Http\Controllers\API\SystemHealthController::class, 'metrics'])->name('api.system.metrics');
 
+    // Notification Center Dashboard
+    Route::get('/notifications', function () {
+        return view('notifications.index');
+    })->name('admin.notifications');
+
     // Notification API
     Route::prefix('api/notifications')->group(function () {
-        Route::get('/', [App\Http\Controllers\API\NotificationController::class, 'getUserNotifications'])->name('api.notifications.index');
-        Route::get('/stats', [App\Http\Controllers\API\NotificationController::class, 'getNotificationStats'])->name('api.notifications.stats');
-        Route::get('/templates', [App\Http\Controllers\API\NotificationController::class, 'getNotificationTemplates'])->name('api.notifications.templates');
-        Route::post('/mark-read', [App\Http\Controllers\API\NotificationController::class, 'markAsRead'])->name('api.notifications.mark-read');
+        Route::get('/list', [App\Http\Controllers\API\NotificationController::class, 'list'])->name('api.notifications.list');
+        Route::get('/stats', [App\Http\Controllers\API\NotificationController::class, 'stats'])->name('api.notifications.stats');
+        Route::post('/send', [App\Http\Controllers\API\NotificationController::class, 'send'])->name('api.notifications.send');
         Route::post('/mark-all-read', [App\Http\Controllers\API\NotificationController::class, 'markAllAsRead'])->name('api.notifications.mark-all-read');
-        Route::delete('/{id}', [App\Http\Controllers\API\NotificationController::class, 'deleteNotification'])->name('api.notifications.delete');
+        Route::delete('/{id}', [App\Http\Controllers\API\NotificationController::class, 'delete'])->name('api.notifications.delete');
+    });
+
+    // User Management (Superadmin only)
+    Route::prefix('user-management')->name('admin.user-management.')->group(function () {
+        Route::get('/', [App\Http\Controllers\UserManagementController::class, 'index'])->name('index');
+        Route::post('/invite', [App\Http\Controllers\UserManagementController::class, 'inviteUser'])->name('invite');
+        Route::post('/create', [App\Http\Controllers\UserManagementController::class, 'createUser'])->name('create');
+        Route::put('/users/{user}', [App\Http\Controllers\UserManagementController::class, 'updateUser'])->name('update');
+        Route::delete('/users/{user}', [App\Http\Controllers\UserManagementController::class, 'deleteUser'])->name('delete');
+        Route::post('/users/{user}/toggle-status', [App\Http\Controllers\UserManagementController::class, 'toggleUserStatus'])->name('toggle-status');
+        Route::get('/roles', [App\Http\Controllers\UserManagementController::class, 'getUserRoles'])->name('roles');
+    });
+
+    // Role & Permission Management (Superadmin only)
+    Route::prefix('role-permissions')->name('admin.role-permissions.')->group(function () {
+        Route::get('/', [App\Http\Controllers\RolePermissionController::class, 'index'])->name('index');
+        Route::post('/roles', [App\Http\Controllers\RolePermissionController::class, 'createRole'])->name('store');
+        Route::put('/roles/{role}', [App\Http\Controllers\RolePermissionController::class, 'updateRole'])->name('update');
+        Route::delete('/roles/{role}', [App\Http\Controllers\RolePermissionController::class, 'deleteRole'])->name('destroy');
+        Route::post('/assign-role', [App\Http\Controllers\RolePermissionController::class, 'assignRoleToUser'])->name('assign-role');
+        Route::post('/remove-role', [App\Http\Controllers\RolePermissionController::class, 'removeRoleFromUser'])->name('remove-role');
+        Route::get('/roles/{role}/permissions', [App\Http\Controllers\RolePermissionController::class, 'getRolePermissions'])->name('role-permissions');
+        Route::get('/users', [App\Http\Controllers\RolePermissionController::class, 'getUsersWithRoles'])->name('users');
     });
 
     // Admin-only System Notifications

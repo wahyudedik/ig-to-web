@@ -101,8 +101,8 @@
                     </div>
                 </div>
 
-                <!-- System Management (Superadmin/Admin only) -->
-                @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
+                <!-- System Management (Superadmin only) -->
+                @if (Auth::user()->hasRole('superadmin'))
                     <div class="relative group">
                         <button
                             class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
@@ -115,14 +115,36 @@
                         <div
                             class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                             <div class="py-2">
-                                <a href="{{ route('admin.superadmin.users') }}"
+                                <a href="{{ route('admin.user-management.index') }}"
                                     class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                     <i class="fas fa-users mr-2"></i>User Management
+                                </a>
+                                <a href="{{ route('admin.role-permissions.index') }}"
+                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                    <i class="fas fa-shield-alt mr-2"></i>Role & Permissions
                                 </a>
                                 @can('viewAny', App\Models\Permission::class)
                                     <a href="{{ route('admin.permissions.index') }}"
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                         <i class="fas fa-shield-alt mr-2"></i>Permission Management
+                                    </a>
+                                @endcan
+                                @can('viewAnalytics', App\Models\User::class)
+                                    <a href="{{ route('admin.analytics') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-chart-line mr-2"></i>Analytics Dashboard
+                                    </a>
+                                @endcan
+                                @can('viewSystemHealth', App\Models\User::class)
+                                    <a href="{{ route('admin.system.health') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-heartbeat mr-2"></i>System Health
+                                    </a>
+                                @endcan
+                                @can('viewNotifications', App\Models\User::class)
+                                    <a href="{{ route('admin.notifications') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-bell mr-2"></i>Notification Center
                                     </a>
                                 @endcan
                                 <a href="{{ route('admin.settings.index') }}"
@@ -338,6 +360,18 @@
                                     <i class="fas fa-shield-alt mr-2"></i>Permission Management
                                 </a>
                             @endcan
+                            <a href="{{ route('admin.analytics') }}"
+                                class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <i class="fas fa-chart-line mr-2"></i>Analytics Dashboard
+                            </a>
+                            <a href="{{ route('admin.system.health') }}"
+                                class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <i class="fas fa-heartbeat mr-2"></i>System Health
+                            </a>
+                            <a href="{{ route('admin.notifications') }}"
+                                class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <i class="fas fa-bell mr-2"></i>Notification Center
+                            </a>
                             <a href="{{ route('admin.settings.index') }}"
                                 class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                 <i class="fas fa-cog mr-2"></i>System Settings

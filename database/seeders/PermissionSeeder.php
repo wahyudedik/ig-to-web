@@ -393,6 +393,120 @@ class PermissionSeeder extends Seeder
                 'action' => 'delete',
                 'guard_name' => 'web'
             ],
+
+            // Role Management permissions
+            [
+                'name' => 'roles.view',
+                'display_name' => 'Role Management - Lihat Data',
+                'description' => 'Permission untuk melihat data role',
+                'module' => 'roles',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'roles.create',
+                'display_name' => 'Role Management - Tambah Data',
+                'description' => 'Permission untuk membuat role baru',
+                'module' => 'roles',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'roles.edit',
+                'display_name' => 'Role Management - Edit Data',
+                'description' => 'Permission untuk mengedit role',
+                'module' => 'roles',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'roles.delete',
+                'display_name' => 'Role Management - Hapus Data',
+                'description' => 'Permission untuk menghapus role',
+                'module' => 'roles',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+
+            // System permissions
+            [
+                'name' => 'system.analytics',
+                'display_name' => 'System - Analytics',
+                'description' => 'Permission untuk melihat analytics sistem',
+                'module' => 'system',
+                'action' => 'analytics',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'system.health',
+                'display_name' => 'System - Health Monitor',
+                'description' => 'Permission untuk melihat health monitor sistem',
+                'module' => 'system',
+                'action' => 'health',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'system.notifications',
+                'display_name' => 'System - Notifications',
+                'description' => 'Permission untuk mengelola notifikasi sistem',
+                'module' => 'system',
+                'action' => 'notifications',
+                'guard_name' => 'web'
+            ],
+
+            // Sarpras Barcode permissions
+            [
+                'name' => 'sarpras.barcode',
+                'display_name' => 'Sarpras - Barcode Management',
+                'description' => 'Permission untuk mengelola barcode sarpras',
+                'module' => 'sarpras',
+                'action' => 'barcode',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'sarpras.maintenance',
+                'display_name' => 'Sarpras - Maintenance',
+                'description' => 'Permission untuk mengelola maintenance sarpras',
+                'module' => 'sarpras',
+                'action' => 'maintenance',
+                'guard_name' => 'web'
+            ],
+
+            // OSIS Voting permissions
+            [
+                'name' => 'osis.vote',
+                'display_name' => 'OSIS - Voting',
+                'description' => 'Permission untuk voting OSIS',
+                'module' => 'osis',
+                'action' => 'vote',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'osis.results',
+                'display_name' => 'OSIS - View Results',
+                'description' => 'Permission untuk melihat hasil voting OSIS',
+                'module' => 'osis',
+                'action' => 'results',
+                'guard_name' => 'web'
+            ],
+
+            // Profile permissions
+            [
+                'name' => 'profile.view',
+                'display_name' => 'Profile - Lihat Data',
+                'description' => 'Permission untuk melihat profil sendiri',
+                'module' => 'profile',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'profile.edit',
+                'display_name' => 'Profile - Edit Data',
+                'description' => 'Permission untuk mengedit profil sendiri',
+                'module' => 'profile',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
         ];
 
         foreach ($permissions as $permissionData) {
@@ -402,61 +516,13 @@ class PermissionSeeder extends Seeder
             );
         }
 
-        // Assign permissions to roles
+        // Assign permissions to roles (only superadmin gets all permissions)
         $superadminRole = Role::where('name', 'superadmin')->first();
         if ($superadminRole) {
             $superadminRole->givePermissionTo(Permission::all());
         }
 
-        $adminRole = Role::where('name', 'admin')->first();
-        if ($adminRole) {
-            // Admin gets most permissions except superadmin-only ones
-            $adminPermissions = Permission::whereNotIn('name', [
-                'permissions.create',
-                'permissions.edit',
-                'permissions.delete',
-                'settings.manage'
-            ])->get();
-            $adminRole->givePermissionTo($adminPermissions);
-        }
-
-        $guruRole = Role::where('name', 'guru')->first();
-        if ($guruRole) {
-            $guruPermissions = Permission::whereIn('name', [
-                'dashboard.view',
-                'profile.view',
-                'guru.view',
-                'guru.edit',
-                'osis.view',
-                'pages.view'
-            ])->get();
-            $guruRole->givePermissionTo($guruPermissions);
-        }
-
-        $siswaRole = Role::where('name', 'siswa')->first();
-        if ($siswaRole) {
-            $siswaPermissions = Permission::whereIn('name', [
-                'dashboard.view',
-                'profile.view',
-                'osis.view',
-                'pages.view'
-            ])->get();
-            $siswaRole->givePermissionTo($siswaPermissions);
-        }
-
-        $sarprasRole = Role::where('name', 'sarpras')->first();
-        if ($sarprasRole) {
-            $sarprasPermissions = Permission::whereIn('name', [
-                'dashboard.view',
-                'profile.view',
-                'sarpras.view',
-                'sarpras.create',
-                'sarpras.edit',
-                'sarpras.delete',
-                'sarpras.export',
-                'sarpras.import'
-            ])->get();
-            $sarprasRole->givePermissionTo($sarprasPermissions);
-        }
+        // Other roles are created dynamically by superadmin
+        // No default role assignments - superadmin will create custom roles as needed
     }
 }
