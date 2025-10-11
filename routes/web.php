@@ -184,6 +184,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin/osis')->name('admin.osis.
     Route::put('/calon/{calon}', [OSISController::class, 'updateCalon'])->name('calon.update');
     Route::delete('/calon/{calon}', [OSISController::class, 'destroyCalon'])->name('calon.destroy');
 
+    // Pemilih Import/Export routes (must be before {pemilih} routes)
+    Route::get('/pemilih/import', [OSISController::class, 'importPemilih'])->name('pemilih.import');
+    Route::get('/pemilih/import/template', [OSISController::class, 'downloadPemilihTemplate'])->name('pemilih.downloadTemplate');
+    Route::post('/pemilih/import', [OSISController::class, 'processPemilihImport'])->name('pemilih.processImport');
+    Route::get('/pemilih/export', [OSISController::class, 'exportPemilih'])->name('pemilih.export');
+
     Route::get('/pemilih', [OSISController::class, 'pemilihIndex'])->name('pemilih.index');
     Route::get('/pemilih/create', [OSISController::class, 'createPemilih'])->name('pemilih.create');
     Route::post('/pemilih', [OSISController::class, 'storePemilih'])->name('pemilih.store');
@@ -385,40 +391,20 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::post('/settings/seo', [SettingsController::class, 'updateSeoSettings'])->name('settings.seo.update');
 
 
-    // Premium API Routes for Envato
-    // Dashboard Analytics API
     // Analytics Dashboard
-    Route::get('/analytics', function () {
-        return view('analytics.dashboard');
-    })->name('admin.analytics');
-
-    Route::get('/api/dashboard/analytics', [App\Http\Controllers\API\DashboardAnalyticsController::class, 'index'])->name('api.dashboard.analytics');
+    Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics');
 
     // System Health Dashboard
-    Route::get('/system/health', function () {
-        return view('system.health');
-    })->name('admin.system.health');
+    Route::get('/system/health', [App\Http\Controllers\SystemHealthController::class, 'index'])->name('system.health');
 
-    // System Health API
-    Route::get('/api/system/health', [App\Http\Controllers\API\SystemHealthController::class, 'index'])->name('api.system.health');
-    Route::get('/api/system/metrics', [App\Http\Controllers\API\SystemHealthController::class, 'metrics'])->name('api.system.metrics');
-
-    // Notification Center Dashboard
-    Route::get('/notifications', function () {
-        return view('notifications.index');
-    })->name('admin.notifications');
-
-    // Notification API
-    Route::prefix('api/notifications')->group(function () {
-        Route::get('/list', [App\Http\Controllers\API\NotificationController::class, 'list'])->name('api.notifications.list');
-        Route::get('/stats', [App\Http\Controllers\API\NotificationController::class, 'stats'])->name('api.notifications.stats');
-        Route::post('/send', [App\Http\Controllers\API\NotificationController::class, 'send'])->name('api.notifications.send');
-        Route::post('/mark-all-read', [App\Http\Controllers\API\NotificationController::class, 'markAllAsRead'])->name('api.notifications.mark-all-read');
-        Route::delete('/{id}', [App\Http\Controllers\API\NotificationController::class, 'delete'])->name('api.notifications.delete');
-    });
+    // Notification Center
+    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/{id}/mark-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'delete'])->name('notifications.delete');
 
     // User Management (Superadmin only)
-    Route::prefix('user-management')->name('admin.user-management.')->group(function () {
+    Route::prefix('user-management')->name('user-management.')->group(function () {
         Route::get('/', [App\Http\Controllers\UserManagementController::class, 'index'])->name('index');
         Route::post('/invite', [App\Http\Controllers\UserManagementController::class, 'inviteUser'])->name('invite');
         Route::post('/create', [App\Http\Controllers\UserManagementController::class, 'createUser'])->name('create');
@@ -429,7 +415,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     });
 
     // Role & Permission Management (Superadmin only)
-    Route::prefix('role-permissions')->name('admin.role-permissions.')->group(function () {
+    Route::prefix('role-permissions')->name('role-permissions.')->group(function () {
         Route::get('/', [App\Http\Controllers\RolePermissionController::class, 'index'])->name('index');
         Route::post('/roles', [App\Http\Controllers\RolePermissionController::class, 'createRole'])->name('store');
         Route::put('/roles/{role}', [App\Http\Controllers\RolePermissionController::class, 'updateRole'])->name('update');
@@ -439,10 +425,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::get('/roles/{role}/permissions', [App\Http\Controllers\RolePermissionController::class, 'getRolePermissions'])->name('role-permissions');
         Route::get('/users', [App\Http\Controllers\RolePermissionController::class, 'getUsersWithRoles'])->name('users');
     });
-
-    // Admin-only System Notifications
-    Route::post('/api/admin/notifications/send', [App\Http\Controllers\API\NotificationController::class, 'sendSystemNotification'])->name('api.admin.notifications.send');
-    Route::post('/api/admin/notifications/bulk-send', [App\Http\Controllers\API\NotificationController::class, 'sendBulkNotifications'])->name('api.admin.notifications.bulk-send');
 });
 
 require __DIR__ . '/auth.php';

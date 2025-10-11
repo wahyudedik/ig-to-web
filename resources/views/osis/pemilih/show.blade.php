@@ -6,14 +6,14 @@
                 <p class="text-slate-600 mt-1">{{ $pemilih->nama }}</p>
             </div>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('osis.pemilih.edit', $pemilih) }}" class="btn btn-secondary">
+                <a href="{{ route('admin.osis.pemilih.edit', $pemilih) }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Edit
                 </a>
-                <a href="{{ route('osis.pemilih.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.osis.pemilih.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -126,7 +126,7 @@
                 <div class="bg-white rounded-xl border border-slate-200 p-6">
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
                     <div class="space-y-3">
-                        <a href="{{ route('osis.pemilih.edit', $pemilih) }}"
+                        <a href="{{ route('admin.osis.pemilih.edit', $pemilih) }}"
                             class="flex items-center justify-between p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
                             <div class="flex items-center space-x-3">
                                 <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -145,7 +145,7 @@
                             </svg>
                         </a>
 
-                        <a href="{{ route('osis.pemilih.index') }}"
+                        <a href="{{ route('admin.osis.pemilih.index') }}"
                             class="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors group">
                             <div class="flex items-center space-x-3">
                                 <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">

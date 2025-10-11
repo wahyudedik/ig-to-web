@@ -74,7 +74,7 @@
                         <div>
                             <p class="text-sm font-medium text-slate-600">Total Siswa</p>
                             <p class="text-2xl font-bold text-slate-900"><?php echo e($statistics['total_siswa'] ?? 0); ?></p>
-                            <p class="text-xs text-green-600 mt-1">+12% dari bulan lalu</p>
+                            
                         </div>
                         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +91,7 @@
                         <div>
                             <p class="text-sm font-medium text-slate-600">Total Guru</p>
                             <p class="text-2xl font-bold text-slate-900"><?php echo e($statistics['total_guru'] ?? 0); ?></p>
-                            <p class="text-xs text-green-600 mt-1">+5% dari bulan lalu</p>
+                            
                         </div>
                         <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
@@ -109,7 +109,7 @@
                         <div>
                             <p class="text-sm font-medium text-slate-600">Active Users</p>
                             <p class="text-2xl font-bold text-slate-900"><?php echo e($statistics['total_users'] ?? 0); ?></p>
-                            <p class="text-xs text-blue-600 mt-1">Online sekarang</p>
+                            
                         </div>
                         <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                             <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor"
@@ -127,7 +127,7 @@
                         <div>
                             <p class="text-sm font-medium text-slate-600">Total Assets</p>
                             <p class="text-2xl font-bold text-slate-900"><?php echo e($statistics['total_barang'] ?? 0); ?></p>
-                            <p class="text-xs text-orange-600 mt-1">Sarana Prasarana</p>
+                            
                         </div>
                         <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                             <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor"
@@ -145,107 +145,72 @@
                 <!-- User Growth Chart -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-slate-900">Pertumbuhan User</h3>
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-900">Pertumbuhan User</h3>
+                            <p class="text-xs text-slate-500 mt-1">6 bulan terakhir - Total:
+                                <?php echo e($userGrowth['total_siswa']); ?> siswa, <?php echo e($userGrowth['total_guru']); ?> guru</p>
+                        </div>
                         <div class="flex items-center space-x-2">
                             <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                            <span class="text-sm text-slate-600">Siswa</span>
+                            <span class="text-xs text-slate-600">Siswa</span>
                             <div class="w-3 h-3 bg-green-500 rounded-full ml-4"></div>
-                            <span class="text-sm text-slate-600">Guru</span>
+                            <span class="text-xs text-slate-600">Guru</span>
                         </div>
                     </div>
                     <div class="h-64 flex items-end justify-between space-x-2">
-                        <!-- Sample Chart Bars -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-8 bg-blue-200 rounded-t" style="height: 60%"></div>
-                            <span class="text-xs text-slate-500 mt-2">Jan</span>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <div class="w-8 bg-blue-300 rounded-t" style="height: 75%"></div>
-                            <span class="text-xs text-slate-500 mt-2">Feb</span>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <div class="w-8 bg-blue-400 rounded-t" style="height: 85%"></div>
-                            <span class="text-xs text-slate-500 mt-2">Mar</span>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <div class="w-8 bg-blue-500 rounded-t" style="height: 95%"></div>
-                            <span class="text-xs text-slate-500 mt-2">Apr</span>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <div class="w-8 bg-blue-600 rounded-t" style="height: 100%"></div>
-                            <span class="text-xs text-slate-500 mt-2">May</span>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <div class="w-8 bg-blue-700 rounded-t" style="height: 90%"></div>
-                            <span class="text-xs text-slate-500 mt-2">Jun</span>
-                        </div>
+                        <?php $__currentLoopData = $userGrowth['data']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $monthData): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <div class="flex flex-col items-center flex-1 group relative">
+                                <!-- Tooltip -->
+                                <div
+                                    class="absolute bottom-full mb-2 hidden group-hover:block bg-slate-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                                    <div>Siswa: <?php echo e($monthData['siswa']['count']); ?></div>
+                                    <div>Guru: <?php echo e($monthData['guru']['count']); ?></div>
+                                </div>
+
+                                <!-- Bars Container -->
+                                <div class="flex space-x-1 h-full items-end">
+                                    <!-- Siswa Bar -->
+                                    <div class="w-6 bg-blue-500 rounded-t transition-all duration-500 hover:bg-blue-600"
+                                        style="height: <?php echo e($monthData['siswa']['percentage'] > 0 ? $monthData['siswa']['percentage'] : 5); ?>%"
+                                        title="Siswa: <?php echo e($monthData['siswa']['count']); ?>">
+                                    </div>
+                                    <!-- Guru Bar -->
+                                    <div class="w-6 bg-green-500 rounded-t transition-all duration-500 hover:bg-green-600"
+                                        style="height: <?php echo e($monthData['guru']['percentage'] > 0 ? $monthData['guru']['percentage'] : 5); ?>%"
+                                        title="Guru: <?php echo e($monthData['guru']['count']); ?>">
+                                    </div>
+                                </div>
+
+                                <!-- Month Label -->
+                                <span class="text-xs text-slate-500 mt-2"><?php echo e($monthData['month']); ?></span>
+                            </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
 
                 <!-- Module Usage Chart -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <h3 class="text-lg font-semibold text-slate-900 mb-4">Penggunaan Module</h3>
+                    <p class="text-xs text-slate-500 mb-4">Berdasarkan jumlah data (70%) & aktivitas 30 hari terakhir
+                        (30%)</p>
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
-                                <span class="text-sm text-slate-600">User Management</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-24 bg-slate-200 rounded-full h-2 mr-3">
-                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 85%"></div>
+                        <?php $__currentLoopData = $moduleUsage; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $moduleName => $module): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-<?php echo e($module['color']); ?>-500 rounded-full mr-3"></div>
+                                    <span class="text-sm text-slate-600"><?php echo e($moduleName); ?></span>
+                                    <span class="text-xs text-slate-400 ml-2">(<?php echo e($module['data_count']); ?> data)</span>
                                 </div>
-                                <span class="text-sm font-medium text-slate-900">85%</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                                <span class="text-sm text-slate-600">Guru Management</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-24 bg-slate-200 rounded-full h-2 mr-3">
-                                    <div class="bg-green-500 h-2 rounded-full" style="width: 72%"></div>
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-slate-200 rounded-full h-2 mr-3">
+                                        <div class="bg-<?php echo e($module['color']); ?>-500 h-2 rounded-full transition-all duration-500"
+                                            style="width: <?php echo e($module['percentage']); ?>%"></div>
+                                    </div>
+                                    <span
+                                        class="text-sm font-medium text-slate-900"><?php echo e($module['percentage']); ?>%</span>
                                 </div>
-                                <span class="text-sm font-medium text-slate-900">72%</span>
                             </div>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
-                                <span class="text-sm text-slate-600">Siswa Management</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-24 bg-slate-200 rounded-full h-2 mr-3">
-                                    <div class="bg-purple-500 h-2 rounded-full" style="width: 68%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-slate-900">68%</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
-                                <span class="text-sm text-slate-600">Sarpras Management</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-24 bg-slate-200 rounded-full h-2 mr-3">
-                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 45%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-slate-900">45%</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-pink-500 rounded-full mr-3"></div>
-                                <span class="text-sm text-slate-600">OSIS System</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-24 bg-slate-200 rounded-full h-2 mr-3">
-                                    <div class="bg-pink-500 h-2 rounded-full" style="width: 38%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-slate-900">38%</span>
-                            </div>
-                        </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
@@ -332,24 +297,121 @@
                 <!-- Recent Activity -->
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                        <h3 class="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h3>
-                        <div class="space-y-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900">Recent Activity</h3>
+                            <span class="text-xs text-slate-500">Last 10 activities</span>
+                        </div>
+                        <div class="space-y-3">
                             <?php $__empty_1 = true; $__currentLoopData = $recentActivities ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $activity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <?php if($activity): ?>
-                                    <div class="flex items-start space-x-3">
+                                    <?php
+                                        $action = strtolower($activity->action ?? '');
+                                        $iconColor = 'blue';
+                                        $iconBg = 'bg-blue-100';
+                                        $icon = 'check';
+
+                                        if (str_contains($action, 'create') || str_contains($action, 'add')) {
+                                            $iconColor = 'green';
+                                            $iconBg = 'bg-green-100';
+                                            $icon = 'plus';
+                                        } elseif (str_contains($action, 'update') || str_contains($action, 'edit')) {
+                                            $iconColor = 'blue';
+                                            $iconBg = 'bg-blue-100';
+                                            $icon = 'pencil';
+                                        } elseif (str_contains($action, 'delete') || str_contains($action, 'remove')) {
+                                            $iconColor = 'red';
+                                            $iconBg = 'bg-red-100';
+                                            $icon = 'trash';
+                                        } elseif (str_contains($action, 'login') || str_contains($action, 'logout')) {
+                                            $iconColor = 'purple';
+                                            $iconBg = 'bg-purple-100';
+                                            $icon = 'user';
+                                        } elseif (str_contains($action, 'view') || str_contains($action, 'access')) {
+                                            $iconColor = 'indigo';
+                                            $iconBg = 'bg-indigo-100';
+                                            $icon = 'eye';
+                                        }
+                                    ?>
+                                    <div
+                                        class="flex items-start space-x-3 py-2 hover:bg-slate-50 rounded-lg px-2 -mx-2 transition-colors">
                                         <div
-                                            class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
+                                            class="w-8 h-8 <?php echo e($iconBg); ?> rounded-full flex items-center justify-center flex-shrink-0">
+                                            <?php if($icon == 'plus'): ?>
+                                                <svg class="w-4 h-4 text-<?php echo e($iconColor); ?>-600" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                </svg>
+                                            <?php elseif($icon == 'pencil'): ?>
+                                                <svg class="w-4 h-4 text-<?php echo e($iconColor); ?>-600" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            <?php elseif($icon == 'trash'): ?>
+                                                <svg class="w-4 h-4 text-<?php echo e($iconColor); ?>-600" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            <?php elseif($icon == 'user'): ?>
+                                                <svg class="w-4 h-4 text-<?php echo e($iconColor); ?>-600" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                </svg>
+                                            <?php elseif($icon == 'eye'): ?>
+                                                <svg class="w-4 h-4 text-<?php echo e($iconColor); ?>-600" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            <?php else: ?>
+                                                <svg class="w-4 h-4 text-<?php echo e($iconColor); ?>-600" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="flex-1 min-w-0">
-                                            <p class="text-sm text-slate-900">
-                                                <?php echo e($activity?->description ?? 'User activity logged'); ?></p>
-                                            <p class="text-xs text-slate-500 mt-1">
-                                                <?php echo e($activity?->created_at?->diffForHumans() ?? 'Just now'); ?></p>
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <?php if($activity->user): ?>
+                                                    <span
+                                                        class="text-sm font-medium text-slate-900"><?php echo e($activity->user->name); ?></span>
+                                                <?php else: ?>
+                                                    <span class="text-sm font-medium text-slate-900">System</span>
+                                                <?php endif; ?>
+
+                                                <?php if($activity->action): ?>
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-<?php echo e($iconColor); ?>-100 text-<?php echo e($iconColor); ?>-800">
+                                                        <?php echo e(ucfirst($activity->action)); ?>
+
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <p class="text-sm text-slate-600 mt-0.5">
+                                                <?php echo e($activity->description ?? 'User activity logged'); ?>
+
+                                            </p>
+                                            <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <?php echo e($activity->created_at?->diffForHumans() ?? 'Just now'); ?>
+
+                                            </p>
                                         </div>
                                     </div>
                                 <?php endif; ?>

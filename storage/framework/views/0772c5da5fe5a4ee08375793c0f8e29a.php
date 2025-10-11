@@ -1,19 +1,28 @@
-<x-app-layout>
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">Analytics Dashboard</h1>
                 <p class="text-slate-600 mt-1">Comprehensive system analytics and insights</p>
             </div>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('admin.analytics') }}" class="btn btn-primary">
+                <a href="<?php echo e(route('admin.analytics')); ?>" class="btn btn-primary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                     Refresh Data
                 </a>
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -22,7 +31,7 @@
                 </a>
             </div>
         </div>
-    </x-slot>
+     <?php $__env->endSlot(); ?>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Overview Statistics -->
@@ -40,7 +49,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Total Users</p>
                         <p class="text-2xl font-bold text-slate-900">
-                            {{ number_format($analytics['overview']['total_users']) }}</p>
+                            <?php echo e(number_format($analytics['overview']['total_users'])); ?></p>
                     </div>
                 </div>
             </div>
@@ -59,7 +68,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Students</p>
                         <p class="text-2xl font-bold text-slate-900">
-                            {{ number_format($analytics['overview']['total_students']) }}</p>
+                            <?php echo e(number_format($analytics['overview']['total_students'])); ?></p>
                     </div>
                 </div>
             </div>
@@ -78,7 +87,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Teachers</p>
                         <p class="text-2xl font-bold text-slate-900">
-                            {{ number_format($analytics['overview']['total_teachers']) }}</p>
+                            <?php echo e(number_format($analytics['overview']['total_teachers'])); ?></p>
                     </div>
                 </div>
             </div>
@@ -97,7 +106,7 @@
                     <div class="ml-4">
                         <p class="text-sm font-medium text-slate-600">Assets</p>
                         <p class="text-2xl font-bold text-slate-900">
-                            {{ number_format($analytics['overview']['total_assets']) }}</p>
+                            <?php echo e(number_format($analytics['overview']['total_assets'])); ?></p>
                     </div>
                 </div>
             </div>
@@ -112,22 +121,22 @@
                     <div class="flex justify-between items-center">
                         <span class="text-slate-600">New Users This Week</span>
                         <span
-                            class="text-xl font-bold text-slate-900">{{ $analytics['user_activity']['new_users_this_week'] }}</span>
+                            class="text-xl font-bold text-slate-900"><?php echo e($analytics['user_activity']['new_users_this_week']); ?></span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-slate-600">New Users This Month</span>
                         <span
-                            class="text-xl font-bold text-slate-900">{{ $analytics['user_activity']['new_users_this_month'] }}</span>
+                            class="text-xl font-bold text-slate-900"><?php echo e($analytics['user_activity']['new_users_this_month']); ?></span>
                     </div>
 
                     <div class="pt-4 border-t">
                         <h4 class="text-sm font-medium text-slate-700 mb-3">User Distribution</h4>
-                        @foreach ($analytics['user_activity']['user_distribution'] as $role => $count)
+                        <?php $__currentLoopData = $analytics['user_activity']['user_distribution']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $role => $count): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="flex justify-between items-center py-2">
-                                <span class="text-slate-600 capitalize">{{ $role }}</span>
-                                <span class="font-semibold text-slate-900">{{ $count }}</span>
+                                <span class="text-slate-600 capitalize"><?php echo e($role); ?></span>
+                                <span class="font-semibold text-slate-900"><?php echo e($count); ?></span>
                             </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
@@ -143,18 +152,18 @@
                             <div>
                                 <p class="text-xs text-slate-500">Candidates</p>
                                 <p class="text-lg font-bold text-slate-900">
-                                    {{ $analytics['module_usage']['e_osis']['total_candidates'] }}</p>
+                                    <?php echo e($analytics['module_usage']['e_osis']['total_candidates']); ?></p>
                             </div>
                             <div>
                                 <p class="text-xs text-slate-500">Voters</p>
                                 <p class="text-lg font-bold text-slate-900">
-                                    {{ $analytics['module_usage']['e_osis']['total_voters'] }}</p>
+                                    <?php echo e($analytics['module_usage']['e_osis']['total_voters']); ?></p>
                             </div>
                         </div>
                         <div class="mt-2">
                             <p class="text-xs text-slate-500">Participation Rate</p>
                             <p class="text-lg font-bold text-green-600">
-                                {{ $analytics['module_usage']['e_osis']['voting_participation'] }}%</p>
+                                <?php echo e($analytics['module_usage']['e_osis']['voting_participation']); ?>%</p>
                         </div>
                     </div>
 
@@ -165,12 +174,12 @@
                             <div>
                                 <p class="text-xs text-slate-500">Graduates</p>
                                 <p class="text-lg font-bold text-slate-900">
-                                    {{ $analytics['module_usage']['e_lulus']['total_graduates'] }}</p>
+                                    <?php echo e($analytics['module_usage']['e_lulus']['total_graduates']); ?></p>
                             </div>
                             <div>
                                 <p class="text-xs text-slate-500">Pending</p>
                                 <p class="text-lg font-bold text-slate-900">
-                                    {{ $analytics['module_usage']['e_lulus']['pending_verification'] }}</p>
+                                    <?php echo e($analytics['module_usage']['e_lulus']['pending_verification']); ?></p>
                             </div>
                         </div>
                     </div>
@@ -179,12 +188,12 @@
                     <div>
                         <h4 class="text-sm font-medium text-slate-700 mb-2">Sarpras</h4>
                         <div class="grid grid-cols-3 gap-2">
-                            @foreach ($analytics['module_usage']['sarpras']['assets_by_condition'] as $condition => $count)
+                            <?php $__currentLoopData = $analytics['module_usage']['sarpras']['assets_by_condition']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $condition => $count): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div>
-                                    <p class="text-xs text-slate-500 capitalize">{{ $condition }}</p>
-                                    <p class="text-lg font-bold text-slate-900">{{ $count }}</p>
+                                    <p class="text-xs text-slate-500 capitalize"><?php echo e($condition); ?></p>
+                                    <p class="text-lg font-bold text-slate-900"><?php echo e($count); ?></p>
                                 </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
                 </div>
@@ -195,27 +204,27 @@
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-8">
             <h3 class="text-lg font-semibold text-slate-900 mb-4">User Registration Trend (Last 30 Days)</h3>
             <div class="h-64 flex items-end justify-between space-x-2">
-                @php
+                <?php
                     $maxCount = max(array_column($analytics['trends']['user_registrations'], 'count'));
                     $maxCount = $maxCount > 0 ? $maxCount : 1;
-                @endphp
-                @foreach ($analytics['trends']['user_registrations'] as $day)
+                ?>
+                <?php $__currentLoopData = $analytics['trends']['user_registrations']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="flex-1 flex flex-col items-center group relative">
                         <!-- Tooltip -->
                         <div
                             class="absolute bottom-full mb-2 hidden group-hover:block bg-slate-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
-                            {{ $day['date'] }}: {{ $day['count'] }} users
+                            <?php echo e($day['date']); ?>: <?php echo e($day['count']); ?> users
                         </div>
                         <!-- Bar -->
                         <div class="w-full bg-blue-500 rounded-t transition-all duration-300 hover:bg-blue-600"
-                            style="height: {{ $day['count'] > 0 ? ($day['count'] / $maxCount) * 100 : 2 }}%">
+                            style="height: <?php echo e($day['count'] > 0 ? ($day['count'] / $maxCount) * 100 : 2); ?>%">
                         </div>
                         <!-- Label -->
-                        @if ($loop->index % 5 == 0)
-                            <span class="text-xs text-slate-500 mt-2 rotate-45 origin-left">{{ $day['date'] }}</span>
-                        @endif
+                        <?php if($loop->index % 5 == 0): ?>
+                            <span class="text-xs text-slate-500 mt-2 rotate-45 origin-left"><?php echo e($day['date']); ?></span>
+                        <?php endif; ?>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
 
@@ -224,7 +233,7 @@
             <h3 class="text-lg font-semibold text-slate-900 mb-4">Module Activity Trend (Last 30 Days)</h3>
             <div class="h-64">
                 <div class="flex items-end justify-between space-x-2 h-full">
-                    @php
+                    <?php
                         $maxModuleCount = 0;
                         foreach ($analytics['trends']['module_usage'] as $day) {
                             $total = $day['voting'] + $day['graduation'] + $day['assets'];
@@ -233,34 +242,34 @@
                             }
                         }
                         $maxModuleCount = $maxModuleCount > 0 ? $maxModuleCount : 1;
-                    @endphp
-                    @foreach ($analytics['trends']['module_usage'] as $day)
+                    ?>
+                    <?php $__currentLoopData = $analytics['trends']['module_usage']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="flex-1 flex flex-col items-center group relative h-full justify-end">
                             <!-- Tooltip -->
                             <div
                                 class="absolute bottom-full mb-2 hidden group-hover:block bg-slate-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
-                                <div>{{ $day['date'] }}</div>
-                                <div>Voting: {{ $day['voting'] }}</div>
-                                <div>Graduation: {{ $day['graduation'] }}</div>
-                                <div>Assets: {{ $day['assets'] }}</div>
+                                <div><?php echo e($day['date']); ?></div>
+                                <div>Voting: <?php echo e($day['voting']); ?></div>
+                                <div>Graduation: <?php echo e($day['graduation']); ?></div>
+                                <div>Assets: <?php echo e($day['assets']); ?></div>
                             </div>
                             <!-- Stacked Bars -->
                             <div class="w-full space-y-1">
-                                @if ($day['voting'] > 0)
+                                <?php if($day['voting'] > 0): ?>
                                     <div class="w-full bg-purple-500 rounded"
-                                        style="height: {{ ($day['voting'] / $maxModuleCount) * 200 }}px"></div>
-                                @endif
-                                @if ($day['graduation'] > 0)
+                                        style="height: <?php echo e(($day['voting'] / $maxModuleCount) * 200); ?>px"></div>
+                                <?php endif; ?>
+                                <?php if($day['graduation'] > 0): ?>
                                     <div class="w-full bg-green-500 rounded"
-                                        style="height: {{ ($day['graduation'] / $maxModuleCount) * 200 }}px"></div>
-                                @endif
-                                @if ($day['assets'] > 0)
+                                        style="height: <?php echo e(($day['graduation'] / $maxModuleCount) * 200); ?>px"></div>
+                                <?php endif; ?>
+                                <?php if($day['assets'] > 0): ?>
                                     <div class="w-full bg-orange-500 rounded"
-                                        style="height: {{ ($day['assets'] / $maxModuleCount) * 200 }}px"></div>
-                                @endif
+                                        style="height: <?php echo e(($day['assets'] / $maxModuleCount) * 200); ?>px"></div>
+                                <?php endif; ?>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
             <!-- Legend -->
@@ -280,4 +289,14 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH E:\PROJEK  LARAVEL\ig-to-web\resources\views/analytics/dashboard.blade.php ENDPATH**/ ?>

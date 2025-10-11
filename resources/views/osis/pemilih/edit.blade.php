@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">{{ $pemilih->nama }}</p>
             </div>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('osis.pemilih.show', $pemilih) }}" class="btn btn-secondary">
+                <a href="{{ route('admin.osis.pemilih.show', $pemilih) }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -15,7 +15,7 @@
                     </svg>
                     Lihat Detail
                 </a>
-                <a href="{{ route('osis.pemilih.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.osis.pemilih.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -28,7 +28,7 @@
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="bg-white rounded-xl border border-slate-200 p-8">
-            <form method="POST" action="{{ route('osis.pemilih.update', $pemilih) }}" class="space-y-6">
+            <form method="POST" action="{{ route('admin.osis.pemilih.update', $pemilih) }}" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -151,7 +151,7 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex items-center justify-end space-x-4 pt-6 border-t border-slate-200">
-                    <a href="{{ route('osis.pemilih.show', $pemilih) }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.osis.pemilih.show', $pemilih) }}" class="btn btn-secondary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M6 18L18 6M6 6l12 12" />

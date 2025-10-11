@@ -5,7 +5,7 @@
                 <h1 class="text-2xl font-bold text-slate-900">Tambah Calon OSIS</h1>
                 <p class="text-slate-600 mt-1">Tambah data calon ketua dan wakil OSIS</p>
             </div>
-            <a href="{{ route('osis.calon.index') }}" class="btn btn-secondary">
+            <a href="{{ route('admin.osis.calon.index') }}" class="btn btn-secondary">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -17,7 +17,7 @@
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="bg-white rounded-xl border border-slate-200 p-8">
-            <form method="POST" action="{{ route('osis.calon.store') }}" enctype="multipart/form-data"
+            <form method="POST" action="{{ route('admin.osis.calon.store') }}" enctype="multipart/form-data"
                 class="space-y-6">
                 @csrf
 
@@ -136,7 +136,7 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex items-center justify-end space-x-4 pt-6 border-t border-slate-200">
-                    <a href="{{ route('osis.calon.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.osis.calon.index') }}" class="btn btn-secondary">
                         Batal
                     </a>
                     <button type="submit" class="btn btn-primary">

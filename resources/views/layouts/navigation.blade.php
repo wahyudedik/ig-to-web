@@ -159,11 +159,107 @@
 
             <!-- User Profile Dropdown -->
             <div class="flex items-center space-x-4">
-                <!-- Notifications -->
-                <button class="relative p-2 text-slate-600 hover:text-slate-900 transition-colors">
-                    <i class="fas fa-bell text-lg"></i>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                </button>
+                <!-- Notifications Dropdown -->
+                @php
+                    $unreadNotifications = DB::table('notifications')
+                        ->where('notifiable_id', Auth::id())
+                        ->where('notifiable_type', 'App\Models\User')
+                        ->whereNull('read_at')
+                        ->orderBy('created_at', 'desc')
+                        ->limit(5)
+                        ->get();
+                    $unreadCount = $unreadNotifications->count();
+                @endphp
+
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open"
+                        class="relative p-2 text-slate-600 hover:text-slate-900 transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                        @if ($unreadCount > 0)
+                            <span
+                                class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
+                                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <!-- Notification Dropdown -->
+                    <div x-show="open" @click.away="open = false"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-slate-200 z-50"
+                        style="display: none;">
+
+                        <!-- Header -->
+                        <div class="px-4 py-3 border-b border-slate-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-semibold text-slate-900">Notifications</h3>
+                                @if ($unreadCount > 0)
+                                    <form action="{{ route('admin.notifications.mark-all-read') }}" method="POST"
+                                        class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-xs text-blue-600 hover:text-blue-800">
+                                            Mark all as read
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Notification List -->
+                        <div class="max-h-96 overflow-y-auto">
+                            @forelse($unreadNotifications as $notification)
+                                @php
+                                    $data = json_decode($notification->data);
+                                    $notifType = $data->type ?? 'info';
+                                    $iconColor = match ($notifType) {
+                                        'success' => 'text-green-600 bg-green-100',
+                                        'warning' => 'text-yellow-600 bg-yellow-100',
+                                        'error' => 'text-red-600 bg-red-100',
+                                        default => 'text-blue-600 bg-blue-100',
+                                    };
+                                @endphp
+                                <a href="{{ route('admin.notifications') }}"
+                                    class="block px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-100">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0">
+                                            <div
+                                                class="w-8 h-8 rounded-full {{ $iconColor }} flex items-center justify-center">
+                                                <i class="fas fa-bell text-sm"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-slate-900 truncate">
+                                                {{ $data->title ?? 'Notification' }}
+                                            </p>
+                                            <p class="text-xs text-slate-600 line-clamp-2 mt-1">
+                                                {{ $data->message ?? 'No message' }}
+                                            </p>
+                                            <p class="text-xs text-slate-400 mt-1">
+                                                {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="px-4 py-8 text-center">
+                                    <i class="fas fa-bell-slash text-3xl text-slate-300 mb-2"></i>
+                                    <p class="text-sm text-slate-600">No new notifications</p>
+                                </div>
+                            @endforelse
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="px-4 py-3 bg-slate-50 border-t border-slate-200">
+                            <a href="{{ route('admin.notifications') }}"
+                                class="block text-center text-sm text-blue-600 hover:text-blue-800 font-medium">
+                                View all notifications
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Profile Dropdown -->
                 <div class="relative" x-data="{ open: false }">
