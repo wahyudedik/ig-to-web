@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\Storage;
 use Milon\Barcode\Facades\DNS1DFacade;
 use Milon\Barcode\Facades\DNS2DFacade;
 use Carbon\Carbon;
+use App\Traits\Auditable;
 
 class Barang extends Model
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $table = 'barang';
 

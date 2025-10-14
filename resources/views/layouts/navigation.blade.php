@@ -129,6 +129,16 @@
                                         <i class="fas fa-shield-alt mr-2"></i>Permission Management
                                     </a>
                                 @endcan
+                                @if (auth()->user()->hasRole('superadmin'))
+                                    <a href="{{ route('admin.roles.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-user-shield mr-2"></i>Role Management
+                                    </a>
+                                    <a href="{{ route('admin.audit-logs.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-history mr-2"></i>Audit Logs
+                                    </a>
+                                @endif
                                 @can('viewAnalytics', App\Models\User::class)
                                     <a href="{{ route('admin.analytics') }}"
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -456,6 +466,16 @@
                                     <i class="fas fa-shield-alt mr-2"></i>Permission Management
                                 </a>
                             @endcan
+                            @if (auth()->user()->hasRole('superadmin'))
+                                <a href="{{ route('admin.roles.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-user-shield mr-2"></i>Role Management
+                                </a>
+                                <a href="{{ route('admin.audit-logs.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-history mr-2"></i>Audit Logs
+                                </a>
+                            @endif
                             <a href="{{ route('admin.analytics') }}"
                                 class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                 <i class="fas fa-chart-line mr-2"></i>Analytics Dashboard

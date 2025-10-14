@@ -28,7 +28,10 @@ class CheckRole
             return $next($request);
         }
 
-        if ($user->user_type !== $role) {
+        // Support multiple roles separated by |
+        $allowedRoles = explode('|', $role);
+
+        if (!in_array($user->user_type, $allowedRoles)) {
             abort(403, 'Unauthorized access.');
         }
 

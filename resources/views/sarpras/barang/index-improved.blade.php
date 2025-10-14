@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">Kelola data barang sarana dan prasarana</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('sarpras.barang.create') }}" class="btn btn-primary">
+                <a href="{{ route('admin.sarpras.barang.create') }}" class="btn btn-primary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -220,7 +220,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('sarpras.barang.show', $b) }}"
+                                        <a href="{{ route('admin.sarpras.barang.show', $b) }}"
                                             class="text-blue-600 hover:text-blue-700" title="Lihat Detail">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -230,7 +230,7 @@
                                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
                                         </a>
-                                        <a href="{{ route('sarpras.barang.edit', $b) }}"
+                                        <a href="{{ route('admin.sarpras.barang.edit', $b) }}"
                                             class="text-amber-600 hover:text-amber-700" title="Edit">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -239,7 +239,7 @@
                                             </svg>
                                         </a>
                                         <button type="button" class="text-red-600 hover:text-red-700"
-                                            data-delete-url="{{ route('sarpras.barang.destroy', $b) }}"
+                                            data-delete-url="{{ route('admin.sarpras.barang.destroy', $b) }}"
                                             data-item-name="barang {{ $b->nama_barang }}" title="Hapus">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -262,7 +262,7 @@
                                         <h3 class="text-lg font-medium text-slate-900 mb-2">Tidak ada data barang</h3>
                                         <p class="text-slate-500 mb-4">Belum ada barang yang terdaftar dalam sistem.
                                         </p>
-                                        <a href="{{ route('sarpras.barang.create') }}" class="btn btn-primary">
+                                        <a href="{{ route('admin.sarpras.barang.create') }}" class="btn btn-primary">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

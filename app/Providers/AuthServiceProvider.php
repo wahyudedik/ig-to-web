@@ -8,10 +8,20 @@ use App\Models\User;
 use App\Models\Barang;
 use App\Models\Calon;
 use App\Models\Pemilih;
+use App\Models\Siswa;
+use App\Models\Guru;
+use App\Models\Kelulusan;
+use App\Models\Page;
+use App\Models\AuditLog;
 use App\Policies\UserPolicy;
 use App\Policies\SarprasPolicy;
 use App\Policies\OSISPolicy;
 use App\Policies\SystemPolicy;
+use App\Policies\SiswaPolicy;
+use App\Policies\GuruPolicy;
+use App\Policies\KelulusanPolicy;
+use App\Policies\PagePolicy;
+use App\Policies\AuditLogPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +35,11 @@ class AuthServiceProvider extends ServiceProvider
         Barang::class => SarprasPolicy::class,
         Calon::class => OSISPolicy::class,
         Pemilih::class => OSISPolicy::class,
+        Siswa::class => SiswaPolicy::class,
+        Guru::class => GuruPolicy::class,
+        Kelulusan::class => KelulusanPolicy::class,
+        Page::class => PagePolicy::class,
+        AuditLog::class => AuditLogPolicy::class,
     ];
 
     /**

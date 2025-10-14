@@ -129,6 +129,16 @@
                                         <i class="fas fa-shield-alt mr-2"></i>Permission Management
                                     </a>
                                 <?php endif; ?>
+                                <?php if(auth()->user()->hasRole('superadmin')): ?>
+                                    <a href="<?php echo e(route('admin.roles.index')); ?>"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-user-shield mr-2"></i>Role Management
+                                    </a>
+                                    <a href="<?php echo e(route('admin.audit-logs.index')); ?>"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-history mr-2"></i>Audit Logs
+                                    </a>
+                                <?php endif; ?>
                                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewAnalytics', App\Models\User::class)): ?>
                                     <a href="<?php echo e(route('admin.analytics')); ?>"
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -458,6 +468,16 @@
                                 <a href="<?php echo e(route('admin.permissions.index')); ?>"
                                     class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                     <i class="fas fa-shield-alt mr-2"></i>Permission Management
+                                </a>
+                            <?php endif; ?>
+                            <?php if(auth()->user()->hasRole('superadmin')): ?>
+                                <a href="<?php echo e(route('admin.roles.index')); ?>"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-user-shield mr-2"></i>Role Management
+                                </a>
+                                <a href="<?php echo e(route('admin.audit-logs.index')); ?>"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-history mr-2"></i>Audit Logs
                                 </a>
                             <?php endif; ?>
                             <a href="<?php echo e(route('admin.analytics')); ?>"

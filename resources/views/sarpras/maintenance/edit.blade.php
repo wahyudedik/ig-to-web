@@ -7,7 +7,7 @@
                 <p class="text-slate-600 mt-1">Update maintenance record information</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('sarpras.maintenance.show', $maintenance) }}" class="btn btn-secondary">
+                <a href="{{ route('admin.sarpras.maintenance.show', $maintenance) }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -16,7 +16,7 @@
                     </svg>
                     View
                 </a>
-                <a href="{{ route('sarpras.maintenance.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.sarpras.maintenance.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -33,7 +33,7 @@
                 <h3 class="text-lg font-semibold text-slate-900">Maintenance Information</h3>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ route('sarpras.maintenance.update', $maintenance) }}"
+                <form method="POST" action="{{ route('admin.sarpras.maintenance.update', $maintenance) }}"
                     enctype="multipart/form-data" class="space-y-6">
                     @csrf
                     @method('PUT')
@@ -262,7 +262,7 @@
 
                     <!-- Form Actions -->
                     <div class="flex items-center justify-end space-x-4 pt-6 border-t border-slate-200">
-                        <a href="{{ route('sarpras.maintenance.show', $maintenance) }}" class="btn btn-secondary">
+                        <a href="{{ route('admin.sarpras.maintenance.show', $maintenance) }}" class="btn btn-secondary">
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">

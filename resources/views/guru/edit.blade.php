@@ -636,7 +636,7 @@
                 button.textContent = 'Loading...';
                 button.disabled = true;
 
-                fetch('/api/users', {
+                fetch('{{ route('admin.superadmin.users.store') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

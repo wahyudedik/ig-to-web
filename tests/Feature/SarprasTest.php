@@ -29,6 +29,10 @@ class SarprasTest extends TestCase
             'user_type' => 'sarpras'
         ]);
 
+        // Assign sarpras role using Spatie
+        $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'sarpras']);
+        $this->user->assignRole($role);
+
         // Create test kategori
         $this->kategori = KategoriSarpras::factory()->create([
             'nama_kategori' => 'Test Kategori',
@@ -186,9 +190,9 @@ class SarprasTest extends TestCase
             'kode_barang' => 'TEST-BARANG-001'
         ]);
 
-        // Check if file was uploaded to private storage
+        // Check if file was uploaded to public storage
         $barang = Barang::where('nama_barang', 'Test Barang')->first();
-        $this->assertTrue(Storage::disk('local')->exists($barang->foto));
+        $this->assertTrue(Storage::disk('public')->exists($barang->foto));
     }
 
     /** @test */
@@ -259,8 +263,11 @@ class SarprasTest extends TestCase
             'foto' => 'private/barang/test.jpg'
         ]);
 
-        // Create fake file
-        Storage::disk('local')->put('private/barang/test.jpg', 'fake content');
+        // Create fake file in public storage
+        $fakePath = 'barang/test.jpg';
+        Storage::disk('public')->put($fakePath, 'fake content');
+        $barang->foto = $fakePath;
+        $barang->save();
 
         $response = $this->actingAs($this->user)->delete("/admin/sarpras/barang/{$barang->id}");
 
@@ -272,7 +279,7 @@ class SarprasTest extends TestCase
         ]);
 
         // Check if file was deleted
-        $this->assertFalse(Storage::disk('local')->exists('private/barang/test.jpg'));
+        $this->assertFalse(Storage::disk('public')->exists($fakePath));
     }
 
     /** @test */

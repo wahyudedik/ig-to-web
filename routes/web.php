@@ -101,8 +101,27 @@ Route::middleware(['auth', 'verified', 'role:superadmin|admin'])->prefix('admin'
     Route::post('permissions/bulk-create', [App\Http\Controllers\PermissionController::class, 'bulkStore'])->name('permissions.bulk-store');
 });
 
+// Audit Logs (Access: superadmin only)
+Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('admin/audit-logs')->name('admin.audit-logs.')->group(function () {
+    Route::get('/', [App\Http\Controllers\AuditLogController::class, 'index'])->name('index');
+    Route::get('/{auditLog}', [App\Http\Controllers\AuditLogController::class, 'show'])->name('show');
+    Route::get('/export', [App\Http\Controllers\AuditLogController::class, 'export'])->name('export');
+});
+
+// Role Management (Access: superadmin only)
+Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('admin/roles')->name('admin.roles.')->group(function () {
+    Route::get('/', [App\Http\Controllers\RoleManagementController::class, 'index'])->name('index');
+    Route::get('/create', [App\Http\Controllers\RoleManagementController::class, 'create'])->name('create');
+    Route::post('/', [App\Http\Controllers\RoleManagementController::class, 'store'])->name('store');
+    Route::get('/{role}/edit', [App\Http\Controllers\RoleManagementController::class, 'edit'])->name('edit');
+    Route::put('/{role}', [App\Http\Controllers\RoleManagementController::class, 'update'])->name('update');
+    Route::delete('/{role}', [App\Http\Controllers\RoleManagementController::class, 'destroy'])->name('destroy');
+    Route::get('/{role}/assign-users', [App\Http\Controllers\RoleManagementController::class, 'assignUsers'])->name('assign-users');
+    Route::post('/{role}/sync-users', [App\Http\Controllers\RoleManagementController::class, 'syncUsers'])->name('sync-users');
+});
+
 // Page Management (Access: admin, superadmin)
-Route::middleware(['auth', 'verified'])->prefix('admin/pages')->name('admin.pages.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/pages')->name('admin.pages.')->group(function () {
     // Page CRUD Routes
     Route::get('/', [PageController::class, 'admin'])->name('index');
     Route::get('/create', [PageController::class, 'create'])->name('create');
@@ -128,7 +147,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin/pages')->name('admin.page
 // ========================================
 
 // Guru Management (Access: guru, admin, superadmin)
-Route::middleware(['auth', 'verified'])->prefix('admin/guru')->name('admin.guru.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:guru|admin|superadmin'])->prefix('admin/guru')->name('admin.guru.')->group(function () {
     // Import/Export routes (must be before resource routes)
     Route::get('/import', [GuruController::class, 'import'])->name('import');
     Route::get('/import/template', [GuruController::class, 'downloadTemplate'])->name('downloadTemplate');
@@ -148,8 +167,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin/guru')->name('admin.guru.
     Route::delete('/{guru}', [GuruController::class, 'destroy'])->name('destroy');
 });
 
-// Siswa Management (Access: siswa, admin, superadmin)
-Route::middleware(['auth', 'verified'])->prefix('admin/siswa')->name('admin.siswa.')->group(function () {
+// Siswa Management (Access: guru, admin, superadmin)
+Route::middleware(['auth', 'verified', 'role:guru|admin|superadmin'])->prefix('admin/siswa')->name('admin.siswa.')->group(function () {
     // Import/Export routes (must be before resource routes)
     Route::get('/import', [SiswaController::class, 'import'])->name('import');
     Route::get('/import/template', [SiswaController::class, 'downloadTemplate'])->name('downloadTemplate');
@@ -167,7 +186,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin/siswa')->name('admin.sisw
 });
 
 // OSIS Management (Access: admin, superadmin)
-Route::middleware(['auth', 'verified'])->prefix('admin/osis')->name('admin.osis.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/osis')->name('admin.osis.')->group(function () {
     Route::get('/', [OSISController::class, 'index'])->name('index');
 
     // Calon Import/Export routes
@@ -208,8 +227,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin/osis')->name('admin.osis.
     Route::get('/teacher-view', [OSISController::class, 'teacherView'])->name('teacher-view');
 });
 
-// E-Lulus Management (Access: admin, superadmin)
-Route::middleware(['auth', 'verified'])->prefix('admin/lulus')->name('admin.lulus.')->group(function () {
+// E-Lulus Management (Access: admin, superadmin, guru)
+Route::middleware(['auth', 'verified', 'role:admin|superadmin|guru'])->prefix('admin/lulus')->name('admin.lulus.')->group(function () {
     // Import/Export routes (must be before resource routes)
     Route::get('/import', [KelulusanController::class, 'import'])->name('import');
     Route::get('/import/template', [KelulusanController::class, 'downloadTemplate'])->name('downloadTemplate');
@@ -230,7 +249,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin/lulus')->name('admin.lulu
 });
 
 // Sarpras Management (Access: sarpras, admin, superadmin)
-Route::middleware(['auth', 'verified'])->prefix('admin/sarpras')->name('admin.sarpras.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:sarpras|admin|superadmin'])->prefix('admin/sarpras')->name('admin.sarpras.')->group(function () {
     Route::get('/', [SarprasController::class, 'index'])->name('index');
     Route::get('/reports', [SarprasController::class, 'reports'])->name('reports');
 
@@ -324,12 +343,12 @@ Route::get('/barcode/{code}', [SarprasController::class, 'generateBarcode'])->na
 Route::get('/qrcode/{code}', [SarprasController::class, 'generateQRCode'])->name('sarpras.qrcode');
 
 // Additional Barcode Routes (for authenticated users)
-Route::middleware(['auth', 'verified', 'role:sarpras'])->group(function () {
-    Route::post('/sarpras/barcode/generate-all', [SarprasController::class, 'generateAllBarcodes'])->name('sarpras.barcode.generate-all');
-    Route::get('/sarpras/barcode/print/{barang}', [SarprasController::class, 'printBarcode'])->name('sarpras.barcode.print');
-    Route::post('/sarpras/barcode/bulk-print', [SarprasController::class, 'bulkPrintBarcodes'])->name('sarpras.barcode.bulk-print');
-    Route::get('/sarpras/barcode/scan', [SarprasController::class, 'showScanPage'])->name('sarpras.barcode.scan');
-    Route::post('/sarpras/barcode/scan', [SarprasController::class, 'processScan'])->name('sarpras.barcode.scan.process');
+Route::middleware(['auth', 'verified', 'role:sarpras'])->prefix('admin/sarpras')->name('admin.sarpras.')->group(function () {
+    Route::post('/barcode/generate-all', [SarprasController::class, 'generateAllBarcodes'])->name('barcode.generate-all');
+    Route::get('/barcode/print/{barang}', [SarprasController::class, 'printBarcode'])->name('barcode.print');
+    Route::post('/barcode/bulk-print', [SarprasController::class, 'bulkPrintBarcodes'])->name('barcode.bulk-print');
+    Route::get('/barcode/scan', [SarprasController::class, 'showScanPage'])->name('barcode.scan');
+    Route::post('/barcode/scan', [SarprasController::class, 'processScan'])->name('barcode.scan.process');
 });
 
 Route::middleware('auth')->group(function () {

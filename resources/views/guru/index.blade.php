@@ -5,26 +5,32 @@
                 {{ __('Data Tenaga Pendidik (Guru)') }}
             </h2>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('admin.guru.import') }}"
-                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    Import
-                </a>
-                <a href="{{ route('admin.guru.export') }}"
-                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Export
-                </a>
-                <a href="{{ route('admin.guru.create') }}"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Tambah Guru
-                </a>
+                @can('import', App\Models\Guru::class)
+                    <a href="{{ route('admin.guru.import') }}"
+                        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        Import
+                    </a>
+                @endcan
+                @can('export', App\Models\Guru::class)
+                    <a href="{{ route('admin.guru.export') }}"
+                        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Export
+                    </a>
+                @endcan
+                @can('create', App\Models\Guru::class)
+                    <a href="{{ route('admin.guru.create') }}"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Tambah Guru
+                    </a>
+                @endcan
             </div>
         </div>
     </x-slot>
@@ -175,18 +181,24 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex space-x-2">
-                                                <a href="{{ route('admin.guru.show', $guru) }}"
-                                                    class="text-blue-600 hover:text-blue-900">View</a>
-                                                <a href="{{ route('admin.guru.edit', $guru) }}"
-                                                    class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                                <form method="POST" action="{{ route('admin.guru.destroy', $guru) }}"
-                                                    class="inline"
-                                                    onsubmit="return confirm('Are you sure you want to delete this guru?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="text-red-600 hover:text-red-900">Delete</button>
-                                                </form>
+                                                @can('view', $guru)
+                                                    <a href="{{ route('admin.guru.show', $guru) }}"
+                                                        class="text-blue-600 hover:text-blue-900">View</a>
+                                                @endcan
+                                                @can('update', $guru)
+                                                    <a href="{{ route('admin.guru.edit', $guru) }}"
+                                                        class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                                @endcan
+                                                @can('delete', $guru)
+                                                    <form method="POST" action="{{ route('admin.guru.destroy', $guru) }}"
+                                                        class="inline"
+                                                        onsubmit="return confirm('Are you sure you want to delete this guru?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="text-red-600 hover:text-red-900">Delete</button>
+                                                    </form>
+                                                @endcan
                                             </div>
                                         </td>
                                     </tr>

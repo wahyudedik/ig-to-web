@@ -6,59 +6,70 @@
                 <p class="text-slate-600 mt-1">Kelola data barang sarana dan prasarana sekolah</p>
             </div>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('admin.sarpras.barang.create') }}" class="btn btn-primary">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Tambah Barang
-                </a>
-
-                <!-- Import/Export Buttons -->
-                <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" class="btn btn-secondary">
+                @can('create', App\Models\Barang::class)
+                    <a href="{{ route('admin.sarpras.barang.create') }}" class="btn btn-primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
-                        Import/Export
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div x-show="open" @click.away="open = false"
-                        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                        <div class="py-1">
-                            <a href="{{ route('admin.sarpras.barang.import') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                </svg>
-                                Import Data
-                            </a>
-                            <a href="{{ route('admin.sarpras.barang.export') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Export Data
-                            </a>
-                            <a href="{{ route('admin.sarpras.barang.downloadTemplate') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Download Template
-                            </a>
+                        Tambah Barang
+                    </a>
+                @endcan
+
+                <!-- Import/Export Buttons -->
+                @if (Auth::user()->can('import', App\Models\Barang::class) || Auth::user()->can('export', App\Models\Barang::class))
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="btn btn-secondary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Import/Export
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.away="open = false"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                            <div class="py-1">
+                                @can('import', App\Models\Barang::class)
+                                    <a href="{{ route('admin.sarpras.barang.import') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
+                                        Import Data
+                                    </a>
+                                @endcan
+                                @can('export', App\Models\Barang::class)
+                                    <a href="{{ route('admin.sarpras.barang.export') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        Export Data
+                                    </a>
+                                @endcan
+                                @can('import', App\Models\Barang::class)
+                                    <a href="{{ route('admin.sarpras.barang.downloadTemplate') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        Download Template
+                                    </a>
+                                @endcan
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Barcode Operations -->
                 <div class="relative" x-data="{ open: false }">
@@ -106,7 +117,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('sarpras.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.sarpras.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -198,7 +209,7 @@
 
         <!-- Filters and Search -->
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <form method="GET" action="{{ route('sarpras.barang.index') }}"
+            <form method="GET" action="{{ route('admin.sarpras.barang.index') }}"
                 class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}"
@@ -292,7 +303,7 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('sarpras.barang.show', $b) }}"
+                                        <a href="{{ route('admin.sarpras.barang.show', $b) }}"
                                             class="text-blue-600 hover:text-blue-700" title="Lihat Detail">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -302,7 +313,7 @@
                                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
                                         </a>
-                                        <a href="{{ route('sarpras.barang.edit', $b) }}"
+                                        <a href="{{ route('admin.sarpras.barang.edit', $b) }}"
                                             class="text-amber-600 hover:text-amber-700" title="Edit">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -319,7 +330,7 @@
                                                     d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                                             </svg>
                                         </a>
-                                        <form method="POST" action="{{ route('sarpras.barang.destroy', $b) }}"
+                                        <form method="POST" action="{{ route('admin.sarpras.barang.destroy', $b) }}"
                                             class="inline"
                                             onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini?')">
                                             @csrf

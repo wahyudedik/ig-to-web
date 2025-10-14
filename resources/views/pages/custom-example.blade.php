@@ -20,7 +20,7 @@
     @endpush
 
     <!-- Custom Hero Section -->
-    <x-landing-hero title="Halaman Custom" subtitle="Contoh Halaman yang Scalable"
+    <x-landing.hero title="Halaman Custom" subtitle="Contoh Halaman yang Scalable"
         description="Halaman ini menggunakan komponen yang dapat digunakan kembali untuk header, footer, dan struktur utama." />
 
     <!-- Custom Content Section -->

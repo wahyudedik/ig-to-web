@@ -274,6 +274,64 @@ class PermissionSeeder extends Seeder
                 'guard_name' => 'web'
             ],
 
+            // Kelulusan (E-Lulus) permissions
+            [
+                'name' => 'kelulusan.view',
+                'display_name' => 'Kelulusan - Lihat Data',
+                'description' => 'Permission untuk melihat data kelulusan',
+                'module' => 'kelulusan',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'kelulusan.create',
+                'display_name' => 'Kelulusan - Tambah Data',
+                'description' => 'Permission untuk menambah data kelulusan',
+                'module' => 'kelulusan',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'kelulusan.edit',
+                'display_name' => 'Kelulusan - Edit Data',
+                'description' => 'Permission untuk mengedit data kelulusan',
+                'module' => 'kelulusan',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'kelulusan.delete',
+                'display_name' => 'Kelulusan - Hapus Data',
+                'description' => 'Permission untuk menghapus data kelulusan',
+                'module' => 'kelulusan',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'kelulusan.export',
+                'display_name' => 'Kelulusan - Export Data',
+                'description' => 'Permission untuk export data kelulusan',
+                'module' => 'kelulusan',
+                'action' => 'export',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'kelulusan.import',
+                'display_name' => 'Kelulusan - Import Data',
+                'description' => 'Permission untuk import data kelulusan',
+                'module' => 'kelulusan',
+                'action' => 'import',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'kelulusan.certificate',
+                'display_name' => 'Kelulusan - Generate Certificate',
+                'description' => 'Permission untuk generate sertifikat kelulusan',
+                'module' => 'kelulusan',
+                'action' => 'certificate',
+                'guard_name' => 'web'
+            ],
+
             // Page Management permissions
             [
                 'name' => 'pages.view',

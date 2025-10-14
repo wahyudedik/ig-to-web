@@ -291,8 +291,7 @@
                                             Tambah
                                         </button>
                                     </div>
-                                    <div
-                                        class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-2">
+                                    <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-2">
                                         @foreach ($ekstrakurikuler as $eks)
                                             <label class="flex items-center">
                                                 <input type="checkbox" name="ekstrakurikuler[]"
@@ -731,7 +730,7 @@
                 button.disabled = true;
 
                 // Send AJAX request
-                fetch('/api/kelas', {
+                fetch('{{ route('admin.settings.data-management.kelas.store') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -789,7 +788,7 @@
                 button.textContent = 'Loading...';
                 button.disabled = true;
 
-                fetch('/api/jurusan', {
+                fetch('{{ route('admin.settings.data-management.jurusan.store') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -845,7 +844,7 @@
                 button.textContent = 'Loading...';
                 button.disabled = true;
 
-                fetch('/api/ekstrakurikuler', {
+                fetch('{{ route('admin.settings.data-management.ekstrakurikuler.store') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -899,7 +898,7 @@
                 button.textContent = 'Loading...';
                 button.disabled = true;
 
-                fetch('/api/users', {
+                fetch('{{ route('admin.superadmin.users.store') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

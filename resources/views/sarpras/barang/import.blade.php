@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Import Data Barang Sarpras') }}
             </h2>
-            <a href="{{ route('sarpras.barang.index') }}"
+            <a href="{{ route('admin.sarpras.barang.index') }}"
                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -23,7 +23,7 @@
                         <!-- Upload Form -->
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Upload File Excel</h3>
-                            <form action="{{ route('sarpras.barang.processImport') }}" method="POST"
+                            <form action="{{ route('admin.sarpras.barang.processImport') }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="space-y-4">
@@ -70,7 +70,7 @@
                             </div>
 
                             <div class="mt-4">
-                                <a href="{{ route('sarpras.barang.downloadTemplate') }}"
+                                <a href="{{ route('admin.sarpras.barang.downloadTemplate') }}"
                                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                     <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
