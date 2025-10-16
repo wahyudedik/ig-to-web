@@ -11,51 +11,132 @@ class RolePermissionController extends Controller
 {
     public function index()
     {
-        $roles = Role::with('permissions')->get();
+        $roles = Role::with('permissions')->withCount('users')->get();
         $permissions = Permission::all()->groupBy(function ($permission) {
             return explode('.', $permission->name)[0];
         });
-        
+
         return view('admin.role-permissions.index', compact('roles', 'permissions'));
     }
 
+
     public function createRole(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'array'
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:roles,name',
+                'permissions' => 'array'
+            ]);
 
-        $role = Role::create(['name' => $request->name]);
-        
-        if ($request->has('permissions')) {
-            $role->givePermissionTo($request->permissions);
+            $role = Role::create([
+                'name' => $request->name,
+                'guard_name' => 'web'
+            ]);
+
+            if ($request->has('permissions')) {
+                $role->givePermissionTo($request->permissions);
+            }
+
+            // Return JSON for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Role created successfully',
+                    'data' => $role
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Role created successfully.');
+        } catch (\Exception $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error creating role: ' . $e->getMessage()
+                ], 422);
+            }
+
+            return redirect()->back()->with('error', 'Error creating role: ' . $e->getMessage());
         }
-
-        return redirect()->back()->with('success', 'Role created successfully.');
     }
 
     public function updateRole(Request $request, Role $role)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'permissions' => 'array'
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
+                'permissions' => 'array'
+            ]);
 
-        $role->update(['name' => $request->name]);
-        $role->syncPermissions($request->permissions ?? []);
+            $role->update(['name' => $request->name]);
+            $role->syncPermissions($request->permissions ?? []);
 
-        return redirect()->back()->with('success', 'Role updated successfully.');
+            // Return JSON for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Role updated successfully',
+                    'data' => $role
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Role updated successfully.');
+        } catch (\Exception $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error updating role: ' . $e->getMessage()
+                ], 422);
+            }
+
+            return redirect()->back()->with('error', 'Error updating role: ' . $e->getMessage());
+        }
     }
 
     public function deleteRole(Role $role)
     {
-        if ($role->users()->count() > 0) {
-            return redirect()->back()->with('error', 'Cannot delete role that has users assigned.');
-        }
+        try {
+            // Prevent deletion of core roles
+            if (in_array($role->name, ['superadmin', 'admin', 'guru', 'sarpras', 'siswa'])) {
+                if (request()->expectsJson() || request()->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Cannot delete core system role'
+                    ], 403);
+                }
+                return redirect()->back()->with('error', 'Cannot delete core system role');
+            }
 
-        $role->delete();
-        return redirect()->back()->with('success', 'Role deleted successfully.');
+            if ($role->users()->count() > 0) {
+                if (request()->expectsJson() || request()->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Cannot delete role that has users assigned'
+                    ], 403);
+                }
+                return redirect()->back()->with('error', 'Cannot delete role that has users assigned.');
+            }
+
+            $role->delete();
+
+            // Return JSON for AJAX requests
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Role deleted successfully'
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Role deleted successfully.');
+        } catch (\Exception $e) {
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error deleting role: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Error deleting role: ' . $e->getMessage());
+        }
     }
 
     public function assignRoleToUser(Request $request)
@@ -90,10 +171,19 @@ class RolePermissionController extends Controller
 
     public function getRolePermissions(Role $role)
     {
-        return response()->json([
-            'role' => $role,
-            'permissions' => $role->permissions->pluck('name')
-        ]);
+        try {
+            $permissions = $role->permissions->pluck('name')->toArray();
+
+            return response()->json([
+                'success' => true,
+                'permissions' => $permissions
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading role permissions: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getUsersWithRoles()

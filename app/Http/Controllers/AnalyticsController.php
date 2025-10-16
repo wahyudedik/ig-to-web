@@ -46,8 +46,8 @@ class AnalyticsController extends Controller
         $lastMonth = Carbon::now()->subMonth();
 
         return [
-            'new_users_this_week' => User::where('created_at', '>=', $lastWeek)->count(),
-            'new_users_this_month' => User::where('created_at', '>=', $lastMonth)->count(),
+            'invited_users_this_week' => User::where('created_at', '>=', $lastWeek)->count(),
+            'invited_users_this_month' => User::where('created_at', '>=', $lastMonth)->count(),
             'user_distribution' => $this->getUserDistribution()
         ];
     }
@@ -79,7 +79,7 @@ class AnalyticsController extends Controller
         });
 
         return [
-            'user_registrations' => $this->getUserRegistrationTrend($last30Days),
+            'user_invitations' => $this->getUserInvitationTrend($last30Days),
             'module_usage' => $this->getModuleUsageTrend($last30Days),
         ];
     }
@@ -112,7 +112,7 @@ class AnalyticsController extends Controller
         ];
     }
 
-    private function getUserRegistrationTrend($days): array
+    private function getUserInvitationTrend($days): array
     {
         return $days->map(function ($day) {
             return [

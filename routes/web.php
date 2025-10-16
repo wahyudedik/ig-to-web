@@ -22,7 +22,22 @@ use Illuminate\Support\Facades\Route;
 // ========================================
 
 Route::get('/', function () {
-    return view('welcome'); // Landing page - fully customizable
+    // Get menu data for header and footer
+    $headerMenus = \App\Models\Page::where('is_menu', true)
+        ->where('menu_position', 'header')
+        ->whereNull('parent_id')
+        ->orderBy('menu_sort_order')
+        ->with('children')
+        ->get();
+
+    $footerMenus = \App\Models\Page::where('is_menu', true)
+        ->where('menu_position', 'footer')
+        ->whereNull('parent_id')
+        ->orderBy('menu_sort_order')
+        ->with('children')
+        ->get();
+
+    return view('welcome', compact('headerMenus', 'footerMenus')); // Landing page - fully customizable
 })->name('landing');
 
 // Public graduation check
@@ -104,8 +119,8 @@ Route::middleware(['auth', 'verified', 'role:superadmin|admin'])->prefix('admin'
 // Audit Logs (Access: superadmin only)
 Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('admin/audit-logs')->name('admin.audit-logs.')->group(function () {
     Route::get('/', [App\Http\Controllers\AuditLogController::class, 'index'])->name('index');
-    Route::get('/{auditLog}', [App\Http\Controllers\AuditLogController::class, 'show'])->name('show');
     Route::get('/export', [App\Http\Controllers\AuditLogController::class, 'export'])->name('export');
+    Route::get('/{auditLog}', [App\Http\Controllers\AuditLogController::class, 'show'])->name('show');
 });
 
 // Role Management (Access: superadmin only)
@@ -301,7 +316,7 @@ Route::middleware(['auth', 'verified', 'role:sarpras|admin|superadmin'])->prefix
 // INSTAGRAM MANAGEMENT ROUTES (Admin only)
 // ========================================
 
-Route::middleware(['auth', 'verified'])->prefix('admin/instagram')->name('admin.instagram.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/instagram')->name('admin.instagram.')->group(function () {
     // Instagram Management (Admin only - untuk pengaturan, bukan kegiatan publik)
     Route::get('/management', [InstagramManagementController::class, 'index'])->name('management');
     Route::post('/management/update-config', [InstagramManagementController::class, 'updateConfig'])->name('management.update-config');
@@ -311,6 +326,27 @@ Route::middleware(['auth', 'verified'])->prefix('admin/instagram')->name('admin.
     Route::get('/management/scheduled-content', [InstagramManagementController::class, 'getScheduledContent'])->name('management.scheduled-content');
     Route::post('/management/cancel-scheduled', [InstagramManagementController::class, 'cancelScheduledContent'])->name('management.cancel-scheduled');
     Route::get('/management/insights', [InstagramManagementController::class, 'getInsights'])->name('management.insights');
+});
+
+// Testimonials Management (Access: admin, superadmin)
+Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/testimonials')->name('admin.testimonials.')->group(function () {
+    Route::get('/', [App\Http\Controllers\TestimonialController::class, 'index'])->name('index');
+    Route::get('/{testimonial}', [App\Http\Controllers\TestimonialController::class, 'show'])->name('show');
+    Route::post('/{testimonial}/approve', [App\Http\Controllers\TestimonialController::class, 'approve'])->name('approve');
+    Route::post('/{testimonial}/reject', [App\Http\Controllers\TestimonialController::class, 'reject'])->name('reject');
+    Route::post('/{testimonial}/toggle-featured', [App\Http\Controllers\TestimonialController::class, 'toggleFeatured'])->name('toggle-featured');
+    Route::delete('/{testimonial}', [App\Http\Controllers\TestimonialController::class, 'destroy'])->name('destroy');
+});
+
+// Testimonial Links Management (Access: admin, superadmin)
+Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/testimonial-links')->name('admin.testimonial-links.')->group(function () {
+    Route::get('/', [App\Http\Controllers\TestimonialLinkController::class, 'index'])->name('index');
+    Route::get('/create', [App\Http\Controllers\TestimonialLinkController::class, 'create'])->name('create');
+    Route::post('/', [App\Http\Controllers\TestimonialLinkController::class, 'store'])->name('store');
+    Route::get('/{testimonialLink}/edit', [App\Http\Controllers\TestimonialLinkController::class, 'edit'])->name('edit');
+    Route::put('/{testimonialLink}', [App\Http\Controllers\TestimonialLinkController::class, 'update'])->name('update');
+    Route::post('/{testimonialLink}/toggle-active', [App\Http\Controllers\TestimonialLinkController::class, 'toggleActive'])->name('toggle-active');
+    Route::delete('/{testimonialLink}', [App\Http\Controllers\TestimonialLinkController::class, 'destroy'])->name('destroy');
 
     // Instagram Analytics (Admin only)
     Route::get('/analytics', [InstagramAnalyticsController::class, 'index'])->name('analytics');
@@ -373,8 +409,8 @@ Route::post('/email/verify/resend-auth', [App\Http\Controllers\Auth\EmailVerific
 // SETTINGS & API ROUTES (Admin only)
 // ========================================
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    // Settings Routes
+Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin')->name('admin.')->group(function () {
+    // Settings Routes (Admin only)
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::get('/settings/data-management', [SettingsController::class, 'dataManagement'])->name('settings.data-management');
     Route::get('/settings/kelas-jurusan', [SettingsController::class, 'kelasJurusan'])->name('settings.kelas-jurusan');
@@ -422,6 +458,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
     Route::delete('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'delete'])->name('notifications.delete');
 
+
     // User Management (Superadmin only)
     Route::prefix('user-management')->name('user-management.')->group(function () {
         Route::get('/', [App\Http\Controllers\UserManagementController::class, 'index'])->name('index');
@@ -445,5 +482,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::get('/users', [App\Http\Controllers\RolePermissionController::class, 'getUsersWithRoles'])->name('users');
     });
 });
+
+// Testimonials (Public - No Login Required)
+Route::get('/testimonial', [App\Http\Controllers\TestimonialController::class, 'create'])->name('testimonials.create');
+Route::post('/testimonial', [App\Http\Controllers\TestimonialController::class, 'store'])->name('testimonials.store');
+
+// Testimonial Links (Public with Token)
+Route::get('/testimonial-link/{token}', [App\Http\Controllers\TestimonialLinkController::class, 'showPublic'])->name('testimonials.public');
+Route::post('/testimonial-link/{token}', [App\Http\Controllers\TestimonialLinkController::class, 'storePublic'])->name('testimonials.public.store');
 
 require __DIR__ . '/auth.php';

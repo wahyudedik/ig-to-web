@@ -274,15 +274,49 @@ class PermissionSeeder extends Seeder
                 'guard_name' => 'web'
             ],
 
-            // Kelulusan (E-Lulus) permissions
-            [
-                'name' => 'kelulusan.view',
-                'display_name' => 'Kelulusan - Lihat Data',
-                'description' => 'Permission untuk melihat data kelulusan',
-                'module' => 'kelulusan',
-                'action' => 'view',
-                'guard_name' => 'web'
-            ],
+        // Kelulusan (E-Lulus) permissions
+        [
+            'name' => 'kelulusan.view',
+            'display_name' => 'Kelulusan - Lihat Data',
+            'description' => 'Permission untuk melihat data kelulusan',
+            'module' => 'kelulusan',
+            'action' => 'view',
+            'guard_name' => 'web'
+        ],
+
+        // Testimonial Links permissions
+        [
+            'name' => 'testimonial-links.view',
+            'display_name' => 'Testimonial Links - Lihat Data',
+            'description' => 'Permission untuk melihat testimonial links',
+            'module' => 'testimonial-links',
+            'action' => 'view',
+            'guard_name' => 'web'
+        ],
+        [
+            'name' => 'testimonial-links.create',
+            'display_name' => 'Testimonial Links - Buat Link',
+            'description' => 'Permission untuk membuat testimonial link',
+            'module' => 'testimonial-links',
+            'action' => 'create',
+            'guard_name' => 'web'
+        ],
+        [
+            'name' => 'testimonial-links.edit',
+            'display_name' => 'Testimonial Links - Edit Link',
+            'description' => 'Permission untuk mengedit testimonial link',
+            'module' => 'testimonial-links',
+            'action' => 'edit',
+            'guard_name' => 'web'
+        ],
+        [
+            'name' => 'testimonial-links.delete',
+            'display_name' => 'Testimonial Links - Hapus Link',
+            'description' => 'Permission untuk menghapus testimonial link',
+            'module' => 'testimonial-links',
+            'action' => 'delete',
+            'guard_name' => 'web'
+        ],
             [
                 'name' => 'kelulusan.create',
                 'display_name' => 'Kelulusan - Tambah Data',

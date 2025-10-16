@@ -22,84 +22,107 @@
                 </a>
 
                 <!-- Academic Management -->
-                <div class="relative group">
-                    <button
-                        class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
-                        Academic
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div
-                        class="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                        <div class="py-2">
-                            <a href="{{ route('admin.guru.index') }}"
-                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                <i class="fas fa-chalkboard-teacher mr-2"></i>Guru Management
-                            </a>
-                            <a href="{{ route('admin.siswa.index') }}"
-                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                <i class="fas fa-user-graduate mr-2"></i>Siswa Management
-                            </a>
-                            <a href="{{ route('admin.sarpras.index') }}"
-                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                <i class="fas fa-building mr-2"></i>Sarpras Management
-                            </a>
+                @if (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin', 'sarpras']))
+                    <div class="relative group">
+                        <button
+                            class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
+                            Academic
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div
+                            class="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="py-2">
+                                @if (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                    <a href="{{ route('admin.guru.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-chalkboard-teacher mr-2"></i>Guru Management
+                                    </a>
+                                @endif
+                                @if (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                    <a href="{{ route('admin.siswa.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-user-graduate mr-2"></i>Siswa Management
+                                    </a>
+                                @endif
+                                @if (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']))
+                                    <a href="{{ route('admin.sarpras.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-building mr-2"></i>Sarpras Management
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- E-Services -->
-                <div class="relative group">
-                    <button
-                        class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
-                        E-Services
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div
-                        class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                        <div class="py-2">
-                            <a href="{{ route('admin.osis.index') }}"
-                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                <i class="fas fa-vote-yea mr-2"></i>E-OSIS Voting
-                            </a>
-                            <a href="{{ route('admin.lulus.index') }}"
-                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                <i class="fas fa-graduation-cap mr-2"></i>E-Lulus Graduation
-                            </a>
+                @if (Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru']))
+                    <div class="relative group">
+                        <button
+                            class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
+                            E-Services
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div
+                            class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="py-2">
+                                @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                    <a href="{{ route('admin.osis.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-vote-yea mr-2"></i>E-OSIS Voting
+                                    </a>
+                                @endif
+                                @if (Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru']))
+                                    <a href="{{ route('admin.lulus.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-graduation-cap mr-2"></i>E-Lulus Graduation
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Content Management -->
-                <div class="relative group">
-                    <button
-                        class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
-                        Content
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div
-                        class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                        <div class="py-2">
-                            <a href="{{ route('landing') }}"
-                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                <i class="fas fa-globe mr-2"></i>Landing Page
-                            </a>
-                            <a href="{{ route('admin.pages.index') }}"
-                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                <i class="fas fa-file-alt mr-2"></i>Page Management
-                            </a>
-                            <a href="{{ route('admin.instagram.management') }}"
-                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                <i class="fab fa-instagram mr-2"></i>Instagram & Events
-                            </a>
+                @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                    <div class="relative group">
+                        <button
+                            class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
+                            Content
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div
+                            class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="py-2">
+                                <a href="{{ route('landing') }}"
+                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                    <i class="fas fa-globe mr-2"></i>Landing Page
+                                </a>
+                                @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                    <a href="{{ route('admin.pages.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-file-alt mr-2"></i>Page Management
+                                    </a>
+                                @endif
+                                @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                    <a href="{{ route('admin.instagram.management') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fab fa-instagram mr-2"></i>Instagram & Events
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- System Management (Superadmin only) -->
                 @if (Auth::user()->hasRole('superadmin'))
@@ -156,6 +179,16 @@
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                         <i class="fas fa-bell mr-2"></i>Notification Center
                                     </a>
+                                @endcan
+                                <a href="{{ route('admin.testimonials.index') }}"
+                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                    <i class="fas fa-comments mr-2"></i>Manage Testimonials
+                                </a>
+                                @can('testimonial-links.view')
+                                <a href="{{ route('admin.testimonial-links.index') }}"
+                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                    <i class="fas fa-link mr-2"></i>Testimonial Links
+                                </a>
                                 @endcan
                                 <a href="{{ route('admin.settings.index') }}"
                                     class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -339,17 +372,19 @@
                                         Instagram Settings
                                     </a>
                                 @endif
-                                <a href="{{ route('admin.settings.index') }}"
-                                    class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    System Settings
-                                </a>
+                                @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                    <a href="{{ route('admin.settings.index') }}"
+                                        class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        System Settings
+                                    </a>
+                                @endif
                             </div>
 
                             <!-- Logout -->
@@ -396,59 +431,81 @@
                 </a>
 
                 <!-- Academic Management -->
-                <div class="px-3 py-2">
-                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Academic Management
+                @if (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin', 'sarpras']))
+                    <div class="px-3 py-2">
+                        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Academic
+                            Management
+                        </div>
+                        <div class="space-y-1 ml-2">
+                            @if (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                <a href="{{ route('admin.guru.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-chalkboard-teacher mr-2"></i>Guru Management
+                                </a>
+                            @endif
+                            @if (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                <a href="{{ route('admin.siswa.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-user-graduate mr-2"></i>Siswa Management
+                                </a>
+                            @endif
+                            @if (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']))
+                                <a href="{{ route('admin.sarpras.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-building mr-2"></i>Sarpras Management
+                                </a>
+                            @endif
+                        </div>
                     </div>
-                    <div class="space-y-1 ml-2">
-                        <a href="{{ route('admin.guru.index') }}"
-                            class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                            <i class="fas fa-chalkboard-teacher mr-2"></i>Guru Management
-                        </a>
-                        <a href="{{ route('admin.siswa.index') }}"
-                            class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                            <i class="fas fa-user-graduate mr-2"></i>Siswa Management
-                        </a>
-                        <a href="{{ route('admin.sarpras.index') }}"
-                            class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                            <i class="fas fa-building mr-2"></i>Sarpras Management
-                        </a>
-                    </div>
-                </div>
+                @endif
 
                 <!-- E-Services -->
-                <div class="px-3 py-2">
-                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">E-Services</div>
-                    <div class="space-y-1 ml-2">
-                        <a href="{{ route('admin.osis.index') }}"
-                            class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                            <i class="fas fa-vote-yea mr-2"></i>E-OSIS Voting
-                        </a>
-                        <a href="{{ route('admin.lulus.index') }}"
-                            class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                            <i class="fas fa-graduation-cap mr-2"></i>E-Lulus Graduation
-                        </a>
+                @if (Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru']))
+                    <div class="px-3 py-2">
+                        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">E-Services</div>
+                        <div class="space-y-1 ml-2">
+                            @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                <a href="{{ route('admin.osis.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-vote-yea mr-2"></i>E-OSIS Voting
+                                </a>
+                            @endif
+                            @if (Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru']))
+                                <a href="{{ route('admin.lulus.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-graduation-cap mr-2"></i>E-Lulus Graduation
+                                </a>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Content Management -->
-                <div class="px-3 py-2">
-                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Content Management
+                @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                    <div class="px-3 py-2">
+                        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Content
+                            Management
+                        </div>
+                        <div class="space-y-1 ml-2">
+                            <a href="{{ route('landing') }}"
+                                class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <i class="fas fa-globe mr-2"></i>Landing Page
+                            </a>
+                            @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                <a href="{{ route('admin.pages.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-file-alt mr-2"></i>Page Management
+                                </a>
+                            @endif
+                            @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                <a href="{{ route('admin.instagram.management') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fab fa-instagram mr-2"></i>Instagram & Events
+                                </a>
+                            @endif
+                        </div>
                     </div>
-                    <div class="space-y-1 ml-2">
-                        <a href="{{ route('landing') }}"
-                            class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                            <i class="fas fa-globe mr-2"></i>Landing Page
-                        </a>
-                        <a href="{{ route('admin.pages.index') }}"
-                            class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                            <i class="fas fa-file-alt mr-2"></i>Page Management
-                        </a>
-                        <a href="{{ route('admin.instagram.management') }}"
-                            class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                            <i class="fab fa-instagram mr-2"></i>Instagram & Events
-                        </a>
-                    </div>
-                </div>
+                @endif
 
                 <!-- System Management -->
                 @if (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))
@@ -488,6 +545,16 @@
                                 class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                 <i class="fas fa-bell mr-2"></i>Notification Center
                             </a>
+                            <a href="{{ route('admin.testimonials.index') }}"
+                                class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <i class="fas fa-comments mr-2"></i>Manage Testimonials
+                            </a>
+                            @can('testimonial-links.view')
+                            <a href="{{ route('admin.testimonial-links.index') }}"
+                                class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                <i class="fas fa-link mr-2"></i>Testimonial Links
+                            </a>
+                            @endcan
                             <a href="{{ route('admin.settings.index') }}"
                                 class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                 <i class="fas fa-cog mr-2"></i>System Settings

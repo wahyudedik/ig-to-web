@@ -114,6 +114,9 @@ class PageController extends Controller
         $data['user_id'] = Auth::id();
         $data['slug'] = Str::slug($request->title);
 
+        // ✅ Fix: Ensure is_featured has a default value
+        $data['is_featured'] = $request->boolean('is_featured', false);
+
         // Handle featured image upload
         if ($request->hasFile('featured_image')) {
             $data['featured_image'] = $request->file('featured_image')->store('pages/images', 'public');

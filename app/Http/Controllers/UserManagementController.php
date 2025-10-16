@@ -21,71 +21,105 @@ class UserManagementController extends Controller
 
     public function inviteUser(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'role_id' => 'required|exists:roles,id',
-            'send_invitation' => 'boolean'
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'role_id' => 'required|exists:roles,id',
+                'send_invitation' => 'boolean'
+            ]);
 
-        // Generate temporary password
-        $tempPassword = Str::random(12);
+            // Generate temporary password
+            $tempPassword = Str::random(12);
 
-        // Create user
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($tempPassword),
-            'user_type' => 'invited',
-            'email_verified_at' => null,
-            'is_verified_by_admin' => true,
-        ]);
+            // Get user type from role
+            $role = Role::findOrFail($request->role_id);
+            $userType = $role->name; // Use role name as user_type
 
-        // Assign role
-        $role = Role::findOrFail($request->role_id);
-        $user->assignRole($role);
+            // Create user
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($tempPassword),
+                'user_type' => $userType,
+                'email_verified_at' => now(), // ✅ Auto-verify invited users
+                'is_verified_by_admin' => true,
+            ]);
 
-        // Send invitation email if requested
-        if ($request->has('send_invitation') && $request->send_invitation) {
-            $this->sendInvitationEmail($user, $tempPassword);
+            // Assign role
+            $user->assignRole($role);
+
+            // Send invitation email if requested
+            if ($request->has('send_invitation') && $request->send_invitation) {
+                $this->sendInvitationEmail($user, $tempPassword);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User invited successfully.',
+                'user' => $user,
+                'temp_password' => $tempPassword
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Error inviting user: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error inviting user: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'User invited successfully.',
-            'user' => $user,
-            'temp_password' => $tempPassword
-        ]);
     }
 
     public function createUser(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role_id' => 'required|exists:roles,id',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8',
+                'role_id' => 'required|exists:roles,id',
+            ]);
 
-        // Create user
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'user_type' => 'created',
-            'email_verified_at' => now(),
-            'is_verified_by_admin' => true,
-        ]);
+            // Get user type from role
+            $role = Role::findOrFail($request->role_id);
+            $userType = $role->name; // Use role name as user_type
 
-        // Assign role
-        $role = Role::findOrFail($request->role_id);
-        $user->assignRole($role);
+            // Create user
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'user_type' => $userType,
+                'email_verified_at' => now(), // ✅ Auto-verify admin-created users
+                'is_verified_by_admin' => true,
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User created successfully.',
-            'user' => $user
-        ]);
+            // Assign role
+            $user->assignRole($role);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully.',
+                'user' => $user
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Error creating user: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating user: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function updateUser(Request $request, User $user)
@@ -168,10 +202,21 @@ class UserManagementController extends Controller
 
     private function sendInvitationEmail($user, $tempPassword)
     {
-        // Send invitation email with temporary password
-        // This would typically use Laravel's Mail system
-        // For now, we'll just log it
-        \Log::info("Invitation sent to {$user->email} with temporary password: {$tempPassword}");
+        try {
+            // Send invitation email with temporary password
+            \Mail::send('emails.user-invitation', [
+                'user' => $user,
+                'tempPassword' => $tempPassword,
+                'loginUrl' => url('/login'),
+            ], function ($message) use ($user) {
+                $message->to($user->email, $user->name)
+                    ->subject('Welcome to Portal Sekolah - Account Invitation');
+            });
+
+            \Log::info("Invitation email sent to {$user->email}");
+        } catch (\Exception $e) {
+            \Log::error("Failed to send invitation email to {$user->email}: " . $e->getMessage());
+        }
     }
 
     public function getUserRoles()

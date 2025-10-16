@@ -80,6 +80,42 @@ class SettingsController extends Controller
             'contact_email' => 'nullable|email',
             'contact_phone' => 'nullable|string|max:20',
             'contact_address' => 'nullable|string',
+            'social_facebook' => 'nullable|url',
+            'social_instagram' => 'nullable|url',
+            'social_youtube' => 'nullable|url',
+            'social_whatsapp' => 'nullable|url',
+            'video_url' => 'nullable|url',
+            'video_thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'headmaster_name' => 'nullable|string|max:255',
+            'headmaster_description' => 'nullable|string',
+            'headmaster_vision' => 'nullable|string',
+            'headmaster_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'program_section_title' => 'nullable|string|max:255',
+            'program_ipa_title' => 'nullable|string|max:255',
+            'program_ipa_description' => 'nullable|string',
+            'program_ips_title' => 'nullable|string|max:255',
+            'program_ips_description' => 'nullable|string',
+            'program_religion_title' => 'nullable|string|max:255',
+            'program_religion_description' => 'nullable|string',
+            'program_section_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // About Section
+            'about_section_title' => 'nullable|string|max:255',
+            'about_section_subtitle' => 'nullable|string|max:255',
+            'about_section_description' => 'nullable|string',
+            'about_image_1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'about_image_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'about_image_3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'about_feature_1_title' => 'nullable|string|max:255',
+            'about_feature_1_description' => 'nullable|string',
+            'about_feature_2_title' => 'nullable|string|max:255',
+            'about_feature_2_description' => 'nullable|string',
+            'about_feature_3_title' => 'nullable|string|max:255',
+            'about_feature_3_description' => 'nullable|string',
+            'about_feature_4_title' => 'nullable|string|max:255',
+            'about_feature_4_description' => 'nullable|string',
+            'about_button_text' => 'nullable|string|max:255',
+            'about_contact_text' => 'nullable|string|max:255',
+            'about_contact_phone' => 'nullable|string|max:255',
         ]);
 
         // Update site settings (you can create a settings table or use config)
@@ -93,12 +129,47 @@ class SettingsController extends Controller
             'contact_email' => $request->contact_email,
             'contact_phone' => $request->contact_phone,
             'contact_address' => $request->contact_address,
+            'social_facebook' => $request->social_facebook,
+            'social_instagram' => $request->social_instagram,
+            'social_youtube' => $request->social_youtube,
+            'social_whatsapp' => $request->social_whatsapp,
+            'video_url' => $request->video_url,
+            'headmaster_name' => $request->headmaster_name,
+            'headmaster_description' => $request->headmaster_description,
+            'headmaster_vision' => $request->headmaster_vision,
+            'program_section_title' => $request->program_section_title,
+            'program_ipa_title' => $request->program_ipa_title,
+            'program_ipa_description' => $request->program_ipa_description,
+            'program_ips_title' => $request->program_ips_title,
+            'program_ips_description' => $request->program_ips_description,
+            'program_religion_title' => $request->program_religion_title,
+            'program_religion_description' => $request->program_religion_description,
+            // About Section
+            'about_section_title' => $request->about_section_title,
+            'about_section_subtitle' => $request->about_section_subtitle,
+            'about_section_description' => $request->about_section_description,
+            'about_feature_1_title' => $request->about_feature_1_title,
+            'about_feature_1_description' => $request->about_feature_1_description,
+            'about_feature_2_title' => $request->about_feature_2_title,
+            'about_feature_2_description' => $request->about_feature_2_description,
+            'about_feature_3_title' => $request->about_feature_3_title,
+            'about_feature_3_description' => $request->about_feature_3_description,
+            'about_feature_4_title' => $request->about_feature_4_title,
+            'about_feature_4_description' => $request->about_feature_4_description,
+            'about_button_text' => $request->about_button_text,
+            'about_contact_text' => $request->about_contact_text,
+            'about_contact_phone' => $request->about_contact_phone,
         ];
 
         // Handle file uploads
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('site-assets', 'public');
             $settings['logo'] = $logoPath;
+        }
+
+        if ($request->hasFile('program_section_image')) {
+            $programImagePath = $request->file('program_section_image')->store('site-assets/program', 'public');
+            $settings['program_section_image'] = $programImagePath;
         }
 
         if ($request->hasFile('favicon')) {
@@ -123,6 +194,32 @@ class SettingsController extends Controller
             if (!empty($heroImagePaths)) {
                 $settings['hero_images'] = json_encode($heroImagePaths);
             }
+        }
+
+        if ($request->hasFile('video_thumbnail')) {
+            $videoThumbnailPath = $request->file('video_thumbnail')->store('site-assets/video', 'public');
+            $settings['video_thumbnail'] = $videoThumbnailPath;
+        }
+
+        if ($request->hasFile('headmaster_photo')) {
+            $headmasterPhotoPath = $request->file('headmaster_photo')->store('site-assets/headmaster', 'public');
+            $settings['headmaster_photo'] = $headmasterPhotoPath;
+        }
+
+        // Handle About Section Images
+        if ($request->hasFile('about_image_1')) {
+            $aboutImage1Path = $request->file('about_image_1')->store('site-assets/about', 'public');
+            $settings['about_image_1'] = $aboutImage1Path;
+        }
+
+        if ($request->hasFile('about_image_2')) {
+            $aboutImage2Path = $request->file('about_image_2')->store('site-assets/about', 'public');
+            $settings['about_image_2'] = $aboutImage2Path;
+        }
+
+        if ($request->hasFile('about_image_3')) {
+            $aboutImage3Path = $request->file('about_image_3')->store('site-assets/about', 'public');
+            $settings['about_image_3'] = $aboutImage3Path;
         }
 
         // Save settings to database or config file
@@ -197,7 +294,17 @@ class SettingsController extends Controller
             'footer_text',
             'contact_email',
             'contact_phone',
-            'contact_address'
+            'contact_address',
+            'social_facebook',
+            'social_instagram',
+            'social_youtube',
+            'social_whatsapp',
+            'video_url',
+            'video_thumbnail',
+            'headmaster_name',
+            'headmaster_description',
+            'headmaster_vision',
+            'headmaster_photo'
         ];
 
         foreach ($settings as $setting) {

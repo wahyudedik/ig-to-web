@@ -45,27 +45,67 @@
                     <div class="header-top-left">
                         <div class="header-top-social">
                             <span>Follow Us: </span>
-                            <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                            <a href="<?php echo e(route('public.instagram')); ?>" target="_blank"><i
-                                    class="fab fa-instagram"></i></a>
-                            <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
-                            <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                            <?php if(cache('site_setting_social_facebook')): ?>
+                                <a href="<?php echo e(cache('site_setting_social_facebook')); ?>" target="_blank"><i
+                                        class="fab fa-facebook-f"></i></a>
+                            <?php else: ?>
+                                <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <?php endif; ?>
+
+                            <?php if(cache('site_setting_social_instagram')): ?>
+                                <a href="<?php echo e(cache('site_setting_social_instagram')); ?>" target="_blank"><i
+                                        class="fab fa-instagram"></i></a>
+                            <?php else: ?>
+                                <a href="<?php echo e(route('public.instagram')); ?>" target="_blank"><i
+                                        class="fab fa-instagram"></i></a>
+                            <?php endif; ?>
+
+                            <?php if(cache('site_setting_social_youtube')): ?>
+                                <a href="<?php echo e(cache('site_setting_social_youtube')); ?>" target="_blank"><i
+                                        class="fab fa-youtube"></i></a>
+                            <?php else: ?>
+                                <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <?php endif; ?>
+
+                            <?php if(cache('site_setting_social_whatsapp')): ?>
+                                <a href="<?php echo e(cache('site_setting_social_whatsapp')); ?>" target="_blank"><i
+                                        class="fab fa-whatsapp"></i></a>
+                            <?php else: ?>
+                                <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="header-top-right">
                         <div class="header-top-contact">
                             <ul>
                                 <li>
-                                    <a href="#" target="_blank"><i class="far fa-location-dot"></i> Jl. Pendidikan
-                                        No. 123, Jakarta</a>
+                                    <?php if(cache('site_setting_contact_address')): ?>
+                                        <a href="#" target="_blank"><i class="far fa-location-dot"></i>
+                                            <?php echo e(cache('site_setting_contact_address')); ?></a>
+                                    <?php else: ?>
+                                        <a href="#" target="_blank"><i class="far fa-location-dot"></i> Jl.
+                                            Pendidikan No. 123, Jakarta</a>
+                                    <?php endif; ?>
                                 </li>
                                 <li>
-                                    <a href="mailto:info@sekolahdigital.com" target="_blank"><i
-                                            class="far fa-envelopes"></i> info@sekolahdigital.com</a>
+                                    <?php if(cache('site_setting_contact_email')): ?>
+                                        <a href="mailto:<?php echo e(cache('site_setting_contact_email')); ?>" target="_blank"><i
+                                                class="far fa-envelopes"></i>
+                                            <?php echo e(cache('site_setting_contact_email')); ?></a>
+                                    <?php else: ?>
+                                        <a href="mailto:info@sekolahdigital.com" target="_blank"><i
+                                                class="far fa-envelopes"></i> info@sekolahdigital.com</a>
+                                    <?php endif; ?>
                                 </li>
                                 <li>
-                                    <a href="tel:+62123456789" target="_blank"><i class="far fa-phone-volume"></i> +62
-                                        123 456 789</a>
+                                    <?php if(cache('site_setting_contact_phone')): ?>
+                                        <a href="tel:<?php echo e(cache('site_setting_contact_phone')); ?>" target="_blank"><i
+                                                class="far fa-phone-volume"></i>
+                                            <?php echo e(cache('site_setting_contact_phone')); ?></a>
+                                    <?php else: ?>
+                                        <a href="tel:+62123456789" target="_blank"><i class="far fa-phone-volume"></i>
+                                            +62 123 456 789</a>
+                                    <?php endif; ?>
                                 </li>
                             </ul>
                         </div>
@@ -306,7 +346,12 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         <div class="content-img wow fadeInLeft" data-wow-delay=".25s">
-                            <img src="<?php echo e(asset('assets/img/campus-life/01.jpg')); ?>" alt="">
+                            <?php if(cache('site_setting_headmaster_photo')): ?>
+                                <img src="<?php echo e(Storage::url(cache('site_setting_headmaster_photo'))); ?>"
+                                    alt="Foto Kepala Sekolah">
+                            <?php else: ?>
+                                <img src="<?php echo e(asset('assets/img/campus-life/01.jpg')); ?>" alt="">
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -335,7 +380,8 @@
         <!-- video-area -->
         <div class="video-area py-120">
             <div class="container">
-                <div class="video-content" style="background-image: url(<?php echo e(asset('assets/img/video/01.jpg')); ?>);">
+                <div class="video-content"
+                    style="background-image: url(<?php echo e(cache('site_setting_video_thumbnail') ? Storage::url(cache('site_setting_video_thumbnail')) : asset('assets/img/video/01.jpg')); ?>);">
                     <div class="row align-items-center">
                         <div class="col-lg-12">
                             <div class="video-wrapper">
@@ -360,8 +406,14 @@
                             <div class="about-img">
                                 <div class="row g-4">
                                     <div class="col-md-6">
-                                        <img class="img-1" src="<?php echo e(asset('assets/img/about/01.jpg')); ?>"
-                                            alt="">
+                                        <?php if(cache('site_setting_about_image_1')): ?>
+                                            <img class="img-1"
+                                                src="<?php echo e(Storage::url(cache('site_setting_about_image_1'))); ?>"
+                                                alt="About Image 1">
+                                        <?php else: ?>
+                                            <img class="img-1" src="<?php echo e(asset('assets/img/about/01.jpg')); ?>"
+                                                alt="">
+                                        <?php endif; ?>
                                         <div class="about-experience mt-4">
                                             <div class="about-experience-icon">
                                                 <img src="<?php echo e(asset('assets/img/icon/monitor.svg')); ?>" alt="">
@@ -370,10 +422,22 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <img class="img-2" src="<?php echo e(asset('assets/img/about/02.jpg')); ?>"
-                                            alt="">
-                                        <img class="img-3 mt-4" src="<?php echo e(asset('assets/img/about/03.jpg')); ?>"
-                                            alt="">
+                                        <?php if(cache('site_setting_about_image_2')): ?>
+                                            <img class="img-2"
+                                                src="<?php echo e(Storage::url(cache('site_setting_about_image_2'))); ?>"
+                                                alt="About Image 2">
+                                        <?php else: ?>
+                                            <img class="img-2" src="<?php echo e(asset('assets/img/about/02.jpg')); ?>"
+                                                alt="">
+                                        <?php endif; ?>
+                                        <?php if(cache('site_setting_about_image_3')): ?>
+                                            <img class="img-3 mt-4"
+                                                src="<?php echo e(Storage::url(cache('site_setting_about_image_3'))); ?>"
+                                                alt="About Image 3">
+                                        <?php else: ?>
+                                            <img class="img-3 mt-4" src="<?php echo e(asset('assets/img/about/03.jpg')); ?>"
+                                                alt="">
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -382,16 +446,16 @@
                     <div class="col-lg-6">
                         <div class="about-right wow fadeInRight" data-wow-delay=".25s">
                             <div class="site-heading mb-3">
-                                <span class="site-title-tagline"><i class="far fa-book-open-reader"></i> TENTANG
-                                    KAMI</span>
+                                <span class="site-title-tagline"><i class="far fa-book-open-reader"></i>
+                                    <?php echo e(cache('site_setting_about_section_subtitle', 'TENTANG KAMI')); ?></span>
                                 <h2 class="site-title">
-                                    Portal Digital <span>Pendidikan</span> Terintegrasi
+                                    <?php echo e(cache('site_setting_about_section_title', 'Portal Digital <span>Pendidikan</span> Terintegrasi')); ?>
+
                                 </h2>
                             </div>
                             <p class="about-text">
-                                Website sekolah yang mengintegrasikan semua layanan pendidikan dalam satu platform
-                                digital yang modern dan efisien. Memudahkan akses informasi dan layanan untuk seluruh
-                                civitas akademika.
+                                <?php echo e(cache('site_setting_about_section_description', 'Website sekolah yang mengintegrasikan semua layanan pendidikan dalam satu platform digital yang modern dan efisien. Memudahkan akses informasi dan layanan untuk seluruh civitas akademika.')); ?>
+
                             </p>
                             <div class="about-content">
                                 <div class="row">
@@ -402,9 +466,12 @@
                                                     alt="">
                                             </div>
                                             <div class="about-item-content">
-                                                <h5>SISTEM E-OSIS</h5>
-                                                <p>Pemilihan OSIS digital dengan monitoring real-time dan sistem voting
-                                                    yang aman</p>
+                                                <h5><?php echo e(cache('site_setting_about_feature_1_title', 'SISTEM E-OSIS')); ?>
+
+                                                </h5>
+                                                <p><?php echo e(cache('site_setting_about_feature_1_description', 'Pemilihan OSIS digital dengan monitoring real-time dan sistem voting yang aman')); ?>
+
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="about-item">
@@ -413,9 +480,12 @@
                                                     alt="">
                                             </div>
                                             <div class="about-item-content">
-                                                <h5>SISTEM E-LULUS</h5>
-                                                <p>Pengumuman kelulusan dengan verifikasi NISN/NIS yang akurat dan
-                                                    real-time</p>
+                                                <h5><?php echo e(cache('site_setting_about_feature_2_title', 'SISTEM E-LULUS')); ?>
+
+                                                </h5>
+                                                <p><?php echo e(cache('site_setting_about_feature_2_description', 'Pengumuman kelulusan dengan verifikasi NISN/NIS yang akurat dan real-time')); ?>
+
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -426,9 +496,12 @@
                                                     alt="">
                                             </div>
                                             <div class="about-item-content">
-                                                <h5>MANAJEMEN SARPRAS</h5>
-                                                <p>Sistem inventaris sarana dan prasarana sekolah dengan barcode
-                                                    tracking</p>
+                                                <h5><?php echo e(cache('site_setting_about_feature_3_title', 'MANAJEMEN SARPRAS')); ?>
+
+                                                </h5>
+                                                <p><?php echo e(cache('site_setting_about_feature_3_description', 'Sistem inventaris sarana dan prasarana sekolah dengan barcode tracking')); ?>
+
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="about-item">
@@ -437,22 +510,28 @@
                                                     alt="">
                                             </div>
                                             <div class="about-item-content">
-                                                <h5>INTEGRASI INSTAGRAM</h5>
-                                                <p>Sinkronisasi otomatis dengan Instagram sekolah untuk galeri kegiatan
-                                                    terbaru</p>
+                                                <h5><?php echo e(cache('site_setting_about_feature_4_title', 'INTEGRASI INSTAGRAM')); ?>
+
+                                                </h5>
+                                                <p><?php echo e(cache('site_setting_about_feature_4_description', 'Sinkronisasi otomatis dengan Instagram sekolah untuk galeri kegiatan terbaru')); ?>
+
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="about-bottom">
-                                <a href="#features" class="theme-btn">JELAJAHI FITUR<i
+                                <a href="#features"
+                                    class="theme-btn"><?php echo e(cache('site_setting_about_button_text', 'JELAJAHI FITUR')); ?><i
                                         class="fas fa-arrow-right-long"></i></a>
                                 <div class="about-phone">
                                     <div class="icon"><i class="fal fa-headset"></i></div>
                                     <div class="number">
-                                        <span>HUBUNGI KAMI</span>
-                                        <h6><a href="tel:+62123456789">+62 123 456 789</a></h6>
+                                        <span><?php echo e(cache('site_setting_about_contact_text', 'HUBUNGI KAMI')); ?></span>
+                                        <h6><a
+                                                href="tel:<?php echo e(cache('site_setting_about_contact_phone', '+62 123 456 789')); ?>"><?php echo e(cache('site_setting_about_contact_phone', '+62 123 456 789')); ?></a>
+                                        </h6>
                                     </div>
                                 </div>
                             </div>
@@ -557,7 +636,8 @@
                                 <div class="site-heading mb-0">
                                     <span class="site-title-tagline"><i class="far fa-book-open-reader"></i> Program
                                         Peminatan</span>
-                                    <h2 class="site-title text-white mb-10">3 <span>Program </span> Peminatan</h2>
+                                    <h2 class="site-title text-white mb-10">
+                                        <?php echo e(cache('site_setting_program_section_title', '3 Program Peminatan')); ?></h2>
                                 </div>
                                 <div class="choose-content-wrap">
                                     <div class="row g-4">
@@ -568,8 +648,10 @@
                                                         alt="">
                                                 </div>
                                                 <div class="choose-item-info">
-                                                    <h4>PEMINATAN ILMU PENGETAHUAN ALAM (IPA)</h4>
-                                                    <p><?php echo e(cache('site_setting_ipa_description', 'Menyiapkan peserta didik yang handal dalam kajian ilmiah dan alamiah dengan berlandaskan kepada ayat-ayat qauliyah dan kauniyah.')); ?>
+                                                    <h4><?php echo e(cache('site_setting_program_ipa_title', 'PEMINATAN ILMU PENGETAHUAN ALAM (IPA)')); ?>
+
+                                                    </h4>
+                                                    <p><?php echo e(cache('site_setting_program_ipa_description', 'Menyiapkan peserta didik yang handal dalam kajian ilmiah dan alamiah dengan berlandaskan kepada ayat-ayat qauliyah dan kauniyah.')); ?>
 
                                                     </p>
                                                 </div>
@@ -582,8 +664,10 @@
                                                         alt="">
                                                 </div>
                                                 <div class="choose-item-info">
-                                                    <h4>PEMINATAN ILMU PENGETAHUAN SOSIAL (IPS)</h4>
-                                                    <p><?php echo e(cache('site_setting_ips_description', 'Menyiapkan peserta didik yang dapat menguasai ilmu-ilmu sosial secara terpadu antara keislaman dan pengetahuan sehingga menjadi insan yang sosialis-agamis.')); ?>
+                                                    <h4><?php echo e(cache('site_setting_program_ips_title', 'PEMINATAN ILMU PENGETAHUAN SOSIAL (IPS)')); ?>
+
+                                                    </h4>
+                                                    <p><?php echo e(cache('site_setting_program_ips_description', 'Menyiapkan peserta didik yang dapat menguasai ilmu-ilmu sosial secara terpadu antara keislaman dan pengetahuan sehingga menjadi insan yang sosialis-agamis.')); ?>
 
                                                     </p>
                                                 </div>
@@ -596,8 +680,10 @@
                                                         alt="">
                                                 </div>
                                                 <div class="choose-item-info">
-                                                    <h4>PEMINATAN KEAGAMAAN</h4>
-                                                    <p><?php echo e(cache('site_setting_religion_description', 'Menyiapkan peserta didik yang lebih mampu menguasai ilmu-ilmu agama dengan mengkaji sumber aslinya serta mengkolaborasikan dengan perkembangan IPTEK.')); ?>
+                                                    <h4><?php echo e(cache('site_setting_program_religion_title', 'PEMINATAN KEAGAMAAN')); ?>
+
+                                                    </h4>
+                                                    <p><?php echo e(cache('site_setting_program_religion_description', 'Menyiapkan peserta didik yang lebih mampu menguasai ilmu-ilmu agama dengan mengkaji sumber aslinya serta mengkolaborasikan dengan perkembangan IPTEK.')); ?>
 
                                                     </p>
                                                 </div>
@@ -610,7 +696,12 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="choose-img wow fadeInRight" data-wow-delay=".25s">
-                            <img src="<?php echo e(asset('assets/img/choose/01.jpg')); ?>" alt="">
+                            <?php if(cache('site_setting_program_section_image')): ?>
+                                <img src="<?php echo e(Storage::url(cache('site_setting_program_section_image'))); ?>"
+                                    alt="Program Peminatan">
+                            <?php else: ?>
+                                <img src="<?php echo e(asset('assets/img/choose/01.jpg')); ?>" alt="">
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -633,39 +724,62 @@
                 </div>
                 <div class="row">
                     <?php
-                        // Ambil data dari Instagram atau dummy data
-                        $instagramPosts = [
-                            [
-                                'image' => asset('assets/img/portfolio/01.jpg'),
-                                'title' => 'Kegiatan Pembelajaran',
-                                'category' => 'Akademik',
-                            ],
-                            [
-                                'image' => asset('assets/img/portfolio/02.jpg'),
-                                'title' => 'Ekstrakurikuler',
-                                'category' => 'Kegiatan',
-                            ],
-                            [
-                                'image' => asset('assets/img/portfolio/03.jpg'),
-                                'title' => 'Upacara Bendera',
-                                'category' => 'Kegiatan',
-                            ],
-                            [
-                                'image' => asset('assets/img/portfolio/04.jpg'),
-                                'title' => 'Lomba Sains',
-                                'category' => 'Prestasi',
-                            ],
-                            [
-                                'image' => asset('assets/img/portfolio/05.jpg'),
-                                'title' => 'Kegiatan Olahraga',
-                                'category' => 'Olahraga',
-                            ],
-                            [
-                                'image' => asset('assets/img/portfolio/06.jpg'),
-                                'title' => 'Acara Sekolah',
-                                'category' => 'Event',
-                            ],
-                        ];
+                        // Ambil data Instagram posts dari database
+                        $instagramPosts = \App\Models\InstagramSetting::where('is_active', true)
+                            ->orderBy('created_at', 'desc')
+                            ->limit(6)
+                            ->get()
+                            ->map(function ($post) {
+                                return [
+                                    'image' => $post->image_url ?: asset('assets/img/portfolio/01.jpg'),
+                                    'title' => $post->caption ?: 'Kegiatan Sekolah',
+                                    'category' => $post->category ?: 'Kegiatan',
+                                    'url' => $post->post_url ?: '#',
+                                ];
+                            })
+                            ->toArray();
+
+                        // Jika tidak ada data Instagram, gunakan dummy data
+                        if (empty($instagramPosts)) {
+                            $instagramPosts = [
+                                [
+                                    'image' => asset('assets/img/portfolio/01.jpg'),
+                                    'title' => 'Kegiatan Pembelajaran',
+                                    'category' => 'Akademik',
+                                    'url' => '#',
+                                ],
+                                [
+                                    'image' => asset('assets/img/portfolio/02.jpg'),
+                                    'title' => 'Ekstrakurikuler',
+                                    'category' => 'Kegiatan',
+                                    'url' => '#',
+                                ],
+                                [
+                                    'image' => asset('assets/img/portfolio/03.jpg'),
+                                    'title' => 'Upacara Bendera',
+                                    'category' => 'Kegiatan',
+                                    'url' => '#',
+                                ],
+                                [
+                                    'image' => asset('assets/img/portfolio/04.jpg'),
+                                    'title' => 'Lomba Sains',
+                                    'category' => 'Prestasi',
+                                    'url' => '#',
+                                ],
+                                [
+                                    'image' => asset('assets/img/portfolio/05.jpg'),
+                                    'title' => 'Kegiatan Olahraga',
+                                    'category' => 'Olahraga',
+                                    'url' => '#',
+                                ],
+                                [
+                                    'image' => asset('assets/img/portfolio/06.jpg'),
+                                    'title' => 'Acara Sekolah',
+                                    'category' => 'Event',
+                                    'url' => '#',
+                                ],
+                            ];
+                        }
                     ?>
 
                     <?php $__currentLoopData = $instagramPosts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $post): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -680,11 +794,11 @@
                                             <h5 class="portfolio-subtitle"><span>//</span> <?php echo e($post['category']); ?>
 
                                             </h5>
-                                            <a href="<?php echo e(route('public.instagram')); ?>">
+                                            <a href="<?php echo e($post['url']); ?>" target="_blank">
                                                 <h4 class="portfolio-title"><?php echo e($post['title']); ?></h4>
                                             </a>
                                         </div>
-                                        <a href="<?php echo e(route('public.instagram')); ?>" class="portfolio-btn"><i
+                                        <a href="<?php echo e($post['url']); ?>" target="_blank" class="portfolio-btn"><i
                                                 class="far fa-arrow-right"></i></a>
                                     </div>
                                 </div>
@@ -710,87 +824,49 @@
                     </div>
                 </div>
                 <div class="testimonial-slider owl-carousel owl-theme">
-                    <div class="testimonial-item">
-                        <div class="testimonial-rate">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="testimonial-quote">
-                            <p>
-                                Di Madrasah ini, kita tidak hanya diajarkan ilmu umum, dan agama, tapi juga ditempa
-                                dengan pengamalan akhlak yang sangat luar biasa. Belajar di Madrasah Aliyah Unggulan
-                                Darul Ulum adalah pengalaman yang sangat berharga untuk saya. Terimakasih kepada segenap
-                                Bapak Ibu guru, berkat ajaran doa beliau, saya sampai pada titik ini.
-                            </p>
-                        </div>
-                        <div class="testimonial-content">
-                            <div class="testimonial-author-img">
-                                <img src="<?php echo e(asset('assets/img/testimonial/01.jpg')); ?>" alt="">
+                    <?php
+                        // Ambil testimonial dari database atau gunakan dummy data
+                        $testimonials = \App\Models\Testimonial::approved()->featured()->latest()->limit(6)->get();
+
+                        // Jika tidak ada testimonial di database, gunakan dummy data
+                        if ($testimonials->isEmpty()) {
+                            $testimonials = collect(\App\Models\Testimonial::getDummyTestimonials());
+                        }
+                    ?>
+
+                    <?php $__currentLoopData = $testimonials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $testimonial): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="testimonial-item">
+                            <div class="testimonial-rate">
+                                <?php for($i = 1; $i <= 5; $i++): ?>
+                                    <i class="fas fa-star<?php echo e($i <= $testimonial['rating'] ? '' : '-o'); ?>"></i>
+                                <?php endfor; ?>
                             </div>
-                            <div class="testimonial-author-info">
-                                <h4>Riza Azkia (2012)</h4>
-                                <p>Al-Azhar Kairo - Staff KBRI di Baghdad, Iraq</p>
+                            <div class="testimonial-quote">
+                                <p><?php echo e($testimonial['testimonial']); ?></p>
                             </div>
-                        </div>
-                        <span class="testimonial-quote-icon"><i class="far fa-quote-right"></i></span>
-                    </div>
-                    <div class="testimonial-item">
-                        <div class="testimonial-rate">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="testimonial-quote">
-                            <p>
-                                Setelah sampai di Tunisia, saya semakin menyadari bahwa pembelajaran di MAU tidak hanya
-                                berorientasi pada akademik semata. MAU juga membentuk kepribadian kami agar siap
-                                menghadapi berbagai situasi. Kami dilatih untuk berpikir kritis, menyampaikan pendapat
-                                dengan percaya diri, dan menjaga adab dalam setiap interaksi.
-                            </p>
-                        </div>
-                        <div class="testimonial-content">
-                            <div class="testimonial-author-img">
-                                <img src="<?php echo e(asset('assets/img/testimonial/02.jpg')); ?>" alt="">
+                            <div class="testimonial-content">
+                                <div class="testimonial-author-img">
+                                    <img src="<?php echo e($testimonial['photo']); ?>" alt="<?php echo e($testimonial['name']); ?>">
+                                </div>
+                                <div class="testimonial-author-info">
+                                    <h4><?php echo e($testimonial['name']); ?></h4>
+                                    <p>
+                                        <?php if($testimonial['position'] === 'Alumni'): ?>
+                                            Alumni <?php echo e($testimonial['graduation_year']); ?>
+
+                                        <?php elseif($testimonial['position'] === 'Siswa'): ?>
+                                            <?php echo e($testimonial['class']); ?>
+
+                                        <?php else: ?>
+                                            <?php echo e($testimonial['position']); ?>
+
+                                        <?php endif; ?>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="testimonial-author-info">
-                                <h4>NAILA KHAIRUN NAJWA (2024)</h4>
-                                <p>Universitas Az-Zaitunah Tunisia</p>
-                            </div>
+                            <span class="testimonial-quote-icon"><i class="far fa-quote-right"></i></span>
                         </div>
-                        <span class="testimonial-quote-icon"><i class="far fa-quote-right"></i></span>
-                    </div>
-                    <div class="testimonial-item">
-                        <div class="testimonial-rate">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="testimonial-quote">
-                            <p>
-                                حاجنلا قيرط ىلإ انيدهي رون ملعلا "Ilmu adalah cahaya yang membimbing kita menuju jalan
-                                kesuksesan". (Pepatah Arab) Sukses yang hendak digapai bukan semata duniawiyah tetapi
-                                berkelanjutan Ukhrawiyah. Bak asa dalam pelangitan doa yg dikenal sebagai doa sapujagat:
-                                (Khasanah Fiddunya Khasanah Fil akhirah) tentu semua butuh piranti keilmuan.
-                            </p>
-                        </div>
-                        <div class="testimonial-content">
-                            <div class="testimonial-author-img">
-                                <img src="<?php echo e(asset('assets/img/testimonial/03.jpg')); ?>" alt="">
-                            </div>
-                            <div class="testimonial-author-info">
-                                <h4>Naura Bya Sakan Naja (2024)</h4>
-                                <p>Ushuluddin - Yarmouk University, Yordania</p>
-                            </div>
-                        </div>
-                        <span class="testimonial-quote-icon"><i class="far fa-quote-right"></i></span>
-                    </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
         </div>
@@ -957,11 +1033,34 @@
                         </div>
                         <div class="col-md-6 align-self-center">
                             <ul class="footer-social">
-                                <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                <li><a href="<?php echo e(route('public.instagram')); ?>" target="_blank"><i
-                                            class="fab fa-instagram"></i></a></li>
-                                <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
-                                <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>
+                                <?php if(cache('site_setting_social_facebook')): ?>
+                                    <li><a href="<?php echo e(cache('site_setting_social_facebook')); ?>" target="_blank"><i
+                                                class="fab fa-facebook-f"></i></a></li>
+                                <?php else: ?>
+                                    <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                                <?php endif; ?>
+
+                                <?php if(cache('site_setting_social_instagram')): ?>
+                                    <li><a href="<?php echo e(cache('site_setting_social_instagram')); ?>" target="_blank"><i
+                                                class="fab fa-instagram"></i></a></li>
+                                <?php else: ?>
+                                    <li><a href="<?php echo e(route('public.instagram')); ?>" target="_blank"><i
+                                                class="fab fa-instagram"></i></a></li>
+                                <?php endif; ?>
+
+                                <?php if(cache('site_setting_social_youtube')): ?>
+                                    <li><a href="<?php echo e(cache('site_setting_social_youtube')); ?>" target="_blank"><i
+                                                class="fab fa-youtube"></i></a></li>
+                                <?php else: ?>
+                                    <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
+                                <?php endif; ?>
+
+                                <?php if(cache('site_setting_social_whatsapp')): ?>
+                                    <li><a href="<?php echo e(cache('site_setting_social_whatsapp')); ?>" target="_blank"><i
+                                                class="fab fa-whatsapp"></i></a></li>
+                                <?php else: ?>
+                                    <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>
+                                <?php endif; ?>
                             </ul>
                         </div>
                     </div>

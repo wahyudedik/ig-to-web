@@ -23,24 +23,46 @@ class RoleManagementController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|unique:roles,name',
-            'display_name' => 'required|string',
-            'description' => 'nullable|string',
-            'permissions' => 'array',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|unique:roles,name',
+                'display_name' => 'required|string',
+                'description' => 'nullable|string',
+                'permissions' => 'array',
+            ]);
 
-        $role = Role::create([
-            'name' => $request->name,
-            'guard_name' => 'web',
-        ]);
+            $role = Role::create([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+                'guard_name' => 'web',
+            ]);
 
-        if ($request->permissions) {
-            $role->syncPermissions($request->permissions);
+            if ($request->permissions) {
+                $role->syncPermissions($request->permissions);
+            }
+
+            // Return JSON for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Role created successfully',
+                    'data' => $role
+                ]);
+            }
+
+            return redirect()->route('admin.roles.index')
+                ->with('success', 'Role created successfully');
+        } catch (\Exception $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error creating role: ' . $e->getMessage()
+                ], 422);
+            }
+
+            return redirect()->back()->with('error', 'Error creating role: ' . $e->getMessage());
         }
-
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Role created successfully');
     }
 
     public function edit(Role $role)
@@ -53,21 +75,43 @@ class RoleManagementController extends Controller
 
     public function update(Request $request, Role $role)
     {
-        $request->validate([
-            'name' => 'required|string|unique:roles,name,' . $role->id,
-            'display_name' => 'nullable|string',
-            'description' => 'nullable|string',
-            'permissions' => 'array',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|unique:roles,name,' . $role->id,
+                'display_name' => 'nullable|string',
+                'description' => 'nullable|string',
+                'permissions' => 'array',
+            ]);
 
-        $role->update([
-            'name' => $request->name,
-        ]);
+            $role->update([
+                'name' => $request->name,
+                'display_name' => $request->display_name,
+                'description' => $request->description,
+            ]);
 
-        $role->syncPermissions($request->permissions ?? []);
+            $role->syncPermissions($request->permissions ?? []);
 
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Role updated successfully');
+            // Return JSON for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Role updated successfully',
+                    'data' => $role
+                ]);
+            }
+
+            return redirect()->route('admin.roles.index')
+                ->with('success', 'Role updated successfully');
+        } catch (\Exception $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error updating role: ' . $e->getMessage()
+                ], 422);
+            }
+
+            return redirect()->back()->with('error', 'Error updating role: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Role $role)
@@ -93,13 +137,36 @@ class RoleManagementController extends Controller
 
     public function syncUsers(Request $request, Role $role)
     {
-        $request->validate([
-            'users' => 'array',
-        ]);
+        try {
+            $request->validate([
+                'user_ids' => 'array',
+            ]);
 
-        $role->users()->sync($request->users ?? []);
+            $role->users()->sync($request->user_ids ?? []);
 
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Users assigned successfully');
+            // Return JSON for AJAX requests
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Users assigned successfully',
+                    'data' => [
+                        'role' => $role,
+                        'user_count' => $role->users()->count()
+                    ]
+                ]);
+            }
+
+            return redirect()->route('admin.roles.index')
+                ->with('success', 'Users assigned successfully');
+        } catch (\Exception $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error assigning users: ' . $e->getMessage()
+                ], 422);
+            }
+            
+            return redirect()->back()->with('error', 'Error assigning users: ' . $e->getMessage());
+        }
     }
 }

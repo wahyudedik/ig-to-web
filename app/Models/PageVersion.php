@@ -88,7 +88,7 @@ class PageVersion extends Model
             'seo_meta' => $page->seo_meta,
             'custom_fields' => $page->custom_fields,
             'status' => $page->status,
-            'is_featured' => $page->is_featured,
+            'is_featured' => $page->is_featured ?? false, // ✅ Fix: Provide default value
             'sort_order' => $page->sort_order,
             'published_at' => $page->published_at,
             'user_id' => $page->user_id,
@@ -113,7 +113,7 @@ class PageVersion extends Model
             'seo_meta' => $this->seo_meta,
             'custom_fields' => $this->custom_fields,
             'status' => $this->status,
-            'is_featured' => $this->is_featured,
+            'is_featured' => $this->is_featured ?? false, // ✅ Fix: Provide default value
             'sort_order' => $this->sort_order,
             'published_at' => $this->published_at,
         ]);

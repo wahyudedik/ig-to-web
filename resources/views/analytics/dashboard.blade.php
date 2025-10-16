@@ -110,14 +110,14 @@
                 <h3 class="text-lg font-semibold text-slate-900 mb-4">User Activity</h3>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-600">New Users This Week</span>
+                        <span class="text-slate-600">Invited Users This Week</span>
                         <span
-                            class="text-xl font-bold text-slate-900">{{ $analytics['user_activity']['new_users_this_week'] }}</span>
+                            class="text-xl font-bold text-slate-900">{{ $analytics['user_activity']['invited_users_this_week'] }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-600">New Users This Month</span>
+                        <span class="text-slate-600">Invited Users This Month</span>
                         <span
-                            class="text-xl font-bold text-slate-900">{{ $analytics['user_activity']['new_users_this_month'] }}</span>
+                            class="text-xl font-bold text-slate-900">{{ $analytics['user_activity']['invited_users_this_month'] }}</span>
                     </div>
 
                     <div class="pt-4 border-t">
@@ -193,18 +193,18 @@
 
         <!-- Trends Chart -->
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-8">
-            <h3 class="text-lg font-semibold text-slate-900 mb-4">User Registration Trend (Last 30 Days)</h3>
+            <h3 class="text-lg font-semibold text-slate-900 mb-4">User Invitation Trend (Last 30 Days)</h3>
             <div class="h-64 flex items-end justify-between space-x-2">
                 @php
-                    $maxCount = max(array_column($analytics['trends']['user_registrations'], 'count'));
+                    $maxCount = max(array_column($analytics['trends']['user_invitations'], 'count'));
                     $maxCount = $maxCount > 0 ? $maxCount : 1;
                 @endphp
-                @foreach ($analytics['trends']['user_registrations'] as $day)
+                @foreach ($analytics['trends']['user_invitations'] as $day)
                     <div class="flex-1 flex flex-col items-center group relative">
                         <!-- Tooltip -->
                         <div
                             class="absolute bottom-full mb-2 hidden group-hover:block bg-slate-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
-                            {{ $day['date'] }}: {{ $day['count'] }} users
+                            {{ $day['date'] }}: {{ $day['count'] }} invited users
                         </div>
                         <!-- Bar -->
                         <div class="w-full bg-blue-500 rounded-t transition-all duration-300 hover:bg-blue-600"

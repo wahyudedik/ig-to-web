@@ -190,7 +190,7 @@
                                     @foreach ($groupPermissions as $permission)
                                         <label class="flex items-center">
                                             <input type="checkbox" name="permissions[]"
-                                                value="{{ $permission->id }}"
+                                                value="{{ $permission->name }}"
                                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                             <span class="ml-2 text-sm text-gray-700">{{ $permission->name }}</span>
                                         </label>
@@ -203,6 +203,46 @@
                         <button type="button" onclick="closeCreateRoleModal()"
                             class="btn btn-secondary">Cancel</button>
                         <button type="submit" class="btn btn-primary">Create Role</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Role Modal -->
+    <div id="editRoleModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Role</h3>
+                <form id="editRoleForm">
+                    <input type="hidden" id="editRoleId" name="role_id">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Role Name</label>
+                        <input type="text" id="editRoleName" name="name" class="form-input"
+                            placeholder="Enter role name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
+                        <div class="max-h-40 overflow-y-auto border border-gray-300 rounded-md p-2">
+                            @foreach ($permissions as $group => $groupPermissions)
+                                <div class="mb-2">
+                                    <div class="text-sm font-medium text-gray-700 mb-1">{{ ucfirst($group) }}</div>
+                                    @foreach ($groupPermissions as $permission)
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="permissions[]"
+                                                value="{{ $permission->name }}"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                            <span class="ml-2 text-sm text-gray-700">{{ $permission->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeEditRoleModal()"
+                            class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Role</button>
                     </div>
                 </form>
             </div>
@@ -235,6 +275,11 @@
             document.getElementById('createRoleForm').reset();
         }
 
+        function closeEditRoleModal() {
+            document.getElementById('editRoleModal').classList.add('hidden');
+            document.getElementById('editRoleForm').reset();
+        }
+
         // Create role form submission
         document.getElementById('createRoleForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -243,36 +288,150 @@
             const permissions = Array.from(document.querySelectorAll('input[name="permissions[]"]:checked'))
                 .map(input => input.value);
 
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Creating...';
+            submitBtn.disabled = true;
+
             fetch('{{ route('admin.role-permissions.store') }}', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                             'content'),
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         name: formData.get('name'),
                         permissions: permissions
                     })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => Promise.reject(err));
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
+                        alert('Role created successfully!');
                         location.reload();
                     } else {
                         alert('Error creating role: ' + data.message);
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error creating role');
+                    const errorMessage = error.message || 'Unknown error occurred';
+                    alert('Error creating role: ' + errorMessage);
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
+        });
+
+        // Edit role form submission
+        document.getElementById('editRoleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const roleId = formData.get('role_id');
+            const permissions = Array.from(document.querySelectorAll(
+                    '#editRoleModal input[name="permissions[]"]:checked'))
+                .map(input => input.value);
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Updating...';
+            submitBtn.disabled = true;
+
+            fetch(`/admin/role-permissions/roles/${roleId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: formData.get('name'),
+                        permissions: permissions
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => Promise.reject(err));
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Role updated successfully!');
+                        location.reload();
+                    } else {
+                        alert('Error updating role: ' + data.message);
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const errorMessage = error.message || 'Unknown error occurred';
+                    alert('Error updating role: ' + errorMessage);
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                 });
         });
 
         // Edit role
         function editRole(roleId) {
-            // Implementation for editing role
-            console.log('Edit role:', roleId);
+            // Find the role data
+            const roleRow = document.querySelector(`button[onclick="editRole(${roleId})"]`).closest('tr');
+            const roleName = roleRow.querySelector('td:first-child').textContent.trim();
+
+            // Get role permissions (this would need to be passed from backend)
+            // For now, we'll fetch the role data
+            fetch(`/admin/role-permissions/roles/${roleId}/permissions`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Fill edit modal
+                        document.getElementById('editRoleId').value = roleId;
+                        document.getElementById('editRoleName').value = roleName;
+
+                        // Clear all checkboxes first
+                        document.querySelectorAll('#editRoleModal input[type="checkbox"]').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+
+                        // Check the permissions this role has
+                        if (data.permissions) {
+                            data.permissions.forEach(permissionName => {
+                                const checkbox = document.querySelector(
+                                    `#editRoleModal input[value="${permissionName}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                }
+                            });
+                        }
+
+                        // Show edit modal
+                        document.getElementById('editRoleModal').classList.remove('hidden');
+                    } else {
+                        alert('Error loading role data: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading role data');
+                });
         }
 
         // Delete role
@@ -281,12 +440,20 @@
                 fetch(`/admin/role-permissions/roles/${roleId}`, {
                         method: 'DELETE',
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => Promise.reject(err));
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
+                            alert('Role deleted successfully!');
                             location.reload();
                         } else {
                             alert('Error deleting role: ' + data.message);
@@ -294,7 +461,8 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Error deleting role');
+                        const errorMessage = error.message || 'Unknown error occurred';
+                        alert('Error deleting role: ' + errorMessage);
                     });
             }
         }
