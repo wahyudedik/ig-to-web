@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Calon;
+use App\Models\Pemilih;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class OSISPolicy
+class PemilihPolicy
 {
     use HandlesAuthorization;
 
@@ -21,7 +21,7 @@ class OSISPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Calon $calon): bool
+    public function view(User $user, Pemilih $pemilih): bool
     {
         return $user->can('osis.view') || $user->hasRole(['superadmin', 'admin']);
     }
@@ -37,7 +37,7 @@ class OSISPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Calon $calon): bool
+    public function update(User $user, Pemilih $pemilih): bool
     {
         return $user->can('osis.edit') || $user->hasRole(['superadmin', 'admin']);
     }
@@ -45,7 +45,7 @@ class OSISPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Calon $calon): bool
+    public function delete(User $user, Pemilih $pemilih): bool
     {
         return $user->can('osis.delete') || $user->hasRole(['superadmin', 'admin']);
     }
@@ -64,29 +64,5 @@ class OSISPolicy
     public function viewResults(User $user): bool
     {
         return $user->can('osis.results') || $user->hasRole(['superadmin', 'admin', 'guru']);
-    }
-
-    /**
-     * Determine whether the user can manage voters.
-     */
-    public function manageVoters(User $user): bool
-    {
-        return $user->can('osis.edit') || $user->hasRole(['superadmin', 'admin']);
-    }
-
-    /**
-     * Determine whether the user can import candidates.
-     */
-    public function import(User $user): bool
-    {
-        return $user->can('osis.create') || $user->hasRole(['superadmin', 'admin']);
-    }
-
-    /**
-     * Determine whether the user can export data.
-     */
-    public function export(User $user): bool
-    {
-        return $user->can('osis.view') || $user->hasRole(['superadmin', 'admin']);
     }
 }

@@ -8,22 +8,29 @@
     $defaultSlides = [
         [
             'image' => asset('assets/img/slider/slider-1.jpg'),
-            'subtitle' => '<i class="far fa-book-open-reader"></i>Welcome To MAUDU Library',
-            'title' => 'Grand Opening <span>MAUDU</span> Library',
+            'subtitle' =>
+                '<i class="far fa-book-open-reader"></i>' .
+                (cache('site_setting_hero_slide1_subtitle') ?: 'Welcome To MAUDU Library'),
+            'title' => cache('site_setting_hero_slide1_title') ?: 'Grand Opening <span>MAUDU</span> Library',
             'description' =>
+                cache('site_setting_hero_slide1_description') ?:
                 'Acara Grandopening Dihadiri oleh Majelis Pimpinan Pondok Pesantren Darul Ulum Rejoso Peterongan Jombang',
         ],
         [
             'image' => asset('assets/img/slider/slider-2.jpg'),
-            'subtitle' => '<i class="far fa-book-open-reader"></i>Studi Edukasi Sosial',
-            'title' => 'Gedung <span>DPRD</span> Kabupaten Jombang',
-            'description' => '',
+            'subtitle' =>
+                '<i class="far fa-book-open-reader"></i>' .
+                (cache('site_setting_hero_slide2_subtitle') ?: 'Studi Edukasi Sosial'),
+            'title' => cache('site_setting_hero_slide2_title') ?: 'Gedung <span>DPRD</span> Kabupaten Jombang',
+            'description' => cache('site_setting_hero_slide2_description') ?: '',
         ],
         [
             'image' => asset('assets/img/slider/slider-3.jpg'),
-            'subtitle' => '<i class="far fa-book-open-reader"></i>Event KOMPASS',
-            'title' => 'Kompetisi Agama, <span>Sains,</span> dan Seni 2024',
-            'description' => '',
+            'subtitle' =>
+                '<i class="far fa-book-open-reader"></i>' .
+                (cache('site_setting_hero_slide3_subtitle') ?: 'Event KOMPASS'),
+            'title' => cache('site_setting_hero_slide3_title') ?: 'Kompetisi Agama, <span>Sains,</span> dan Seni 2024',
+            'description' => cache('site_setting_hero_slide3_description') ?: '',
         ],
     ];
 ?>

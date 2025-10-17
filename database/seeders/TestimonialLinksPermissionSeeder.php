@@ -28,6 +28,8 @@ class TestimonialLinksPermissionSeeder extends Seeder
         }
 
         if ($superadminRole) {
+            // Superadmin already has all permissions from PermissionSeeder
+            // Just ensure testimonial-links permissions are included
             $superadminRole->givePermissionTo([
                 'testimonial-links.view',
                 'testimonial-links.create',

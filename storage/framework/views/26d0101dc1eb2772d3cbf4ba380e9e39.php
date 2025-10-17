@@ -10,8 +10,11 @@
                             <img src="<?php echo e(asset('assets/img/icon/library.svg')); ?>" alt="">
                         </div>
                         <div class="feature-content">
-                            <h4 class="feature-title"><a href="">E-LIBRARY</a></h4>
-                            <p>Perpustakaan digital berisi Koleksi materi dalam format elektronik</p>
+                            <h4 class="feature-title"><a
+                                    href=""><?php echo e(cache('site_setting_feature1_title', 'E-LIBRARY')); ?></a></h4>
+                            <p><?php echo e(cache('site_setting_feature1_description', 'Perpustakaan digital berisi Koleksi materi dalam format elektronik')); ?>
+
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -22,8 +25,11 @@
                             <img src="<?php echo e(asset('assets/img/icon/teacher-2.svg')); ?>" alt="">
                         </div>
                         <div class="feature-content">
-                            <h4 class="feature-title">SERTIFIKASI KOMPETENSI</h4>
-                            <p>Uji kompetensi yang sistematis dan objektif</p>
+                            <h4 class="feature-title">
+                                <?php echo e(cache('site_setting_feature2_title', 'SERTIFIKASI KOMPETENSI')); ?></h4>
+                            <p><?php echo e(cache('site_setting_feature2_description', 'Uji kompetensi yang sistematis dan objektif')); ?>
+
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -34,8 +40,10 @@
                             <img src="<?php echo e(asset('assets/img/icon/course.svg')); ?>" alt="">
                         </div>
                         <div class="feature-content">
-                            <h4 class="feature-title">KARYA LITERASI</h4>
-                            <p>Penelitian di Bidang Keislaman, Sains, Teknologi, dan Sosial.</p>
+                            <h4 class="feature-title"><?php echo e(cache('site_setting_feature3_title', 'KARYA LITERASI')); ?></h4>
+                            <p><?php echo e(cache('site_setting_feature3_description', 'Penelitian di Bidang Keislaman, Sains, Teknologi, dan Sosial.')); ?>
+
+                            </p>
                         </div>
                     </div>
                 </div>

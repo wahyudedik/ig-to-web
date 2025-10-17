@@ -33,8 +33,8 @@ class NotificationSeeder extends Seeder
             'info'
         );
 
-        // 3. OSIS Voting
-        NotificationHelper::sendVotingNotification(
+        // 3. OSIS Voting (send to all users for now)
+        NotificationHelper::sendAnnouncement(
             '🗳️ Pemilihan OSIS Dimulai!',
             'Periode pemilihan ketua OSIS telah dibuka. Gunakan hak suara Anda sekarang!',
             'success'
@@ -46,8 +46,8 @@ class NotificationSeeder extends Seeder
         // 5. Data Change
         NotificationHelper::sendDataChange($admin, 'profil', 'diperbarui');
 
-        // 6. Sarpras Alert
-        NotificationHelper::sendSarprasAlert(
+        // 6. Sarpras Alert (send to all users for now)
+        NotificationHelper::sendAnnouncement(
             '⚠️ Peringatan Barang Rusak',
             'Terdapat 3 barang dengan kondisi rusak yang memerlukan perhatian segera.',
             'warning'

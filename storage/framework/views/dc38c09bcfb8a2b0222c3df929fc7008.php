@@ -5,8 +5,9 @@
             <div class="col-lg-6 mx-auto">
                 <div class="site-heading text-center">
                     <span class="site-title-tagline"><i class="far fa-book-open-reader"></i> Kegiatan MAUDU</span>
-                    <h2 class="site-title">Kegiatan<span> Madrasah</span></h2>
-                    <p>Ket// programmer : ambil data dari dari IG</p>
+                    <h2 class="site-title"><?php echo e(cache('site_setting_gallery_title', 'Kegiatan')); ?><span> Madrasah</span>
+                    </h2>
+                    <p><?php echo e(cache('site_setting_gallery_subtitle', 'Ket// programmer : ambil data dari dari IG')); ?></p>
                 </div>
             </div>
         </div>

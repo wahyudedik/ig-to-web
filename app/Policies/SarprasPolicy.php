@@ -15,7 +15,7 @@ class SarprasPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('sarpras.view');
+        return $user->can('sarpras.view') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -23,7 +23,7 @@ class SarprasPolicy
      */
     public function view(User $user, Barang $barang): bool
     {
-        return $user->can('sarpras.view');
+        return $user->can('sarpras.view') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -31,7 +31,7 @@ class SarprasPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('sarpras.create');
+        return $user->can('sarpras.create') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -39,7 +39,7 @@ class SarprasPolicy
      */
     public function update(User $user, Barang $barang): bool
     {
-        return $user->can('sarpras.edit');
+        return $user->can('sarpras.edit') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -47,7 +47,7 @@ class SarprasPolicy
      */
     public function delete(User $user, Barang $barang): bool
     {
-        return $user->can('sarpras.delete');
+        return $user->can('sarpras.delete') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -55,7 +55,7 @@ class SarprasPolicy
      */
     public function import(User $user): bool
     {
-        return $user->can('sarpras.import');
+        return $user->can('sarpras.import') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -63,7 +63,7 @@ class SarprasPolicy
      */
     public function export(User $user): bool
     {
-        return $user->can('sarpras.export');
+        return $user->can('sarpras.export') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -71,7 +71,7 @@ class SarprasPolicy
      */
     public function generateBarcode(User $user): bool
     {
-        return $user->can('sarpras.barcode');
+        return $user->can('sarpras.barcode') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -79,7 +79,7 @@ class SarprasPolicy
      */
     public function scanBarcode(User $user): bool
     {
-        return $user->can('sarpras.barcode');
+        return $user->can('sarpras.barcode') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -87,7 +87,7 @@ class SarprasPolicy
      */
     public function printBarcode(User $user): bool
     {
-        return $user->can('sarpras.barcode');
+        return $user->can('sarpras.barcode') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -95,7 +95,7 @@ class SarprasPolicy
      */
     public function manageMaintenance(User $user): bool
     {
-        return $user->can('sarpras.maintenance');
+        return $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
@@ -103,6 +103,6 @@ class SarprasPolicy
      */
     public function viewMaintenance(User $user): bool
     {
-        return $user->can('sarpras.view') || $user->can('sarpras.maintenance');
+        return $user->can('sarpras.view') || $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin']);
     }
 }

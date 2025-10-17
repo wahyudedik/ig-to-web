@@ -180,15 +180,18 @@
                                         <i class="fas fa-bell mr-2"></i>Notification Center
                                     </a>
                                 @endcan
-                                <a href="{{ route('admin.testimonials.index') }}"
-                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                    <i class="fas fa-comments mr-2"></i>Manage Testimonials
-                                </a>
+                                @canany(['testimonials.view', 'testimonials.create', 'testimonials.edit',
+                                    'testimonials.delete'])
+                                    <a href="{{ route('admin.testimonials.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-comments mr-2"></i>Manage Testimonials
+                                    </a>
+                                @endcanany
                                 @can('testimonial-links.view')
-                                <a href="{{ route('admin.testimonial-links.index') }}"
-                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                    <i class="fas fa-link mr-2"></i>Testimonial Links
-                                </a>
+                                    <a href="{{ route('admin.testimonial-links.index') }}"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-link mr-2"></i>Testimonial Links
+                                    </a>
                                 @endcan
                                 <a href="{{ route('admin.settings.index') }}"
                                     class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -545,15 +548,18 @@
                                 class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                 <i class="fas fa-bell mr-2"></i>Notification Center
                             </a>
-                            <a href="{{ route('admin.testimonials.index') }}"
-                                class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                                <i class="fas fa-comments mr-2"></i>Manage Testimonials
-                            </a>
+                            @canany(['testimonials.view', 'testimonials.create', 'testimonials.edit',
+                                'testimonials.delete'])
+                                <a href="{{ route('admin.testimonials.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-comments mr-2"></i>Manage Testimonials
+                                </a>
+                            @endcanany
                             @can('testimonial-links.view')
-                            <a href="{{ route('admin.testimonial-links.index') }}"
-                                class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                                <i class="fas fa-link mr-2"></i>Testimonial Links
-                            </a>
+                                <a href="{{ route('admin.testimonial-links.index') }}"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-link mr-2"></i>Testimonial Links
+                                </a>
                             @endcan
                             <a href="{{ route('admin.settings.index') }}"
                                 class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">

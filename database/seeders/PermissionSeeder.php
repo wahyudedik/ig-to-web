@@ -274,49 +274,83 @@ class PermissionSeeder extends Seeder
                 'guard_name' => 'web'
             ],
 
-        // Kelulusan (E-Lulus) permissions
-        [
-            'name' => 'kelulusan.view',
-            'display_name' => 'Kelulusan - Lihat Data',
-            'description' => 'Permission untuk melihat data kelulusan',
-            'module' => 'kelulusan',
-            'action' => 'view',
-            'guard_name' => 'web'
-        ],
+            // Kelulusan (E-Lulus) permissions
+            [
+                'name' => 'kelulusan.view',
+                'display_name' => 'Kelulusan - Lihat Data',
+                'description' => 'Permission untuk melihat data kelulusan',
+                'module' => 'kelulusan',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
 
-        // Testimonial Links permissions
-        [
-            'name' => 'testimonial-links.view',
-            'display_name' => 'Testimonial Links - Lihat Data',
-            'description' => 'Permission untuk melihat testimonial links',
-            'module' => 'testimonial-links',
-            'action' => 'view',
-            'guard_name' => 'web'
-        ],
-        [
-            'name' => 'testimonial-links.create',
-            'display_name' => 'Testimonial Links - Buat Link',
-            'description' => 'Permission untuk membuat testimonial link',
-            'module' => 'testimonial-links',
-            'action' => 'create',
-            'guard_name' => 'web'
-        ],
-        [
-            'name' => 'testimonial-links.edit',
-            'display_name' => 'Testimonial Links - Edit Link',
-            'description' => 'Permission untuk mengedit testimonial link',
-            'module' => 'testimonial-links',
-            'action' => 'edit',
-            'guard_name' => 'web'
-        ],
-        [
-            'name' => 'testimonial-links.delete',
-            'display_name' => 'Testimonial Links - Hapus Link',
-            'description' => 'Permission untuk menghapus testimonial link',
-            'module' => 'testimonial-links',
-            'action' => 'delete',
-            'guard_name' => 'web'
-        ],
+            // Testimonials permissions
+            [
+                'name' => 'testimonials.view',
+                'display_name' => 'Testimonials - Lihat Data',
+                'description' => 'Permission untuk melihat testimonials',
+                'module' => 'testimonials',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'testimonials.create',
+                'display_name' => 'Testimonials - Tambah Data',
+                'description' => 'Permission untuk menambah testimonial',
+                'module' => 'testimonials',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'testimonials.edit',
+                'display_name' => 'Testimonials - Edit Data',
+                'description' => 'Permission untuk mengedit testimonial',
+                'module' => 'testimonials',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'testimonials.delete',
+                'display_name' => 'Testimonials - Hapus Data',
+                'description' => 'Permission untuk menghapus testimonial',
+                'module' => 'testimonials',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+
+            // Testimonial Links permissions
+            [
+                'name' => 'testimonial-links.view',
+                'display_name' => 'Testimonial Links - Lihat Data',
+                'description' => 'Permission untuk melihat testimonial links',
+                'module' => 'testimonial-links',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'testimonial-links.create',
+                'display_name' => 'Testimonial Links - Buat Link',
+                'description' => 'Permission untuk membuat testimonial link',
+                'module' => 'testimonial-links',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'testimonial-links.edit',
+                'display_name' => 'Testimonial Links - Edit Link',
+                'description' => 'Permission untuk mengedit testimonial link',
+                'module' => 'testimonial-links',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'testimonial-links.delete',
+                'display_name' => 'Testimonial Links - Hapus Link',
+                'description' => 'Permission untuk menghapus testimonial link',
+                'module' => 'testimonial-links',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
             [
                 'name' => 'kelulusan.create',
                 'display_name' => 'Kelulusan - Tambah Data',
@@ -608,10 +642,31 @@ class PermissionSeeder extends Seeder
             );
         }
 
+        // Create superadmin role if it doesn't exist
+        $superadminRole = Role::firstOrCreate(
+            ['name' => 'superadmin'],
+            ['guard_name' => 'web']
+        );
+
         // Assign permissions to roles (only superadmin gets all permissions)
-        $superadminRole = Role::where('name', 'superadmin')->first();
         if ($superadminRole) {
-            $superadminRole->givePermissionTo(Permission::all());
+            // Clear permission cache before assigning
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+            // Get all permissions
+            $allPermissions = Permission::all();
+
+            // Assign permissions one by one to ensure they're assigned
+            foreach ($allPermissions as $permission) {
+                $superadminRole->givePermissionTo($permission);
+            }
+
+            // Clear cache again after assigning
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+            $this->command->info('Assigned ' . $allPermissions->count() . ' permissions to superadmin role');
+        } else {
+            $this->command->error('Superadmin role not found!');
         }
 
         // Other roles are created dynamically by superadmin

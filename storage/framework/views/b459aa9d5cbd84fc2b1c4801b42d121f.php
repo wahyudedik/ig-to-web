@@ -8,8 +8,9 @@
                         <img src="<?php echo e(asset('assets/img/icon/course.svg')); ?>" alt="">
                     </div>
                     <div>
-                        <span class="counter" data-count="+" data-to="24" data-speed="3000">24</span>
-                        <h6 class="title">Mata Pelajaran</h6>
+                        <span class="counter" data-count="+" data-to="<?php echo e(cache('site_setting_counter1_number', '24')); ?>"
+                            data-speed="3000"><?php echo e(cache('site_setting_counter1_number', '24')); ?></span>
+                        <h6 class="title"><?php echo e(cache('site_setting_counter1_label', 'Mata Pelajaran')); ?></h6>
                     </div>
                 </div>
             </div>
@@ -19,8 +20,10 @@
                         <img src="<?php echo e(asset('assets/img/icon/graduation.svg')); ?>" alt="">
                     </div>
                     <div>
-                        <span class="counter" data-count="+" data-to="800" data-speed="3000">800</span>
-                        <h6 class="title">+ Peserta Didik</h6>
+                        <span class="counter" data-count="+"
+                            data-to="<?php echo e(cache('site_setting_counter2_number', '800')); ?>"
+                            data-speed="3000"><?php echo e(cache('site_setting_counter2_number', '800')); ?></span>
+                        <h6 class="title"><?php echo e(cache('site_setting_counter2_label', '+ Peserta Didik')); ?></h6>
                     </div>
                 </div>
             </div>
@@ -30,8 +33,10 @@
                         <img src="<?php echo e(asset('assets/img/icon/teacher-2.svg')); ?>" alt="">
                     </div>
                     <div>
-                        <span class="counter" data-count="+" data-to="98" data-speed="3000">98</span>
-                        <h6 class="title">+ Tenaga Pendidik & KEPENDIDIKAN</h6>
+                        <span class="counter" data-count="+" data-to="<?php echo e(cache('site_setting_counter3_number', '98')); ?>"
+                            data-speed="3000"><?php echo e(cache('site_setting_counter3_number', '98')); ?></span>
+                        <h6 class="title">
+                            <?php echo e(cache('site_setting_counter3_label', '+ Tenaga Pendidik & KEPENDIDIKAN')); ?></h6>
                     </div>
                 </div>
             </div>

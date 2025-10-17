@@ -47,10 +47,12 @@
                         </p>
                     </div>
                 </div>
-                <button id="testConnection" class="btn btn-primary">
-                    <i class="fas fa-plug mr-2"></i>
-                    Test Connection
-                </button>
+                @can('instagram.manage')
+                    <button id="testConnection" class="btn btn-primary">
+                        <i class="fas fa-plug mr-2"></i>
+                        Test Connection
+                    </button>
+                @endcan
             </div>
         </div>
 
@@ -114,10 +116,12 @@
                             <input type="url" name="redirect_uri" class="form-input"
                                 placeholder="Enter Redirect URI">
                         </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save mr-2"></i>
-                            Update Configuration
-                        </button>
+                        @can('instagram.manage')
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-2"></i>
+                                Update Configuration
+                            </button>
+                        @endcan
                     </form>
                 </div>
 
@@ -159,10 +163,12 @@
                                     placeholder="0">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter mr-2"></i>
-                            Apply Filters
-                        </button>
+                        @can('instagram.manage')
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter mr-2"></i>
+                                Apply Filters
+                            </button>
+                        @endcan
                     </form>
                     <div id="filterResults" class="mt-6"></div>
                 </div>
@@ -191,10 +197,12 @@
                             <label class="block text-sm font-medium text-slate-700 mb-2">Caption</label>
                             <textarea name="caption" rows="3" class="form-input" placeholder="Write your Instagram caption here..."></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-calendar-plus mr-2"></i>
-                            Schedule Content
-                        </button>
+                        @can('instagram.manage')
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-plus mr-2"></i>
+                                Schedule Content
+                            </button>
+                        @endcan
                     </form>
                     <div id="scheduledContent" class="mt-6"></div>
                 </div>
