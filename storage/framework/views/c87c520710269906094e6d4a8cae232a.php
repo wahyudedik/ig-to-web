@@ -3,17 +3,28 @@
     if ($heroImages) {
         $heroImages = json_decode($heroImages, true);
     }
-    $heroTitle = cache('site_setting_hero_title', 'Selamat Datang di Portal Digital Pendidikan');
-    $heroSubtitle = cache(
-        'site_setting_hero_subtitle',
-        'Website sekolah yang mengintegrasikan semua layanan pendidikan dalam satu platform digital yang modern dan efisien.',
-    );
 
-    // Default hero images jika tidak ada setting dari admin
-    $defaultImages = [
-        asset('assets/img/slider/slider-1.jpg'),
-        asset('assets/img/slider/slider-2.jpg'),
-        asset('assets/img/slider/slider-3.jpg'),
+    // Default hero slides sesuai dengan index.html
+    $defaultSlides = [
+        [
+            'image' => asset('assets/img/slider/slider-1.jpg'),
+            'subtitle' => '<i class="far fa-book-open-reader"></i>Welcome To MAUDU Library',
+            'title' => 'Grand Opening <span>MAUDU</span> Library',
+            'description' =>
+                'Acara Grandopening Dihadiri oleh Majelis Pimpinan Pondok Pesantren Darul Ulum Rejoso Peterongan Jombang',
+        ],
+        [
+            'image' => asset('assets/img/slider/slider-2.jpg'),
+            'subtitle' => '<i class="far fa-book-open-reader"></i>Studi Edukasi Sosial',
+            'title' => 'Gedung <span>DPRD</span> Kabupaten Jombang',
+            'description' => '',
+        ],
+        [
+            'image' => asset('assets/img/slider/slider-3.jpg'),
+            'subtitle' => '<i class="far fa-book-open-reader"></i>Event KOMPASS',
+            'title' => 'Kompetisi Agama, <span>Sains,</span> dan Seni 2024',
+            'description' => '',
+        ],
     ];
 ?>
 
@@ -23,30 +34,28 @@
         <?php if($heroImages && count($heroImages) > 0): ?>
             
             <?php $__currentLoopData = $heroImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php
+                    $slide = $defaultSlides[$index] ?? $defaultSlides[0];
+                ?>
                 <div class="hero-single" style="background: url(<?php echo e(Storage::url($image)); ?>)">
                     <div class="container">
                         <div class="row align-items-center">
                             <div class="col-md-12 col-lg-7">
                                 <div class="hero-content">
                                     <h6 class="hero-sub-title" data-animation="fadeInDown" data-delay=".25s">
-                                        <i
-                                            class="far fa-book-open-reader"></i><?php echo e(cache('site_setting_site_name', 'Portal Digital Pendidikan')); ?>
+                                        <?php echo $slide['subtitle']; ?>
 
                                     </h6>
                                     <h1 class="hero-title" data-animation="fadeInRight" data-delay=".50s">
-                                        <?php echo e($heroTitle); ?>
+                                        <?php echo $slide['title']; ?>
 
                                     </h1>
-                                    <p data-animation="fadeInLeft" data-delay=".75s">
-                                        <?php echo e($heroSubtitle); ?>
+                                    <?php if($slide['description']): ?>
+                                        <p data-animation="fadeInLeft" data-delay=".75s">
+                                            <?php echo e($slide['description']); ?>
 
-                                    </p>
-                                    <div class="hero-btn" data-animation="fadeInUp" data-delay="1s">
-                                        <a href="#features" class="theme-btn">Jelajahi Fitur<i
-                                                class="fas fa-arrow-right-long"></i></a>
-                                        <a href="#contact" class="theme-btn theme-btn2">Hubungi Kami<i
-                                                class="fas fa-arrow-right-long"></i></a>
-                                    </div>
+                                        </p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -55,31 +64,26 @@
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         <?php else: ?>
             
-            <?php $__currentLoopData = $defaultImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="hero-single" style="background: url(<?php echo e($image); ?>)">
+            <?php $__currentLoopData = $defaultSlides; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $slide): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="hero-single" style="background: url(<?php echo e($slide['image']); ?>)">
                     <div class="container">
                         <div class="row align-items-center">
                             <div class="col-md-12 col-lg-7">
                                 <div class="hero-content">
                                     <h6 class="hero-sub-title" data-animation="fadeInDown" data-delay=".25s">
-                                        <i
-                                            class="far fa-book-open-reader"></i><?php echo e(cache('site_setting_site_name', 'Portal Digital Pendidikan')); ?>
+                                        <?php echo $slide['subtitle']; ?>
 
                                     </h6>
                                     <h1 class="hero-title" data-animation="fadeInRight" data-delay=".50s">
-                                        <?php echo e($heroTitle); ?>
+                                        <?php echo $slide['title']; ?>
 
                                     </h1>
-                                    <p data-animation="fadeInLeft" data-delay=".75s">
-                                        <?php echo e($heroSubtitle); ?>
+                                    <?php if($slide['description']): ?>
+                                        <p data-animation="fadeInLeft" data-delay=".75s">
+                                            <?php echo e($slide['description']); ?>
 
-                                    </p>
-                                    <div class="hero-btn" data-animation="fadeInUp" data-delay="1s">
-                                        <a href="#features" class="theme-btn">Jelajahi Fitur<i
-                                                class="fas fa-arrow-right-long"></i></a>
-                                        <a href="#contact" class="theme-btn theme-btn2">Hubungi Kami<i
-                                                class="fas fa-arrow-right-long"></i></a>
-                                    </div>
+                                        </p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>

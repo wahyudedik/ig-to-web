@@ -343,4 +343,46 @@ class PageController extends Controller
             'gallery' => 'Gallery Page',
         ];
     }
+
+    /**
+     * Display a listing of published pages (public view).
+     */
+    public function publicIndex(Request $request)
+    {
+        $query = Page::where('status', 'published')
+            ->orderBy('published_at', 'desc');
+
+        // Filter by category
+        if ($request->has('category') && $request->category !== '') {
+            $query->where('category', $request->category);
+        }
+
+        // Search by title
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $pages = $query->paginate(12);
+        $categories = Page::where('status', 'published')
+            ->distinct()
+            ->pluck('category')
+            ->filter();
+
+        return view('pages.public.index', compact('pages', 'categories'));
+    }
+
+    /**
+     * Display the specified page (public view).
+     */
+    public function publicShow($slug)
+    {
+        $page = Page::where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        // Increment views count (optional)
+        // $page->increment('views_count');
+
+        return view('pages.public.show', compact('page'));
+    }
 }

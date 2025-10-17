@@ -195,7 +195,7 @@
 
         <div class="footer">
             <p>This is an automated message from Portal Sekolah.</p>
-            <p>© {{ date('Y') }} Portal Sekolah. All rights reserved.</p>
+            <p>© {{ date('Y') }} Portal Sekolah. All rights reserved. wahyu dedik developer</p>
             <p><small>If you did not expect this invitation, please ignore this email.</small></p>
         </div>
     </div>

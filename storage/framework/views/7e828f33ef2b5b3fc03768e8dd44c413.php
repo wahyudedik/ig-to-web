@@ -108,6 +108,99 @@
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Membangun generasi yang berakhlak mulia dan berprestasi"><?php echo e(cache('site_setting_hero_subtitle')); ?></textarea>
                         </div>
+
+                        <!-- Hero Slide 1 Settings -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Hero Slide 1 - Library</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="hero_slide1_subtitle"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 1 Subtitle</label>
+                                    <input type="text" id="hero_slide1_subtitle" name="hero_slide1_subtitle"
+                                        value="<?php echo e(cache('site_setting_hero_slide1_subtitle', 'Welcome To MAUDU Library')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Welcome To MAUDU Library">
+                                </div>
+                                <div>
+                                    <label for="hero_slide1_title"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 1 Title</label>
+                                    <input type="text" id="hero_slide1_title" name="hero_slide1_title"
+                                        value="<?php echo e(cache('site_setting_hero_slide1_title', 'Grand Opening MAUDU Library')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Grand Opening MAUDU Library">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="hero_slide1_description"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 1
+                                        Description</label>
+                                    <textarea id="hero_slide1_description" name="hero_slide1_description" rows="2"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Acara Grandopening Dihadiri oleh Majelis Pimpinan Pondok Pesantren Darul Ulum Rejoso Peterongan Jombang"><?php echo e(cache('site_setting_hero_slide1_description', 'Acara Grandopening Dihadiri oleh Majelis Pimpinan Pondok Pesantren Darul Ulum Rejoso Peterongan Jombang')); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hero Slide 2 Settings -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Hero Slide 2 - DPRD</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="hero_slide2_subtitle"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 2 Subtitle</label>
+                                    <input type="text" id="hero_slide2_subtitle" name="hero_slide2_subtitle"
+                                        value="<?php echo e(cache('site_setting_hero_slide2_subtitle', 'Studi Edukasi Sosial')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Studi Edukasi Sosial">
+                                </div>
+                                <div>
+                                    <label for="hero_slide2_title"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 2 Title</label>
+                                    <input type="text" id="hero_slide2_title" name="hero_slide2_title"
+                                        value="<?php echo e(cache('site_setting_hero_slide2_title', 'Gedung DPRD Kabupaten Jombang')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Gedung DPRD Kabupaten Jombang">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="hero_slide2_description"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 2
+                                        Description</label>
+                                    <textarea id="hero_slide2_description" name="hero_slide2_description" rows="2"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Deskripsi untuk slide 2"><?php echo e(cache('site_setting_hero_slide2_description')); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hero Slide 3 Settings -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Hero Slide 3 - KOMPASS</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="hero_slide3_subtitle"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 3 Subtitle</label>
+                                    <input type="text" id="hero_slide3_subtitle" name="hero_slide3_subtitle"
+                                        value="<?php echo e(cache('site_setting_hero_slide3_subtitle', 'Event KOMPASS')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Event KOMPASS">
+                                </div>
+                                <div>
+                                    <label for="hero_slide3_title"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 3 Title</label>
+                                    <input type="text" id="hero_slide3_title" name="hero_slide3_title"
+                                        value="<?php echo e(cache('site_setting_hero_slide3_title', 'Kompetisi Agama, Sains, dan Seni 2024')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Kompetisi Agama, Sains, dan Seni 2024">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="hero_slide3_description"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Slide 3
+                                        Description</label>
+                                    <textarea id="hero_slide3_description" name="hero_slide3_description" rows="2"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Deskripsi untuk slide 3"><?php echo e(cache('site_setting_hero_slide3_description')); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
                         <div>
                             <label for="hero_images" class="block text-sm font-medium text-gray-700 mb-2">Hero Images
                                 (Multiple)</label>
@@ -142,6 +235,179 @@
                                     </div>
                                 </div>
                             <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Cards Section -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Feature Cards Section</h2>
+                    <div class="space-y-6">
+                        <!-- Feature Card 1 -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Feature Card 1 - E-Library</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="feature1_title"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Feature 1 Title</label>
+                                    <input type="text" id="feature1_title" name="feature1_title"
+                                        value="<?php echo e(cache('site_setting_feature1_title', 'E-LIBRARY')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="E-LIBRARY">
+                                </div>
+                                <div>
+                                    <label for="feature1_description"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Feature 1
+                                        Description</label>
+                                    <textarea id="feature1_description" name="feature1_description" rows="2"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Perpustakaan digital berisi Koleksi materi dalam format elektronik"><?php echo e(cache('site_setting_feature1_description', 'Perpustakaan digital berisi Koleksi materi dalam format elektronik')); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feature Card 2 -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Feature Card 2 - Sertifikasi</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="feature2_title"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Feature 2 Title</label>
+                                    <input type="text" id="feature2_title" name="feature2_title"
+                                        value="<?php echo e(cache('site_setting_feature2_title', 'SERTIFIKASI KOMPETENSI')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="SERTIFIKASI KOMPETENSI">
+                                </div>
+                                <div>
+                                    <label for="feature2_description"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Feature 2
+                                        Description</label>
+                                    <textarea id="feature2_description" name="feature2_description" rows="2"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Uji kompetensi yang sistematis dan objektif"><?php echo e(cache('site_setting_feature2_description', 'Uji kompetensi yang sistematis dan objektif')); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feature Card 3 -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Feature Card 3 - Karya Literasi</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="feature3_title"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Feature 3 Title</label>
+                                    <input type="text" id="feature3_title" name="feature3_title"
+                                        value="<?php echo e(cache('site_setting_feature3_title', 'KARYA LITERASI')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="KARYA LITERASI">
+                                </div>
+                                <div>
+                                    <label for="feature3_description"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Feature 3
+                                        Description</label>
+                                    <textarea id="feature3_description" name="feature3_description" rows="2"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Penelitian di Bidang Keislaman, Sains, Teknologi, dan Sosial."><?php echo e(cache('site_setting_feature3_description', 'Penelitian di Bidang Keislaman, Sains, Teknologi, dan Sosial.')); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Counter Section -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Counter Section (Statistik)</h2>
+                    <div class="space-y-6">
+                        <!-- Counter 1 -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Counter 1 - Mata Pelajaran</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="counter1_number"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Counter 1 Number</label>
+                                    <input type="number" id="counter1_number" name="counter1_number"
+                                        value="<?php echo e(cache('site_setting_counter1_number', '24')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="24">
+                                </div>
+                                <div>
+                                    <label for="counter1_label"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Counter 1 Label</label>
+                                    <input type="text" id="counter1_label" name="counter1_label"
+                                        value="<?php echo e(cache('site_setting_counter1_label', 'Mata Pelajaran')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Mata Pelajaran">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Counter 2 -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Counter 2 - Peserta Didik</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="counter2_number"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Counter 2 Number</label>
+                                    <input type="number" id="counter2_number" name="counter2_number"
+                                        value="<?php echo e(cache('site_setting_counter2_number', '800')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="800">
+                                </div>
+                                <div>
+                                    <label for="counter2_label"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Counter 2 Label</label>
+                                    <input type="text" id="counter2_label" name="counter2_label"
+                                        value="<?php echo e(cache('site_setting_counter2_label', '+ Peserta Didik')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="+ Peserta Didik">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Counter 3 -->
+                        <div class="border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Counter 3 - Tenaga Pendidik</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="counter3_number"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Counter 3 Number</label>
+                                    <input type="number" id="counter3_number" name="counter3_number"
+                                        value="<?php echo e(cache('site_setting_counter3_number', '98')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="98">
+                                </div>
+                                <div>
+                                    <label for="counter3_label"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Counter 3 Label</label>
+                                    <input type="text" id="counter3_label" name="counter3_label"
+                                        value="<?php echo e(cache('site_setting_counter3_label', '+ Tenaga Pendidik & KEPENDIDIKAN')); ?>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="+ Tenaga Pendidik & KEPENDIDIKAN">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Section -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Gallery Section</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="gallery_title" class="block text-sm font-medium text-gray-700 mb-2">Gallery
+                                Title</label>
+                            <input type="text" id="gallery_title" name="gallery_title"
+                                value="<?php echo e(cache('site_setting_gallery_title', 'Kegiatan Madrasah')); ?>"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Kegiatan Madrasah">
+                        </div>
+                        <div>
+                            <label for="gallery_subtitle" class="block text-sm font-medium text-gray-700 mb-2">Gallery
+                                Subtitle</label>
+                            <input type="text" id="gallery_subtitle" name="gallery_subtitle"
+                                value="<?php echo e(cache('site_setting_gallery_subtitle', 'Ket// programmer : ambil data dari dari IG')); ?>"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Ket// programmer : ambil data dari dari IG">
                         </div>
                     </div>
                 </div>
@@ -562,6 +828,54 @@
                                         placeholder="+62 123 456 789">
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campus Life Section (Headmaster) -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Campus Life Section (Kepala Madrasah)</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="headmaster_name" class="block text-sm font-medium text-gray-700 mb-2">Nama
+                                Kepala Madrasah</label>
+                            <input type="text" id="headmaster_name" name="headmaster_name"
+                                value="<?php echo e(cache('site_setting_headmaster_name', 'Khoiruddinul Qoyyum,S.S.,M.Pd')); ?>"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Khoiruddinul Qoyyum,S.S.,M.Pd">
+                        </div>
+
+                        <div>
+                            <label for="headmaster_description"
+                                class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Kepala Madrasah</label>
+                            <textarea id="headmaster_description" name="headmaster_description" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Sebagai kepala madrasah yang berpengalaman, kami berkomitmen untuk memberikan pendidikan terbaik..."><?php echo e(cache('site_setting_headmaster_description', 'Sebagai kepala madrasah yang berpengalaman, kami berkomitmen untuk memberikan pendidikan terbaik bagi para siswa dengan mengintegrasikan nilai-nilai keislaman dan pengetahuan modern.')); ?></textarea>
+                        </div>
+
+                        <div>
+                            <label for="headmaster_vision" class="block text-sm font-medium text-gray-700 mb-2">Visi
+                                Kepala Madrasah</label>
+                            <textarea id="headmaster_vision" name="headmaster_vision" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Visi kami adalah menciptakan generasi yang unggul dalam akademik..."><?php echo e(cache('site_setting_headmaster_vision', 'Visi kami adalah menciptakan generasi yang unggul dalam akademik, berakhlak mulia, dan siap menghadapi tantangan masa depan dengan bekal ilmu pengetahuan yang komprehensif.')); ?></textarea>
+                        </div>
+
+                        <div>
+                            <label for="headmaster_photo" class="block text-sm font-medium text-gray-700 mb-2">Foto
+                                Kepala Madrasah</label>
+                            <input type="file" id="headmaster_photo" name="headmaster_photo" accept="image/*"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <?php if(cache('site_setting_headmaster_photo')): ?>
+                                <div class="mt-2">
+                                    <img src="<?php echo e(Storage::url(cache('site_setting_headmaster_photo'))); ?>"
+                                        alt="Foto Kepala Madrasah" class="h-32 w-auto rounded-lg border">
+                                    <p class="text-sm text-gray-500 mt-1">Foto saat ini</p>
+                                </div>
+                            <?php else: ?>
+                                <p class="text-sm text-gray-500 mt-1">Belum ada foto. Upload foto untuk menampilkan di
+                                    landing page.</p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

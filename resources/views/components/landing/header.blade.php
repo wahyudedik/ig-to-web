@@ -6,10 +6,34 @@
                 <div class="header-top-left">
                     <div class="header-top-social">
                         <span>Follow Us: </span>
-                        <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        <a href="{{ route('public.instagram') }}" target="_blank"><i class="fab fa-instagram"></i></a>
-                        <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
-                        <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        @if (cache('site_setting_social_facebook'))
+                            <a href="{{ cache('site_setting_social_facebook') }}" target="_blank"><i
+                                    class="fab fa-facebook-f"></i></a>
+                        @else
+                            <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        @endif
+
+                        @if (cache('site_setting_social_instagram'))
+                            <a href="{{ cache('site_setting_social_instagram') }}" target="_blank"><i
+                                    class="fab fa-instagram"></i></a>
+                        @else
+                            <a href="{{ route('public.instagram') }}" target="_blank"><i
+                                    class="fab fa-instagram"></i></a>
+                        @endif
+
+                        @if (cache('site_setting_social_youtube'))
+                            <a href="{{ cache('site_setting_social_youtube') }}" target="_blank"><i
+                                    class="fab fa-youtube"></i></a>
+                        @else
+                            <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                        @endif
+
+                        @if (cache('site_setting_social_whatsapp'))
+                            <a href="{{ cache('site_setting_social_whatsapp') }}" target="_blank"><i
+                                    class="fab fa-whatsapp"></i></a>
+                        @else
+                            <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        @endif
                     </div>
                 </div>
                 <div class="header-top-right">
@@ -141,7 +165,8 @@
                                         <li><a class="dropdown-item" href="{{ route('admin.lulus.check') }}">🎓
                                                 E-LULUS</a></li>
                                     @endif
-                                    <li><a class="dropdown-item" href="{{ route('admin.osis.voting') }}">🗳️ E-OSIS</a>
+                                    <li><a class="dropdown-item" href="{{ route('admin.osis.voting') }}">🗳️
+                                            E-OSIS</a>
                                     </li>
                                     <li><a class="dropdown-item" href="{{ route('admin.sarpras.index') }}">🏢
                                             E-SARPRAS</a></li>

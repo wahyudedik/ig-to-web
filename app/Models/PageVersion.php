@@ -89,7 +89,7 @@ class PageVersion extends Model
             'custom_fields' => $page->custom_fields,
             'status' => $page->status,
             'is_featured' => $page->is_featured ?? false, // ✅ Fix: Provide default value
-            'sort_order' => $page->sort_order,
+            'sort_order' => $page->sort_order ?? 0, // ✅ Fix: Provide default value
             'published_at' => $page->published_at,
             'user_id' => $page->user_id,
             'change_summary' => $changeSummary,

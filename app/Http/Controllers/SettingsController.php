@@ -116,6 +116,33 @@ class SettingsController extends Controller
             'about_button_text' => 'nullable|string|max:255',
             'about_contact_text' => 'nullable|string|max:255',
             'about_contact_phone' => 'nullable|string|max:255',
+            // Hero Slides
+            'hero_slide1_subtitle' => 'nullable|string|max:255',
+            'hero_slide1_title' => 'nullable|string|max:255',
+            'hero_slide1_description' => 'nullable|string',
+            'hero_slide2_subtitle' => 'nullable|string|max:255',
+            'hero_slide2_title' => 'nullable|string|max:255',
+            'hero_slide2_description' => 'nullable|string',
+            'hero_slide3_subtitle' => 'nullable|string|max:255',
+            'hero_slide3_title' => 'nullable|string|max:255',
+            'hero_slide3_description' => 'nullable|string',
+            // Feature Cards
+            'feature1_title' => 'nullable|string|max:255',
+            'feature1_description' => 'nullable|string',
+            'feature2_title' => 'nullable|string|max:255',
+            'feature2_description' => 'nullable|string',
+            'feature3_title' => 'nullable|string|max:255',
+            'feature3_description' => 'nullable|string',
+            // Counter Section
+            'counter1_number' => 'nullable|integer',
+            'counter1_label' => 'nullable|string|max:255',
+            'counter2_number' => 'nullable|integer',
+            'counter2_label' => 'nullable|string|max:255',
+            'counter3_number' => 'nullable|integer',
+            'counter3_label' => 'nullable|string|max:255',
+            // Gallery Section
+            'gallery_title' => 'nullable|string|max:255',
+            'gallery_subtitle' => 'nullable|string|max:255',
         ]);
 
         // Update site settings (you can create a settings table or use config)
@@ -159,6 +186,33 @@ class SettingsController extends Controller
             'about_button_text' => $request->about_button_text,
             'about_contact_text' => $request->about_contact_text,
             'about_contact_phone' => $request->about_contact_phone,
+            // Hero Slides
+            'hero_slide1_subtitle' => $request->hero_slide1_subtitle,
+            'hero_slide1_title' => $request->hero_slide1_title,
+            'hero_slide1_description' => $request->hero_slide1_description,
+            'hero_slide2_subtitle' => $request->hero_slide2_subtitle,
+            'hero_slide2_title' => $request->hero_slide2_title,
+            'hero_slide2_description' => $request->hero_slide2_description,
+            'hero_slide3_subtitle' => $request->hero_slide3_subtitle,
+            'hero_slide3_title' => $request->hero_slide3_title,
+            'hero_slide3_description' => $request->hero_slide3_description,
+            // Feature Cards
+            'feature1_title' => $request->feature1_title,
+            'feature1_description' => $request->feature1_description,
+            'feature2_title' => $request->feature2_title,
+            'feature2_description' => $request->feature2_description,
+            'feature3_title' => $request->feature3_title,
+            'feature3_description' => $request->feature3_description,
+            // Counter Section
+            'counter1_number' => $request->counter1_number,
+            'counter1_label' => $request->counter1_label,
+            'counter2_number' => $request->counter2_number,
+            'counter2_label' => $request->counter2_label,
+            'counter3_number' => $request->counter3_number,
+            'counter3_label' => $request->counter3_label,
+            // Gallery Section
+            'gallery_title' => $request->gallery_title,
+            'gallery_subtitle' => $request->gallery_subtitle,
         ];
 
         // Handle file uploads

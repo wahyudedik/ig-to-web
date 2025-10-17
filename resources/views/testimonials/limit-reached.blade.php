@@ -1,49 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.landing')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testimonial Limit Reached</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+@section('content')
+    <!-- breadcrumb -->
+    <div class="site-breadcrumb" style="background: url({{ asset('assets/img/breadcrumb/01.jpg') }})">
+        <div class="container">
+            <h2 class="breadcrumb-title">Testimonial Limit Reached</h2>
+            <ul class="breadcrumb-menu">
+                <li><a href="/">Home</a></li>
+                <li class="active">Limit Reached</li>
+            </ul>
+        </div>
+    </div>
+    <!-- breadcrumb end -->
 
-<body class="bg-gray-50">
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
-            <div class="text-center">
-                <div class="mx-auto h-16 w-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 text-2xl"></i>
-                </div>
-                <h2 class="text-3xl font-bold text-gray-900 mb-2">Submission Limit Reached</h2>
-                <p class="text-gray-600 mb-6">
-                    This testimonial link has reached its maximum number of submissions and is no longer accepting new
-                    testimonials.
-                </p>
+    <div class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-info">
+                        <div class="card-body text-center p-5">
+                            <!-- Icon -->
+                            <div class="mb-4">
+                                <i class="fas fa-check-circle fa-4x text-info"></i>
+                            </div>
 
-                <div class="bg-gray-100 rounded-lg p-4 mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $link->title }}</h3>
-                    @if ($link->description)
-                        <p class="text-gray-600 text-sm mb-2">{{ $link->description }}</p>
-                    @endif
-                    <div class="text-sm text-gray-500">
-                        <p><strong>Submissions:</strong> {{ $link->current_submissions }} / {{ $link->max_submissions }}
-                        </p>
-                        <p><strong>Status:</strong> Limit Reached</p>
+                            <!-- Title -->
+                            <h2 class="h4 mb-3 text-dark">Submission Limit Reached</h2>
+
+                            <!-- Message -->
+                            <p class="text-muted mb-4">
+                                Link testimonial ini sudah mencapai batas maksimal pengisian.
+                            </p>
+
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Terima kasih atas antusiasme Anda! Batas maksimal testimonial untuk link ini sudah tercapai.
+                            </div>
+
+                            <!-- Action -->
+                            <div class="mt-4">
+                                <a href="/" class="btn btn-primary">
+                                    <i class="fas fa-home mr-2"></i>
+                                    Kembali ke Beranda
+                                </a>
+                            </div>
+
+                            <p class="text-muted small mt-4 mb-0">
+                                <i class="fas fa-question-circle mr-1"></i>
+                                Untuk informasi lebih lanjut, hubungi administrator sekolah.
+                            </p>
+                        </div>
                     </div>
-                </div>
-
-                <div class="space-y-4">
-                    <a href="/"
-                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <i class="fas fa-home mr-2"></i>
-                        Back to Home
-                    </a>
                 </div>
             </div>
         </div>
     </div>
-</body>
-
-</html>
+@endsection

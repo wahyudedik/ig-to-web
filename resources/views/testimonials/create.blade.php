@@ -1,207 +1,225 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testimonial - {{ $link->title }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
-<body class="bg-gray-50">
-    <div class="min-h-screen py-12">
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $link->title }}</h1>
-                @if($link->description)
-                    <p class="text-gray-600">{{ $link->description }}</p>
-                @endif
-                <div class="mt-4 text-sm text-gray-500">
-                    <i class="fas fa-clock mr-1"></i>
-                    Active until: {{ $link->active_until->format('M d, Y H:i') }}
-                </div>
-            </div>
+@extends('layouts.landing')
 
-            <!-- Success Message -->
-            @if (session('success'))
-                <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                    <i class="fas fa-check-circle mr-2"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
+@section('content')
+    <!-- breadcrumb -->
+    <div class="site-breadcrumb" style="background: url({{ asset('assets/img/breadcrumb/01.jpg') }})">
+        <div class="container">
+            <h2 class="breadcrumb-title">{{ $link->title }}</h2>
+            <ul class="breadcrumb-menu">
+                <li><a href="/">Home</a></li>
+                <li class="active">Testimonial</li>
+            </ul>
+        </div>
+    </div>
+    <!-- breadcrumb end -->
 
-            <!-- Error Message -->
-            @if (session('error'))
-                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                    <i class="fas fa-exclamation-circle mr-2"></i>
-                    {{ session('error') }}
-                </div>
-            @endif
+    <div class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Info Header -->
+                    <div class="text-center mb-4">
+                        @if ($link->description)
+                            <p class="lead text-muted">{{ $link->description }}</p>
+                        @endif
+                        <div class="text-muted small mt-2">
+                            <i class="fas fa-clock mr-1"></i>
+                            Active until: {{ $link->active_until->format('M d, Y H:i') }}
+                        </div>
+                    </div>
 
-            <!-- Form -->
-            <div class="bg-white shadow-sm rounded-lg">
-                <div class="p-6">
-                    <form action="{{ route('testimonials.public.store', $link->token) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                        @csrf
+                    <!-- Success Message -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
 
-                        <!-- Personal Information -->
-                        <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-                                    <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @enderror">
-                                    @error('name')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
+                    <!-- Error Message -->
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+
+                    <!-- Form -->
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <form action="{{ route('testimonials.public.store', $link->token) }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+
+                                <!-- Personal Information -->
+                                <div class="mb-4">
+                                    <h5 class="card-title border-bottom pb-2 mb-3">Personal Information</h5>
+
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                            id="name" name="name" value="{{ old('name') }}" required>
+                                        @error('name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="position" class="form-label">Position *</label>
+                                        <select class="form-select @error('position') is-invalid @enderror" id="position"
+                                            name="position" required>
+                                            <option value="">Select Position</option>
+                                            @foreach ($link->target_audience as $audience)
+                                                <option value="{{ $audience }}"
+                                                    {{ old('position') == $audience ? 'selected' : '' }}>
+                                                    {{ $audience }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('position')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="mb-3" id="graduation_year_field" style="display: none;">
+                                        <label for="graduation_year" class="form-label">Graduation Year</label>
+                                        <input type="number"
+                                            class="form-control @error('graduation_year') is-invalid @enderror"
+                                            id="graduation_year" name="graduation_year"
+                                            value="{{ old('graduation_year') }}" min="1900"
+                                            max="{{ date('Y') + 10 }}">
+                                        @error('graduation_year')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="mb-3" id="class_field" style="display: none;">
+                                        <label for="class" class="form-label">Class</label>
+                                        <input type="text" class="form-control @error('class') is-invalid @enderror"
+                                            id="class" name="class" value="{{ old('class') }}">
+                                        @error('class')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="photo" class="form-label">Photo (Optional)</label>
+                                        <input type="file" class="form-control @error('photo') is-invalid @enderror"
+                                            id="photo" name="photo" accept="image/*">
+                                        <div class="form-text">Max size: 2MB (JPEG, PNG, JPG, GIF)</div>
+                                        @error('photo')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                                    <input type="email" name="email" id="email" value="{{ old('email') }}" required
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('email') border-red-500 @enderror">
-                                    @error('email')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
+                                <!-- Testimonial -->
+                                <div class="mb-4">
+                                    <h5 class="card-title border-bottom pb-2 mb-3">Your Testimonial</h5>
+
+                                    <div class="mb-3">
+                                        <label for="rating" class="form-label">Rating *</label>
+                                        <div class="star-rating" id="star-rating">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="fas fa-star star" data-rating="{{ $i }}"
+                                                    style="cursor: pointer; font-size: 2rem; color: #ddd;"></i>
+                                            @endfor
+                                        </div>
+                                        <input type="hidden" id="rating" name="rating" value="{{ old('rating') }}"
+                                            required>
+                                        @error('rating')
+                                            <div class="text-danger small">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="testimonial" class="form-label">Your Testimonial *</label>
+                                        <textarea class="form-control @error('testimonial') is-invalid @enderror" id="testimonial" name="testimonial"
+                                            rows="5" required>{{ old('testimonial') }}</textarea>
+                                        <div class="form-text">Share your experience with us</div>
+                                        @error('testimonial')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="mt-6">
-                                <label for="position" class="block text-sm font-medium text-gray-700 mb-2">Position *</label>
-                                <select name="position" id="position" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('position') border-red-500 @enderror">
-                                    <option value="">Select your position</option>
-                                    @foreach($link->target_audience as $audience)
-                                        <option value="{{ $audience }}" {{ old('position') == $audience ? 'selected' : '' }}>
-                                            {{ $audience }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('position')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Conditional Fields -->
-                            <div id="class-field" class="mt-6 hidden">
-                                <label for="class" class="block text-sm font-medium text-gray-700 mb-2">Class</label>
-                                <input type="text" name="class" id="class" value="{{ old('class') }}"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('class') border-red-500 @enderror"
-                                    placeholder="e.g., XII IPA 1">
-                                @error('class')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div id="graduation-year-field" class="mt-6 hidden">
-                                <label for="graduation_year" class="block text-sm font-medium text-gray-700 mb-2">Graduation Year</label>
-                                <input type="text" name="graduation_year" id="graduation_year" value="{{ old('graduation_year') }}"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('graduation_year') border-red-500 @enderror"
-                                    placeholder="e.g., 2023">
-                                @error('graduation_year')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Testimonial Content -->
-                        <div class="border-b border-gray-200 pb-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Your Testimonial</h3>
-                            
-                            <div class="mb-6">
-                                <label for="testimonial" class="block text-sm font-medium text-gray-700 mb-2">Testimonial *</label>
-                                <textarea name="testimonial" id="testimonial" rows="6" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('testimonial') border-red-500 @enderror"
-                                    placeholder="Share your experience and thoughts about the school...">{{ old('testimonial') }}</textarea>
-                                <p class="text-sm text-gray-500 mt-1">Minimum 50 characters, maximum 1000 characters</p>
-                                @error('testimonial')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="mb-6">
-                                <label for="rating" class="block text-sm font-medium text-gray-700 mb-2">Rating *</label>
-                                <div class="flex items-center space-x-2">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <input type="radio" name="rating" id="rating{{ $i }}" value="{{ $i }}" 
-                                            {{ old('rating') == $i ? 'checked' : '' }} required
-                                            class="h-4 w-4 text-yellow-400 focus:ring-yellow-400 border-gray-300">
-                                        <label for="rating{{ $i }}" class="text-yellow-400 cursor-pointer">
-                                            <i class="fas fa-star"></i>
-                                        </label>
-                                    @endfor
-                                    <span class="ml-2 text-sm text-gray-500">(1 = Poor, 5 = Excellent)</span>
+                                <!-- Submit -->
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-paper-plane mr-2"></i>
+                                        Submit Testimonial
+                                    </button>
                                 </div>
-                                @error('rating')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="photo" class="block text-sm font-medium text-gray-700 mb-2">Photo (Optional)</label>
-                                <input type="file" name="photo" id="photo" accept="image/*"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('photo') border-red-500 @enderror">
-                                <p class="text-sm text-gray-500 mt-1">Maximum 2MB, formats: JPEG, PNG, JPG, GIF</p>
-                                @error('photo')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                            </form>
                         </div>
+                    </div>
 
-                        <!-- Submit Button -->
-                        <div class="flex justify-end">
-                            <button type="submit" 
-                                class="px-8 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
-                                <i class="fas fa-paper-plane mr-2"></i>
-                                Submit Testimonial
-                            </button>
+                    <!-- Info Card -->
+                    <div class="card shadow-sm mt-4 bg-light">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Information
+                            </h6>
+                            <p class="card-text small">
+                                Your testimonial will be reviewed by admin before appearing on the website.
+                                Thank you for your feedback!
+                            </p>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="text-center mt-8 text-sm text-gray-500">
-                <p>This testimonial will be reviewed by our admin team before being published.</p>
             </div>
         </div>
     </div>
 
-    <script>
-        // Show/hide conditional fields based on position
-        document.getElementById('position').addEventListener('change', function() {
-            const classField = document.getElementById('class-field');
-            const graduationYearField = document.getElementById('graduation-year-field');
-            
-            if (this.value === 'Siswa') {
-                classField.classList.remove('hidden');
-                graduationYearField.classList.add('hidden');
-            } else if (this.value === 'Alumni') {
-                classField.classList.add('hidden');
-                graduationYearField.classList.remove('hidden');
-            } else {
-                classField.classList.add('hidden');
-                graduationYearField.classList.add('hidden');
-            }
-        });
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Position field change handler
+                document.getElementById('position').addEventListener('change', function() {
+                    const graduationField = document.getElementById('graduation_year_field');
+                    const classField = document.getElementById('class_field');
 
-        // Character counter for testimonial
-        document.getElementById('testimonial').addEventListener('input', function() {
-            const length = this.value.length;
-            const minLength = 50;
-            const maxLength = 1000;
-            
-            if (length < minLength) {
-                this.setCustomValidity(`Please enter at least ${minLength} characters.`);
-            } else if (length > maxLength) {
-                this.setCustomValidity(`Please enter no more than ${maxLength} characters.`);
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-    </script>
-</body>
-</html>
+                    if (this.value === 'Alumni') {
+                        graduationField.style.display = 'block';
+                        classField.style.display = 'none';
+                        document.getElementById('graduation_year').required = true;
+                        document.getElementById('class').required = false;
+                    } else if (this.value === 'Siswa') {
+                        graduationField.style.display = 'none';
+                        classField.style.display = 'block';
+                        document.getElementById('graduation_year').required = false;
+                        document.getElementById('class').required = true;
+                    } else {
+                        graduationField.style.display = 'none';
+                        classField.style.display = 'none';
+                        document.getElementById('graduation_year').required = false;
+                        document.getElementById('class').required = false;
+                    }
+                });
+
+                // Star rating
+                const stars = document.querySelectorAll('.star');
+                const ratingInput = document.getElementById('rating');
+
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        const rating = this.getAttribute('data-rating');
+                        ratingInput.value = rating;
+
+                        // Update star colors
+                        stars.forEach((s, index) => {
+                            if (index < rating) {
+                                s.style.color = '#fbbf24'; // yellow
+                            } else {
+                                s.style.color = '#ddd'; // gray
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    @endpush
+@endsection
