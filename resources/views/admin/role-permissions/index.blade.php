@@ -314,10 +314,11 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        alert('Role created successfully!');
-                        location.reload();
+                        showSuccess('Berhasil!', 'Role berhasil dibuat').then(() => {
+                            location.reload();
+                        });
                     } else {
-                        alert('Error creating role: ' + data.message);
+                        showError('Error!', 'Gagal membuat role: ' + data.message);
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
@@ -325,7 +326,7 @@
                 .catch(error => {
                     console.error('Error:', error);
                     const errorMessage = error.message || 'Unknown error occurred';
-                    alert('Error creating role: ' + errorMessage);
+                    showError('Error!', 'Gagal membuat role: ' + errorMessage);
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 });
@@ -367,10 +368,11 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        alert('Role updated successfully!');
-                        location.reload();
+                        showSuccess('Berhasil!', 'Role berhasil diupdate').then(() => {
+                            location.reload();
+                        });
                     } else {
-                        alert('Error updating role: ' + data.message);
+                        showError('Error!', 'Gagal mengupdate role: ' + data.message);
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
@@ -378,7 +380,7 @@
                 .catch(error => {
                     console.error('Error:', error);
                     const errorMessage = error.message || 'Unknown error occurred';
-                    alert('Error updating role: ' + errorMessage);
+                    showError('Error!', 'Gagal mengupdate role: ' + errorMessage);
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 });
@@ -425,46 +427,58 @@
                         // Show edit modal
                         document.getElementById('editRoleModal').classList.remove('hidden');
                     } else {
-                        alert('Error loading role data: ' + data.message);
+                        showError('Error!', 'Gagal memuat data role: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error loading role data');
+                    showError('Error!', 'Gagal memuat data role');
                 });
         }
 
         // Delete role
         function deleteRole(roleId) {
-            if (confirm('Are you sure you want to delete this role?')) {
-                fetch(`/admin/role-permissions/roles/${roleId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => Promise.reject(err));
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            alert('Role deleted successfully!');
-                            location.reload();
-                        } else {
-                            alert('Error deleting role: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        const errorMessage = error.message || 'Unknown error occurred';
-                        alert('Error deleting role: ' + errorMessage);
-                    });
-            }
+            showConfirm(
+                'Hapus Role?',
+                'Apakah Anda yakin ingin menghapus role ini? Tindakan ini tidak dapat dibatalkan.',
+                'Ya, Hapus',
+                'Batal'
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    showLoading('Menghapus...', 'Mohon tunggu sebentar');
+                    fetch(`/admin/role-permissions/roles/${roleId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content'),
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => Promise.reject(err));
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            closeLoading();
+                            if (data.success) {
+                                showSuccess('Berhasil!', 'Role berhasil dihapus').then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                showError('Error!', 'Gagal menghapus role: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            closeLoading();
+                            console.error('Error:', error);
+                            const errorMessage = error.message || 'Unknown error occurred';
+                            showError('Error!', 'Gagal menghapus role: ' + errorMessage);
+                        });
+                }
+            });
         }
     </script>
 </x-app-layout>

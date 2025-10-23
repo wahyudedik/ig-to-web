@@ -72,14 +72,19 @@ class SuperadminController extends Controller
      */
     public function storeUser(Request $request)
     {
-        $request->validate([
+        // Different validation for AJAX requests (from guru/create modal)
+        $isAjax = $request->wantsJson() || $request->ajax();
+
+        $validationRules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => $isAjax ? 'required|string|min:8' : 'required|string|min:8|confirmed',
             'user_type' => 'required|in:superadmin,admin,guru,siswa,sarpras',
             'roles' => 'array',
             'roles.*' => 'exists:roles,id',
-        ]);
+        ];
+
+        $validated = $request->validate($validationRules);
 
         $user = User::create([
             'name' => $request->name,
@@ -107,6 +112,20 @@ class SuperadminController extends Controller
             $request->ip(),
             $request->userAgent()
         );
+
+        // Return JSON for AJAX requests
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully.',
+                'data' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'user_type' => $user->user_type,
+                ]
+            ]);
+        }
 
         return redirect()->route('superadmin.users')
             ->with('success', 'User created successfully.');

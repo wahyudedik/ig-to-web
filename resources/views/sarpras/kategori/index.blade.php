@@ -84,7 +84,8 @@
 
         <!-- Filters and Search -->
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <form method="GET" action="{{ route('admin.sarpras.kategori.index') }}" class="flex flex-col sm:flex-row gap-4">
+            <form method="GET" action="{{ route('admin.sarpras.kategori.index') }}"
+                class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari kategori..."
                         class="form-input">
@@ -103,6 +104,13 @@
                         </svg>
                         Cari
                     </button>
+                    <a href="{{ route('admin.sarpras.kategori.index') }}" class="btn btn-secondary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Reset
+                    </a>
                 </div>
             </form>
         </div>
@@ -163,9 +171,9 @@
                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                         </a>
-                                        <form method="POST" action="{{ route('admin.sarpras.kategori.destroy', $k) }}"
-                                            class="inline"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
+                                        <form method="POST"
+                                            action="{{ route('admin.sarpras.kategori.destroy', $k) }}" class="inline"
+                                            data-confirm="Apakah Anda yakin ingin menghapus kategori {{ $k->nama_kategori }}?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-700">
@@ -204,4 +212,58 @@
             @endif
         </div>
     </div>
+
+    @if (session('success'))
+        <script>
+            const successKey = 'kategori_alert_' + '{{ md5(session('success') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(successKey)) {
+                    showSuccess('{{ session('success') }}');
+                    sessionStorage.setItem(successKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('kategori_alert_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'kategori_alert_error_' + '{{ md5(session('error') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(errorKey)) {
+                    showError('{{ session('error') }}');
+                    sessionStorage.setItem(errorKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('kategori_alert_error_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            const validationKey = 'kategori_alert_validation_' + '{{ md5(json_encode($errors->all()) . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(validationKey)) {
+                    showError('{!! implode('<br>', $errors->all()) !!}');
+                    sessionStorage.setItem(validationKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('kategori_alert_validation_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
 </x-app-layout>

@@ -317,15 +317,17 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('User invited successfully! Temporary password: ' + data.temp_password);
-                        location.reload();
+                        showSuccess('Berhasil!', 'User berhasil diundang. Password sementara: ' + data
+                            .temp_password).then(() => {
+                            location.reload();
+                        });
                     } else {
-                        alert('Error inviting user: ' + data.message);
+                        showError('Error!', 'Gagal mengundang user: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error inviting user');
+                    showError('Error!', 'Gagal mengundang user');
                 });
         });
 
@@ -353,15 +355,16 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('User created successfully!');
-                        location.reload();
+                        showSuccess('Berhasil!', 'User berhasil dibuat').then(() => {
+                            location.reload();
+                        });
                     } else {
-                        alert('Error creating user: ' + data.message);
+                        showError('Error!', 'Gagal membuat user: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error creating user');
+                    showError('Error!', 'Gagal membuat user');
                 });
         });
 
@@ -373,50 +376,76 @@
 
         // Toggle user status
         function toggleUserStatus(userId) {
-            if (confirm('Are you sure you want to toggle this user\'s status?')) {
-                fetch(`/admin/user-management/users/${userId}/toggle-status`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Error updating user status: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error updating user status');
-                    });
-            }
+            showConfirm(
+                'Toggle Status User?',
+                'Apakah Anda yakin ingin mengubah status user ini?',
+                'Ya, Ubah',
+                'Batal'
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    showLoading('Mengubah status...', 'Mohon tunggu sebentar');
+                    fetch(`/admin/user-management/users/${userId}/toggle-status`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            closeLoading();
+                            if (data.success) {
+                                showSuccess('Berhasil!', 'Status user berhasil diubah').then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                showError('Error!', 'Gagal mengubah status: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            closeLoading();
+                            console.error('Error:', error);
+                            showError('Error!', 'Gagal mengubah status user');
+                        });
+                }
+            });
         }
 
         // Delete user
         function deleteUser(userId) {
-            if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-                fetch(`/admin/user-management/users/${userId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Error deleting user: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error deleting user');
-                    });
-            }
+            showConfirm(
+                'Hapus User?',
+                'Apakah Anda yakin ingin menghapus user ini? Tindakan ini tidak dapat dibatalkan.',
+                'Ya, Hapus',
+                'Batal'
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    showLoading('Menghapus...', 'Mohon tunggu sebentar');
+                    fetch(`/admin/user-management/users/${userId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            closeLoading();
+                            if (data.success) {
+                                showSuccess('Berhasil!', 'User berhasil dihapus').then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                showError('Error!', 'Gagal menghapus user: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            closeLoading();
+                            console.error('Error:', error);
+                            showError('Error!', 'Gagal menghapus user');
+                        });
+                }
+            });
         }
     </script>
 </x-app-layout>

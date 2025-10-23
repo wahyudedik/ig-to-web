@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "ig-to-web": {
+      "command": "node",
+      "args": ["E:\\PROJEK  LARAVEL\\ig-to-web\\mcp-server\\index.js"],
+      "cwd": "E:\\PROJEK  LARAVEL\\ig-to-web\\mcp-server"
+    }
+  }
+}
+

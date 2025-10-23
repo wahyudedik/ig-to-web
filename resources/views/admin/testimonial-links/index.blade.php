@@ -18,48 +18,62 @@
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-medium text-gray-900">Testimonial Links</h3>
                 @can('testimonial-links.create')
-                <a href="{{ route('admin.testimonial-links.create') }}" 
-                   class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                    <i class="fas fa-plus mr-2"></i>Create New Link
-                </a>
+                    <a href="{{ route('admin.testimonial-links.create') }}"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i>Create New Link
+                    </a>
                 @endcan
             </div>
 
             <!-- Links Table -->
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    @if($links->count() > 0)
+                    @if ($links->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Target Audience</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Active Period</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submissions</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Title</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Target Audience</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Active Period</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Submissions</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($links as $link)
+                                    @foreach ($links as $link)
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-6 py-4">
                                                 <div>
-                                                    <div class="text-sm font-medium text-gray-900">{{ $link->title }}</div>
-                                                    @if($link->description)
-                                                        <div class="text-sm text-gray-500">{{ Str::limit($link->description, 50) }}</div>
+                                                    <div class="text-sm font-medium text-gray-900">{{ $link->title }}
+                                                    </div>
+                                                    @if ($link->description)
+                                                        <div class="text-sm text-gray-500">
+                                                            {{ Str::limit($link->description, 50) }}</div>
                                                     @endif
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex flex-wrap gap-1">
-                                                    @foreach($link->target_audience as $audience)
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                                            @if($audience === 'Siswa') bg-blue-100 text-blue-800
+                                                    @foreach ($link->target_audience as $audience)
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                                            @if ($audience === 'Siswa') bg-blue-100 text-blue-800
                                                             @elseif($audience === 'Guru') bg-green-100 text-green-800
-                                                            @else bg-purple-100 text-purple-800
-                                                            @endif">
+                                                            @else bg-purple-100 text-purple-800 @endif">
                                                             {{ $audience }}
                                                         </span>
                                                     @endforeach
@@ -73,22 +87,26 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex flex-col space-y-1">
-                                                    @if($link->isCurrentlyActive())
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    @if ($link->isCurrentlyActive())
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                             <i class="fas fa-check-circle mr-1"></i>Active
                                                         </span>
                                                     @elseif($link->active_until < now())
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                                             <i class="fas fa-clock mr-1"></i>Expired
                                                         </span>
                                                     @else
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                                                             <i class="fas fa-pause mr-1"></i>Inactive
                                                         </span>
                                                     @endif
-                                                    
-                                                    @if(!$link->is_active)
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+
+                                                    @if (!$link->is_active)
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                                             <i class="fas fa-ban mr-1"></i>Disabled
                                                         </span>
                                                     @endif
@@ -97,7 +115,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 <div>
                                                     <div>{{ $link->current_submissions }} submissions</div>
-                                                    @if($link->max_submissions)
+                                                    @if ($link->max_submissions)
                                                         <div class="text-xs">Max: {{ $link->max_submissions }}</div>
                                                     @else
                                                         <div class="text-xs">Unlimited</div>
@@ -107,7 +125,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div class="flex space-x-2">
                                                     <!-- Copy Link Button -->
-                                                    <button onclick="copyLink('{{ $link->getPublicUrl() }}')" 
+                                                    <button onclick="copyLink('{{ $link->getPublicUrl() }}')"
                                                         class="text-blue-600 hover:text-blue-900" title="Copy Link">
                                                         <i class="fas fa-copy"></i>
                                                     </button>
@@ -120,32 +138,38 @@
 
                                                     <!-- Edit Button -->
                                                     @can('testimonial-links.edit')
-                                                    <a href="{{ route('admin.testimonial-links.edit', $link) }}"
-                                                        class="text-yellow-600 hover:text-yellow-900" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
+                                                        <a href="{{ route('admin.testimonial-links.edit', $link) }}"
+                                                            class="text-yellow-600 hover:text-yellow-900" title="Edit">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
                                                     @endcan
 
                                                     <!-- Toggle Active Button -->
-                                                    <form method="POST" action="{{ route('admin.testimonial-links.toggle-active', $link) }}" class="inline">
+                                                    <form method="POST"
+                                                        action="{{ route('admin.testimonial-links.toggle-active', $link) }}"
+                                                        class="inline">
                                                         @csrf
-                                                        <button type="submit" 
-                                                            class="{{ $link->is_active ? 'text-orange-600 hover:text-orange-900' : 'text-green-600 hover:text-green-900' }}" 
+                                                        <button type="submit"
+                                                            class="{{ $link->is_active ? 'text-orange-600 hover:text-orange-900' : 'text-green-600 hover:text-green-900' }}"
                                                             title="{{ $link->is_active ? 'Disable' : 'Enable' }}">
-                                                            <i class="fas fa-{{ $link->is_active ? 'pause' : 'play' }}"></i>
+                                                            <i
+                                                                class="fas fa-{{ $link->is_active ? 'pause' : 'play' }}"></i>
                                                         </button>
                                                     </form>
 
                                                     <!-- Delete Button -->
                                                     @can('testimonial-links.delete')
-                                                    <form method="POST" action="{{ route('admin.testimonial-links.destroy', $link) }}" class="inline"
-                                                        onsubmit="return confirm('Are you sure you want to delete this testimonial link?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-red-600 hover:text-red-900" title="Delete">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                        <form method="POST"
+                                                            action="{{ route('admin.testimonial-links.destroy', $link) }}"
+                                                            class="inline"
+                                                            onsubmit="return confirm('Are you sure you want to delete this testimonial link?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="text-red-600 hover:text-red-900"
+                                                                title="Delete">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     @endcan
                                                 </div>
                                             </td>
@@ -163,9 +187,10 @@
                         <div class="text-center py-12">
                             <i class="fas fa-link text-6xl text-gray-300 mb-4"></i>
                             <h3 class="text-lg font-medium text-gray-900 mb-2">No testimonial links found</h3>
-                            <p class="text-gray-500 mb-4">Create your first testimonial link to start collecting testimonials.</p>
-                            <a href="{{ route('admin.testimonial-links.create') }}" 
-                               class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                            <p class="text-gray-500 mb-4">Create your first testimonial link to start collecting
+                                testimonials.</p>
+                            <a href="{{ route('admin.testimonial-links.create') }}"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
                                 <i class="fas fa-plus mr-2"></i>Create New Link
                             </a>
                         </div>
@@ -178,7 +203,7 @@
     <script>
         function copyLink(url) {
             navigator.clipboard.writeText(url).then(function() {
-                alert('Link copied to clipboard!');
+                showSuccess('Berhasil!', 'Link berhasil disalin ke clipboard');
             }, function(err) {
                 console.error('Could not copy text: ', err);
                 // Fallback for older browsers
@@ -188,7 +213,7 @@
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                alert('Link copied to clipboard!');
+                showSuccess('Berhasil!', 'Link berhasil disalin ke clipboard');
             });
         }
     </script>

@@ -89,11 +89,15 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="flex items-end">
+                            <div class="flex items-end space-x-2">
                                 <button type="submit"
-                                    class="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                                    class="flex-1 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                     Filter
                                 </button>
+                                <a href="{{ route('admin.siswa.index') }}"
+                                    class="flex-1 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
+                                    Reset
+                                </a>
                             </div>
                         </form>
                     </div>
@@ -188,7 +192,7 @@
                                                 @can('delete', $siswa)
                                                     <form method="POST"
                                                         action="{{ route('admin.siswa.destroy', $siswa) }}" class="inline"
-                                                        onsubmit="return confirm('Are you sure you want to delete this siswa?')">
+                                                        data-confirm="Apakah Anda yakin ingin menghapus data siswa {{ $siswa->nama_lengkap }}?">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
@@ -217,4 +221,58 @@
             </div>
         </div>
     </div>
+
+    @if (session('success'))
+        <script>
+            const successKey = 'siswa_alert_' + '{{ md5(session('success') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(successKey)) {
+                    showSuccess('{{ session('success') }}');
+                    sessionStorage.setItem(successKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('siswa_alert_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'siswa_alert_error_' + '{{ md5(session('error') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(errorKey)) {
+                    showError('{{ session('error') }}');
+                    sessionStorage.setItem(errorKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('siswa_alert_error_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            const validationKey = 'siswa_alert_validation_' + '{{ md5(json_encode($errors->all()) . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(validationKey)) {
+                    showError('{!! implode('<br>', $errors->all()) !!}');
+                    sessionStorage.setItem(validationKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('siswa_alert_validation_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
 </x-app-layout>

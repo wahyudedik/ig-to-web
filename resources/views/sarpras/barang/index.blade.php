@@ -239,6 +239,13 @@
                         </svg>
                         Cari
                     </button>
+                    <a href="{{ route('admin.sarpras.barang.index') }}" class="btn btn-secondary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Reset
+                    </a>
                 </div>
             </form>
         </div>
@@ -332,7 +339,7 @@
                                         </a>
                                         <form method="POST" action="{{ route('admin.sarpras.barang.destroy', $b) }}"
                                             class="inline"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini?')">
+                                            data-confirm="Apakah Anda yakin ingin menghapus barang {{ $b->nama_barang }}?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-700"
@@ -376,28 +383,40 @@
     <!-- JavaScript for Barcode Operations -->
     <script>
         function generateAllBarcodes() {
-            if (confirm('Apakah Anda yakin ingin generate barcode untuk semua barang?')) {
-                fetch('{{ route('admin.sarpras.barcode.generate-all') }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            location.reload();
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat generate barcode');
-                    });
-            }
+            showConfirm(
+                'Konfirmasi',
+                'Apakah Anda yakin ingin generate barcode untuk semua barang?',
+                'Ya, Generate',
+                'Batal'
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    showLoading();
+                    fetch('{{ route('admin.sarpras.barcode.generate-all') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content'),
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            closeLoading();
+                            if (data.success) {
+                                showSuccess(data.message).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                showError('Error: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            closeLoading();
+                            console.error('Error:', error);
+                            showError('Terjadi kesalahan saat generate barcode');
+                        });
+                }
+            });
         }
 
         function bulkPrintBarcodes() {
@@ -450,7 +469,7 @@
             const selectedIds = Array.from(checkboxes).map(cb => cb.value);
 
             if (selectedIds.length === 0) {
-                alert('Pilih minimal satu barang untuk di-print');
+                showError('Pilih minimal satu barang untuk di-print');
                 return;
             }
 
@@ -483,4 +502,58 @@
             closeBulkPrintModal();
         }
     </script>
+
+    @if (session('success'))
+        <script>
+            const successKey = 'barang_alert_' + '{{ md5(session('success') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(successKey)) {
+                    showSuccess('{{ session('success') }}');
+                    sessionStorage.setItem(successKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('barang_alert_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'barang_alert_error_' + '{{ md5(session('error') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(errorKey)) {
+                    showError('{{ session('error') }}');
+                    sessionStorage.setItem(errorKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('barang_alert_error_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            const validationKey = 'barang_alert_validation_' + '{{ md5(json_encode($errors->all()) . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(validationKey)) {
+                    showError('{!! implode('<br>', $errors->all()) !!}');
+                    sessionStorage.setItem(validationKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('barang_alert_validation_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
 </x-app-layout>

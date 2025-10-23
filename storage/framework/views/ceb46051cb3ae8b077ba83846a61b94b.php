@@ -102,11 +102,15 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
-                            <div class="flex items-end">
+                            <div class="flex items-end space-x-2">
                                 <button type="submit"
-                                    class="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                                    class="flex-1 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                     Filter
                                 </button>
+                                <a href="<?php echo e(route('admin.guru.index')); ?>"
+                                    class="flex-1 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
+                                    Reset
+                                </a>
                             </div>
                         </form>
                     </div>
@@ -211,7 +215,7 @@
                                                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('delete', $guru)): ?>
                                                     <form method="POST" action="<?php echo e(route('admin.guru.destroy', $guru)); ?>"
                                                         class="inline"
-                                                        onsubmit="return confirm('Are you sure you want to delete this guru?')">
+                                                        data-confirm="Apakah Anda yakin ingin menghapus data guru <?php echo e($guru->full_name); ?>?">
                                                         <?php echo csrf_field(); ?>
                                                         <?php echo method_field('DELETE'); ?>
                                                         <button type="submit"
@@ -241,6 +245,64 @@
             </div>
         </div>
     </div>
+
+    <?php if(session('success')): ?>
+        <script>
+            // Generate unique key for this success message
+            const successKey = 'guru_alert_' + '<?php echo e(md5(session('success') . time())); ?>';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // Check if this alert has already been shown
+                if (!sessionStorage.getItem(successKey)) {
+                    showSuccess('<?php echo e(session('success')); ?>');
+                    // Mark this alert as shown
+                    sessionStorage.setItem(successKey, 'shown');
+
+                    // Clean up old alerts (keep only last 5)
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('guru_alert_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    <?php endif; ?>
+
+    <?php if(session('error')): ?>
+        <script>
+            const errorKey = 'guru_alert_error_' + '<?php echo e(md5(session('error') . time())); ?>';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(errorKey)) {
+                    showError('<?php echo e(session('error')); ?>');
+                    sessionStorage.setItem(errorKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('guru_alert_error_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    <?php endif; ?>
+
+    <?php if($errors->any()): ?>
+        <script>
+            const validationKey = 'guru_alert_validation_' + '<?php echo e(md5(json_encode($errors->all()) . time())); ?>';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(validationKey)) {
+                    showError('<?php echo implode('<br>', $errors->all()); ?>');
+                    sessionStorage.setItem(validationKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('guru_alert_validation_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    <?php endif; ?>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>

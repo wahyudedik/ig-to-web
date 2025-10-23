@@ -638,12 +638,12 @@
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <input type="password" id="newUserPassword" placeholder="Password"
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <select id="newUserType"
-                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="siswa">Siswa</option>
-                                <option value="guru">Guru</option>
-                                <option value="admin">Admin</option>
-                            </select>
+                            <div class="bg-blue-50 border border-blue-200 rounded-md px-3 py-2">
+                                <p class="text-sm text-gray-700">
+                                    <i class="fas fa-user-graduate text-blue-600 mr-2"></i>
+                                    <span class="font-medium">Role:</span> Siswa
+                                </p>
+                            </div>
                             <button onclick="addUser()"
                                 class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
                                 Tambah User
@@ -764,14 +764,14 @@
                             list.appendChild(div);
 
                             document.getElementById('newKelas').value = '';
-                            alert('Kelas berhasil ditambahkan!');
+                            showSuccess('Kelas berhasil ditambahkan!');
                         } else {
-                            alert('Error: ' + data.message);
+                            showError(data.message || 'Terjadi kesalahan saat menambahkan kelas');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menambahkan kelas');
+                        showError('Terjadi kesalahan saat menambahkan kelas');
                     })
                     .finally(() => {
                         button.textContent = originalText;
@@ -820,14 +820,14 @@
                             list.appendChild(div);
 
                             document.getElementById('newJurusan').value = '';
-                            alert('Jurusan berhasil ditambahkan!');
+                            showSuccess('Jurusan berhasil ditambahkan!');
                         } else {
-                            alert('Error: ' + data.message);
+                            showError(data.message || 'Terjadi kesalahan saat menambahkan jurusan');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menambahkan jurusan');
+                        showError('Terjadi kesalahan saat menambahkan jurusan');
                     })
                     .finally(() => {
                         button.textContent = originalText;
@@ -870,14 +870,14 @@
                             list.appendChild(div);
 
                             document.getElementById('newEkstrakurikuler').value = '';
-                            alert('Ekstrakurikuler berhasil ditambahkan!');
+                            showSuccess('Ekstrakurikuler berhasil ditambahkan!');
                         } else {
-                            alert('Error: ' + data.message);
+                            showError(data.message || 'Terjadi kesalahan saat menambahkan ekstrakurikuler');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menambahkan ekstrakurikuler');
+                        showError('Terjadi kesalahan saat menambahkan ekstrakurikuler');
                     })
                     .finally(() => {
                         button.textContent = originalText;
@@ -890,42 +890,67 @@
             const name = document.getElementById('newUserName').value;
             const email = document.getElementById('newUserEmail').value;
             const password = document.getElementById('newUserPassword').value;
-            const userType = document.getElementById('newUserType').value;
+            const userType = 'siswa'; // Hardcoded untuk form siswa
 
-            if (name.trim() && email.trim() && password.trim()) {
-                const button = event.target;
-                const originalText = button.textContent;
-                button.textContent = 'Loading...';
-                button.disabled = true;
+            // Validation
+            if (!name.trim()) {
+                showError('Nama lengkap harus diisi');
+                return;
+            }
+            if (!email.trim()) {
+                showError('Email harus diisi');
+                return;
+            }
+            if (!password.trim()) {
+                showError('Password harus diisi');
+                return;
+            }
+            if (password.length < 8) {
+                showError('Password minimal 8 karakter');
+                return;
+            }
 
-                fetch('{{ route('admin.superadmin.users.store') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            name: name,
-                            email: email,
-                            password: password,
-                            user_type: userType
-                        })
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Loading...';
+            button.disabled = true;
+
+            fetch('{{ route('admin.superadmin.users.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password,
+                        user_type: userType
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Add to select dropdown
-                            const select = document.getElementById('user_id');
-                            const option = document.createElement('option');
-                            option.value = data.data.id;
-                            option.textContent = `${data.data.name} (${data.data.email})`;
-                            select.appendChild(option);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw err;
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Add to select dropdown
+                        const select = document.getElementById('user_id');
+                        const option = document.createElement('option');
+                        option.value = data.data.id;
+                        option.textContent = `${data.data.name} (${data.data.email})`;
+                        select.appendChild(option);
 
-                            // Add to list
-                            const list = document.getElementById('userList');
-                            const div = document.createElement('div');
-                            div.className = 'flex items-center justify-between p-2 bg-gray-50 rounded';
-                            div.innerHTML = `
+                        // Add to list
+                        const list = document.getElementById('userList');
+                        const div = document.createElement('div');
+                        div.className = 'flex items-center justify-between p-2 bg-gray-50 rounded';
+                        div.innerHTML = `
                             <div>
                                 <span class="text-sm font-medium">${data.data.name}</span>
                                 <span class="text-xs text-gray-500 ml-2">(${data.data.email})</span>
@@ -935,26 +960,37 @@
                                 <button onclick="deleteUser(${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
                             </div>
                         `;
-                            list.appendChild(div);
+                        list.appendChild(div);
 
-                            // Clear form
-                            document.getElementById('newUserName').value = '';
-                            document.getElementById('newUserEmail').value = '';
-                            document.getElementById('newUserPassword').value = '';
-                            alert('User berhasil ditambahkan!');
-                        } else {
-                            alert('Error: ' + data.message);
+                        // Clear form
+                        document.getElementById('newUserName').value = '';
+                        document.getElementById('newUserEmail').value = '';
+                        document.getElementById('newUserPassword').value = '';
+                        showSuccess('User berhasil ditambahkan!');
+                    } else {
+                        showError(data.message || 'Terjadi kesalahan saat menambahkan user');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Handle validation errors
+                    if (error.errors) {
+                        let errorMessages = [];
+                        for (let field in error.errors) {
+                            errorMessages.push(...error.errors[field]);
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menambahkan user');
-                    })
-                    .finally(() => {
-                        button.textContent = originalText;
-                        button.disabled = false;
-                    });
-            }
+                        showError(errorMessages.join('<br>'));
+                    } else if (error.message) {
+                        showError(error.message);
+                    } else {
+                        showError('Terjadi kesalahan saat menambahkan user');
+                    }
+                })
+                .finally(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                });
         }
 
         // Edit functions
@@ -1062,157 +1098,170 @@
 
         // Delete functions
         function deleteKelas(value, id) {
-            if (confirm(`Hapus kelas "${value}"?`)) {
-                fetch(`/api/kelas/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Remove from select
-                            const select = document.getElementById('kelas');
-                            const options = select.querySelectorAll('option');
-                            options.forEach(option => {
-                                if (option.value === value) {
-                                    option.remove();
-                                }
-                            });
+            showConfirm('Konfirmasi Hapus', `Hapus kelas "${value}"?`, 'Ya, Hapus', 'Batal').then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/kelas/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Remove from select
+                                const select = document.getElementById('kelas');
+                                const options = select.querySelectorAll('option');
+                                options.forEach(option => {
+                                    if (option.value === value) {
+                                        option.remove();
+                                    }
+                                });
 
-                            // Remove from list
-                            const list = document.getElementById('kelasList');
-                            const items = list.querySelectorAll('div');
-                            items.forEach(item => {
-                                const span = item.querySelector('span');
-                                if (span.textContent === value) {
-                                    item.remove();
-                                }
-                            });
-                            alert('Kelas berhasil dihapus!');
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menghapus kelas');
-                    });
-            }
+                                // Remove from list
+                                const list = document.getElementById('kelasList');
+                                const items = list.querySelectorAll('div');
+                                items.forEach(item => {
+                                    const span = item.querySelector('span');
+                                    if (span.textContent === value) {
+                                        item.remove();
+                                    }
+                                });
+                                showSuccess('Kelas berhasil dihapus!');
+                            } else {
+                                showError(data.message || 'Terjadi kesalahan saat menghapus kelas');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showError('Terjadi kesalahan saat menghapus kelas');
+                        });
+                }
+            });
         }
 
         function deleteJurusan(value, id) {
-            if (confirm(`Hapus jurusan "${value}"?`)) {
-                fetch(`/api/jurusan/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const select = document.getElementById('jurusan');
-                            const options = select.querySelectorAll('option');
-                            options.forEach(option => {
-                                if (option.value === value) {
-                                    option.remove();
-                                }
-                            });
+            showConfirm('Konfirmasi Hapus', `Hapus jurusan "${value}"?`, 'Ya, Hapus', 'Batal').then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/jurusan/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const select = document.getElementById('jurusan');
+                                const options = select.querySelectorAll('option');
+                                options.forEach(option => {
+                                    if (option.value === value) {
+                                        option.remove();
+                                    }
+                                });
 
-                            const list = document.getElementById('jurusanList');
-                            const items = list.querySelectorAll('div');
-                            items.forEach(item => {
-                                const span = item.querySelector('span');
-                                if (span.textContent === value) {
-                                    item.remove();
-                                }
-                            });
-                            alert('Jurusan berhasil dihapus!');
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menghapus jurusan');
-                    });
-            }
+                                const list = document.getElementById('jurusanList');
+                                const items = list.querySelectorAll('div');
+                                items.forEach(item => {
+                                    const span = item.querySelector('span');
+                                    if (span.textContent === value) {
+                                        item.remove();
+                                    }
+                                });
+                                showSuccess('Jurusan berhasil dihapus!');
+                            } else {
+                                showError(data.message || 'Terjadi kesalahan saat menghapus jurusan');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showError('Terjadi kesalahan saat menghapus jurusan');
+                        });
+                }
+            });
         }
 
         function deleteEkstrakurikuler(value, id) {
-            if (confirm(`Hapus ekstrakurikuler "${value}"?`)) {
-                fetch(`/api/ekstrakurikuler/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const list = document.getElementById('ekstrakurikulerList');
-                            const items = list.querySelectorAll('div');
-                            items.forEach(item => {
-                                const span = item.querySelector('span');
-                                if (span.textContent === value) {
-                                    item.remove();
-                                }
-                            });
-                            alert('Ekstrakurikuler berhasil dihapus!');
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menghapus ekstrakurikuler');
-                    });
-            }
+            showConfirm('Konfirmasi Hapus', `Hapus ekstrakurikuler "${value}"?`, 'Ya, Hapus', 'Batal').then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/ekstrakurikuler/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const list = document.getElementById('ekstrakurikulerList');
+                                const items = list.querySelectorAll('div');
+                                items.forEach(item => {
+                                    const span = item.querySelector('span');
+                                    if (span.textContent === value) {
+                                        item.remove();
+                                    }
+                                });
+                                showSuccess('Ekstrakurikuler berhasil dihapus!');
+                            } else {
+                                showError(data.message || 'Terjadi kesalahan saat menghapus ekstrakurikuler');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showError('Terjadi kesalahan saat menghapus ekstrakurikuler');
+                        });
+                }
+            });
         }
 
         function deleteUser(id) {
-            if (confirm('Hapus user ini?')) {
-                fetch(`/api/users/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const select = document.getElementById('user_id');
-                            const options = select.querySelectorAll('option');
-                            options.forEach(option => {
-                                if (option.value === id) {
-                                    option.remove();
-                                }
-                            });
+            showConfirm('Konfirmasi Hapus', 'Hapus user ini?', 'Ya, Hapus', 'Batal').then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/users/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const select = document.getElementById('user_id');
+                                const options = select.querySelectorAll('option');
+                                options.forEach(option => {
+                                    if (option.value === id) {
+                                        option.remove();
+                                    }
+                                });
 
-                            const list = document.getElementById('userList');
-                            const items = list.querySelectorAll('div');
-                            items.forEach(item => {
-                                const button = item.querySelector(`button[onclick*="deleteUser('${id}')"]`);
-                                if (button) {
-                                    item.remove();
-                                }
-                            });
-                            alert('User berhasil dihapus!');
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menghapus user');
-                    });
-            }
+                                const list = document.getElementById('userList');
+                                const items = list.querySelectorAll('div');
+                                items.forEach(item => {
+                                    const button = item.querySelector(
+                                        `button[onclick*="deleteUser('${id}')"]`);
+                                    if (button) {
+                                        item.remove();
+                                    }
+                                });
+                                showSuccess('User berhasil dihapus!');
+                            } else {
+                                showError(data.message || 'Terjadi kesalahan saat menghapus user');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showError('Terjadi kesalahan saat menghapus user');
+                        });
+                }
+            });
         }
 
         // Close modals when clicking outside

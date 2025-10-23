@@ -547,7 +547,8 @@ unset($__errorArgs, $__bag); ?>
                                         <label for="tahun_lulus"
                                             class="block text-sm font-medium text-gray-700 mb-1">Tahun Lulus *</label>
                                         <input type="text" name="tahun_lulus" id="tahun_lulus"
-                                            value="<?php echo e(old('tahun_lulus')); ?>"
+                                            value="<?php echo e(old('tahun_lulus')); ?>" inputmode="numeric" pattern="[0-9]{4}"
+                                            maxlength="4" minlength="4"
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 <?php $__errorArgs = ['tahun_lulus'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -556,7 +557,9 @@ $message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php else: ?> bord
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                            required>
+                                            placeholder="YYYY" required
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);">
+                                        <small class="text-gray-500">Hanya tahun, contoh: 2023</small>
                                         <?php $__errorArgs = ['tahun_lulus'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -886,53 +889,77 @@ unset($__errorArgs, $__bag); ?>
 
         function addMataPelajaran() {
             const newMataPelajaran = document.getElementById('newMataPelajaran').value;
-            if (newMataPelajaran.trim()) {
-                const button = event.target;
-                const originalText = button.textContent;
-                button.textContent = 'Loading...';
-                button.disabled = true;
 
-                fetch('<?php echo e(route('admin.guru.addSubject')); ?>', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            nama: newMataPelajaran
-                        })
+            if (!newMataPelajaran.trim()) {
+                showError('Nama mata pelajaran harus diisi');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Loading...';
+            button.disabled = true;
+
+            fetch('<?php echo e(route('admin.guru.addSubject')); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nama: newMataPelajaran
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Add to checkbox list
-                            const container = document.querySelector('.grid.grid-cols-2.gap-2');
-                            const label = document.createElement('label');
-                            label.className = 'flex items-center';
-                            label.innerHTML = `
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw err;
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Add to checkbox list
+                        const container = document.querySelector('.grid.grid-cols-2.gap-2');
+                        const label = document.createElement('label');
+                        label.className = 'flex items-center';
+                        label.innerHTML = `
                             <input type="checkbox" name="mata_pelajaran[]" value="${data.data.nama}" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                             <span class="ml-2 text-sm text-gray-700">${data.data.nama}</span>
                         `;
-                            container.appendChild(label);
+                        container.appendChild(label);
 
-                            // Update list in modal
-                            loadMataPelajaranList();
+                        // Update list in modal
+                        loadMataPelajaranList();
 
-                            document.getElementById('newMataPelajaran').value = '';
-                            alert('Mata pelajaran berhasil ditambahkan!');
-                        } else {
-                            alert('Error: ' + data.message);
+                        document.getElementById('newMataPelajaran').value = '';
+                        showSuccess('Mata pelajaran berhasil ditambahkan!');
+                    } else {
+                        showError(data.message || 'Terjadi kesalahan saat menambahkan mata pelajaran');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Handle validation errors
+                    if (error.errors) {
+                        let errorMessages = [];
+                        for (let field in error.errors) {
+                            errorMessages.push(...error.errors[field]);
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menambahkan mata pelajaran');
-                    })
-                    .finally(() => {
-                        button.textContent = originalText;
-                        button.disabled = false;
-                    });
-            }
+                        showError(errorMessages.join('<br>'));
+                    } else if (error.message) {
+                        showError(error.message);
+                    } else {
+                        showError('Terjadi kesalahan saat menambahkan mata pelajaran');
+                    }
+                })
+                .finally(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                });
         }
 
         function loadMataPelajaranList() {
@@ -957,57 +984,93 @@ unset($__errorArgs, $__bag); ?>
             const password = document.getElementById('newUserPassword').value;
             const userType = document.getElementById('newUserType').value;
 
-            if (name.trim() && email.trim() && password.trim()) {
-                const button = event.target;
-                const originalText = button.textContent;
-                button.textContent = 'Loading...';
-                button.disabled = true;
-
-                fetch('<?php echo e(route('admin.superadmin.users.store')); ?>', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            name: name,
-                            email: email,
-                            password: password,
-                            user_type: userType
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Add to select dropdown
-                            const select = document.getElementById('user_id');
-                            const option = document.createElement('option');
-                            option.value = data.data.id;
-                            option.textContent = `${data.data.name} (${data.data.email})`;
-                            select.appendChild(option);
-
-                            // Update list in modal
-                            loadUserList();
-
-                            // Clear form
-                            document.getElementById('newUserName').value = '';
-                            document.getElementById('newUserEmail').value = '';
-                            document.getElementById('newUserPassword').value = '';
-
-                            alert('User berhasil ditambahkan!');
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menambahkan user');
-                    })
-                    .finally(() => {
-                        button.textContent = originalText;
-                        button.disabled = false;
-                    });
+            // Validation
+            if (!name.trim()) {
+                showError('Nama lengkap harus diisi');
+                return;
             }
+            if (!email.trim()) {
+                showError('Email harus diisi');
+                return;
+            }
+            if (!password.trim()) {
+                showError('Password harus diisi');
+                return;
+            }
+            if (password.length < 8) {
+                showError('Password minimal 8 karakter');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Loading...';
+            button.disabled = true;
+
+            fetch('<?php echo e(route('admin.superadmin.users.store')); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password,
+                        user_type: userType
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw err;
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Add to select dropdown
+                        const select = document.getElementById('user_id');
+                        const option = document.createElement('option');
+                        option.value = data.data.id;
+                        option.textContent = `${data.data.name} (${data.data.email})`;
+                        select.appendChild(option);
+
+                        // Update list in modal
+                        loadUserList();
+
+                        // Clear form
+                        document.getElementById('newUserName').value = '';
+                        document.getElementById('newUserEmail').value = '';
+                        document.getElementById('newUserPassword').value = '';
+
+                        showSuccess('User berhasil ditambahkan!');
+                    } else {
+                        showError(data.message || 'Terjadi kesalahan saat menambahkan user');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Handle validation errors
+                    if (error.errors) {
+                        let errorMessages = [];
+                        for (let field in error.errors) {
+                            errorMessages.push(...error.errors[field]);
+                        }
+                        showError(errorMessages.join('<br>'));
+                    } else if (error.message) {
+                        showError(error.message);
+                    } else {
+                        showError('Terjadi kesalahan saat menambahkan user');
+                    }
+                })
+                .finally(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                });
         }
 
         function loadUserList() {

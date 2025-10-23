@@ -167,7 +167,7 @@
                         }, function(err) {
                             if (err) {
                                 console.error('Error initializing Quagga:', err);
-                                alert('Error initializing scanner: ' + err.message);
+                                showError('Error initializing scanner: ' + err.message);
                                 return;
                             }
                             Quagga.start();
@@ -190,10 +190,10 @@
                     })
                     .catch(function(err) {
                         console.error('Error accessing camera:', err);
-                        alert('Error accessing camera: ' + err.message);
+                        showError('Error accessing camera: ' + err.message);
                     });
             } else {
-                alert('Camera not supported on this device');
+                showError('Camera not supported on this device');
             }
         }
 
@@ -221,7 +221,7 @@
             if (code) {
                 searchBarcode(code);
             } else {
-                alert('Masukkan kode barcode/QR code');
+                showError('Masukkan kode barcode/QR code');
             }
         }
 

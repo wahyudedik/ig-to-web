@@ -245,12 +245,21 @@ class Siswa extends Model
     {
         $nilai = $this->nilai_akademik ?? [];
         if (empty($nilai)) {
-            return ['average' => 0, 'grade' => 'Tidak ada data'];
+            return [
+                'average' => 0,
+                'grade' => 'Tidak ada data',
+                'highest' => 0,
+                'lowest' => 0,
+                'subjects' => 0,
+                'total_subjects' => 0
+            ];
         }
 
         $total = array_sum($nilai);
         $count = count($nilai);
         $average = $count > 0 ? round($total / $count, 2) : 0;
+        $highest = $count > 0 ? max($nilai) : 0;
+        $lowest = $count > 0 ? min($nilai) : 0;
 
         $grade = match (true) {
             $average >= 90 => 'A',
@@ -263,6 +272,9 @@ class Siswa extends Model
         return [
             'average' => $average,
             'grade' => $grade,
+            'highest' => $highest,
+            'lowest' => $lowest,
+            'subjects' => $count,
             'total_subjects' => $count
         ];
     }

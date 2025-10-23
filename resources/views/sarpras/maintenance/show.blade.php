@@ -185,8 +185,9 @@
                                 </svg>
                                 Edit Maintenance
                             </a>
-                            <form method="POST" action="{{ route('admin.sarpras.maintenance.destroy', $maintenance) }}"
-                                onsubmit="return confirm('Are you sure you want to delete this maintenance record?')">
+                            <form method="POST"
+                                action="{{ route('admin.sarpras.maintenance.destroy', $maintenance) }}"
+                                data-confirm="Apakah Anda yakin ingin menghapus maintenance {{ $maintenance->jenis_maintenance }}?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="w-full btn btn-danger">

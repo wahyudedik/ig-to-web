@@ -262,7 +262,8 @@
 
                     <!-- Form Actions -->
                     <div class="flex items-center justify-end space-x-4 pt-6 border-t border-slate-200">
-                        <a href="{{ route('admin.sarpras.maintenance.show', $maintenance) }}" class="btn btn-secondary">
+                        <a href="{{ route('admin.sarpras.maintenance.show', $maintenance) }}"
+                            class="btn btn-secondary">
                             Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
@@ -324,10 +325,18 @@
         });
 
         function removePhoto(photoName) {
-            if (confirm('Are you sure you want to remove this photo?')) {
-                // In a real implementation, this would make an AJAX call to remove the photo
-                console.log('Removing photo:', photoName);
-            }
+            showConfirm(
+                'Konfirmasi',
+                'Apakah Anda yakin ingin menghapus foto ini?',
+                'Ya, Hapus',
+                'Batal'
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    // In a real implementation, this would make an AJAX call to remove the photo
+                    console.log('Removing photo:', photoName);
+                    showSuccess('Foto berhasil dihapus');
+                }
+            });
         }
     </script>
 </x-app-layout>

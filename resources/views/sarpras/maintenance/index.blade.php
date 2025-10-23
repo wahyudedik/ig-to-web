@@ -127,6 +127,13 @@
                         </svg>
                         Cari
                     </button>
+                    <a href="{{ route('admin.sarpras.maintenance.index') }}" class="btn btn-secondary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Reset
+                    </a>
                 </div>
             </form>
         </div>
@@ -202,9 +209,10 @@
                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                         </a>
-                                        <form method="POST" action="{{ route('admin.sarpras.maintenance.destroy', $m) }}"
+                                        <form method="POST"
+                                            action="{{ route('admin.sarpras.maintenance.destroy', $m) }}"
                                             class="inline"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus maintenance ini?')">
+                                            data-confirm="Apakah Anda yakin ingin menghapus maintenance {{ $m->jenis_maintenance }}?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-700">
@@ -245,4 +253,58 @@
             @endif
         </div>
     </div>
+
+    @if (session('success'))
+        <script>
+            const successKey = 'maintenance_alert_' + '{{ md5(session('success') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(successKey)) {
+                    showSuccess('{{ session('success') }}');
+                    sessionStorage.setItem(successKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('maintenance_alert_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'maintenance_alert_error_' + '{{ md5(session('error') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(errorKey)) {
+                    showError('{{ session('error') }}');
+                    sessionStorage.setItem(errorKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('maintenance_alert_error_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            const validationKey = 'maintenance_alert_validation_' + '{{ md5(json_encode($errors->all()) . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(validationKey)) {
+                    showError('{!! implode('<br>', $errors->all()) !!}');
+                    sessionStorage.setItem(validationKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('maintenance_alert_validation_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
 </x-app-layout>

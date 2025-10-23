@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untuk DEWI FATIMAH 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated Background Hearts */
+        .heart-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 10s infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            25% {
+                opacity: 0.8;
+            }
+
+            75% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Cursor Trail Effect */
+        .cursor-trail {
+            position: fixed;
+            pointer-events: none;
+            font-size: 20px;
+            z-index: 9999;
+            animation: fadeOut 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.5);
+            }
+        }
+
+        /* Main Container */
+        .main-wrapper {
+            position: relative;
+            z-index: 2;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeInScale 1s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Interactive Welcome Section */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .big-emoji {
+            font-size: 5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        .big-emoji:hover {
+            transform: scale(1.3) rotate(20deg);
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin: 20px 0;
+            animation: slideDown 1s ease-out;
+        }
+
+        /* Interactive Heart Counter */
+        .heart-counter {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 30px 0;
+        }
+
+        .heart-counter:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 154, 158, 0.5);
+        }
+
+        .heart-counter h3 {
+            color: #d63447;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .heart-display {
+            font-size: 3em;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .heart-counter p {
+            color: #333;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Interactive Envelope/Letter */
+        .envelope-wrapper {
+            perspective: 1000px;
+            margin: 40px 0;
+        }
+
+        .envelope {
+            width: 300px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            clip-path: polygon(0 0, 50% 60%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 2;
+        }
+
+        .envelope.opened .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .letter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            opacity: 0;
+            transition: all 0.6s ease;
+            z-index: 1;
+        }
+
+        .envelope.opened .letter {
+            opacity: 1;
+            top: 20%;
+        }
+
+        .letter p {
+            font-size: 0.9em;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .envelope-text {
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Interactive Reasons Carousel */
+        .reasons-section {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+
+        .reasons-section h2 {
+            text-align: center;
+            color: #764ba2;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .reasons-carousel {
+            position: relative;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reason-card {
+            position: absolute;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .reason-card.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: 2;
+        }
+
+        .reason-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .reason-card p {
+            color: #333;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 250px;
+        }
+
+        .carousel-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .carousel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: #667eea;
+            transform: scale(1.3);
+        }
+
+        /* Interactive Memory Game */
+        .memory-game {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+
+        .memory-game h2 {
+            text-align: center;
+            color: #764ba2;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden;
+            border-radius: 15px;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .game-info {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        /* Floating Love Notes */
+        .floating-notes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .love-note {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            animation: floatNote 4s ease-in-out forwards;
+            font-size: 1em;
+            color: #333;
+            max-width: 200px;
+        }
+
+        @keyframes floatNote {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) scale(0);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            80% {
+                opacity: 1;
+                transform: translateY(-50px) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-150px) scale(0);
+            }
+        }
+
+        /* Interactive Quiz */
+        .quiz-section {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+
+        .quiz-section h2 {
+            text-align: center;
+            color: #764ba2;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .quiz-question {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-question h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quiz-option {
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            transform: translateX(10px);
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .quiz-option.correct {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+            border-color: #22c55e;
+        }
+
+        .quiz-option.wrong {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .quiz-result {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background: white;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .quiz-result.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Final Reveal Section */
+        .reveal-section {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+            margin-top: 40px;
+        }
+
+        .reveal-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .reveal-button:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .hidden-message {
+            display: none;
+            margin-top: 40px;
+            animation: fadeInScale 0.8s ease-out;
+        }
+
+        .hidden-message.show {
+            display: block;
+        }
+
+        .big-reveal {
+            font-size: 2.5em;
+            color: #d63447;
+            font-weight: bold;
+            animation: heartBeat 1.5s infinite;
+            margin: 30px 0;
+        }
+
+        @keyframes heartBeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.1);
+            }
+
+            50% {
+                transform: scale(1);
+            }
+
+            75% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #667eea;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            .welcome-section h1 {
+                font-size: 1.8em;
+            }
+
+            .big-emoji {
+                font-size: 3em;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .reason-card {
+                padding: 20px;
+            }
+
+            .carousel-controls {
+                margin-top: 230px;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Hearts Background -->
+    <div class="heart-container" id="heartContainer"></div>
+
+    <!-- Floating Love Notes -->
+    <div class="floating-notes" id="floatingNotes"></div>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="big-emoji" onclick="emojiClick(this)">💝</div>
+                <h1>Untuk Kamu Yang Luar Biasa! ✨</h1>
+                <p style="color: #666; font-size: 1.1em; margin-top: 10px;">
+                    Ada sesuatu yang spesial untukmu di sini... 💕
+                </p>
+            </div>
+
+            <!-- Interactive Heart Counter -->
+            <div class="heart-counter" onclick="addHeart()">
+                <h3>💕 Klik Untuk Kirim Semangat! 💕</h3>
+                <div class="heart-display" id="heartCount">0</div>
+                <p>❤️ semangat terkirim!</p>
+            </div>
+
+            <!-- Interactive Envelope -->
+            <div class="envelope-wrapper">
+                <div class="envelope" id="envelope" onclick="openEnvelope()">
+                    <div class="envelope-body">
+                        <div class="envelope-flap"></div>
+                        <div class="letter">
+                            <p>
+                                <strong>Dear Kamu,</strong><br><br>
+                                Operasimu bukan akhir dari segalanya,
+                                tapi awal dari kehidupan yang lebih baik!
+                                Kamu hebat! 💪❤️
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <p class="envelope-text">📧 Klik amplop untuk membuka surat!</p>
+            </div>
+
+            <!-- Interactive Reasons Carousel -->
+            <div class="reasons-section">
+                <h2>💝 Kenapa Kamu Istimewa?</h2>
+                <div class="reasons-carousel" id="reasonsCarousel">
+                    <!-- Reason cards will be inserted here by JS -->
+                </div>
+                <div class="carousel-controls">
+                    <button class="carousel-btn" onclick="prevReason()">⬅️ Sebelumnya</button>
+                    <button class="carousel-btn" onclick="nextReason()">Selanjutnya ➡️</button>
+                </div>
+                <div class="carousel-indicators" id="indicators"></div>
+            </div>
+
+            <!-- Interactive Memory Game -->
+            <div class="memory-game">
+                <h2>🎮 Mini Game: Temukan Pasangan! 🎮</h2>
+                <p style="text-align: center; color: #333; margin-bottom: 20px;">
+                    Cocokkan emoji yang sama! (Seperti kita yang cocok 😉)
+                </p>
+                <div class="cards-grid" id="memoryGame">
+                    <!-- Memory cards will be inserted here by JS -->
+                </div>
+                <div class="game-info">
+                    <p>🎯 Langkah: <span id="moves">0</span> | ⭐ Pasangan: <span id="matches">0</span>/6</p>
+                </div>
+            </div>
+
+            <!-- Interactive Quiz -->
+            <div class="quiz-section">
+                <h2>❓ Kuis Cinta! ❓</h2>
+                <div class="quiz-question">
+                    <h3>Menurutmu, apa yang paling penting dalam hubungan?</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="answerQuiz(this, false)">
+                            💰 Uang dan materi
+                        </div>
+                        <div class="quiz-option" onclick="answerQuiz(this, false)">
+                            👗 Penampilan fisik sempurna
+                        </div>
+                        <div class="quiz-option" onclick="answerQuiz(this, true)">
+                            ❤️ Saling menerima apa adanya
+                        </div>
+                        <div class="quiz-option" onclick="answerQuiz(this, false)">
+                            📱 Popularitas di media sosial
+                        </div>
+                    </div>
+                    <div class="quiz-result" id="quizResult">
+                        <h3 style="color: #22c55e; font-size: 1.5em;">🎉 Benar Sekali! 🎉</h3>
+                        <p style="color: #333; margin-top: 15px; line-height: 1.8;">
+                            Cinta sejati adalah tentang <strong>saling menerima</strong> dengan segala
+                            kelebihan dan kekurangan. Bekas luka, operasi, atau apapun itu tidak mengubah
+                            nilai seseorang. Yang terpenting adalah <strong>hati dan kepribadian</strong>! 💕
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Reveal Section -->
+            <div class="reveal-section">
+                <h2 style="color: #764ba2; font-size: 2em;">🎁 Pesan Rahasia Untukmu...</h2>
+                <p style="color: #333; margin: 20px 0; font-size: 1.2em;">
+                    Setelah semua yang sudah kamu lalui...<br>
+                    Ada seseorang yang ingin memberitahumu sesuatu...
+                </p>
+                <button class="reveal-button" id="revealBtn" onclick="revealFinalMessage()">
+                    💌 Buka Pesan Terakhir 💌
+                </button>
+                <div class="hidden-message" id="finalMessage">
+                    <div class="big-reveal">
+                        🎊 JODOHMU ITU... TITITITTTTTTT...........SENSOR! 🎊
+                    </div>
+                    <p style="font-size: 1.3em; color: #333; line-height: 2; margin-top: 30px;">
+                        Iya serius! Orang kemlagi nggak peduli sama bekas operasimu. <br>
+                        Yang dia lihat adalah <strong style="color: #667eea;">kamu yang kuat</strong>,
+                        <strong style="color: #764ba2;">kamu yang pemberani</strong>, dan
+                        <strong style="color: #d63447;">kamu yang aku titititittttt......sensor!</strong> ❤️
+                    </p>
+                    <p style="font-size: 1.1em; color: #666; margin-top: 30px; font-style: italic;">
+                        Jadi stop khawatir ya... Fokus sembuh dulu, <br>
+                        karena aku akan selalu ada di sini menemanimu! 🤗💕
+                    </p>
+                    <div style="margin-top: 40px;">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath fill='%23d63447' d='M100,170 L30,100 Q30,70 50,50 T80,40 Q100,40 100,60 Q100,40 120,40 T150,50 Q170,70 170,100 Z'/%3E%3C/svg%3E"
+                            alt="heart" style="width: 100px; animation: heartBeat 1s infinite;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p style="font-size: 1.2em; color: #667eea; font-weight: bold;">
+                    💝 Dibuat dengan gabut yang tulus 💝
+                </p>
+                <p style="margin-top: 15px;">
+                    Cepat sembuh ya wi dewi! Es Selendang mayang tunggu kamu sehat lagi! ✨
+                </p>
+                <p style="margin-top: 10px; color: #999; font-size: 0.9em;">
+                    P.S: Refresh halaman ini kapan aja kamu butuh semangat! 🌈
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // FLOATING HEARTS ANIMATION
+        // ============================================
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            const hearts = ['💕', '❤️', '💖', '💗', '💝', '💓'];
+            heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 5 + 8) + 's';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            document.getElementById('heartContainer').appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 13000);
+        }
+
+        setInterval(createHeart, 300);
+
+        // ============================================
+        // CURSOR TRAIL EFFECT
+        // ============================================
+        document.addEventListener('mousemove', function (e) {
+            if (Math.random() > 0.8) {
+                const trail = document.createElement('div');
+                trail.classList.add('cursor-trail');
+                const emojis = ['✨', '💫', '⭐', '🌟', '💕'];
+                trail.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                trail.style.left = e.clientX + 'px';
+                trail.style.top = e.clientY + 'px';
+                document.body.appendChild(trail);
+
+                setTimeout(() => {
+                    trail.remove();
+                }, 1000);
+            }
+        });
+
+        // ============================================
+        // EMOJI CLICK WITH EXPLOSION
+        // ============================================
+        function emojiClick(element) {
+            element.style.animation = 'none';
+            setTimeout(() => {
+                element.style.animation = 'bounce 0.5s ease-in-out 3';
+            }, 10);
+            createConfetti();
+            createFloatingNote("Kamu hebat! 💪");
+        }
+
+        // ============================================
+        // HEART COUNTER
+        // ============================================
+        let heartCount = 0;
+        function addHeart() {
+            heartCount++;
+            document.getElementById('heartCount').textContent = heartCount;
+
+            // Create floating hearts
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createFloatingHeart();
+                }, i * 100);
+            }
+
+            // Special messages at milestones
+            if (heartCount === 10) {
+                createFloatingNote("Wow! 10 semangat! Kamu baik banget! 💕");
+            } else if (heartCount === 50) {
+                createFloatingNote("50 semangat! Kamu luar biasa! 🌟");
+            } else if (heartCount === 100) {
+                createFloatingNote("100 SEMANGAT! I LOVE YOU! ❤️");
+                createConfetti();
+            }
+        }
+
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.style.position = 'fixed';
+            heart.style.fontSize = '30px';
+            heart.style.pointerEvents = 'none';
+            heart.style.zIndex = '9999';
+            heart.innerHTML = '❤️';
+
+            const rect = document.querySelector('.heart-counter').getBoundingClientRect();
+            heart.style.left = (rect.left + rect.width / 2) + 'px';
+            heart.style.top = rect.top + 'px';
+
+            document.body.appendChild(heart);
+
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 100 + Math.random() * 100;
+            const endX = Math.cos(angle) * distance;
+            const endY = Math.sin(angle) * distance - 100;
+
+            heart.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${endX}px, ${endY}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 1000,
+                easing: 'ease-out'
+            });
+
+            setTimeout(() => {
+                heart.remove();
+            }, 1000);
+        }
+
+        // ============================================
+        // ENVELOPE OPEN
+        // ============================================
+        let envelopeOpened = false;
+        function openEnvelope() {
+            if (!envelopeOpened) {
+                document.getElementById('envelope').classList.add('opened');
+                envelopeOpened = true;
+                createFloatingNote("Semoga pesannya menyentuh hatimu! 💌");
+            }
+        }
+
+        // ============================================
+        // REASONS CAROUSEL
+        // ============================================
+        const reasons = [
+            {
+                title: "🌟 Kamu Kuat & Pemberani",
+                text: "Kamu baru saja melewati operasi dan itu membuktikan bahwa kamu adalah pejuang sejati! Tidak semua orang punya kekuatan sepertimu."
+            },
+            {
+                title: "💪 Bekas Luka Adalah Medali",
+                text: "Setiap bekas luka adalah medali keberanian. Itu menunjukkan bahwa kamu sudah melewati pertempuran dan menang!"
+            },
+            {
+                title: "❤️ Cinta Sejati Melihat Jiwa",
+                text: "Orang yang benar-benar mencintaimu akan melihat jiwamu, bukan bekas lukamu. Karena jiwa tidak pernah terluka oleh operasi apapun."
+            },
+            {
+                title: "✨ Kamu Itu Unik & Istimewa",
+                text: "Tidak ada orang lain sepertimu di dunia ini! Kepribadianmu, senyummu, caramu tertawa - semua itu adalah hal yang membuatmu spesial!"
+            },
+            {
+                title: "🌈 Masa Depan Cerah Menanti",
+                text: "Ini bukan akhir, tapi awal dari chapter baru yang lebih baik! Kamu akan pulih, kuat, dan bahagia. Trust the process!"
+            },
+            {
+                title: "💝 Kamu Layak Dicintai",
+                text: "Kamu layak mendapatkan cinta yang tulus dan tanpa syarat. Dan guess what? Cinta itu sudah ada di sini... KEMLAGI GAK SIH! 😊"
+            }
+        ];
+
+        let currentReason = 0;
+
+        function initReasons() {
+            const carousel = document.getElementById('reasonsCarousel');
+            const indicators = document.getElementById('indicators');
+
+            reasons.forEach((reason, index) => {
+                const card = document.createElement('div');
+                card.classList.add('reason-card');
+                if (index === 0) card.classList.add('active');
+                card.innerHTML = `
+                    <h3>${reason.title}</h3>
+                    <p>${reason.text}</p>
+                `;
+                carousel.appendChild(card);
+
+                const indicator = document.createElement('div');
+                indicator.classList.add('indicator');
+                if (index === 0) indicator.classList.add('active');
+                indicator.onclick = () => goToReason(index);
+                indicators.appendChild(indicator);
+            });
+        }
+
+        function nextReason() {
+            currentReason = (currentReason + 1) % reasons.length;
+            updateReasons();
+        }
+
+        function prevReason() {
+            currentReason = (currentReason - 1 + reasons.length) % reasons.length;
+            updateReasons();
+        }
+
+        function goToReason(index) {
+            currentReason = index;
+            updateReasons();
+        }
+
+        function updateReasons() {
+            const cards = document.querySelectorAll('.reason-card');
+            const indicators = document.querySelectorAll('.indicator');
+
+            cards.forEach((card, index) => {
+                card.classList.toggle('active', index === currentReason);
+            });
+
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentReason);
+            });
+        }
+
+        // ============================================
+        // MEMORY GAME
+        // ============================================
+        const gameEmojis = ['💕', '💖', '💗', '💝', '💓', '❤️'];
+        let gameCards = [...gameEmojis, ...gameEmojis].sort(() => Math.random() - 0.5);
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+
+        function initMemoryGame() {
+            const gameContainer = document.getElementById('memoryGame');
+            gameCards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.classList.add('memory-card');
+                card.dataset.emoji = emoji;
+                card.dataset.index = index;
+                card.innerHTML = `
+                    <div class="card-front">💝</div>
+                    <div class="card-back">${emoji}</div>
+                `;
+                card.onclick = () => flipCard(card);
+                gameContainer.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (flippedCards.length < 2 && !card.classList.contains('flipped') && !card.classList.contains('matched')) {
+                card.classList.add('flipped');
+                flippedCards.push(card);
+
+                if (flippedCards.length === 2) {
+                    moves++;
+                    document.getElementById('moves').textContent = moves;
+                    checkMatch();
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+
+            if (card1.dataset.emoji === card2.dataset.emoji) {
+                setTimeout(() => {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    document.getElementById('matches').textContent = matchedPairs;
+                    flippedCards = [];
+
+                    if (matchedPairs === 6) {
+                        setTimeout(() => {
+                            createConfetti();
+                            createFloatingNote("🎉 Selamat! Kamu berhasil! Seperti kita yang cocok! 💕");
+                        }, 500);
+                    }
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+
+        // ============================================
+        // QUIZ
+        // ============================================
+        function answerQuiz(element, isCorrect) {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
+            });
+
+            if (isCorrect) {
+                setTimeout(() => {
+                    document.getElementById('quizResult').classList.add('show');
+                    createFloatingNote("Kamu memang paham cinta sejati! 💕");
+                }, 500);
+            } else {
+                createFloatingNote("Hmm, coba pikir lagi... 🤔");
+                setTimeout(() => {
+                    options.forEach(opt => {
+                        opt.style.pointerEvents = 'auto';
+                        opt.classList.remove('wrong');
+                    });
+                }, 1500);
+            }
+        }
+
+        // ============================================
+        // FINAL REVEAL
+        // ============================================
+        function revealFinalMessage() {
+            const button = document.getElementById('revealBtn');
+            const message = document.getElementById('finalMessage');
+
+            button.style.display = 'none';
+            message.classList.add('show');
+
+            // Epic confetti
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createConfetti();
+                }, i * 300);
+            }
+
+            // Floating notes
+            setTimeout(() => createFloatingNote("💕 I Love You!"), 500);
+            setTimeout(() => createFloatingNote("❤️ You're Perfect!"), 1000);
+            setTimeout(() => createFloatingNote("✨ You're My World!"), 1500);
+            setTimeout(() => createFloatingNote("💝 Forever & Always!"), 2000);
+
+            // Scroll to message
+            message.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // ============================================
+        // CONFETTI EFFECT
+        // ============================================
+        function createConfetti() {
+            const colors = ['#667eea', '#764ba2', '#ffd700', '#ff69b4', '#00ff00', '#ff0000', '#00ffff'];
+
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 20);
+            }
+        }
+
+        // ============================================
+        // FLOATING NOTES
+        // ============================================
+        function createFloatingNote(message) {
+            const note = document.createElement('div');
+            note.classList.add('love-note');
+            note.textContent = message;
+            note.style.left = (Math.random() * 70 + 15) + '%';
+            note.style.top = '100%';
+            document.getElementById('floatingNotes').appendChild(note);
+
+            setTimeout(() => {
+                note.remove();
+            }, 4000);
+        }
+
+        // ============================================
+        // INITIALIZE EVERYTHING
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function () {
+            initReasons();
+            initMemoryGame();
+
+            // Welcome message
+            setTimeout(() => {
+                createFloatingNote("Selamat datang! Ada banyak hal spesial untukmu di sini! 💕");
+            }, 1000);
+
+            console.log('💕 Halaman cinta berhasil dimuat! 💕');
+        });
+
+        // Auto-advance carousel
+        setInterval(() => {
+            if (document.querySelector('.reasons-section:hover') === null) {
+                nextReason();
+            }
+        }, 5000);
+    </script>
+</body>
+
+</html>

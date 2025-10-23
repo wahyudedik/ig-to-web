@@ -393,7 +393,7 @@ class SarprasController extends Controller
             ->orderBy('nama_ruang')
             ->paginate(15);
 
-        return view('admin.sarpras.ruang.index', compact('ruangs'));
+        return view('sarpras.ruang.index', compact('ruangs'));
     }
 
     /**
@@ -587,7 +587,7 @@ class SarprasController extends Controller
 
         $maintenances = $query->orderBy('tanggal_maintenance', 'desc')->paginate(15);
 
-        return view('admin.sarpras.maintenance.index', compact('maintenances'));
+        return view('sarpras.maintenance.index', compact('maintenances'));
     }
 
     /**
@@ -811,9 +811,17 @@ class SarprasController extends Controller
     }
 
     /**
-     * Scan barcode/QR code.
+     * Show barcode/QR code scan page.
      */
-    public function scanBarcode(Request $request)
+    public function showScanPage()
+    {
+        return view('sarpras.scan-barcode');
+    }
+
+    /**
+     * Process barcode/QR code scan.
+     */
+    public function processScan(Request $request)
     {
         $request->validate([
             'code' => 'required|string',
@@ -836,6 +844,15 @@ class SarprasController extends Controller
             'success' => true,
             'data' => $barang->barcode_data
         ]);
+    }
+
+    /**
+     * Scan barcode/QR code (deprecated - use processScan instead).
+     * @deprecated Use processScan() instead
+     */
+    public function scanBarcode(Request $request)
+    {
+        return $this->processScan($request);
     }
 
     /**

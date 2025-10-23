@@ -89,11 +89,15 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="flex items-end">
+                            <div class="flex items-end space-x-2">
                                 <button type="submit"
-                                    class="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                                    class="flex-1 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                     Filter
                                 </button>
+                                <a href="{{ route('admin.guru.index') }}"
+                                    class="flex-1 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
+                                    Reset
+                                </a>
                             </div>
                         </form>
                     </div>
@@ -192,7 +196,7 @@
                                                 @can('delete', $guru)
                                                     <form method="POST" action="{{ route('admin.guru.destroy', $guru) }}"
                                                         class="inline"
-                                                        onsubmit="return confirm('Are you sure you want to delete this guru?')">
+                                                        data-confirm="Apakah Anda yakin ingin menghapus data guru {{ $guru->full_name }}?">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
@@ -221,4 +225,62 @@
             </div>
         </div>
     </div>
+
+    @if (session('success'))
+        <script>
+            // Generate unique key for this success message
+            const successKey = 'guru_alert_' + '{{ md5(session('success') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // Check if this alert has already been shown
+                if (!sessionStorage.getItem(successKey)) {
+                    showSuccess('{{ session('success') }}');
+                    // Mark this alert as shown
+                    sessionStorage.setItem(successKey, 'shown');
+
+                    // Clean up old alerts (keep only last 5)
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('guru_alert_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'guru_alert_error_' + '{{ md5(session('error') . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(errorKey)) {
+                    showError('{{ session('error') }}');
+                    sessionStorage.setItem(errorKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('guru_alert_error_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            const validationKey = 'guru_alert_validation_' + '{{ md5(json_encode($errors->all()) . time()) }}';
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (!sessionStorage.getItem(validationKey)) {
+                    showError('{!! implode('<br>', $errors->all()) !!}');
+                    sessionStorage.setItem(validationKey, 'shown');
+
+                    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('guru_alert_validation_'));
+                    if (keys.length > 5) {
+                        keys.slice(0, keys.length - 5).forEach(k => sessionStorage.removeItem(k));
+                    }
+                }
+            });
+        </script>
+    @endif
 </x-app-layout>
