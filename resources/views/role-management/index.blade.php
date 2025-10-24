@@ -31,10 +31,10 @@
                                         class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                     @if (!in_array($role->name, ['superadmin', 'admin', 'guru', 'sarpras']))
                                         <form method="POST" action="{{ route('admin.roles.destroy', $role) }}"
-                                            class="inline">
+                                            class="inline" data-confirm="Delete this role?">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900 ml-3"
-                                                onclick="return confirm('Delete this role?')">Delete</button>
+                                            <button type="submit"
+                                                class="text-red-600 hover:text-red-900 ml-3">Delete</button>
                                         </form>
                                     @endif
                                 </td>

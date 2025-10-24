@@ -407,30 +407,34 @@
         }
 
         function deleteItem(type, id, nama) {
-            if (confirm(`Apakah Anda yakin ingin menghapus ${nama}?`)) {
-                const url = `{{ url('admin/settings/data-management') }}/${type}/${id}`;
+            showConfirm(
+                `Apakah Anda yakin ingin menghapus ${nama}?`,
+                () => {
+                    const url = `{{ url('admin/settings/data-management') }}/${type}/${id}`;
 
-                fetch(url, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            location.reload();
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Terjadi kesalahan saat menghapus data');
-                    });
-            }
+                    fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content'),
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showSuccess(data.message);
+                                setTimeout(() => location.reload(), 1500);
+                            } else {
+                                showError(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showError('Terjadi kesalahan saat menghapus data');
+                        });
+                }
+            );
         }
 
         // Form submission
@@ -465,24 +469,24 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.message);
+                        showSuccess(data.message);
                         closeModal();
-                        location.reload();
+                        setTimeout(() => location.reload(), 1500);
                     } else {
                         if (data.errors) {
-                            let errorMessage = 'Validation errors:\n';
+                            let errorMessage = 'Validation errors:<br>';
                             for (const [field, errors] of Object.entries(data.errors)) {
-                                errorMessage += `${field}: ${errors.join(', ')}\n`;
+                                errorMessage += `${field}: ${errors.join(', ')}<br>`;
                             }
-                            alert(errorMessage);
+                            showError(errorMessage);
                         } else {
-                            alert(data.message);
+                            showError(data.message);
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menyimpan data');
+                    showError('Terjadi kesalahan saat menyimpan data');
                 });
         });
     </script>

@@ -142,10 +142,12 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        alert('Role updated successfully!');
-                        window.location.href = '{{ route('admin.roles.index') }}';
+                        showSuccess('Role updated successfully!');
+                        setTimeout(() => {
+                            window.location.href = '{{ route('admin.roles.index') }}';
+                        }, 1500);
                     } else {
-                        alert('Error updating role: ' + data.message);
+                        showError('Error updating role: ' + data.message);
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
@@ -153,7 +155,7 @@
                 .catch(error => {
                     console.error('Error:', error);
                     const errorMessage = error.message || 'Unknown error occurred';
-                    alert('Error updating role: ' + errorMessage);
+                    showError('Error updating role: ' + errorMessage);
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 });

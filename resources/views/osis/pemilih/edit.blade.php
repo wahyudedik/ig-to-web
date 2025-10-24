@@ -169,4 +169,35 @@
             </form>
         </div>
     </div>
+
+    <!-- Session Flash Messages -->
+    @if (session('success'))
+        <script>
+            const successKey = 'pemilih_edit_success_' + '{{ md5(session('success') . time()) }}';
+            if (!sessionStorage.getItem(successKey)) {
+                showSuccess('{{ session('success') }}');
+                sessionStorage.setItem(successKey, 'shown');
+            }
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'pemilih_edit_error_' + '{{ md5(session('error') . time()) }}';
+            if (!sessionStorage.getItem(errorKey)) {
+                showError('{{ session('error') }}');
+                sessionStorage.setItem(errorKey, 'shown');
+            }
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            const errorsKey = 'pemilih_edit_errors_' + '{{ md5(json_encode($errors->all()) . time()) }}';
+            if (!sessionStorage.getItem(errorsKey)) {
+                showError('{{ $errors->first() }}');
+                sessionStorage.setItem(errorsKey, 'shown');
+            }
+        </script>
+    @endif
 </x-app-layout>

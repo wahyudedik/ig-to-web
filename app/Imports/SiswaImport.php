@@ -42,15 +42,23 @@ class SiswaImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
             // Create user account if email provided
             $userId = null;
             if (!empty($row['email'])) {
-                $user = User::create([
-                    'name' => trim($row['nama_lengkap']),
-                    'email' => trim($row['email']),
-                    'password' => Hash::make($row['password'] ?? 'password123'),
-                    'user_type' => 'siswa',
-                    'email_verified_at' => null,
-                    'is_verified_by_admin' => false,
-                ]);
-                $userId = $user->id;
+                // Check if email already exists
+                $existingUser = User::where('email', trim($row['email']))->first();
+
+                if ($existingUser) {
+                    Log::warning("Skipping user creation, email already exists: {$row['email']}");
+                    $userId = $existingUser->id; // Link to existing user
+                } else {
+                    $user = User::create([
+                        'name' => trim($row['nama_lengkap']),
+                        'email' => trim($row['email']),
+                        'password' => Hash::make($row['password'] ?? 'password123'),
+                        'user_type' => 'siswa',
+                        'email_verified_at' => null,
+                        'is_verified_by_admin' => false,
+                    ]);
+                    $userId = $user->id;
+                }
             }
 
             // Parse tanggal_lahir

@@ -233,7 +233,7 @@
             document.getElementById('loading-section').classList.remove('hidden');
 
             // Make API call
-            fetch('{{ route('admin.sarpras.barcode.scan') }}', {
+            fetch('{{ route('admin.sarpras.barcode.scan.process') }}', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -261,6 +261,9 @@
         }
 
         function displayResults(data) {
+            // Build URLs using route base
+            const detailUrl = '{{ route('admin.sarpras.barang.index') }}/' + data.id;
+
             const resultsHtml = `
                 <div class="bg-green-50 border border-green-200 rounded-lg p-6">
                     <div class="flex items-start space-x-4">
@@ -287,7 +290,7 @@
                                 </div>
                             </div>
                             <div class="mt-4 flex space-x-3">
-                                <a href="/admin/sarpras/barang/${data.id}" class="btn btn-primary btn-sm">
+                                <a href="${detailUrl}" class="btn btn-primary btn-sm">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -296,13 +299,13 @@
                                     </svg>
                                     Lihat Detail
                                 </a>
-                                <a href="/admin/sarpras/barcode/print/${data.id}" target="_blank" class="btn btn-secondary btn-sm">
+                                <button onclick="printBarcode(${data.id})" class="btn btn-secondary btn-sm">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                     </svg>
                                     Print Barcode
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -322,6 +325,14 @@
             document.getElementById('results-section').classList.add('hidden');
             document.getElementById('loading-section').classList.add('hidden');
             document.getElementById('error-section').classList.add('hidden');
+        }
+
+        // Print barcode function
+        function printBarcode(id) {
+            // Build print URL using route base
+            const printBase = '{{ route('admin.sarpras.barcode.generate-all') }}';
+            const printUrl = printBase.replace('/barcode/generate-all', '/barcode/print/' + id);
+            window.open(printUrl, '_blank');
         }
 
         // Cleanup on page unload

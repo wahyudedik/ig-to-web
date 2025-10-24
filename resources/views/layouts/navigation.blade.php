@@ -113,10 +113,10 @@
                                         <i class="fas fa-file-alt mr-2"></i>Page Management
                                     </a>
                                 @endif
-                                @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
-                                    <a href="{{ route('admin.instagram.management') }}"
+                                @if (Auth::user()->hasRole('superadmin'))
+                                    <a href="{{ route('admin.superadmin.instagram-settings') }}"
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                        <i class="fab fa-instagram mr-2"></i>Instagram & Events
+                                        <i class="fab fa-instagram mr-2"></i>Instagram Settings
                                     </a>
                                 @endif
                             </div>
@@ -500,10 +500,10 @@
                                     <i class="fas fa-file-alt mr-2"></i>Page Management
                                 </a>
                             @endif
-                            @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
-                                <a href="{{ route('admin.instagram.management') }}"
+                            @if (Auth::user()->hasRole('superadmin'))
+                                <a href="{{ route('admin.superadmin.instagram-settings') }}"
                                     class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                                    <i class="fab fa-instagram mr-2"></i>Instagram & Events
+                                    <i class="fab fa-instagram mr-2"></i>Instagram Settings
                                 </a>
                             @endif
                         </div>

@@ -3,7 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InstagramController;
 use App\Http\Controllers\InstagramAnalyticsController;
-use App\Http\Controllers\InstagramManagementController;
 use App\Http\Controllers\InstagramSettingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuperadminController;
@@ -87,7 +86,7 @@ Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('admin/supera
     // User Import/Export (must be before {user} routes to avoid conflicts)
     Route::get('/users/import', [SuperadminController::class, 'importUsers'])->name('users.import');
     Route::get('/users/import/template', [SuperadminController::class, 'downloadUserTemplate'])->name('users.downloadTemplate');
-    Route::post('/users/import', [SuperadminController::class, 'processUserImport'])->name('users.processImport');
+    Route::post('/users/import', [SuperadminController::class, 'processUserImport'])->name('users.processImport')->middleware('throttle:10,1'); // Max 10 imports per minute
     Route::get('/users/export', [SuperadminController::class, 'exportUsers'])->name('users.export');
 
     // User CRUD with model binding (must be after specific routes)
@@ -166,7 +165,7 @@ Route::middleware(['auth', 'verified', 'role:guru|admin|superadmin'])->prefix('a
     // Import/Export routes (must be before resource routes)
     Route::get('/import', [GuruController::class, 'import'])->name('import');
     Route::get('/import/template', [GuruController::class, 'downloadTemplate'])->name('downloadTemplate');
-    Route::post('/import', [GuruController::class, 'processImport'])->name('processImport');
+    Route::post('/import', [GuruController::class, 'processImport'])->name('processImport')->middleware('throttle:10,1'); // Max 10 imports per minute
     Route::get('/export', [GuruController::class, 'export'])->name('export');
 
     // Subject management routes
@@ -187,7 +186,7 @@ Route::middleware(['auth', 'verified', 'role:guru|admin|superadmin'])->prefix('a
     // Import/Export routes (must be before resource routes)
     Route::get('/import', [SiswaController::class, 'import'])->name('import');
     Route::get('/import/template', [SiswaController::class, 'downloadTemplate'])->name('downloadTemplate');
-    Route::post('/import', [SiswaController::class, 'processImport'])->name('processImport');
+    Route::post('/import', [SiswaController::class, 'processImport'])->name('processImport')->middleware('throttle:10,1'); // Max 10 imports per minute
     Route::get('/export', [SiswaController::class, 'export'])->name('export');
 
     // CRUD routes
@@ -207,7 +206,7 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/
     // Calon Import/Export routes
     Route::get('/calon/import', [OSISController::class, 'importCalon'])->name('calon.import');
     Route::get('/calon/import/template', [OSISController::class, 'downloadCalonTemplate'])->name('calon.downloadTemplate');
-    Route::post('/calon/import', [OSISController::class, 'processCalonImport'])->name('calon.processImport');
+    Route::post('/calon/import', [OSISController::class, 'processCalonImport'])->name('calon.processImport')->middleware('throttle:10,1'); // Max 10 imports per minute
     Route::get('/calon/export', [OSISController::class, 'exportCalon'])->name('calon.export');
 
     Route::get('/calon', [OSISController::class, 'calonIndex'])->name('calon.index');
@@ -221,7 +220,7 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/
     // Pemilih Import/Export routes (must be before {pemilih} routes)
     Route::get('/pemilih/import', [OSISController::class, 'importPemilih'])->name('pemilih.import');
     Route::get('/pemilih/import/template', [OSISController::class, 'downloadPemilihTemplate'])->name('pemilih.downloadTemplate');
-    Route::post('/pemilih/import', [OSISController::class, 'processPemilihImport'])->name('pemilih.processImport');
+    Route::post('/pemilih/import', [OSISController::class, 'processPemilihImport'])->name('pemilih.processImport')->middleware('throttle:10,1'); // Max 10 imports per minute
     Route::get('/pemilih/export', [OSISController::class, 'exportPemilih'])->name('pemilih.export');
 
     Route::get('/pemilih', [OSISController::class, 'pemilihIndex'])->name('pemilih.index');
@@ -247,7 +246,7 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin|guru'])->prefix('a
     // Import/Export routes (must be before resource routes)
     Route::get('/import', [KelulusanController::class, 'import'])->name('import');
     Route::get('/import/template', [KelulusanController::class, 'downloadTemplate'])->name('downloadTemplate');
-    Route::post('/import', [KelulusanController::class, 'processImport'])->name('processImport');
+    Route::post('/import', [KelulusanController::class, 'processImport'])->name('processImport')->middleware('throttle:10,1'); // Max 10 imports per minute
     Route::get('/export', [KelulusanController::class, 'export'])->name('export');
     Route::get('/check', [KelulusanController::class, 'checkStatus'])->name('check');
     Route::post('/check', [KelulusanController::class, 'processCheck'])->name('check.process');
@@ -284,7 +283,7 @@ Route::middleware(['auth', 'verified', 'role:sarpras|admin|superadmin'])->prefix
     // Barang Import/Export (must be before {barang} routes to avoid conflicts)
     Route::get('/barang/import', [SarprasController::class, 'importBarang'])->name('barang.import');
     Route::get('/barang/import/template', [SarprasController::class, 'downloadBarangTemplate'])->name('barang.downloadTemplate');
-    Route::post('/barang/import', [SarprasController::class, 'processBarangImport'])->name('barang.processImport');
+    Route::post('/barang/import', [SarprasController::class, 'processBarangImport'])->name('barang.processImport')->middleware('throttle:10,1'); // Max 10 imports per minute
     Route::get('/barang/export', [SarprasController::class, 'exportBarang'])->name('barang.export');
 
     // Barang CRUD with model binding (must be after specific routes)
@@ -310,22 +309,6 @@ Route::middleware(['auth', 'verified', 'role:sarpras|admin|superadmin'])->prefix
     Route::get('/maintenance/{maintenance}/edit', [SarprasController::class, 'editMaintenance'])->name('maintenance.edit');
     Route::put('/maintenance/{maintenance}', [SarprasController::class, 'updateMaintenance'])->name('maintenance.update');
     Route::delete('/maintenance/{maintenance}', [SarprasController::class, 'destroyMaintenance'])->name('maintenance.destroy');
-});
-
-// ========================================
-// INSTAGRAM MANAGEMENT ROUTES (Admin only)
-// ========================================
-
-Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/instagram')->name('admin.instagram.')->group(function () {
-    // Instagram Management (Admin only - untuk pengaturan, bukan kegiatan publik)
-    Route::get('/management', [InstagramManagementController::class, 'index'])->name('management');
-    Route::post('/management/update-config', [InstagramManagementController::class, 'updateConfig'])->name('management.update-config');
-    Route::get('/management/test-connection', [InstagramManagementController::class, 'testConnection'])->name('management.test-connection');
-    Route::post('/management/filter-posts', [InstagramManagementController::class, 'filterPosts'])->name('management.filter-posts');
-    Route::post('/management/schedule-content', [InstagramManagementController::class, 'scheduleContent'])->name('management.schedule-content');
-    Route::get('/management/scheduled-content', [InstagramManagementController::class, 'getScheduledContent'])->name('management.scheduled-content');
-    Route::post('/management/cancel-scheduled', [InstagramManagementController::class, 'cancelScheduledContent'])->name('management.cancel-scheduled');
-    Route::get('/management/insights', [InstagramManagementController::class, 'getInsights'])->name('management.insights');
 });
 
 // Testimonials Management (Access: admin, superadmin)

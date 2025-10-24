@@ -55,18 +55,19 @@
                                             <div class="ml-3 flex-1">
                                                 <div class="flex items-center justify-between">
                                                     <div>
-                                                        <p class="text-sm font-medium text-gray-900">{{ $user->name }}</p>
+                                                        <p class="text-sm font-medium text-gray-900">{{ $user->name }}
+                                                        </p>
                                                         <p class="text-sm text-gray-500">{{ $user->email }}</p>
                                                     </div>
                                                     <div class="text-right">
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                            @if($user->user_type === 'superadmin') bg-red-100 text-red-800
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                            @if ($user->user_type === 'superadmin') bg-red-100 text-red-800
                                                             @elseif($user->user_type === 'admin') bg-blue-100 text-blue-800
                                                             @elseif($user->user_type === 'guru') bg-green-100 text-green-800
                                                             @elseif($user->user_type === 'sarpras') bg-yellow-100 text-yellow-800
                                                             @elseif($user->user_type === 'siswa') bg-purple-100 text-purple-800
-                                                            @else bg-gray-100 text-gray-800
-                                                            @endif">
+                                                            @else bg-gray-100 text-gray-800 @endif">
                                                             {{ ucfirst($user->user_type) }}
                                                         </span>
                                                     </div>
@@ -110,7 +111,8 @@
             fetch(this.action, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
@@ -126,10 +128,12 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        alert('User assignments updated successfully!');
-                        window.location.href = '{{ route('admin.roles.index') }}';
+                        showSuccess('User assignments updated successfully!');
+                        setTimeout(() => {
+                            window.location.href = '{{ route('admin.roles.index') }}';
+                        }, 1500);
                     } else {
-                        alert('Error updating user assignments: ' + data.message);
+                        showError('Error updating user assignments: ' + data.message);
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
@@ -137,7 +141,7 @@
                 .catch(error => {
                     console.error('Error:', error);
                     const errorMessage = error.message || 'Unknown error occurred';
-                    alert('Error updating user assignments: ' + errorMessage);
+                    showError('Error updating user assignments: ' + errorMessage);
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 });

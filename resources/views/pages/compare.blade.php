@@ -90,8 +90,9 @@
         <div class="mt-8 bg-white rounded-xl border border-slate-200 p-6">
             <h3 class="text-lg font-semibold text-slate-900 mb-4">Actions</h3>
             <div class="flex items-center space-x-4">
-                <form method="POST" action="{{ route('admin.pages.versions.restore', [$page, $version1]) }}" class="inline"
-                    onsubmit="return confirm('Are you sure you want to restore version {{ $version1->version_number }}?')">
+                <form method="POST" action="{{ route('admin.pages.versions.restore', [$page, $version1]) }}"
+                    class="inline"
+                    data-confirm="Are you sure you want to restore version {{ $version1->version_number }}?">
                     @csrf
                     <button type="submit" class="btn btn-primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,8 +102,9 @@
                         Restore Version {{ $version1->version_number }}
                     </button>
                 </form>
-                <form method="POST" action="{{ route('admin.pages.versions.restore', [$page, $version2]) }}" class="inline"
-                    onsubmit="return confirm('Are you sure you want to restore version {{ $version2->version_number }}?')">
+                <form method="POST" action="{{ route('admin.pages.versions.restore', [$page, $version2]) }}"
+                    class="inline"
+                    data-confirm="Are you sure you want to restore version {{ $version2->version_number }}?">
                     @csrf
                     <button type="submit" class="btn btn-secondary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

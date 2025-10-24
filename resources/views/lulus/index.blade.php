@@ -183,7 +183,7 @@
                                                     <form method="POST"
                                                         action="{{ route('admin.lulus.destroy', $kelulusan) }}"
                                                         class="inline"
-                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                        data-confirm="Apakah Anda yakin ingin menghapus data ini?">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"

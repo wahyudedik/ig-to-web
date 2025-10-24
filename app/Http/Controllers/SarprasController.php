@@ -200,6 +200,25 @@ class SarprasController extends Controller
             });
         }
 
+        // Handle AJAX request for all data (e.g., for bulk print modal)
+        if ($request->ajax() || $request->wantsJson()) {
+            if ($request->input('per_page') === 'all') {
+                $barangs = $query->orderBy('nama_barang')->get();
+                return response()->json([
+                    'success' => true,
+                    'data' => $barangs->map(function ($item) {
+                        return [
+                            'id' => $item->id,
+                            'nama_barang' => $item->nama_barang,
+                            'kode_barang' => $item->kode_barang,
+                            'kategori' => $item->kategori ? $item->kategori->nama_kategori : null,
+                            'ruang' => $item->ruang ? $item->ruang->nama_ruang : null,
+                        ];
+                    })
+                ]);
+            }
+        }
+
         $barangs = $query->orderBy('nama_barang')->paginate(15);
         $kategoris = KategoriSarpras::active()->ordered()->get();
         $ruangs = Ruang::active()->orderBy('nama_ruang')->get();
@@ -790,10 +809,18 @@ class SarprasController extends Controller
     public function generateBarcode($code)
     {
         try {
-            $barcode = DNS1DFacade::getBarcodePNG($code, 'C39+', 3, 33);
-            return response($barcode)->header('Content-Type', 'image/png');
+            // getBarcodePNG returns base64 encoded string, we need to decode it
+            $barcodeBase64 = DNS1DFacade::getBarcodePNG($code, 'C39+', 3, 33);
+            $barcodeBinary = base64_decode($barcodeBase64);
+
+            return response($barcodeBinary)
+                ->header('Content-Type', 'image/png')
+                ->header('Cache-Control', 'public, max-age=31536000');
         } catch (\Exception $e) {
-            return response('Barcode generation failed', 500);
+            \Log::error('Barcode generation failed: ' . $e->getMessage());
+
+            // Return a simple error image
+            return response()->view('errors.barcode-error', ['message' => 'Barcode generation failed'], 500);
         }
     }
 
@@ -803,10 +830,18 @@ class SarprasController extends Controller
     public function generateQRCode($code)
     {
         try {
-            $qrCode = DNS2DFacade::getBarcodePNG($code, 'QRCODE', 10, 10);
-            return response($qrCode)->header('Content-Type', 'image/png');
+            // getBarcodePNG returns base64 encoded string, we need to decode it
+            $qrCodeBase64 = DNS2DFacade::getBarcodePNG($code, 'QRCODE', 10, 10);
+            $qrCodeBinary = base64_decode($qrCodeBase64);
+
+            return response($qrCodeBinary)
+                ->header('Content-Type', 'image/png')
+                ->header('Cache-Control', 'public, max-age=31536000');
         } catch (\Exception $e) {
-            return response('QR Code generation failed', 500);
+            \Log::error('QR Code generation failed: ' . $e->getMessage());
+
+            // Return a simple error image
+            return response()->view('errors.barcode-error', ['message' => 'QR Code generation failed'], 500);
         }
     }
 
@@ -915,32 +950,40 @@ class SarprasController extends Controller
         // Create sample data for template
         $sampleData = [
             [
-                'nama' => 'Laptop Dell Inspiron',
+                'nama_barang' => 'Laptop Dell Inspiron',
                 'kode_barang' => 'LPT-001',
                 'kategori' => 'Elektronik',
                 'ruang' => 'Lab Komputer',
-                'jumlah' => '1',
+                'lokasi' => 'Gedung A Lantai 2',
+                'merk' => 'Dell',
+                'model' => 'Inspiron 15 3000',
+                'serial_number' => 'SN123456789',
                 'kondisi' => 'baik',
-                'status' => 'aktif',
-                'harga' => '5000000',
+                'status' => 'tersedia',
+                'harga_beli' => '5000000',
                 'tanggal_pembelian' => '2024-01-15',
-                'supplier' => 'PT Teknologi',
+                'sumber_dana' => 'BOS',
                 'deskripsi' => 'Laptop untuk pembelajaran komputer',
+                'catatan' => 'Perlu upgrade RAM',
                 'barcode' => '',
                 'qr_code' => ''
             ],
             [
-                'nama' => 'Meja Guru',
+                'nama_barang' => 'Meja Guru',
                 'kode_barang' => 'MJG-001',
                 'kategori' => 'Furnitur',
                 'ruang' => 'Ruang Guru',
-                'jumlah' => '1',
+                'lokasi' => 'Gedung B Lantai 1',
+                'merk' => 'Olympic',
+                'model' => 'Classic Wood',
+                'serial_number' => '',
                 'kondisi' => 'baik',
-                'status' => 'aktif',
-                'harga' => '800000',
+                'status' => 'tersedia',
+                'harga_beli' => '800000',
                 'tanggal_pembelian' => '2024-02-01',
-                'supplier' => 'CV Furniture',
+                'sumber_dana' => 'Dana Komite',
                 'deskripsi' => 'Meja kerja untuk guru',
+                'catatan' => '',
                 'barcode' => '',
                 'qr_code' => ''
             ]
@@ -963,17 +1006,21 @@ class SarprasController extends Controller
             public function headings(): array
             {
                 return [
-                    'nama',
+                    'nama_barang',
                     'kode_barang',
                     'kategori',
                     'ruang',
-                    'jumlah',
+                    'lokasi',
+                    'merk',
+                    'model',
+                    'serial_number',
                     'kondisi',
                     'status',
-                    'harga',
+                    'harga_beli',
                     'tanggal_pembelian',
-                    'supplier',
+                    'sumber_dana',
                     'deskripsi',
+                    'catatan',
                     'barcode',
                     'qr_code'
                 ];
@@ -982,26 +1029,32 @@ class SarprasController extends Controller
             public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
             {
                 return [
-                    1 => ['font' => ['bold' => true]],
+                    1 => ['font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']], 'fill' => ['fillType' => 'solid', 'color' => ['rgb' => '4472C4']]],
+                    2 => ['fill' => ['fillType' => 'solid', 'color' => ['rgb' => 'E7E6E6']]],
+                    3 => ['fill' => ['fillType' => 'solid', 'color' => ['rgb' => 'F2F2F2']]],
                 ];
             }
 
             public function columnWidths(): array
             {
                 return [
-                    'A' => 25,
-                    'B' => 15,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 10,
-                    'F' => 15,
-                    'G' => 15,
-                    'H' => 15,
-                    'I' => 15,
-                    'J' => 20,
-                    'K' => 30,
-                    'L' => 15,
-                    'M' => 15
+                    'A' => 30,  // nama_barang
+                    'B' => 15,  // kode_barang
+                    'C' => 20,  // kategori
+                    'D' => 20,  // ruang
+                    'E' => 25,  // lokasi
+                    'F' => 15,  // merk
+                    'G' => 20,  // model
+                    'H' => 20,  // serial_number
+                    'I' => 12,  // kondisi
+                    'J' => 12,  // status
+                    'K' => 15,  // harga_beli
+                    'L' => 18,  // tanggal_pembelian
+                    'M' => 20,  // sumber_dana
+                    'N' => 35,  // deskripsi
+                    'O' => 25,  // catatan
+                    'P' => 18,  // barcode
+                    'Q' => 18   // qr_code
                 ];
             }
         };

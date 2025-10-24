@@ -42,15 +42,23 @@ class GuruImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErro
             // Create user account if email provided
             $userId = null;
             if (!empty($row['email'])) {
-                $user = User::create([
-                    'name' => trim($row['nama_lengkap']),
-                    'email' => trim($row['email']),
-                    'password' => Hash::make($row['password'] ?? 'password123'),
-                    'user_type' => 'guru',
-                    'email_verified_at' => now(),
-                    'is_verified_by_admin' => true,
-                ]);
-                $userId = $user->id;
+                // Check if email already exists
+                $existingUser = User::where('email', trim($row['email']))->first();
+
+                if ($existingUser) {
+                    Log::warning("Skipping user creation, email already exists: {$row['email']}");
+                    $userId = $existingUser->id; // Link to existing user
+                } else {
+                    $user = User::create([
+                        'name' => trim($row['nama_lengkap']),
+                        'email' => trim($row['email']),
+                        'password' => Hash::make($row['password'] ?? 'password123'),
+                        'user_type' => 'guru',
+                        'email_verified_at' => now(),
+                        'is_verified_by_admin' => true,
+                    ]);
+                    $userId = $user->id;
+                }
             }
 
             // Convert mata_pelajaran string to array

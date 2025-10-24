@@ -77,16 +77,35 @@
     </div>
 
     @foreach ($barangs as $barang)
+        <!-- Barcode Linear (Garis-garis) -->
         <div class="barcode-label">
-            <div class="item-name">{{ $barang->nama }}</div>
+            <div class="item-name">{{ $barang->nama_barang }}</div>
 
             <img src="{{ $barang->barcode_image_url }}" alt="Barcode" class="barcode-image">
 
             <div class="barcode-code">{{ $barang->barcode }}</div>
 
             <div class="item-info">
-                <div><strong>Kategori:</strong> {{ $barang->kategori->nama ?? 'N/A' }}</div>
-                <div><strong>Ruang:</strong> {{ $barang->ruang->nama ?? 'N/A' }}</div>
+                <div><strong>Kode:</strong> {{ $barang->kode_barang }}</div>
+                <div><strong>Kategori:</strong> {{ $barang->kategori->nama_kategori ?? 'N/A' }}</div>
+                <div><strong>Ruang:</strong> {{ $barang->ruang->nama_ruang ?? 'N/A' }}</div>
+                <div><strong>Kondisi:</strong> {{ $barang->kondisi_display }}</div>
+                <div><strong>Status:</strong> {{ $barang->status }}</div>
+            </div>
+        </div>
+
+        <!-- QR Code (Kotak) -->
+        <div class="barcode-label">
+            <div class="item-name">{{ $barang->nama_barang }}</div>
+
+            <img src="{{ $barang->qr_code_image_url }}" alt="QR Code" class="barcode-image">
+
+            <div class="barcode-code">{{ $barang->qr_code }}</div>
+
+            <div class="item-info">
+                <div><strong>Kode:</strong> {{ $barang->kode_barang }}</div>
+                <div><strong>Kategori:</strong> {{ $barang->kategori->nama_kategori ?? 'N/A' }}</div>
+                <div><strong>Ruang:</strong> {{ $barang->ruang->nama_ruang ?? 'N/A' }}</div>
                 <div><strong>Kondisi:</strong> {{ $barang->kondisi_display }}</div>
                 <div><strong>Status:</strong> {{ $barang->status }}</div>
             </div>

@@ -53,8 +53,8 @@
                                         View
                                     </a>
                                     <form method="POST"
-                                        action="{{ route('admin.pages.versions.restore', [$page, $version]) }}" class="inline"
-                                        onsubmit="return confirm('Are you sure you want to restore this version?')">
+                                        action="{{ route('admin.pages.versions.restore', [$page, $version]) }}"
+                                        class="inline" data-confirm="Are you sure you want to restore this version?">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-primary">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"

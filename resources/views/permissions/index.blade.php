@@ -193,7 +193,7 @@
                                             </a>
                                             <form action="{{ route('admin.permissions.destroy', $permission) }}"
                                                 method="POST" class="inline"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus permission ini?')">
+                                                data-confirm="Apakah Anda yakin ingin menghapus permission ini?">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-600 hover:text-red-900">

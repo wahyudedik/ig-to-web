@@ -270,9 +270,8 @@
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Edit Data
                         </a>
-                        <form method="POST" action="{{ route('admin.siswa.destroy', $siswa) }}"
-                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini?')"
-                            class="inline">
+                        <form method="POST" action="{{ route('admin.siswa.destroy', $siswa) }}" class="inline"
+                            data-confirm="Apakah Anda yakin ingin menghapus data siswa ini?">
                             @csrf
                             @method('DELETE')
                             <button type="submit"

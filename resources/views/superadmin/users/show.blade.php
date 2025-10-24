@@ -175,7 +175,7 @@
                         </a>
                         @if ($user->user_type !== 'superadmin')
                             <form method="POST" action="{{ route('superadmin.users.destroy', $user) }}"
-                                onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                data-confirm="Are you sure you want to delete this user?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"

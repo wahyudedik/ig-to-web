@@ -152,7 +152,7 @@
 
                                 <form action="{{ route('admin.notifications.delete', $notification->id) }}"
                                     method="POST" class="inline"
-                                    onsubmit="return confirm('Are you sure you want to delete this notification?')">
+                                    data-confirm="Are you sure you want to delete this notification?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"

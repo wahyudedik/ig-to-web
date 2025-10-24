@@ -165,8 +165,7 @@
                 <!-- Submit Button -->
                 @if ($calon->count() > 0)
                     <div class="flex items-center justify-center pt-6 border-t border-slate-200">
-                        <button type="submit" class="btn btn-primary btn-lg"
-                            onclick="return confirm('Apakah Anda yakin dengan pilihan Anda? Setelah memilih, Anda tidak dapat mengubah pilihan.')">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="confirmVote()">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -196,4 +195,15 @@
             </div>
         @endif
     </div>
+
+    <script>
+        function confirmVote() {
+            showConfirm(
+                'Apakah Anda yakin dengan pilihan Anda? Setelah memilih, Anda tidak dapat mengubah pilihan.',
+                () => {
+                    document.querySelector('form').submit();
+                }
+            );
+        }
+    </script>
 </x-app-layout>

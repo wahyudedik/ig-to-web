@@ -956,11 +956,11 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex justify-between">
-                    <form action="{{ route('admin.settings.landing-page.reset') }}" method="POST" class="inline">
+                    <form action="{{ route('admin.settings.landing-page.reset') }}" method="POST" class="inline"
+                        data-confirm="Apakah Anda yakin ingin mengembalikan semua setting ke default? Tindakan ini tidak dapat dibatalkan.">
                         @csrf
                         <button type="submit"
-                            class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            onclick="return confirm('Apakah Anda yakin ingin mengembalikan semua setting ke default? Tindakan ini tidak dapat dibatalkan.')">
+                            class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
                             <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -989,7 +989,7 @@
         document.getElementById('hero_images').addEventListener('change', function(e) {
             const files = e.target.files;
             if (files.length > 5) {
-                alert('Maksimal 5 gambar untuk hero carousel');
+                showError('Maksimal 5 gambar untuk hero carousel');
                 e.target.value = '';
                 return;
             }

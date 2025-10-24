@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\CalonImport;
 use App\Exports\CalonExport;
+use App\Imports\PemilihImport;
+use App\Exports\PemilihExport;
 
 class OSISController extends Controller
 {
@@ -826,5 +828,192 @@ class OSISController extends Controller
             return redirect()->route('admin.osis.pemilih.index')
                 ->with('error', 'Terjadi kesalahan saat membuat pemilih: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Show import form for pemilih.
+     */
+    public function importPemilih()
+    {
+        return view('osis.pemilih.import');
+    }
+
+    /**
+     * Download template Excel for pemilih import.
+     */
+    public function downloadPemilihTemplate()
+    {
+        // Create sample data for template
+        $sampleData = [
+            [
+                'nama' => 'Ahmad Rizki',
+                'email' => 'ahmad.rizki@email.com',
+                'user_type' => 'siswa',
+                'jenis_kelamin' => 'L',
+                'kelas_jabatan' => 'XII IPA 1',
+                'status' => 'active',
+            ],
+            [
+                'nama' => 'Siti Nurhaliza',
+                'email' => 'siti.nurhaliza@email.com',
+                'user_type' => 'siswa',
+                'jenis_kelamin' => 'P',
+                'kelas_jabatan' => 'XI IPS 2',
+                'status' => 'active',
+            ],
+            [
+                'nama' => 'Dr. Budi Santoso, S.Pd',
+                'email' => 'budi.santoso@email.com',
+                'user_type' => 'guru',
+                'jenis_kelamin' => 'L',
+                'kelas_jabatan' => 'Wali Kelas XII',
+                'status' => 'active',
+            ],
+        ];
+
+        $templateExport = new class($sampleData) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $data;
+
+            public function __construct($data)
+            {
+                $this->data = $data;
+            }
+
+            public function array(): array
+            {
+                return $this->data;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'nama',
+                    'email',
+                    'user_type',
+                    'jenis_kelamin',
+                    'kelas_jabatan',
+                    'status'
+                ];
+            }
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => ['font' => ['bold' => true]],
+                ];
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 30,
+                    'B' => 30,
+                    'C' => 15,
+                    'D' => 15,
+                    'E' => 25,
+                    'F' => 12,
+                ];
+            }
+        };
+
+        return Excel::download($templateExport, 'template-import-pemilih.xlsx');
+    }
+
+    /**
+     * Process pemilih import.
+     */
+    public function processPemilihImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            // Get file info for logging
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+
+            Log::info("Starting pemilih import process", [
+                'file_name' => $fileName,
+                'file_size' => $fileSize,
+                'user_id' => Auth::id()
+            ]);
+
+            // Create import instance
+            $import = new PemilihImport();
+
+            // Import the file
+            Excel::import($import, $file);
+
+            // Get import results
+            $importedCount = $import->getRowCount() ?? 0;
+            $errors = $import->errors();
+            $failures = $import->failures();
+
+            Log::info("Pemilih import completed", [
+                'imported_count' => $importedCount,
+                'errors_count' => count($errors),
+                'failures_count' => count($failures)
+            ]);
+
+            // Prepare success message with details
+            $message = "Data pemilih berhasil diimpor!";
+            $details = [];
+
+            if ($importedCount > 0) {
+                $details[] = "Berhasil mengimpor {$importedCount} pemilih";
+            }
+
+            if (count($failures) > 0) {
+                $details[] = count($failures) . " pemilih gagal diimpor (cek log untuk detail)";
+            }
+
+            if (count($errors) > 0) {
+                $details[] = count($errors) . " pemilih memiliki error validasi";
+            }
+
+            if (!empty($details)) {
+                $message .= " (" . implode(', ', $details) . ")";
+            }
+
+            return redirect()->route('admin.osis.pemilih.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            Log::error("Pemilih import failed", [
+                'error' => $e->getMessage(),
+                'file' => $request->file('file')->getClientOriginalName(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export pemilih data.
+     */
+    public function exportPemilih(Request $request)
+    {
+        $query = Pemilih::with('user');
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('user_type') && $request->user_type !== '') {
+            $query->where('user_type', $request->user_type);
+        }
+
+        if ($request->has('has_voted') && $request->has_voted !== '') {
+            $hasVoted = $request->has_voted === '1' || $request->has_voted === 'yes';
+            $query->where('has_voted', $hasVoted);
+        }
+
+        $pemilihs = $query->get();
+
+        return Excel::download(new PemilihExport($pemilihs), 'pemilih-osis-' . date('Y-m-d') . '.xlsx');
     }
 }

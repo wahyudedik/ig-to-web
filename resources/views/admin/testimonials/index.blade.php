@@ -286,7 +286,7 @@
                                                         <form method="POST"
                                                             action="{{ route('admin.testimonials.destroy', $testimonial) }}"
                                                             class="inline"
-                                                            onsubmit="return confirm('Are you sure you want to delete this testimonial?')">
+                                                            data-confirm="Are you sure you want to delete this testimonial?">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="text-red-600 hover:text-red-900"
@@ -404,8 +404,8 @@
                 <
                 p class = "text-gray-900 bg-gray-50 rounded p-3" > $ {
                     testimonial.testimonial
-                } < /p> <
-                /div>
+                } < /p> < /
+                div >
 
                 <
                 !--Status-- >
@@ -420,40 +420,40 @@
                     testimonial.is_featured ?
                         '<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">Featured</span>' : ''
                 } <
-                /div> <
-                /div>
+                /div> < /
+                div >
                 `;
-                                        } else {
+                                            } else {
+                                                document.getElementById('testimonialContent').innerHTML = ` <
+                div class = "text-center py-8" >
+                <
+                i class = "fas fa-exclamation-triangle text-2xl text-red-400 mb-4" > < /i> <
+                p class = "text-red-500" > Error loading testimonial details < /p> < /
+                div >
+                `;
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
                                             document.getElementById('testimonialContent').innerHTML = ` <
                 div class = "text-center py-8" >
                 <
                 i class = "fas fa-exclamation-triangle text-2xl text-red-400 mb-4" > < /i> <
-                p class = "text-red-500" > Error loading testimonial details < /p> <
-                /div>
+                p class = "text-red-500" > Error loading testimonial details < /p> < /
+                div >
                 `;
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        document.getElementById('testimonialContent').innerHTML = ` <
-                div class = "text-center py-8" >
-                <
-                i class = "fas fa-exclamation-triangle text-2xl text-red-400 mb-4" > < /i> <
-                p class = "text-red-500" > Error loading testimonial details < /p> <
-                /div>
-                `;
-                                    });
-                            }
-
-                            function closeModal() {
-                                document.getElementById('testimonialModal').classList.add('hidden');
-                            }
-
-                            // Close modal when clicking outside
-                            document.getElementById('testimonialModal').addEventListener('click', function(e) {
-                                if (e.target === this) {
-                                    closeModal();
+                                        });
                                 }
-                            });
+
+                                function closeModal() {
+                                    document.getElementById('testimonialModal').classList.add('hidden');
+                                }
+
+                                // Close modal when clicking outside
+                                document.getElementById('testimonialModal').addEventListener('click', function(e) {
+                                    if (e.target === this) {
+                                        closeModal();
+                                    }
+                                });
     </script>
 </x-app-layout>

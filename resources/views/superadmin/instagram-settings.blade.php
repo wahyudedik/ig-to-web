@@ -272,12 +272,13 @@
                     const userId = document.getElementById('user_id').value;
 
                     if (!accessToken || !userId) {
-                        showNotification('Please fill in Access Token and User ID first', 'error');
+                        showError('Please fill in Access Token and User ID first');
                         return;
                     }
 
                     testBtn.disabled = true;
                     testBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+                    showLoading();
 
                     fetch('{{ route('admin.superadmin.instagram-settings.test-connection') }}', {
                             method: 'POST',
@@ -293,14 +294,20 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            showNotification(data.message, data.success ? 'success' : 'error');
-                            if (data.success && data.account_info) {
-                                showAccountInfo(data.account_info);
+                            closeLoading();
+                            if (data.success) {
+                                showSuccess(data.message);
+                                if (data.account_info) {
+                                    showAccountInfo(data.account_info);
+                                }
+                            } else {
+                                showError(data.message);
                             }
                         })
                         .catch(error => {
+                            closeLoading();
                             console.error('Error:', error);
-                            showNotification('Connection test failed', 'error');
+                            showError('Connection test failed');
                         })
                         .finally(() => {
                             testBtn.disabled = false;
@@ -314,6 +321,7 @@
 
                     saveBtn.disabled = true;
                     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+                    showLoading();
 
                     const formData = new FormData(form);
 
@@ -327,14 +335,19 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            showNotification(data.message, data.success ? 'success' : 'error');
+                            closeLoading();
                             if (data.success) {
-                                setTimeout(() => location.reload(), 2000);
+                                showSuccess(data.message).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                showError(data.message);
                             }
                         })
                         .catch(error => {
+                            closeLoading();
                             console.error('Error:', error);
-                            showNotification('Failed to save settings', 'error');
+                            showError('Failed to save settings');
                         })
                         .finally(() => {
                             saveBtn.disabled = false;
@@ -347,6 +360,7 @@
                     syncBtn.addEventListener('click', function() {
                         syncBtn.disabled = true;
                         syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Syncing...';
+                        showLoading();
 
                         fetch('{{ route('admin.superadmin.instagram-settings.sync') }}', {
                                 method: 'POST',
@@ -357,14 +371,19 @@
                             })
                             .then(response => response.json())
                             .then(data => {
-                                showNotification(data.message, data.success ? 'success' : 'error');
+                                closeLoading();
                                 if (data.success) {
-                                    setTimeout(() => location.reload(), 2000);
+                                    showSuccess(data.message).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    showError(data.message);
                                 }
                             })
                             .catch(error => {
+                                closeLoading();
                                 console.error('Error:', error);
-                                showNotification('Sync failed', 'error');
+                                showError('Sync failed');
                             })
                             .finally(() => {
                                 syncBtn.disabled = false;
@@ -376,60 +395,65 @@
                 // Deactivate
                 if (deactivateBtn) {
                     deactivateBtn.addEventListener('click', function() {
-                        if (confirm('Are you sure you want to deactivate Instagram integration?')) {
-                            deactivateBtn.disabled = true;
-                            deactivateBtn.innerHTML =
-                                '<i class="fas fa-spinner fa-spin mr-2"></i>Deactivating...';
+                        showConfirm(
+                            'Konfirmasi',
+                            'Apakah Anda yakin ingin menonaktifkan integrasi Instagram?',
+                            'Ya, Nonaktifkan',
+                            'Batal'
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                deactivateBtn.disabled = true;
+                                deactivateBtn.innerHTML =
+                                    '<i class="fas fa-spinner fa-spin mr-2"></i>Deactivating...';
 
-                            fetch('{{ route('admin.superadmin.instagram-settings.deactivate') }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                            .getAttribute('content')
-                                    }
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    showNotification(data.message, data.success ? 'success' : 'error');
-                                    if (data.success) {
-                                        setTimeout(() => location.reload(), 2000);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    showNotification('Deactivation failed', 'error');
-                                })
-                                .finally(() => {
-                                    deactivateBtn.disabled = false;
-                                    deactivateBtn.innerHTML =
-                                        '<i class="fas fa-power-off mr-2"></i>Deactivate';
-                                });
-                        }
+                                fetch('{{ route('admin.superadmin.instagram-settings.deactivate') }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': document.querySelector(
+                                                    'meta[name="csrf-token"]')
+                                                .getAttribute('content')
+                                        }
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            showSuccess(data.message).then(() => {
+                                                location.reload();
+                                            });
+                                        } else {
+                                            showError(data.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        showError('Deactivation failed');
+                                    })
+                                    .finally(() => {
+                                        deactivateBtn.disabled = false;
+                                        deactivateBtn.innerHTML =
+                                            '<i class="fas fa-power-off mr-2"></i>Deactivate';
+                                    });
+                            }
+                        });
                     });
                 }
 
                 // Reset Form
                 resetBtn.addEventListener('click', function() {
-                    if (confirm('Are you sure you want to reset the form?')) {
-                        form.reset();
-                    }
+                    showConfirm(
+                        'Konfirmasi',
+                        'Apakah Anda yakin ingin mereset form?',
+                        'Ya, Reset',
+                        'Batal'
+                    ).then((result) => {
+                        if (result.isConfirmed) {
+                            form.reset();
+                            showSuccess('Form berhasil direset');
+                        }
+                    });
                 });
 
                 // Helper functions
-                function showNotification(message, type) {
-                    const notification = document.createElement('div');
-                    notification.className = `fixed top-20 right-4 z-50 px-6 py-3 rounded-lg text-white ${
-                    type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-yellow-500'
-                }`;
-                    notification.textContent = message;
-
-                    document.body.appendChild(notification);
-
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 5000);
-                }
-
                 function showAccountInfo(accountInfo) {
                     const modal = document.createElement('div');
                     modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';

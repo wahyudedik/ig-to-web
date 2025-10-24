@@ -13,10 +13,10 @@
                     </svg>
                     Tambah Pemilih
                 </a>
-                <form action="{{ route('admin.osis.pemilih.generate-from-users') }}" method="POST" class="inline">
+                <form action="{{ route('admin.osis.pemilih.generate-from-users') }}" method="POST" class="inline"
+                    data-confirm="Apakah Anda yakin ingin membuat pemilih dari data guru dan siswa yang sudah ada?">
                     @csrf
-                    <button type="submit" class="btn btn-success"
-                        onclick="return confirm('Apakah Anda yakin ingin membuat pemilih dari data guru dan siswa yang sudah ada?')">
+                    <button type="submit" class="btn btn-success">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -24,6 +24,41 @@
                         Generate Pemilih
                     </button>
                 </form>
+
+                <!-- Import/Export Dropdown -->
+                <div class="relative inline-block">
+                    <button type="button" onclick="toggleDropdown('importExportDropdown')"
+                        class="btn btn-secondary flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                        </svg>
+                        Import/Export
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="importExportDropdown"
+                        class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-10">
+                        <a href="{{ route('admin.osis.pemilih.import') }}"
+                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-t-lg">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Import Data
+                        </a>
+                        <a href="{{ route('admin.osis.pemilih.export', request()->query()) }}"
+                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-b-lg">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Export Data
+                        </a>
+                    </div>
+                </div>
+
                 <a href="{{ route('admin.osis.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -118,7 +153,8 @@
 
         <!-- Filters and Search -->
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <form method="GET" action="{{ route('admin.osis.pemilih.index') }}" class="flex flex-col sm:flex-row gap-4">
+            <form method="GET" action="{{ route('admin.osis.pemilih.index') }}"
+                class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}"
                         placeholder="Cari nama pemilih..." class="form-input">
@@ -234,7 +270,7 @@
                                         </a>
                                         <form method="POST" action="{{ route('admin.osis.pemilih.destroy', $p) }}"
                                             class="inline"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus pemilih ini?')">
+                                            data-confirm="Apakah Anda yakin ingin menghapus pemilih ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-700">
@@ -273,4 +309,26 @@
             @endif
         </div>
     </div>
+
+    <script>
+        // Dropdown toggle
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdowns = ['importExportDropdown'];
+            dropdowns.forEach(id => {
+                const dropdown = document.getElementById(id);
+                const button = event.target.closest('button');
+                if (dropdown && !dropdown.contains(event.target) && (!button || button.getAttribute(
+                            'onclick') !==
+                        `toggleDropdown('${id}')`)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </x-app-layout>

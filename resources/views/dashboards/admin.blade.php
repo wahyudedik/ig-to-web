@@ -344,16 +344,20 @@
                                     </a>
                                 @endif
 
-                                <a href="{{ route('admin.instagram.management') }}"
-                                    class="flex items-center p-3 rounded-lg hover:bg-slate-50 transition-colors">
-                                    <div class="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center mr-3">
-                                        <svg class="w-4 h-4 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297zm7.718-1.297c-.875.807-2.026 1.297-3.323 1.297s-2.448-.49-3.323-1.297c-.807-.875-1.297-2.026-1.297-3.323s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323z" />
-                                        </svg>
-                                    </div>
-                                    <span class="text-sm font-medium text-slate-900">Kelola Instagram</span>
-                                </a>
+                                @if (Auth::user()->hasRole('superadmin'))
+                                    <a href="{{ route('admin.superadmin.instagram-settings') }}"
+                                        class="flex items-center p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                                        <div
+                                            class="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center mr-3">
+                                            <svg class="w-4 h-4 text-pink-600" fill="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path
+                                                    d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297zm7.718-1.297c-.875.807-2.026 1.297-3.323 1.297s-2.448-.49-3.323-1.297c-.807-.875-1.297-2.026-1.297-3.323s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323z" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm font-medium text-slate-900">Kelola Instagram</span>
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>

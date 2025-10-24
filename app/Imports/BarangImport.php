@@ -32,14 +32,14 @@ class BarangImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnEr
         $existing = Barang::where('kode_barang', $row['kode_barang'])->first();
 
         if ($existing) {
-            Log::info("Skipping duplicate kode_barang: {$row['kode_barang']} for {$row['nama']}");
+            Log::info("Skipping duplicate kode_barang: {$row['kode_barang']} for {$row['nama_barang']}");
             return null;
         }
 
         // Find kategori by name
         $kategoriId = null;
         if (!empty($row['kategori'])) {
-            $kategori = KategoriSarpras::where('nama', trim($row['kategori']))->first();
+            $kategori = KategoriSarpras::where('nama_kategori', trim($row['kategori']))->first();
             if ($kategori) {
                 $kategoriId = $kategori->id;
             } else {
@@ -50,7 +50,7 @@ class BarangImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnEr
         // Find ruang by name
         $ruangId = null;
         if (!empty($row['ruang'])) {
-            $ruang = Ruang::where('nama', trim($row['ruang']))->first();
+            $ruang = Ruang::where('nama_ruang', trim($row['ruang']))->first();
             if ($ruang) {
                 $ruangId = $ruang->id;
             } else {
@@ -68,24 +68,34 @@ class BarangImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnEr
             }
         }
 
+        // Parse harga_beli - handle formatted input (e.g., "Rp 450.000")
+        $hargaBeli = 0;
+        if (!empty($row['harga_beli'])) {
+            $hargaBeli = (float) preg_replace('/[^0-9.]/', '', $row['harga_beli']);
+        }
+
         // Generate barcode and QR code if not provided
-        $barcode = !empty($row['barcode']) ? trim($row['barcode']) : 'BAR-' . str_pad($this->rowCount + 1, 6, '0', STR_PAD_LEFT);
-        $qrCode = !empty($row['qr_code']) ? trim($row['qr_code']) : 'QR-' . str_pad($this->rowCount + 1, 6, '0', STR_PAD_LEFT);
+        $barcode = !empty($row['barcode']) ? trim($row['barcode']) : null;
+        $qrCode = !empty($row['qr_code']) ? trim($row['qr_code']) : null;
 
         $this->rowCount++;
 
         return new Barang([
-            'nama' => trim($row['nama']),
+            'nama_barang' => trim($row['nama_barang']),
             'kode_barang' => trim($row['kode_barang']),
             'kategori_id' => $kategoriId,
             'ruang_id' => $ruangId,
-            'jumlah' => !empty($row['jumlah']) ? (int)$row['jumlah'] : 1,
+            'lokasi' => !empty($row['lokasi']) ? trim($row['lokasi']) : null,
+            'merk' => !empty($row['merk']) ? trim($row['merk']) : null,
+            'model' => !empty($row['model']) ? trim($row['model']) : null,
+            'serial_number' => !empty($row['serial_number']) ? trim($row['serial_number']) : null,
             'kondisi' => !empty($row['kondisi']) ? trim($row['kondisi']) : 'baik',
-            'status' => !empty($row['status']) ? trim($row['status']) : 'aktif',
-            'harga' => !empty($row['harga']) ? (float)$row['harga'] : 0,
+            'status' => !empty($row['status']) ? trim($row['status']) : 'tersedia',
+            'harga_beli' => $hargaBeli,
             'tanggal_pembelian' => $tanggalPembelian,
-            'supplier' => !empty($row['supplier']) ? trim($row['supplier']) : null,
+            'sumber_dana' => !empty($row['sumber_dana']) ? trim($row['sumber_dana']) : null,
             'deskripsi' => !empty($row['deskripsi']) ? trim($row['deskripsi']) : null,
+            'catatan' => !empty($row['catatan']) ? trim($row['catatan']) : null,
             'barcode' => $barcode,
             'qr_code' => $qrCode,
         ]);
@@ -97,17 +107,21 @@ class BarangImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnEr
     public function rules(): array
     {
         return [
-            '*.nama' => 'required|string|max:255',
+            '*.nama_barang' => 'required|string|max:255',
             '*.kode_barang' => 'required|string|max:50',
-            '*.jumlah' => 'nullable|integer|min:1',
-            '*.kondisi' => 'nullable|in:baik,rusak_ringan,rusak_berat,hilang',
-            '*.status' => 'nullable|in:aktif,tidak_aktif,maintenance',
             '*.kategori' => 'nullable|string|max:255',
             '*.ruang' => 'nullable|string|max:255',
-            '*.harga' => 'nullable|numeric|min:0',
+            '*.lokasi' => 'nullable|string|max:255',
+            '*.merk' => 'nullable|string|max:100',
+            '*.model' => 'nullable|string|max:100',
+            '*.serial_number' => 'nullable|string|max:100',
+            '*.kondisi' => 'nullable|in:baik,rusak,hilang',
+            '*.status' => 'nullable|in:tersedia,dipinjam,rusak,hilang',
+            '*.harga_beli' => 'nullable|numeric|min:0',
             '*.tanggal_pembelian' => 'nullable|date',
-            '*.supplier' => 'nullable|string|max:255',
+            '*.sumber_dana' => 'nullable|string|max:255',
             '*.deskripsi' => 'nullable|string',
+            '*.catatan' => 'nullable|string',
             '*.barcode' => 'nullable|string|max:255',
             '*.qr_code' => 'nullable|string|max:255',
         ];

@@ -37,13 +37,17 @@ class BarangExport implements FromCollection, WithHeadings, WithMapping, WithSty
             'Kode Barang',
             'Kategori',
             'Ruang',
-            'Jumlah',
+            'Lokasi',
+            'Merk',
+            'Model',
+            'Serial Number',
             'Kondisi',
             'Status',
-            'Harga',
+            'Harga Beli',
             'Tanggal Pembelian',
-            'Supplier',
+            'Sumber Dana',
             'Deskripsi',
+            'Catatan',
             'Barcode',
             'QR Code',
             'Created At',
@@ -58,19 +62,23 @@ class BarangExport implements FromCollection, WithHeadings, WithMapping, WithSty
     public function map($barang): array
     {
         return [
-            $barang->nama,
-            $barang->kode_barang,
-            $barang->kategori->nama ?? '',
-            $barang->ruang->nama ?? '',
-            $barang->jumlah,
-            $barang->kondisi,
-            $barang->status,
-            $barang->harga,
+            $barang->nama_barang ?? '',
+            $barang->kode_barang ?? '',
+            $barang->kategori->nama_kategori ?? '',
+            $barang->ruang->nama_ruang ?? '',
+            $barang->lokasi ?? '',
+            $barang->merk ?? '',
+            $barang->model ?? '',
+            $barang->serial_number ?? '',
+            $barang->kondisi ?? '',
+            $barang->status ?? '',
+            $barang->harga_beli ? 'Rp ' . number_format($barang->harga_beli, 0, ',', '.') : '',
             $barang->tanggal_pembelian ? $barang->tanggal_pembelian->format('Y-m-d') : '', // @phpstan-ignore-line
-            $barang->supplier,
-            $barang->deskripsi,
-            $barang->barcode,
-            $barang->qr_code,
+            $barang->sumber_dana ?? '',
+            $barang->deskripsi ?? '',
+            $barang->catatan ?? '',
+            $barang->barcode ?? '',
+            $barang->qr_code ?? '',
             $barang->created_at?->format('Y-m-d H:i:s'),
             $barang->updated_at?->format('Y-m-d H:i:s'),
         ];
@@ -93,21 +101,25 @@ class BarangExport implements FromCollection, WithHeadings, WithMapping, WithSty
     public function columnWidths(): array
     {
         return [
-            'A' => 25,
-            'B' => 15,
-            'C' => 20,
-            'D' => 20,
-            'E' => 10,
-            'F' => 15,
-            'G' => 15,
-            'H' => 15,
-            'I' => 15,
-            'J' => 20,
-            'K' => 30,
-            'L' => 15,
-            'M' => 15,
-            'N' => 20,
-            'O' => 20,
+            'A' => 30,  // Nama Barang
+            'B' => 15,  // Kode Barang
+            'C' => 20,  // Kategori
+            'D' => 20,  // Ruang
+            'E' => 20,  // Lokasi
+            'F' => 15,  // Merk
+            'G' => 15,  // Model
+            'H' => 20,  // Serial Number
+            'I' => 12,  // Kondisi
+            'J' => 12,  // Status
+            'K' => 18,  // Harga Beli
+            'L' => 18,  // Tanggal Pembelian
+            'M' => 20,  // Sumber Dana
+            'N' => 35,  // Deskripsi
+            'O' => 25,  // Catatan
+            'P' => 18,  // Barcode
+            'Q' => 18,  // QR Code
+            'R' => 20,  // Created At
+            'S' => 20,  // Updated At
         ];
     }
 }

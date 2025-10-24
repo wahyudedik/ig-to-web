@@ -285,4 +285,35 @@
             </div>
         </div>
     </div>
+
+    <!-- Session Flash Messages -->
+    @if (session('success'))
+        <script>
+            const successKey = 'osis_index_success_' + '{{ md5(session('success') . time()) }}';
+            if (!sessionStorage.getItem(successKey)) {
+                showSuccess('{{ session('success') }}');
+                sessionStorage.setItem(successKey, 'shown');
+            }
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'osis_index_error_' + '{{ md5(session('error') . time()) }}';
+            if (!sessionStorage.getItem(errorKey)) {
+                showError('{{ session('error') }}');
+                sessionStorage.setItem(errorKey, 'shown');
+            }
+        </script>
+    @endif
+
+    @if (session('info'))
+        <script>
+            const infoKey = 'osis_index_info_' + '{{ md5(session('info') . time()) }}';
+            if (!sessionStorage.getItem(infoKey)) {
+                showAlert('Info', '{{ session('info') }}', 'info');
+                sessionStorage.setItem(infoKey, 'shown');
+            }
+        </script>
+    @endif
 </x-app-layout>

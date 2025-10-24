@@ -164,4 +164,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Session Flash Messages -->
+    @if (session('success'))
+        <script>
+            const successKey = 'osis_analytics_success_' + '{{ md5(session('success') . time()) }}';
+            if (!sessionStorage.getItem(successKey)) {
+                showSuccess('{{ session('success') }}');
+                sessionStorage.setItem(successKey, 'shown');
+            }
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'osis_analytics_error_' + '{{ md5(session('error') . time()) }}';
+            if (!sessionStorage.getItem(errorKey)) {
+                showError('{{ session('error') }}');
+                sessionStorage.setItem(errorKey, 'shown');
+            }
+        </script>
+    @endif
 </x-app-layout>

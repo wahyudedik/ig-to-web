@@ -5,13 +5,49 @@
                 <h1 class="text-2xl font-bold text-slate-900">Data Calon OSIS</h1>
                 <p class="text-slate-600 mt-1">Kelola data calon ketua dan wakil OSIS</p>
             </div>
-            <a href="{{ route('admin.osis.calon.create') }}" class="btn btn-primary">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Tambah Calon
-            </a>
+            <div class="flex items-center space-x-2">
+                <!-- Import/Export Dropdown -->
+                <div class="relative inline-block">
+                    <button type="button" onclick="toggleDropdown('importExportDropdown')"
+                        class="btn btn-secondary flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                        </svg>
+                        Import/Export
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="importExportDropdown"
+                        class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-10">
+                        <a href="{{ route('admin.osis.calon.import') }}"
+                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-t-lg">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Import Data
+                        </a>
+                        <a href="{{ route('admin.osis.calon.export', request()->query()) }}"
+                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-b-lg">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Export Data
+                        </a>
+                    </div>
+                </div>
+
+                <a href="{{ route('admin.osis.calon.create') }}" class="btn btn-primary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Tambah Calon
+                </a>
+            </div>
         </div>
     </x-slot>
 
@@ -45,8 +81,15 @@
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama calon..."
                         class="form-input">
                 </div>
-                <div class="flex items-end">
-                    <button type="submit" class="btn btn-primary w-full">Filter</button>
+                <div class="flex items-end space-x-2">
+                    <button type="submit" class="btn btn-primary flex-1">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        Cari
+                    </button>
+                    <a href="{{ route('admin.osis.calon.index') }}" class="btn btn-secondary">Reset</a>
                 </div>
             </form>
         </div>
@@ -80,8 +123,10 @@
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <a href="{{ route('admin.osis.calon.show', $calon) }}" class="btn btn-secondary text-sm">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="{{ route('admin.osis.calon.show', $calon) }}"
+                                    class="btn btn-secondary text-sm">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -89,15 +134,17 @@
                                     </svg>
                                     Lihat
                                 </a>
-                                <a href="{{ route('admin.osis.calon.edit', $calon) }}" class="btn btn-secondary text-sm">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="{{ route('admin.osis.calon.edit', $calon) }}"
+                                    class="btn btn-secondary text-sm">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
                                     Edit
                                 </a>
-                                <form method="POST" action="{{ route('admin.osis.calon.destroy', $calon) }}" class="inline"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus calon ini?')">
+                                <form method="POST" action="{{ route('admin.osis.calon.destroy', $calon) }}"
+                                    class="inline" data-confirm="Apakah Anda yakin ingin menghapus calon ini?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger text-sm">
@@ -139,4 +186,56 @@
             @endif
         </div>
     </div>
+
+    @if (session('success'))
+        <script>
+            const successKey = 'calon_alert_' + '{{ md5(session('success') . time()) }}';
+            if (!sessionStorage.getItem(successKey)) {
+                showSuccess('{{ session('success') }}');
+                sessionStorage.setItem(successKey, 'shown');
+            }
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            const errorKey = 'calon_alert_' + '{{ md5(session('error') . time()) }}';
+            if (!sessionStorage.getItem(errorKey)) {
+                showError('{{ session('error') }}');
+                sessionStorage.setItem(errorKey, 'shown');
+            }
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            const errorsKey = 'calon_errors_' + '{{ md5(json_encode($errors->all()) . time()) }}';
+            if (!sessionStorage.getItem(errorsKey)) {
+                showError('{{ $errors->first() }}');
+                sessionStorage.setItem(errorsKey, 'shown');
+            }
+        </script>
+    @endif
+
+    <script>
+        // Dropdown toggle
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdowns = ['importExportDropdown'];
+            dropdowns.forEach(id => {
+                const dropdown = document.getElementById(id);
+                const button = event.target.closest('button');
+                if (dropdown && !dropdown.contains(event.target) && (!button || button.getAttribute(
+                            'onclick') !==
+                        `toggleDropdown('${id}')`)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </x-app-layout>

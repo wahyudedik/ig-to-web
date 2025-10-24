@@ -438,8 +438,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Untuk bantuan dan pertanyaan:
 - **Email**: support@sekolah.com
-- **Documentation**: [Wiki Repository](https://github.com/your-username/ig-to-web/wiki)
-- **Issues**: [GitHub Issues](https://github.com/your-username/ig-to-web/issues)
+- **Documentation**: [Wiki Repository](https://github.com/wahyudedik/ig-to-web/wiki)
+- **Issues**: [GitHub Issues](https://github.com/wahyudedik/ig-to-web/issues)
 
 ## 🎯 Roadmap & Future Enhancements
 
@@ -1092,4 +1092,4 @@ free -m
 
 Dibuat dengan ❤️ untuk kemajuan pendidikan Indonesia
 
-© 2024 IG to Web. All rights reserved.
+© 2025 IG to Web. All rights reserved.

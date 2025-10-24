@@ -385,7 +385,7 @@
         function generateAllBarcodes() {
             showConfirm(
                 'Konfirmasi',
-                'Apakah Anda yakin ingin generate barcode untuk semua barang?',
+                'Apakah Anda yakin ingin generate barcode untuk semua barang yang belum memiliki barcode?',
                 'Ya, Generate',
                 'Batal'
             ).then((result) => {
@@ -403,9 +403,11 @@
                         .then(data => {
                             closeLoading();
                             if (data.success) {
-                                showSuccess(data.message).then(() => {
+                                showSuccess(data.message);
+                                // Reload after 1 second
+                                setTimeout(() => {
                                     location.reload();
-                                });
+                                }, 1000);
                             } else {
                                 showError('Error: ' + data.message);
                             }
@@ -427,46 +429,122 @@
         }
 
         function showBulkPrintModal() {
-            // Create a simple modal for bulk print selection
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
-            modal.innerHTML = `
-                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                    <div class="mt-3">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Bulk Print Barcodes</h3>
-                        <p class="text-sm text-gray-600 mb-4">Pilih barang yang akan di-print barcodenya:</p>
-                        <div class="space-y-2 max-h-60 overflow-y-auto">
-                            @foreach ($barangs as $item)
-                                <label class="flex items-center">
-                                    <input type="checkbox" value="{{ $item->id }}" class="mr-2">
-                                    <span class="text-sm">{{ $item->nama_barang }} ({{ $item->kode_barang }})</span>
-                                </label>
-                            @endforeach
+            // Fetch all available barang via AJAX for selection
+            showLoading();
+
+            fetch('{{ route('admin.sarpras.barang.index') }}?per_page=all', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    closeLoading();
+
+                    const barangList = data.data || [];
+
+                    if (barangList.length === 0) {
+                        showError('Tidak ada barang tersedia');
+                        return;
+                    }
+
+                    // Create modal
+                    const modal = document.createElement('div');
+                    modal.id = 'bulkPrintModal';
+                    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+
+                    let checkboxesHtml = '';
+                    barangList.forEach(item => {
+                        checkboxesHtml += `
+                            <label class="flex items-center hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="${item.id}" class="mr-2 bulk-print-checkbox">
+                                <span class="text-sm">${item.nama_barang} (${item.kode_barang})</span>
+                            </label>
+                        `;
+                    });
+
+                    modal.innerHTML = `
+                        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                            <div class="mt-3">
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Bulk Print Barcodes</h3>
+                                <p class="text-sm text-gray-600 mb-4">Pilih barang yang akan di-print barcodenya:</p>
+                                <div class="mb-3">
+                                    <label class="flex items-center text-sm font-medium text-blue-600 cursor-pointer hover:text-blue-700">
+                                        <input type="checkbox" id="selectAllBarcodes" class="mr-2">
+                                        Pilih Semua
+                                    </label>
+                                </div>
+                                <div class="space-y-1 max-h-60 overflow-y-auto border rounded p-2">
+                                    ${checkboxesHtml}
+                                </div>
+                                <div class="flex justify-end space-x-3 mt-4">
+                                    <button onclick="closeBulkPrintModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                        Batal
+                                    </button>
+                                    <button onclick="processBulkPrint()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                        Print Selected
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex justify-end space-x-3 mt-4">
-                            <button onclick="closeBulkPrintModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                                Batal
-                            </button>
-                            <button onclick="processBulkPrint()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                Print Selected
-                            </button>
+                    `;
+
+                    document.body.appendChild(modal);
+
+                    // Add select all functionality
+                    document.getElementById('selectAllBarcodes').addEventListener('change', function(e) {
+                        const checkboxes = document.querySelectorAll('.bulk-print-checkbox');
+                        checkboxes.forEach(cb => cb.checked = e.target.checked);
+                    });
+                })
+                .catch(error => {
+                    closeLoading();
+                    console.error('Error fetching barang:', error);
+
+                    // Fallback: use current page data
+                    const modal = document.createElement('div');
+                    modal.id = 'bulkPrintModal';
+                    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+
+                    modal.innerHTML = `
+                        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                            <div class="mt-3">
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Bulk Print Barcodes</h3>
+                                <p class="text-sm text-gray-600 mb-4">Pilih barang dari halaman ini:</p>
+                                <div class="space-y-2 max-h-60 overflow-y-auto">
+                                    @foreach ($barangs as $item)
+                                        <label class="flex items-center">
+                                            <input type="checkbox" value="{{ $item->id }}" class="mr-2 bulk-print-checkbox">
+                                            <span class="text-sm">{{ $item->nama_barang }} ({{ $item->kode_barang }})</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                                <div class="flex justify-end space-x-3 mt-4">
+                                    <button onclick="closeBulkPrintModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                        Batal
+                                    </button>
+                                    <button onclick="processBulkPrint()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                        Print Selected
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
+                    `;
+                    document.body.appendChild(modal);
+                });
         }
 
         function closeBulkPrintModal() {
-            const modal = document.querySelector('.fixed.inset-0.bg-gray-600');
+            const modal = document.getElementById('bulkPrintModal');
             if (modal) {
                 modal.remove();
             }
         }
 
         function processBulkPrint() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-            const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+            const checkboxes = document.querySelectorAll('.bulk-print-checkbox:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => cb.value).filter(id => id); // Filter empty values
 
             if (selectedIds.length === 0) {
                 showError('Pilih minimal satu barang untuk di-print');
