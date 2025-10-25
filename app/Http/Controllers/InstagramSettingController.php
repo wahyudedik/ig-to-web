@@ -16,38 +16,56 @@ class InstagramSettingController extends Controller
      */
     public function index(Request $request)
     {
+        // Get latest settings from database (if any)
         $settings = InstagramSetting::latest()->first();
 
-        // Capture access_token from URL parameter OR session flash (OAuth redirect)
-        $urlAccessToken = $request->query('access_token') ?? session('oauth_access_token');
-        $urlUserId = $request->query('user_id') ?? session('oauth_user_id');
+        // Capture OAuth data from session flash (OAuth redirect)
+        $urlAccessToken = session('oauth_access_token');
+        $urlUserId = session('oauth_user_id');
+        $urlPermissions = session('oauth_permissions');
+        $urlExpiresIn = session('oauth_expires_in');
 
-        // Load defaults from .env if no settings exist
-        $envDefaults = [
-            'app_id' => config('services.instagram.app_id'),
-            'app_secret' => config('services.instagram.app_secret'),
-            'access_token' => config('services.instagram.access_token'),
-            'user_id' => config('services.instagram.user_id'),
-            'webhook_verify_token' => config('services.instagram.webhook_verify_token', 'mySchoolWebhook2025'),
-        ];
+        // Generate Instagram Business Login authorization URL
+        $authorizationUrl = app(\App\Services\InstagramService::class)->getAuthorizationUrl();
 
-        // Debug logging
-        Log::info('Instagram Settings Page Loaded', [
-            'has_url_token' => !empty($urlAccessToken),
-            'token_length' => $urlAccessToken ? strlen($urlAccessToken) : 0,
-            'has_url_user_id' => !empty($urlUserId),
-            'url_user_id' => $urlUserId,
-            'has_settings' => !empty($settings),
-            'settings_active' => $settings ? $settings->is_active : false,
-            'env_defaults' => [
-                'has_app_id' => !empty($envDefaults['app_id']),
-                'has_app_secret' => !empty($envDefaults['app_secret']),
-                'has_access_token' => !empty($envDefaults['access_token']),
-                'has_user_id' => !empty($envDefaults['user_id']),
-            ]
-        ]);
+        return view('superadmin.instagram-settings', compact(
+            'settings',
+            'urlAccessToken',
+            'urlUserId',
+            'urlPermissions',
+            'urlExpiresIn',
+            'authorizationUrl'
+        ));
+    }
 
-        return view('superadmin.instagram-settings', compact('settings', 'urlAccessToken', 'urlUserId', 'envDefaults'));
+    /**
+     * Generate Instagram Business Login authorization URL
+     * Returns URL for OAuth flow
+     */
+    public function getAuthorizationUrl()
+    {
+        try {
+            $instagramService = app(\App\Services\InstagramService::class);
+            $authUrl = $instagramService->getAuthorizationUrl();
+
+            if (!$authUrl) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to generate authorization URL. Please configure App ID first.'
+                ], 400);
+            }
+
+            return response()->json([
+                'success' => true,
+                'authorization_url' => $authUrl
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Generate authorization URL error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

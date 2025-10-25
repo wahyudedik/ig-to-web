@@ -302,4 +302,426 @@ class InstagramService
             return null;
         }
     }
+
+    /**
+     * Refresh long-lived access token
+     * Instagram Platform API: Tokens expire in 60 days and can be refreshed
+     * 
+     * @see https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login/get-started#step-5--get-a-long-lived-token
+     */
+    public function refreshLongLivedToken()
+    {
+        try {
+            $settings = InstagramSetting::active()->first();
+
+            if (!$settings || !$settings->access_token) {
+                Log::error('Cannot refresh token: No active Instagram settings found');
+                return false;
+            }
+
+            // Exchange short-lived token for long-lived token
+            // For Instagram Platform API with Instagram Login
+            $response = Http::timeout(30)->get($this->baseUrl . '/refresh_access_token', [
+                'grant_type' => 'ig_refresh_token',
+                'access_token' => $settings->access_token
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Update token and expiry
+                $settings->update([
+                    'access_token' => $data['access_token'],
+                    'token_expires_at' => now()->addSeconds($data['expires_in'] ?? 5184000) // 60 days default
+                ]);
+
+                Log::info('Instagram token refreshed successfully', [
+                    'expires_in' => $data['expires_in'] ?? 5184000,
+                    'new_expiry' => $settings->token_expires_at->format('Y-m-d H:i:s')
+                ]);
+
+                return true;
+            }
+
+            Log::error('Failed to refresh Instagram token', [
+                'status' => $response->status(),
+                'error' => $response->json()
+            ]);
+
+            return false;
+        } catch (\Exception $e) {
+            Log::error('Instagram token refresh error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * STEP 1: Generate Instagram Business Login Authorization URL
+     * 
+     * IMPORTANT: New scopes required by January 27, 2025
+     * Old scopes (business_basic, etc.) will be deprecated!
+     * 
+     * New scopes:
+     * - instagram_business_basic (required)
+     * - instagram_business_content_publish
+     * - instagram_business_manage_messages
+     * - instagram_business_manage_comments
+     * 
+     * @param array $scopes List of permissions to request
+     * @param string|null $state Optional CSRF protection state
+     * @return string|false Authorization URL or false on failure
+     */
+    public function getAuthorizationUrl($scopes = null, $state = null)
+    {
+        try {
+            $settings = InstagramSetting::active()->first();
+
+            if (!$settings || !$settings->app_id) {
+                Log::error('Cannot generate authorization URL: App ID not configured');
+                return false;
+            }
+
+            // Default scopes using NEW Instagram Business Login scopes
+            if (empty($scopes)) {
+                $scopes = [
+                    'instagram_business_basic',
+                    'instagram_business_content_publish',
+                    'instagram_business_manage_comments',
+                    'instagram_business_manage_messages'
+                ];
+            }
+
+            $params = [
+                'client_id' => $settings->app_id,
+                'redirect_uri' => route('instagram.callback'),
+                'response_type' => 'code',
+                'scope' => implode(',', $scopes)
+            ];
+
+            // Add state for CSRF protection
+            if ($state) {
+                $params['state'] = $state;
+            }
+
+            $authUrl = 'https://www.instagram.com/oauth/authorize?' . http_build_query($params);
+
+            Log::info('Generated Instagram Business Login authorization URL', [
+                'scopes' => $scopes,
+                'has_state' => !empty($state)
+            ]);
+
+            return $authUrl;
+
+        } catch (\Exception $e) {
+            Log::error('Error generating Instagram authorization URL: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * STEP 2: Exchange authorization code for short-lived access token
+     * 
+     * Called after user authorizes and Meta redirects with code
+     * Authorization code is valid for 1 hour and can only be used once
+     * 
+     * @param string $code Authorization code from redirect
+     * @return array|false Token data or false on failure
+     */
+    public function exchangeCodeForToken($code)
+    {
+        try {
+            $settings = InstagramSetting::active()->first();
+
+            if (!$settings || !$settings->app_id || !$settings->app_secret) {
+                Log::error('Cannot exchange code: App credentials not configured');
+                return false;
+            }
+
+            // POST to Instagram OAuth endpoint
+            $response = Http::asForm()->timeout(30)->post('https://api.instagram.com/oauth/access_token', [
+                'client_id' => $settings->app_id,
+                'client_secret' => $settings->app_secret,
+                'grant_type' => 'authorization_code',
+                'redirect_uri' => route('instagram.callback'),
+                'code' => $code
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Response format: { "data": [{ "access_token": "...", "user_id": "...", "permissions": "..." }] }
+                $tokenData = $data['data'][0] ?? $data;
+
+                Log::info('✅ Instagram authorization code exchanged successfully', [
+                    'has_access_token' => !empty($tokenData['access_token']),
+                    'has_user_id' => !empty($tokenData['user_id']),
+                    'permissions' => $tokenData['permissions'] ?? 'none'
+                ]);
+
+                return [
+                    'access_token' => $tokenData['access_token'],
+                    'user_id' => $tokenData['user_id'],
+                    'permissions' => $tokenData['permissions'] ?? '',
+                    'token_type' => 'bearer'
+                ];
+            }
+
+            Log::error('❌ Failed to exchange Instagram authorization code', [
+                'status' => $response->status(),
+                'error' => $response->json()
+            ]);
+
+            return false;
+
+        } catch (\Exception $e) {
+            Log::error('Instagram code exchange error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * STEP 3: Exchange short-lived token for long-lived token
+     * 
+     * Short-lived token: Valid for 1 hour
+     * Long-lived token: Valid for 60 days
+     * Initial token exchange (1 hour -> 60 days)
+     * 
+     * @param string $shortLivedToken Short-lived access token
+     * @return array|null Token data or null on failure
+     */
+    public function exchangeForLongLivedToken($shortLivedToken)
+    {
+        try {
+            $settings = InstagramSetting::active()->first();
+
+            if (!$settings || !$settings->app_secret) {
+                Log::error('Cannot exchange token: App secret not configured');
+                return null;
+            }
+
+            $response = Http::timeout(30)->get('https://graph.instagram.com/access_token', [
+                'grant_type' => 'ig_exchange_token',
+                'client_secret' => $settings->app_secret,
+                'access_token' => $shortLivedToken
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                Log::info('✅ Instagram token exchanged for long-lived token', [
+                    'expires_in' => $data['expires_in'] ?? 0,
+                    'token_type' => $data['token_type'] ?? 'bearer'
+                ]);
+
+                return [
+                    'access_token' => $data['access_token'],
+                    'token_type' => $data['token_type'] ?? 'bearer',
+                    'expires_in' => $data['expires_in'] ?? 5184000 // 60 days
+                ];
+            }
+
+            Log::error('❌ Failed to exchange for long-lived token', [
+                'status' => $response->status(),
+                'error' => $response->json()
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Token exchange error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Publish single photo to Instagram
+     * Requires instagram_content_publish permission
+     * 
+     * @param string $imageUrl Public image URL
+     * @param string $caption Post caption
+     * @return array|null Media creation result
+     */
+    public function publishPhoto($imageUrl, $caption = '')
+    {
+        try {
+            if (empty($this->accessToken) || empty($this->userId)) {
+                return null;
+            }
+
+            // Step 1: Create media container
+            $response = Http::timeout(30)->post($this->baseUrl . "/{$this->userId}/media", [
+                'image_url' => $imageUrl,
+                'caption' => $caption,
+                'access_token' => $this->accessToken
+            ]);
+
+            if (!$response->successful()) {
+                Log::error('Failed to create media container', [
+                    'status' => $response->status(),
+                    'error' => $response->json()
+                ]);
+                return null;
+            }
+
+            $containerId = $response->json()['id'];
+
+            // Step 2: Publish media container
+            $publishResponse = Http::timeout(30)->post($this->baseUrl . "/{$this->userId}/media_publish", [
+                'creation_id' => $containerId,
+                'access_token' => $this->accessToken
+            ]);
+
+            if ($publishResponse->successful()) {
+                Log::info('Instagram photo published successfully', [
+                    'media_id' => $publishResponse->json()['id']
+                ]);
+                return $publishResponse->json();
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Instagram publish photo error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get comments on a media post
+     * Requires instagram_manage_comments permission
+     */
+    public function getMediaComments($mediaId)
+    {
+        try {
+            if (empty($this->accessToken)) {
+                return null;
+            }
+
+            $response = Http::timeout(15)->get($this->baseUrl . "/{$mediaId}/comments", [
+                'fields' => 'id,text,username,timestamp,like_count,replies{id,text,username}',
+                'access_token' => $this->accessToken
+            ]);
+
+            if ($response->successful()) {
+                return $response->json()['data'] ?? [];
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Instagram get comments error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Reply to a comment
+     * Requires instagram_manage_comments permission
+     */
+    public function replyToComment($commentId, $message)
+    {
+        try {
+            if (empty($this->accessToken)) {
+                return null;
+            }
+
+            $response = Http::timeout(15)->post($this->baseUrl . "/{$commentId}/replies", [
+                'message' => $message,
+                'access_token' => $this->accessToken
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Instagram reply comment error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Delete a comment
+     * Requires instagram_manage_comments permission
+     */
+    public function deleteComment($commentId)
+    {
+        try {
+            if (empty($this->accessToken)) {
+                return false;
+            }
+
+            $response = Http::timeout(15)->delete($this->baseUrl . "/{$commentId}", [
+                'access_token' => $this->accessToken
+            ]);
+
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error('Instagram delete comment error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Hide/Unhide a comment
+     * Requires instagram_manage_comments permission
+     */
+    public function toggleCommentVisibility($commentId, $hide = true)
+    {
+        try {
+            if (empty($this->accessToken)) {
+                return false;
+            }
+
+            $response = Http::timeout(15)->post($this->baseUrl . "/{$commentId}", [
+                'hide' => $hide,
+                'access_token' => $this->accessToken
+            ]);
+
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error('Instagram toggle comment visibility error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Check rate limit status
+     * Instagram Platform: Calls within 24 hours = 4800 * Number of Impressions
+     * 
+     * @return array Rate limit info
+     */
+    public function getRateLimitStatus()
+    {
+        try {
+            // This would typically come from response headers: X-App-Usage, X-Business-Use-Case-Usage
+            // For now, return cached value
+            return Cache::get('instagram_rate_limit', [
+                'calls_made' => 0,
+                'calls_remaining' => 4800,
+                'reset_time' => now()->addHours(24)
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Instagram rate limit check error: ' . $e->getMessage());
+            return [
+                'calls_made' => 0,
+                'calls_remaining' => 4800,
+                'reset_time' => now()->addHours(24)
+            ];
+        }
+    }
+
+    /**
+     * Check if we're approaching rate limit
+     */
+    public function isApproachingRateLimit()
+    {
+        $status = $this->getRateLimitStatus();
+
+        if (!$status) {
+            return false;
+        }
+
+        $percentageUsed = ($status['calls_made'] / ($status['calls_made'] + $status['calls_remaining'])) * 100;
+
+        return $percentageUsed > 80; // 80% threshold
+    }
 }

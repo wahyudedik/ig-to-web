@@ -11,342 +11,446 @@
      <?php $__env->slot('header', null, []); ?> 
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">
-                    <i class="fab fa-instagram mr-2"
+                <h1 class="text-3xl font-bold text-slate-900 flex items-center">
+                    <i class="fab fa-instagram mr-3"
                         style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-                    Instagram Settings
+                    Instagram Integration
                 </h1>
-                <p class="text-slate-600 mt-1">Configure Instagram API integration for social media feed</p>
+                <p class="text-slate-500 mt-1.5 text-sm">Manage your Instagram feed connection</p>
             </div>
-            <div class="flex items-center space-x-2">
-                <a href="<?php echo e(route('docs.instagram-setup')); ?>" class="btn btn-secondary">
-                    <i class="fas fa-book mr-2"></i>
-                    Setup Guide
+            <div class="flex items-center gap-2">
+                <a href="<?php echo e(route('docs.instagram-setup')); ?>"
+                    class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                    <i class="fas fa-book mr-2 text-slate-500"></i>
+                    Guide
                 </a>
-                <a href="<?php echo e(route('public.kegiatan')); ?>" class="btn btn-secondary">
-                    <i class="fas fa-images mr-2"></i>
-                    View Feed
-                </a>
-                <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Dashboard
+                <a href="<?php echo e(route('public.kegiatan')); ?>"
+                    class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                    <i class="fas fa-images mr-2 text-slate-500"></i>
+                    Feed
                 </a>
             </div>
         </div>
      <?php $__env->endSlot(); ?>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Current Status -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6 mb-8">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <div
-                        class="w-12 h-12 <?php echo e($settings && $settings->is_active ? 'bg-green-100' : 'bg-red-100'); ?> rounded-lg flex items-center justify-center">
-                        <div
-                            class="status-indicator <?php echo e($settings && $settings->is_active ? 'status-active' : 'status-inactive'); ?>">
-                        </div>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-slate-900">
-                            Instagram Integration Status
-                        </h3>
-                        <p class="text-sm text-slate-600">
-                            <?php if($settings && $settings->is_active): ?>
-                                <span class="font-medium text-green-600">Active</span>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Status Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+            <div class="px-6 py-5 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <?php if($settings && $settings->is_active): ?>
+                            <div class="relative">
+                                <div
+                                    class="w-14 h-14 bg-gradient-to-br from-green-50 to-green-100 rounded-xl flex items-center justify-center">
+                                    <i class="fab fa-instagram text-2xl text-green-600"></i>
+                                </div>
+                                <div
+                                    class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white status-pulse">
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="text-lg font-semibold text-slate-900">Connected</h3>
+                                    <?php if($settings->account_type): ?>
+                                        <span
+                                            class="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-medium rounded-md">
+                                            <?php echo e($settings->account_type); ?>
+
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                                 <?php if($settings->username): ?>
-                                    - Connected as <span class="font-medium">{{ $settings - > username }}</span>
+                                    <p class="text-sm text-slate-600">{{ $settings - > username }}</p>
                                 <?php endif; ?>
-                                <?php if($settings->account_type): ?>
-                                    <span
-                                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 ml-2">
-                                        <?php echo e($settings->account_type); ?>
+                                <p class="text-xs text-slate-400 mt-0.5">
+                                    Last sync:
+                                    <?php echo e($settings->last_sync ? $settings->last_sync->diffForHumans() : 'Never'); ?>
 
-                                    </span>
-                                <?php endif; ?>
-                                <br>
-                                <span class="text-xs">Last sync:
-                                    <?php echo e($settings->last_sync ? $settings->last_sync->diffForHumans() : 'Never'); ?></span>
-                            <?php else: ?>
-                                Inactive - No Instagram integration configured
-                            <?php endif; ?>
-                        </p>
-
-                        <?php if($settings && $settings->is_active && $settings->token_expires_at): ?>
-                            <?php if($settings->isTokenExpired()): ?>
-                                <div class="mt-2 flex items-center text-red-600 text-xs">
-                                    <i class="fas fa-exclamation-triangle mr-1"></i>
-                                    Token expired on <?php echo e($settings->token_expires_at->format('M d, Y')); ?>. Please update
-                                    your access token.
-                                </div>
-                            <?php elseif($settings->isTokenExpiringSoon()): ?>
-                                <div class="mt-2 flex items-center text-orange-600 text-xs">
-                                    <i class="fas fa-exclamation-circle mr-1"></i>
-                                    Token will expire on <?php echo e($settings->token_expires_at->format('M d, Y')); ?>. Consider
-                                    refreshing soon.
-                                </div>
-                            <?php else: ?>
-                                <div class="mt-2 flex items-center text-green-600 text-xs">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    Token valid until <?php echo e($settings->token_expires_at->format('M d, Y')); ?>
-
-                                </div>
-                            <?php endif; ?>
+                                </p>
+                            </div>
+                        <?php else: ?>
+                            <div class="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center">
+                                <i class="fab fa-instagram text-2xl text-slate-300"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-900">Not Connected</h3>
+                                <p class="text-sm text-slate-500">Configure Instagram integration below</p>
+                            </div>
                         <?php endif; ?>
                     </div>
-                </div>
-                <div class="flex space-x-3">
+
                     <?php if($settings && $settings->is_active): ?>
-                        <button id="syncBtn" class="btn btn-success">
-                            <i class="fas fa-sync-alt mr-2"></i>
-                            Sync Now
-                        </button>
-                        <button id="deactivateBtn" class="btn btn-danger">
-                            <i class="fas fa-power-off mr-2"></i>
-                            Deactivate
-                        </button>
+                        <div class="flex gap-2">
+                            <button id="syncBtn"
+                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                                <i class="fas fa-sync-alt mr-2"></i>
+                                Sync
+                            </button>
+                            <button id="deactivateBtn"
+                                class="inline-flex items-center px-4 py-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-sm font-medium rounded-lg transition-colors">
+                                <i class="fas fa-power-off mr-2"></i>
+                                Disconnect
+                            </button>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
+
+            <?php if($settings && $settings->is_active && $settings->token_expires_at): ?>
+                <div
+                    class="px-6 py-3 <?php echo e($settings->isTokenExpired() ? 'bg-red-50' : ($settings->isTokenExpiringSoon() ? 'bg-amber-50' : 'bg-green-50')); ?>">
+                    <div class="flex items-center text-sm">
+                        <?php if($settings->isTokenExpired()): ?>
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                            <span class="text-red-700">Token expired on
+                                <?php echo e($settings->token_expires_at->format('M d, Y')); ?> - Please update your access
+                                token</span>
+                        <?php elseif($settings->isTokenExpiringSoon()): ?>
+                            <i class="fas fa-exclamation-circle text-amber-500 mr-2"></i>
+                            <span class="text-amber-700">Token expires on
+                                <?php echo e($settings->token_expires_at->format('M d, Y')); ?> - Consider refreshing</span>
+                        <?php else: ?>
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span class="text-green-700">Token valid until
+                                <?php echo e($settings->token_expires_at->format('M d, Y')); ?></span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
 
-        <!-- Settings Form -->
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
-            <h3 class="text-lg font-semibold text-slate-900 mb-6">Instagram API Configuration</h3>
+        <form id="instagramSettingsForm" class="space-y-4">
+            <?php if($urlAccessToken): ?>
+                <!-- Success Alert -->
+                <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                    <div class="flex gap-3">
+                        <i class="fas fa-check-circle text-green-600 text-lg mt-0.5"></i>
+                        <div class="text-sm">
+                            <p class="font-semibold text-green-900 mb-1">Access Token Retrieved</p>
+                            <p class="text-green-700">Now enter your <strong>User ID</strong>, test the connection, then
+                                save.</p>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
 
-            <form id="instagramSettingsForm" class="space-y-6">
-                <!-- API Credentials -->
+            <!-- Info Alert -->
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                <div class="flex gap-3">
+                    <i class="fas fa-info-circle text-blue-600 text-lg mt-0.5"></i>
+                    <div class="text-sm">
+                        <p class="font-semibold text-blue-900 mb-1">Using Instagram Business Login (Updated Jan 2025)
+                        </p>
+                        <p class="text-blue-700">Use Instagram Business Login with new scopes or enter credentials
+                            manually.
+                            <a href="<?php echo e(route('docs.instagram-setup')); ?>"
+                                class="underline font-semibold hover:text-blue-900">View setup guide</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-                <?php if($urlAccessToken): ?>
-                    <!-- OAuth Success Alert -->
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                        <div class="flex items-start">
-                            <i class="fas fa-check-circle text-green-600 mt-0.5 mr-3"></i>
-                            <div class="text-sm text-green-800">
-                                <p class="font-medium mb-1">✅ Access Token Berhasil Didapatkan!</p>
-                                <p>Sekarang masukkan <strong>User ID</strong> (Instagram Account ID seperti
-                                    17841428646148329 yang tertera di Meta Dashboard), lalu klik <strong>Test
-                                        Connection</strong> untuk verifikasi, kemudian <strong>Save Settings</strong>.
+            <!-- NEW: Quick Setup with OAuth -->
+            <?php if($authorizationUrl && !($settings && $settings->is_active)): ?>
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200 p-6">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-bolt text-white text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">
+                                <i class="fas fa-sparkles text-purple-500 mr-1"></i>
+                                Quick Setup (Recommended)
+                            </h3>
+                            <p class="text-sm text-slate-700 mb-4">
+                                Authorize with Instagram Business Login to automatically get your 60-day access token.
+                                This is the easiest way to connect your Instagram Professional account.
+                            </p>
+
+                            <div class="flex flex-wrap items-center gap-3">
+                                <a href="<?php echo e($authorizationUrl); ?>"
+                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all transform hover:scale-105 shadow-lg">
+                                    <i class="fab fa-instagram text-xl mr-2"></i>
+                                    Connect with Instagram
+                                </a>
+
+                                <button type="button"
+                                    onclick="document.getElementById('manualSetup').scrollIntoView({behavior: 'smooth'})"
+                                    class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors">
+                                    <i class="fas fa-keyboard mr-2"></i>
+                                    Or enter manually
+                                </button>
+                            </div>
+
+                            <div class="mt-4 p-3 bg-white/50 rounded-lg border border-purple-200">
+                                <p class="text-xs text-slate-600">
+                                    <i class="fas fa-shield-alt text-purple-600 mr-1"></i>
+                                    <strong>New scopes (Jan 27, 2025 update):</strong> instagram_business_basic,
+                                    instagram_business_content_publish, instagram_business_manage_comments,
+                                    instagram_business_manage_messages
                                 </p>
                             </div>
                         </div>
                     </div>
-                <?php endif; ?>
+                </div>
+            <?php endif; ?>
 
-                <!-- Info Alert -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                    <div class="flex items-start">
-                        <i class="fas fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
-                        <div class="text-sm text-blue-800">
-                            <p class="font-medium mb-1">Instagram Platform API dengan Instagram Login</p>
-                            <p>Dapatkan Access Token dan User ID dari <strong>Instagram Platform API</strong> (bukan
-                                Basic Display API).
-                                Lihat <a href="<?php echo e(route('docs.instagram-setup')); ?>" class="underline font-medium">Setup
-                                    Guide</a> untuk panduan lengkap.</p>
+            <?php if($urlPermissions): ?>
+                <!-- OAuth Success Info -->
+                <div class="bg-green-50 rounded-xl p-4 border-2 border-green-200">
+                    <div class="flex gap-3">
+                        <i class="fas fa-check-circle text-green-600 text-xl mt-0.5"></i>
+                        <div class="text-sm flex-1">
+                            <p class="font-bold text-green-900 mb-2">Authorization Successful!</p>
+                            <p class="text-green-700 mb-2">Permissions granted: <code
+                                    class="bg-white px-2 py-1 rounded text-xs"><?php echo e($urlPermissions); ?></code></p>
+                            <?php if($urlExpiresIn): ?>
+                                <p class="text-green-700">Token valid for: <strong><?php echo e(floor($urlExpiresIn / 86400)); ?>
+
+                                        days</strong></p>
+                            <?php endif; ?>
+                            <p class="text-green-800 font-semibold mt-3">
+                                <i class="fas fa-arrow-down mr-1"></i>
+                                Now click "Test Connection" below, then "Save Settings"
+                            </p>
                         </div>
                     </div>
                 </div>
+            <?php endif; ?>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div id="manualSetup"></div>
+
+            <!-- Card 1: Required Credentials -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center gap-3 mb-4">
+                    <span
+                        class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">1</span>
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-900">Required Credentials</h3>
+                        <p class="text-xs text-slate-500">Access token and user ID are required</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">
                             Access Token <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="access_token" id="access_token" class="form-input"
-                            placeholder="Enter Instagram User Access Token"
-                            value="<?php if(isset($urlAccessToken) && $urlAccessToken): ?> <?php echo e($urlAccessToken); ?><?php elseif(isset($settings) && $settings && $settings->access_token): ?><?php echo e($settings->access_token); ?><?php else: ?><?php echo e($envDefaults['access_token'] ?? ''); ?> <?php endif; ?>"
+                        <input type="text" name="access_token" id="access_token"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                            placeholder="IGAAW..."
+                            value="<?php if(isset($urlAccessToken) && $urlAccessToken): ?> <?php echo e($urlAccessToken); ?><?php elseif(isset($settings) && $settings && $settings->access_token): ?><?php echo e($settings->access_token); ?> <?php endif; ?>"
                             required>
-                        <p class="text-xs text-slate-500 mt-1">
-                            <i class="fas fa-key mr-1"></i>
-                            Instagram User Access Token dari Business Login
-                        </p>
+                        <p class="text-xs text-slate-500 mt-1.5">Long-lived user access token from Instagram Platform
+                            API</p>
                     </div>
+
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">
-                            User ID <span class="text-red-500">*</span>
+                            Instagram User ID <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="user_id" id="user_id" class="form-input"
-                            placeholder="Enter Instagram Professional Account ID (contoh: 17841428646148329)"
-                            value="<?php if(isset($urlUserId) && $urlUserId): ?> <?php echo e($urlUserId); ?><?php elseif(isset($settings) && $settings && $settings->user_id): ?><?php echo e($settings->user_id); ?><?php else: ?><?php echo e($envDefaults['user_id'] ?? ''); ?> <?php endif; ?>"
+                        <input type="text" name="user_id" id="user_id"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                            placeholder="17841428646148329"
+                            value="<?php if(isset($urlUserId) && $urlUserId): ?> <?php echo e($urlUserId); ?><?php elseif(isset($settings) && $settings && $settings->user_id): ?><?php echo e($settings->user_id); ?> <?php endif; ?>"
                             required>
-                        <p class="text-xs text-slate-500 mt-1">
-                            <i class="fas fa-user mr-1"></i>
-                            Instagram Business/Creator Account ID (bukan Facebook Page ID). <strong>Contoh:
-                                17841428646148329</strong> (lihat di Meta Dashboard)
-                        </p>
+                        <p class="text-xs text-slate-500 mt-1.5">Instagram Business/Creator Account ID from Meta
+                            Dashboard</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Optional Configuration -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center gap-3 mb-4">
+                    <span
+                        class="w-8 h-8 bg-slate-500 text-white rounded-lg flex items-center justify-center text-sm font-bold">2</span>
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-900">Optional Configuration</h3>
+                        <p class="text-xs text-slate-500">App credentials for advanced features</p>
                     </div>
                 </div>
 
-                <!-- Optional Settings -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">
-                            App ID
-                        </label>
-                        <input type="text" name="app_id" id="app_id" class="form-input"
-                            placeholder="Enter Instagram App ID (e.g., 1575539400487129)"
-                            value="<?php echo e($settings->app_id ?? ($envDefaults['app_id'] ?? '')); ?>">
-                        <p class="text-xs text-slate-500 mt-1">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Optional: Instagram App ID dari Meta Dashboard
-                        </p>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">App ID</label>
+                        <input type="text" name="app_id" id="app_id"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                            placeholder="1575539400487129" value="<?php echo e($settings->app_id ?? ''); ?>">
+                        <p class="text-xs text-slate-500 mt-1.5">App ID from Meta for Developers</p>
                     </div>
+
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">
-                            App Secret
-                        </label>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">App Secret</label>
                         <div class="relative">
-                            <input type="password" name="app_secret" id="app_secret" class="form-input pr-10"
-                                placeholder="Enter Instagram App Secret (e.g., 7b6f727ebfd70...)"
-                                value="<?php echo e($settings->app_secret ?? ($envDefaults['app_secret'] ?? '')); ?>">
+                            <input type="password" name="app_secret" id="app_secret"
+                                class="w-full px-4 py-2.5 pr-10 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                                placeholder="••••••••••••" value="<?php echo e($settings->app_secret ?? ''); ?>">
                             <button type="button" id="toggleAppSecret"
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
-                                <i class="fas fa-eye" id="appSecretIcon"></i>
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
+                                <i class="fas fa-eye text-sm" id="appSecretIcon"></i>
                             </button>
                         </div>
-                        <p class="text-xs text-slate-500 mt-1">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Optional: Instagram App Secret dari Meta Dashboard
-                        </p>
+                        <p class="text-xs text-slate-500 mt-1.5">App Secret from Meta for Developers</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Webhook Configuration -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center gap-3 mb-4">
+                    <span
+                        class="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">3</span>
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-900">Webhook Configuration</h3>
+                        <p class="text-xs text-slate-500">OAuth and webhook settings</p>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">
-                        Redirect URI
-                    </label>
-                    <input type="url" name="redirect_uri" id="redirect_uri" class="form-input"
-                        placeholder="<?php echo e(url('/instagram/callback')); ?>"
-                        value="<?php echo e($settings->redirect_uri ?? url('/instagram/callback')); ?>">
-                    <p class="text-xs text-slate-500 mt-1">
-                        <i class="fas fa-link mr-1"></i>
-                        URL callback untuk OAuth. Harus sama dengan yang di-setup di Meta Dashboard.
-                    </p>
-                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Redirect URI</label>
+                        <input type="url" name="redirect_uri" id="redirect_uri"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                            placeholder="<?php echo e(url('/instagram/callback')); ?>"
+                            value="<?php echo e($settings->redirect_uri ?? url('/instagram/callback')); ?>">
+                        <p class="text-xs text-slate-500 mt-1.5">OAuth callback URL (must match Meta Dashboard
+                            settings)</p>
+                    </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">
-                        Webhook Verify Token
-                    </label>
-                    <input type="text" name="webhook_verify_token" id="webhook_verify_token" class="form-input"
-                        placeholder="Enter webhook verify token (e.g., mySchoolWebhook2025)"
-                        value="<?php echo e($settings->webhook_verify_token ?? ($envDefaults['webhook_verify_token'] ?? 'mySchoolWebhook2025')); ?>">
-                    <p class="text-xs text-slate-500 mt-1">
-                        <i class="fas fa-shield-alt mr-1"></i>
-                        Secret token untuk verifikasi webhook dari Meta. Buat token unik sendiri.
-                    </p>
-                    <div class="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
-                        <p class="text-xs text-amber-800">
-                            <i class="fas fa-lightbulb mr-1"></i>
-                            <strong>Webhook URL:</strong> <code
-                                class="bg-amber-100 px-2 py-1 rounded"><?php echo e(url('/instagram/webhook')); ?></code>
-                            <br>
-                            Gunakan URL dan token ini di Meta Dashboard → Konfigurasi webhook
-                        </p>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Webhook Verify Token</label>
+                        <input type="text" name="webhook_verify_token" id="webhook_verify_token"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                            placeholder="mySchoolWebhook2025"
+                            value="<?php echo e($settings->webhook_verify_token ?? 'mySchoolWebhook2025'); ?>">
+                        <p class="text-xs text-slate-500 mt-1.5">Custom secret token for webhook verification</p>
+
+                        <div class="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                            <p class="text-xs font-semibold text-amber-900 mb-1.5">📍 Webhook Callback URL:</p>
+                            <code
+                                class="block text-xs bg-white px-3 py-2 rounded border border-amber-300 text-amber-900 font-mono"><?php echo e(url('/instagram/webhook')); ?></code>
+                            <p class="text-xs text-amber-700 mt-2">Use this URL and token in Meta Dashboard webhook
+                                settings</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Sync & Cache Settings -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center gap-3 mb-4">
+                    <span
+                        class="w-8 h-8 bg-green-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">4</span>
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-900">Sync & Cache Settings</h3>
+                        <p class="text-xs text-slate-500">Manage data synchronization and caching</p>
                     </div>
                 </div>
 
-                <!-- Sync Settings -->
-                <div class="border-t border-slate-200 pt-6">
-                    <h4 class="text-md font-semibold text-slate-900 mb-4">Sync Settings</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">
-                                Sync Frequency (minutes)
-                            </label>
-                            <select name="sync_frequency" id="sync_frequency" class="form-select">
-                                <option value="5" <?php echo e(($settings->sync_frequency ?? 30) == 5 ? 'selected' : ''); ?>>
-                                    5
-                                    minutes</option>
-                                <option value="15"
-                                    <?php echo e(($settings->sync_frequency ?? 30) == 15 ? 'selected' : ''); ?>>
-                                    15 minutes</option>
-                                <option value="30"
-                                    <?php echo e(($settings->sync_frequency ?? 30) == 30 ? 'selected' : ''); ?>>
-                                    30 minutes</option>
-                                <option value="60"
-                                    <?php echo e(($settings->sync_frequency ?? 30) == 60 ? 'selected' : ''); ?>>
-                                    1 hour</option>
-                                <option value="120"
-                                    <?php echo e(($settings->sync_frequency ?? 30) == 120 ? 'selected' : ''); ?>>2 hours</option>
-                                <option value="240"
-                                    <?php echo e(($settings->sync_frequency ?? 30) == 240 ? 'selected' : ''); ?>>4 hours</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">
-                                Cache Duration (seconds)
-                            </label>
-                            <select name="cache_duration" id="cache_duration" class="form-select">
-                                <option value="300"
-                                    <?php echo e(($settings->cache_duration ?? 3600) == 300 ? 'selected' : ''); ?>>5 minutes
-                                </option>
-                                <option value="900"
-                                    <?php echo e(($settings->cache_duration ?? 3600) == 900 ? 'selected' : ''); ?>>15 minutes
-                                </option>
-                                <option value="1800"
-                                    <?php echo e(($settings->cache_duration ?? 3600) == 1800 ? 'selected' : ''); ?>>30 minutes
-                                </option>
-                                <option value="3600"
-                                    <?php echo e(($settings->cache_duration ?? 3600) == 3600 ? 'selected' : ''); ?>>1 hour</option>
-                                <option value="7200"
-                                    <?php echo e(($settings->cache_duration ?? 3600) == 7200 ? 'selected' : ''); ?>>2 hours
-                                </option>
-                            </select>
-                        </div>
-                        <div class="flex items-center">
-                            <label class="flex items-center">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Sync Frequency</label>
+                        <select name="sync_frequency" id="sync_frequency"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm">
+                            <option value="5" <?php echo e(($settings->sync_frequency ?? 30) == 5 ? 'selected' : ''); ?>>
+                                Every 5 minutes</option>
+                            <option value="15" <?php echo e(($settings->sync_frequency ?? 30) == 15 ? 'selected' : ''); ?>>
+                                Every 15 minutes</option>
+                            <option value="30" <?php echo e(($settings->sync_frequency ?? 30) == 30 ? 'selected' : ''); ?>>
+                                Every 30 minutes</option>
+                            <option value="60" <?php echo e(($settings->sync_frequency ?? 30) == 60 ? 'selected' : ''); ?>>
+                                Every hour</option>
+                            <option value="120" <?php echo e(($settings->sync_frequency ?? 30) == 120 ? 'selected' : ''); ?>>
+                                Every 2 hours</option>
+                            <option value="240" <?php echo e(($settings->sync_frequency ?? 30) == 240 ? 'selected' : ''); ?>>
+                                Every 4 hours</option>
+                        </select>
+                        <p class="text-xs text-slate-500 mt-1.5">How often to fetch new posts</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Cache Duration</label>
+                        <select name="cache_duration" id="cache_duration"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm">
+                            <option value="300" <?php echo e(($settings->cache_duration ?? 3600) == 300 ? 'selected' : ''); ?>>
+                                5 minutes</option>
+                            <option value="900" <?php echo e(($settings->cache_duration ?? 3600) == 900 ? 'selected' : ''); ?>>
+                                15 minutes</option>
+                            <option value="1800"
+                                <?php echo e(($settings->cache_duration ?? 3600) == 1800 ? 'selected' : ''); ?>>30 minutes</option>
+                            <option value="3600"
+                                <?php echo e(($settings->cache_duration ?? 3600) == 3600 ? 'selected' : ''); ?>>1 hour</option>
+                            <option value="7200"
+                                <?php echo e(($settings->cache_duration ?? 3600) == 7200 ? 'selected' : ''); ?>>2 hours</option>
+                        </select>
+                        <p class="text-xs text-slate-500 mt-1.5">Cache lifetime for performance</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Auto Sync</label>
+                        <div class="h-[42px] flex items-center">
+                            <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" name="auto_sync_enabled" id="auto_sync_enabled"
-                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                    <?php echo e($settings->auto_sync_enabled ?? true ? 'checked' : ''); ?>>
-                                <span class="ml-2 text-sm text-slate-700">
-                                    Enable Auto Sync
-                                </span>
+                                    class="sr-only peer" <?php echo e($settings->auto_sync_enabled ?? true ? 'checked' : ''); ?>>
+                                <div
+                                    class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
+                                </div>
+                                <span class="ml-3 text-sm font-medium text-slate-700">Enable</span>
                             </label>
                         </div>
+                        <p class="text-xs text-slate-500 mt-1.5">Automatic background sync</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Action Buttons -->
-                <div class="flex justify-between items-center pt-6 border-t border-slate-200">
-                    <button type="button" id="testConnectionBtn" class="btn btn-warning">
+            <!-- Action Buttons Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <button type="button" id="testConnectionBtn"
+                        class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 bg-amber-50 border-2 border-amber-400 hover:bg-amber-100 text-amber-700 font-semibold rounded-lg transition-all">
                         <i class="fas fa-plug mr-2"></i>
                         Test Connection
                     </button>
-                    <div class="flex space-x-3">
-                        <button type="button" id="resetFormBtn" class="btn btn-secondary">
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <button type="button" id="resetFormBtn"
+                            class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-white border-2 border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded-lg transition-all">
                             <i class="fas fa-undo mr-2"></i>
                             Reset
                         </button>
-                        <button type="submit" id="saveSettingsBtn" class="btn btn-primary">
+                        <button type="submit" id="saveSettingsBtn"
+                            class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/30">
                             <i class="fas fa-save mr-2"></i>
                             Save Settings
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
 
         <!-- Help Section -->
-        <div class="bg-blue-50 rounded-xl border border-blue-200 p-6 mt-8">
-            <div class="flex items-start">
-                <i class="fas fa-info-circle text-blue-600 text-xl mr-3 mt-1"></i>
-                <div>
-                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Need Help?</h3>
-                    <p class="text-blue-800 mb-4">
-                        Follow our step-by-step guide to set up Instagram API integration for your school's social media
-                        feed.
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 p-6 mt-6">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-question-circle text-blue-600 text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-blue-900 mb-1">Need Help?</h3>
+                    <p class="text-sm text-blue-700 mb-4">
+                        Follow our comprehensive guide for Instagram API integration setup
                     </p>
-                    <div class="flex flex-wrap gap-3">
-                        <a href="<?php echo e(route('docs.instagram-setup')); ?>" class="btn btn-primary">
+                    <div class="flex flex-wrap gap-2">
+                        <a href="<?php echo e(route('docs.instagram-setup')); ?>"
+                            class="inline-flex items-center px-4 py-2 bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium rounded-lg transition-colors">
                             <i class="fas fa-book mr-2"></i>
                             Setup Guide
                         </a>
-                        <a href="<?php echo e(route('public.kegiatan')); ?>" class="btn btn-success">
+                        <a href="<?php echo e(route('public.kegiatan')); ?>"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
                             <i class="fas fa-images mr-2"></i>
-                            View Instagram Feed
+                            View Feed
                         </a>
                     </div>
                 </div>
@@ -356,20 +460,9 @@
 
     <?php $__env->startPush('styles'); ?>
         <style>
-            .status-indicator {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                display: inline-block;
-            }
-
-            .status-active {
-                background-color: #10b981;
-                animation: pulse 2s infinite;
-            }
-
-            .status-inactive {
-                background-color: #ef4444;
+            /* Status pulse animation */
+            .status-pulse {
+                animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
             }
 
             @keyframes pulse {
@@ -381,7 +474,35 @@
 
                 50% {
                     opacity: 0.5;
+                    transform: scale(1.05);
                 }
+            }
+
+            /* Smooth transitions for inputs */
+            input:focus,
+            select:focus,
+            textarea:focus {
+                outline: none;
+            }
+
+            /* Custom scrollbar for better aesthetics */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
             }
         </style>
     <?php $__env->stopPush(); ?>
@@ -396,39 +517,52 @@
                 const deactivateBtn = document.getElementById('deactivateBtn');
                 const resetBtn = document.getElementById('resetFormBtn');
 
-                // Toggle App Secret visibility
+                // Toggle App Secret visibility - Simple & Reliable
                 const toggleAppSecretBtn = document.getElementById('toggleAppSecret');
                 const appSecretInput = document.getElementById('app_secret');
                 const appSecretIcon = document.getElementById('appSecretIcon');
 
-                console.log('Toggle App Secret elements:', {
+                console.log('🔍 Checking Toggle App Secret elements:', {
                     btn: !!toggleAppSecretBtn,
                     input: !!appSecretInput,
                     icon: !!appSecretIcon
                 });
 
                 if (toggleAppSecretBtn && appSecretInput && appSecretIcon) {
-                    toggleAppSecretBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                    // Remove any existing listeners
+                    const newToggleBtn = toggleAppSecretBtn.cloneNode(true);
+                    toggleAppSecretBtn.parentNode.replaceChild(newToggleBtn, toggleAppSecretBtn);
 
-                        console.log('Toggle clicked, current type:', appSecretInput.type);
+                    const newIcon = appSecretIcon.cloneNode(true);
+                    newToggleBtn.innerHTML = '';
+                    newToggleBtn.appendChild(newIcon);
+
+                    newToggleBtn.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        console.log('👁️ Toggle clicked! Current type:', appSecretInput.type);
 
                         if (appSecretInput.type === 'password') {
                             appSecretInput.type = 'text';
-                            appSecretIcon.classList.remove('fa-eye');
-                            appSecretIcon.classList.add('fa-eye-slash');
-                            console.log('Changed to text');
+                            newIcon.className = 'fas fa-eye-slash';
+                            console.log('✅ Changed to visible (text)');
                         } else {
                             appSecretInput.type = 'password';
-                            appSecretIcon.classList.remove('fa-eye-slash');
-                            appSecretIcon.classList.add('fa-eye');
-                            console.log('Changed to password');
+                            newIcon.className = 'fas fa-eye';
+                            console.log('✅ Changed to hidden (password)');
                         }
+                    }, {
+                        passive: false
                     });
+
                     console.log('✅ Toggle App Secret initialized successfully');
                 } else {
-                    console.error('❌ Toggle App Secret elements not found!');
+                    console.error('❌ Toggle App Secret elements not found!', {
+                        btn: toggleAppSecretBtn,
+                        input: appSecretInput,
+                        icon: appSecretIcon
+                    });
                 }
 
                 // Test Connection

@@ -110,6 +110,13 @@ Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('admin/supera
     Route::post('/instagram-settings/sync', [InstagramSettingController::class, 'syncData'])->name('instagram-settings.sync');
     Route::post('/instagram-settings/deactivate', [InstagramSettingController::class, 'deactivate'])->name('instagram-settings.deactivate');
     Route::get('/instagram-settings/current', [InstagramSettingController::class, 'getSettings'])->name('instagram-settings.current');
+
+    // Bulk Import Management
+    Route::prefix('bulk-import')->name('bulk-import.')->group(function () {
+        Route::get('/', [App\Http\Controllers\BulkImportController::class, 'index'])->name('index');
+        Route::post('/process', [App\Http\Controllers\BulkImportController::class, 'processBulkImport'])->name('process');
+        Route::get('/template/{module}', [App\Http\Controllers\BulkImportController::class, 'downloadTemplate'])->name('template');
+    });
 });
 
 // Permission Management Routes

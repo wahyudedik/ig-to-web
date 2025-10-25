@@ -53,68 +53,122 @@ class InstagramController extends Controller
     }
 
     /**
-     * Handle OAuth callback from Meta
-     * This is where Meta redirects after user authorizes the app
+     * Handle OAuth callback from Instagram Business Login
+     * 
+     * Instagram Business Login Flow:
+     * 1. User clicks authorization URL
+     * 2. User authorizes app
+     * 3. Meta redirects here with authorization code
+     * 4. We exchange code for short-lived token
+     * 5. We exchange short-lived for long-lived token (60 days)
+     * 6. We save settings and redirect to admin panel
      */
     public function handleOAuthCallback(Request $request)
     {
         Log::info('Instagram OAuth Callback Received', [
-            'all_params' => $request->all(),
+            'has_code' => $request->has('code'),
+            'has_state' => $request->has('state'),
+            'has_error' => $request->has('error'),
             'ip' => $request->ip()
         ]);
 
-        // Get access token from Meta redirect
-        // Meta can send either 'access_token' directly or 'code' for exchange
-        $accessToken = $request->query('access_token');
-        $userId = $request->query('user_id');
+        // Get parameters from Meta redirect
         $code = $request->query('code');
+        $state = $request->query('state');
         $error = $request->query('error');
+        $errorReason = $request->query('error_reason');
         $errorDescription = $request->query('error_description');
 
-        // Handle errors from Meta
+        // Handle authorization denial/errors
         if ($error) {
             Log::error('Instagram OAuth Error', [
                 'error' => $error,
+                'reason' => $errorReason,
                 'description' => $errorDescription
             ]);
 
+            $message = 'OAuth Error: ';
+            if ($error === 'access_denied' && $errorReason === 'user_denied') {
+                $message = 'Authorization dibatalkan. Anda harus memberikan izin untuk melanjutkan.';
+            } else {
+                $message .= $errorDescription ?? $error;
+            }
+
             return redirect()
                 ->route('admin.superadmin.instagram-settings')
-                ->with('error', 'OAuth Error: ' . $errorDescription ?? $error);
+                ->with('error', $message);
         }
 
-        // If we got authorization code (not direct access token), we need to exchange it
-        // For Instagram Platform API with Instagram Login, Meta usually gives direct access token
-        if (!$accessToken && $code) {
-            Log::warning('Received authorization code instead of access token. Exchange logic not implemented yet.', [
-                'code' => substr($code, 0, 20) . '...'
+        // Authorization code must be present
+        if (!$code) {
+            Log::error('Instagram OAuth callback without authorization code');
+
+            return redirect()
+                ->route('admin.superadmin.instagram-settings')
+                ->with('error', 'Authorization code tidak ditemukan. Silakan coba lagi.');
+        }
+
+        try {
+            // STEP 1: Exchange authorization code for short-lived access token
+            Log::info('Exchanging authorization code for access token');
+
+            $tokenData = $this->instagramService->exchangeCodeForToken($code);
+
+            if (!$tokenData || !isset($tokenData['access_token'])) {
+                Log::error('Failed to exchange code for token', ['token_data' => $tokenData]);
+
+                return redirect()
+                    ->route('admin.superadmin.instagram-settings')
+                    ->with('error', 'Gagal mendapatkan access token. Silakan coba lagi.');
+            }
+
+            $shortLivedToken = $tokenData['access_token'];
+            $userId = $tokenData['user_id'];
+            $permissions = $tokenData['permissions'] ?? '';
+
+            Log::info('Short-lived token obtained', [
+                'user_id' => $userId,
+                'permissions' => $permissions
+            ]);
+
+            // STEP 2: Exchange short-lived token for long-lived token (60 days)
+            Log::info('Exchanging short-lived token for long-lived token');
+
+            $longLivedData = $this->instagramService->exchangeForLongLivedToken($shortLivedToken);
+
+            if (!$longLivedData || !isset($longLivedData['access_token'])) {
+                Log::error('Failed to exchange for long-lived token');
+
+                return redirect()
+                    ->route('admin.superadmin.instagram-settings')
+                    ->with('error', 'Gagal mendapatkan long-lived token. Silakan coba lagi.');
+            }
+
+            $longLivedToken = $longLivedData['access_token'];
+            $expiresIn = $longLivedData['expires_in'];
+
+            Log::info('✅ Long-lived token obtained', [
+                'expires_in' => $expiresIn . ' seconds (~60 days)'
+            ]);
+
+            // Redirect to settings page with token data
+            return redirect()
+                ->route('admin.superadmin.instagram-settings')
+                ->with('success', 'Authorization berhasil! Access token (valid 60 hari) telah didapatkan. Silakan simpan pengaturan.')
+                ->with('oauth_access_token', $longLivedToken)
+                ->with('oauth_user_id', $userId)
+                ->with('oauth_permissions', $permissions)
+                ->with('oauth_expires_in', $expiresIn);
+        } catch (\Exception $e) {
+            Log::error('Instagram OAuth callback exception', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return redirect()
                 ->route('admin.superadmin.instagram-settings')
-                ->with('error', 'Authorization code received but exchange not implemented. Please use direct access token from Meta Dashboard.');
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        // Redirect to settings page with access token and user_id
-        if ($accessToken) {
-            Log::info('✅ Access token received via OAuth callback', [
-                'token_length' => strlen($accessToken),
-                'has_user_id' => !empty($userId)
-            ]);
-
-            return redirect()
-                ->route('admin.superadmin.instagram-settings')
-                ->with('success', 'Access token berhasil didapatkan! Silakan isi User ID dan simpan pengaturan.')
-                ->with('oauth_access_token', $accessToken)
-                ->with('oauth_user_id', $userId);
-        }
-
-        // No access token or code received
-        Log::warning('Instagram OAuth callback with no access token or code');
-
-        return redirect()
-            ->route('admin.superadmin.instagram-settings')
-            ->with('error', 'Tidak ada access token yang diterima dari Meta. Silakan coba lagi.');
     }
 
     /**
@@ -183,34 +237,59 @@ class InstagramController extends Controller
 
     /**
      * Handle webhook notifications (POST request from Meta)
+     * 
+     * Meta Webhooks Requirements:
+     * 1. Respond with 200 OK within 20 seconds
+     * 2. Validate X-Hub-Signature-256 header
+     * 3. Handle deduplication (retries if failed)
+     * 4. Process batch of up to 1000 updates
+     * 
      * Called when Instagram events happen (new post, comment, etc)
      */
     public function handleWebhook(Request $request)
     {
+        // Get raw payload for signature verification
+        $payload = $request->getContent();
         $data = $request->all();
 
         Log::info('Instagram Webhook Event Received', [
-            'data' => $data,
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent()
+            'has_entry' => isset($data['entry']),
+            'entry_count' => isset($data['entry']) ? count($data['entry']) : 0,
+            'object' => $data['object'] ?? 'unknown',
+            'ip' => $request->ip()
         ]);
 
-        // Verify signature (security check)
+        // IMPORTANT: Validate X-Hub-Signature-256 for security
+        // This prevents unauthorized requests from fake sources
         $signature = $request->header('X-Hub-Signature-256');
-        if ($signature) {
-            $appSecret = config('services.instagram.app_secret');
-            if ($appSecret) {
-                $expectedSignature = 'sha256=' . hash_hmac('sha256', $request->getContent(), $appSecret);
 
+        if ($signature) {
+            $settings = InstagramSetting::active()->first();
+            $appSecret = $settings->app_secret ?? config('services.instagram.app_secret');
+
+            if ($appSecret) {
+                $expectedSignature = 'sha256=' . hash_hmac('sha256', $payload, $appSecret);
+
+                // Use hash_equals to prevent timing attacks
                 if (!hash_equals($expectedSignature, $signature)) {
-                    Log::error('❌ Invalid webhook signature');
-                    return response('Invalid signature', 403);
+                    Log::error('❌ Invalid webhook signature - possible security threat!', [
+                        'received_signature' => substr($signature, 0, 20) . '...',
+                        'ip' => $request->ip(),
+                        'user_agent' => $request->userAgent()
+                    ]);
+                    return response('Forbidden', 403);
                 }
+
                 Log::info('✅ Webhook signature verified');
+            } else {
+                Log::warning('⚠️ Webhook received but no App Secret configured for validation');
             }
+        } else {
+            Log::warning('⚠️ Webhook received without X-Hub-Signature-256 header');
         }
 
         // Process webhook data
+        // Meta may batch up to 1000 updates in one request
         if (isset($data['entry'])) {
             foreach ($data['entry'] as $entry) {
                 if (isset($entry['changes'])) {
@@ -221,7 +300,8 @@ class InstagramController extends Controller
             }
         }
 
-        // Meta expects 200 response immediately
+        // CRITICAL: Meta expects 200 response immediately (within 20 seconds)
+        // If we don't respond, Meta will retry and may disable webhook
         return response('EVENT_RECEIVED', 200);
     }
 
