@@ -53,6 +53,71 @@ class InstagramController extends Controller
     }
 
     /**
+     * Handle OAuth callback from Meta
+     * This is where Meta redirects after user authorizes the app
+     */
+    public function handleOAuthCallback(Request $request)
+    {
+        Log::info('Instagram OAuth Callback Received', [
+            'all_params' => $request->all(),
+            'ip' => $request->ip()
+        ]);
+
+        // Get access token from Meta redirect
+        // Meta can send either 'access_token' directly or 'code' for exchange
+        $accessToken = $request->query('access_token');
+        $userId = $request->query('user_id');
+        $code = $request->query('code');
+        $error = $request->query('error');
+        $errorDescription = $request->query('error_description');
+
+        // Handle errors from Meta
+        if ($error) {
+            Log::error('Instagram OAuth Error', [
+                'error' => $error,
+                'description' => $errorDescription
+            ]);
+
+            return redirect()
+                ->route('admin.superadmin.instagram-settings')
+                ->with('error', 'OAuth Error: ' . $errorDescription ?? $error);
+        }
+
+        // If we got authorization code (not direct access token), we need to exchange it
+        // For Instagram Platform API with Instagram Login, Meta usually gives direct access token
+        if (!$accessToken && $code) {
+            Log::warning('Received authorization code instead of access token. Exchange logic not implemented yet.', [
+                'code' => substr($code, 0, 20) . '...'
+            ]);
+
+            return redirect()
+                ->route('admin.superadmin.instagram-settings')
+                ->with('error', 'Authorization code received but exchange not implemented. Please use direct access token from Meta Dashboard.');
+        }
+
+        // Redirect to settings page with access token and user_id
+        if ($accessToken) {
+            Log::info('✅ Access token received via OAuth callback', [
+                'token_length' => strlen($accessToken),
+                'has_user_id' => !empty($userId)
+            ]);
+
+            return redirect()
+                ->route('admin.superadmin.instagram-settings')
+                ->with('success', 'Access token berhasil didapatkan! Silakan isi User ID dan simpan pengaturan.')
+                ->with('oauth_access_token', $accessToken)
+                ->with('oauth_user_id', $userId);
+        }
+
+        // No access token or code received
+        Log::warning('Instagram OAuth callback with no access token or code');
+
+        return redirect()
+            ->route('admin.superadmin.instagram-settings')
+            ->with('error', 'Tidak ada access token yang diterima dari Meta. Silakan coba lagi.');
+    }
+
+    /**
      * Get Instagram account information
      */
     public function getAccountInfo()

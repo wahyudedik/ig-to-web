@@ -189,8 +189,12 @@
                         Redirect URI
                     </label>
                     <input type="url" name="redirect_uri" id="redirect_uri" class="form-input"
-                        placeholder="https://yourdomain.com/instagram/callback"
-                        value="{{ $settings->redirect_uri ?? '' }}">
+                        placeholder="{{ url('/instagram/callback') }}"
+                        value="{{ $settings->redirect_uri ?? url('/instagram/callback') }}">
+                    <p class="text-xs text-slate-500 mt-1">
+                        <i class="fas fa-link mr-1"></i>
+                        URL callback untuk OAuth. Harus sama dengan yang di-setup di Meta Dashboard.
+                    </p>
                 </div>
 
                 <div>
@@ -483,7 +487,7 @@
                             console.error('Save error:', error);
                             showError('Gagal Menyimpan',
                                 'Terjadi kesalahan saat menyimpan pengaturan. Cek console untuk detail.'
-                                );
+                            );
                         })
                         .finally(() => {
                             saveBtn.disabled = false;

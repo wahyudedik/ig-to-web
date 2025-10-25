@@ -18,9 +18,9 @@ class InstagramSettingController extends Controller
     {
         $settings = InstagramSetting::latest()->first();
 
-        // Capture access_token from URL parameter (OAuth redirect)
-        $urlAccessToken = $request->query('access_token');
-        $urlUserId = $request->query('user_id');
+        // Capture access_token from URL parameter OR session flash (OAuth redirect)
+        $urlAccessToken = $request->query('access_token') ?? session('oauth_access_token');
+        $urlUserId = $request->query('user_id') ?? session('oauth_user_id');
 
         return view('superadmin.instagram-settings', compact('settings', 'urlAccessToken', 'urlUserId'));
     }
