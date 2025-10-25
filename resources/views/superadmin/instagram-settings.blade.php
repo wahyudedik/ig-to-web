@@ -175,6 +175,28 @@
                         value="{{ $settings->redirect_uri ?? '' }}">
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">
+                        Webhook Verify Token
+                    </label>
+                    <input type="text" name="webhook_verify_token" id="webhook_verify_token" class="form-input"
+                        placeholder="Enter webhook verify token (e.g., mySchoolWebhook2025)"
+                        value="{{ $settings->webhook_verify_token ?? 'mySchoolWebhook2025' }}">
+                    <p class="text-xs text-slate-500 mt-1">
+                        <i class="fas fa-shield-alt mr-1"></i>
+                        Secret token untuk verifikasi webhook dari Meta. Buat token unik sendiri.
+                    </p>
+                    <div class="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                        <p class="text-xs text-amber-800">
+                            <i class="fas fa-lightbulb mr-1"></i>
+                            <strong>Webhook URL:</strong> <code
+                                class="bg-amber-100 px-2 py-1 rounded">{{ url('/instagram/webhook') }}</code>
+                            <br>
+                            Gunakan URL dan token ini di Meta Dashboard → Konfigurasi webhook
+                        </p>
+                    </div>
+                </div>
+
                 <!-- Sync Settings -->
                 <div class="border-t border-slate-200 pt-6">
                     <h4 class="text-md font-semibold text-slate-900 mb-4">Sync Settings</h4>

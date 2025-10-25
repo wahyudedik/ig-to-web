@@ -48,6 +48,10 @@ Route::get('/kegiatan', [InstagramController::class, 'index'])->name('public.keg
 Route::get('/kegiatan/refresh', [InstagramController::class, 'refresh'])->name('public.kegiatan.refresh');
 Route::get('/kegiatan/posts', [InstagramController::class, 'getPosts'])->name('public.kegiatan.posts');
 
+// Instagram Webhook Endpoints (for Meta verification & notifications)
+Route::get('/instagram/webhook', [InstagramController::class, 'verifyWebhook'])->name('instagram.webhook.verify');
+Route::post('/instagram/webhook', [InstagramController::class, 'handleWebhook'])->name('instagram.webhook.handle');
+
 // Custom pages example
 Route::get('/custom-example', function () {
     return view('pages.custom-example');

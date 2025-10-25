@@ -17,6 +17,7 @@ class InstagramSetting extends Model
         'app_id',
         'app_secret',
         'redirect_uri',
+        'webhook_verify_token', // NEW: Webhook verification token
         'is_active',
         'last_sync',
         'token_expires_at', // NEW: Token expiry tracking

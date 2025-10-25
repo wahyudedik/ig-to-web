@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'verified.email' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
+
+        // Exclude Instagram webhook from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'instagram/webhook',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
