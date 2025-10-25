@@ -175,14 +175,30 @@
                             App ID
                         </label>
                         <input type="text" name="app_id" id="app_id" class="form-input"
-                            placeholder="Enter Instagram App ID" value="{{ $settings->app_id ?? '' }}">
+                            placeholder="Enter Instagram App ID (e.g., 1575539400487129)" 
+                            value="{{ $settings->app_id ?? '' }}">
+                        <p class="text-xs text-slate-500 mt-1">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Optional: Instagram App ID dari Meta Dashboard
+                        </p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">
                             App Secret
                         </label>
-                        <input type="password" name="app_secret" id="app_secret" class="form-input"
-                            placeholder="Enter Instagram App Secret" value="{{ $settings->app_secret ?? '' }}">
+                        <div class="relative">
+                            <input type="password" name="app_secret" id="app_secret" class="form-input pr-10"
+                                placeholder="Enter Instagram App Secret (e.g., 7b6f727ebfd70...)" 
+                                value="{{ $settings->app_secret ?? '' }}">
+                            <button type="button" id="toggleAppSecret" 
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                <i class="fas fa-eye" id="appSecretIcon"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Optional: Instagram App Secret dari Meta Dashboard
+                        </p>
                     </div>
                 </div>
 
@@ -368,6 +384,25 @@
                 const syncBtn = document.getElementById('syncBtn');
                 const deactivateBtn = document.getElementById('deactivateBtn');
                 const resetBtn = document.getElementById('resetFormBtn');
+                
+                // Toggle App Secret visibility
+                const toggleAppSecretBtn = document.getElementById('toggleAppSecret');
+                const appSecretInput = document.getElementById('app_secret');
+                const appSecretIcon = document.getElementById('appSecretIcon');
+                
+                if (toggleAppSecretBtn) {
+                    toggleAppSecretBtn.addEventListener('click', function() {
+                        if (appSecretInput.type === 'password') {
+                            appSecretInput.type = 'text';
+                            appSecretIcon.classList.remove('fa-eye');
+                            appSecretIcon.classList.add('fa-eye-slash');
+                        } else {
+                            appSecretInput.type = 'password';
+                            appSecretIcon.classList.remove('fa-eye-slash');
+                            appSecretIcon.classList.add('fa-eye');
+                        }
+                    });
+                }
 
                 // Test Connection
                 testBtn.addEventListener('click', function() {
@@ -470,11 +505,15 @@
 
                     // Log form data for debugging
                     console.log('Form data:', {
-                        access_token: accessToken ? 'Set (length: ' + accessToken.length + ')' :
-                            'Empty',
+                        access_token: accessToken ? 'Set (length: ' + accessToken.length + ')' : 'Empty',
                         user_id: userId,
-                        app_id: formData.get('app_id'),
-                        webhook_verify_token: formData.get('webhook_verify_token')
+                        app_id: formData.get('app_id') || 'Not set',
+                        app_secret: formData.get('app_secret') ? 'Set (length: ' + formData.get('app_secret').length + ')' : 'Not set',
+                        redirect_uri: formData.get('redirect_uri') || 'Not set',
+                        webhook_verify_token: formData.get('webhook_verify_token') || 'Not set',
+                        sync_frequency: formData.get('sync_frequency'),
+                        cache_duration: formData.get('cache_duration'),
+                        auto_sync_enabled: formData.get('auto_sync_enabled')
                     });
 
                     fetch('{{ route('admin.superadmin.instagram-settings.store') }}', {
