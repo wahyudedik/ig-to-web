@@ -22,6 +22,15 @@ class InstagramSettingController extends Controller
         $urlAccessToken = $request->query('access_token') ?? session('oauth_access_token');
         $urlUserId = $request->query('user_id') ?? session('oauth_user_id');
 
+        // Load defaults from .env if no settings exist
+        $envDefaults = [
+            'app_id' => config('services.instagram.app_id'),
+            'app_secret' => config('services.instagram.app_secret'),
+            'access_token' => config('services.instagram.access_token'),
+            'user_id' => config('services.instagram.user_id'),
+            'webhook_verify_token' => config('services.instagram.webhook_verify_token', 'mySchoolWebhook2025'),
+        ];
+
         // Debug logging
         Log::info('Instagram Settings Page Loaded', [
             'has_url_token' => !empty($urlAccessToken),
@@ -29,10 +38,16 @@ class InstagramSettingController extends Controller
             'has_url_user_id' => !empty($urlUserId),
             'url_user_id' => $urlUserId,
             'has_settings' => !empty($settings),
-            'settings_active' => $settings ? $settings->is_active : false
+            'settings_active' => $settings ? $settings->is_active : false,
+            'env_defaults' => [
+                'has_app_id' => !empty($envDefaults['app_id']),
+                'has_app_secret' => !empty($envDefaults['app_secret']),
+                'has_access_token' => !empty($envDefaults['access_token']),
+                'has_user_id' => !empty($envDefaults['user_id']),
+            ]
         ]);
 
-        return view('superadmin.instagram-settings', compact('settings', 'urlAccessToken', 'urlUserId'));
+        return view('superadmin.instagram-settings', compact('settings', 'urlAccessToken', 'urlUserId', 'envDefaults'));
     }
 
     /**

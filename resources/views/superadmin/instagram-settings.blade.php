@@ -145,7 +145,7 @@
                         </label>
                         <input type="text" name="access_token" id="access_token" class="form-input"
                             placeholder="Enter Instagram User Access Token"
-                            value="@if (isset($urlAccessToken) && $urlAccessToken) {{ $urlAccessToken }}@elseif(isset($settings) && $settings && $settings->access_token){{ $settings->access_token }} @endif"
+                            value="@if (isset($urlAccessToken) && $urlAccessToken) {{ $urlAccessToken }}@elseif(isset($settings) && $settings && $settings->access_token){{ $settings->access_token }}@else{{ $envDefaults['access_token'] ?? '' }} @endif"
                             required>
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-key mr-1"></i>
@@ -158,7 +158,7 @@
                         </label>
                         <input type="text" name="user_id" id="user_id" class="form-input"
                             placeholder="Enter Instagram Professional Account ID (contoh: 17841428646148329)"
-                            value="@if (isset($urlUserId) && $urlUserId) {{ $urlUserId }}@elseif(isset($settings) && $settings && $settings->user_id){{ $settings->user_id }} @endif"
+                            value="@if (isset($urlUserId) && $urlUserId) {{ $urlUserId }}@elseif(isset($settings) && $settings && $settings->user_id){{ $settings->user_id }}@else{{ $envDefaults['user_id'] ?? '' }} @endif"
                             required>
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-user mr-1"></i>
@@ -175,8 +175,8 @@
                             App ID
                         </label>
                         <input type="text" name="app_id" id="app_id" class="form-input"
-                            placeholder="Enter Instagram App ID (e.g., 1575539400487129)" 
-                            value="{{ $settings->app_id ?? '' }}">
+                            placeholder="Enter Instagram App ID (e.g., 1575539400487129)"
+                            value="{{ $settings->app_id ?? ($envDefaults['app_id'] ?? '') }}">
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-info-circle mr-1"></i>
                             Optional: Instagram App ID dari Meta Dashboard
@@ -188,9 +188,9 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="app_secret" id="app_secret" class="form-input pr-10"
-                                placeholder="Enter Instagram App Secret (e.g., 7b6f727ebfd70...)" 
-                                value="{{ $settings->app_secret ?? '' }}">
-                            <button type="button" id="toggleAppSecret" 
+                                placeholder="Enter Instagram App Secret (e.g., 7b6f727ebfd70...)"
+                                value="{{ $settings->app_secret ?? ($envDefaults['app_secret'] ?? '') }}">
+                            <button type="button" id="toggleAppSecret"
                                 class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
                                 <i class="fas fa-eye" id="appSecretIcon"></i>
                             </button>
@@ -221,7 +221,7 @@
                     </label>
                     <input type="text" name="webhook_verify_token" id="webhook_verify_token" class="form-input"
                         placeholder="Enter webhook verify token (e.g., mySchoolWebhook2025)"
-                        value="{{ $settings->webhook_verify_token ?? 'mySchoolWebhook2025' }}">
+                        value="{{ $settings->webhook_verify_token ?? ($envDefaults['webhook_verify_token'] ?? 'mySchoolWebhook2025') }}">
                     <p class="text-xs text-slate-500 mt-1">
                         <i class="fas fa-shield-alt mr-1"></i>
                         Secret token untuk verifikasi webhook dari Meta. Buat token unik sendiri.
@@ -384,24 +384,40 @@
                 const syncBtn = document.getElementById('syncBtn');
                 const deactivateBtn = document.getElementById('deactivateBtn');
                 const resetBtn = document.getElementById('resetFormBtn');
-                
+
                 // Toggle App Secret visibility
                 const toggleAppSecretBtn = document.getElementById('toggleAppSecret');
                 const appSecretInput = document.getElementById('app_secret');
                 const appSecretIcon = document.getElementById('appSecretIcon');
-                
-                if (toggleAppSecretBtn) {
-                    toggleAppSecretBtn.addEventListener('click', function() {
+
+                console.log('Toggle App Secret elements:', {
+                    btn: !!toggleAppSecretBtn,
+                    input: !!appSecretInput,
+                    icon: !!appSecretIcon
+                });
+
+                if (toggleAppSecretBtn && appSecretInput && appSecretIcon) {
+                    toggleAppSecretBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        console.log('Toggle clicked, current type:', appSecretInput.type);
+
                         if (appSecretInput.type === 'password') {
                             appSecretInput.type = 'text';
                             appSecretIcon.classList.remove('fa-eye');
                             appSecretIcon.classList.add('fa-eye-slash');
+                            console.log('Changed to text');
                         } else {
                             appSecretInput.type = 'password';
                             appSecretIcon.classList.remove('fa-eye-slash');
                             appSecretIcon.classList.add('fa-eye');
+                            console.log('Changed to password');
                         }
                     });
+                    console.log('✅ Toggle App Secret initialized successfully');
+                } else {
+                    console.error('❌ Toggle App Secret elements not found!');
                 }
 
                 // Test Connection
@@ -438,14 +454,15 @@
                         .then(response => {
                             console.log('Response status:', response.status);
                             console.log('Response headers:', response.headers.get('content-type'));
-                            
+
                             // Check if response is JSON
                             const contentType = response.headers.get('content-type');
                             if (contentType && contentType.includes('application/json')) {
                                 return response.json();
                             } else {
                                 // Not JSON, probably redirected to login or error page
-                                throw new Error('Response is not JSON. Status: ' + response.status + '. You may have been logged out.');
+                                throw new Error('Response is not JSON. Status: ' + response.status +
+                                    '. You may have been logged out.');
                             }
                         })
                         .then(data => {
@@ -464,16 +481,17 @@
                         .catch(error => {
                             closeLoading();
                             console.error('Connection test error:', error);
-                            
+
                             // More helpful error message
                             if (error.message.includes('logged out')) {
-                                showError('Session Expired', 
+                                showError('Session Expired',
                                     'Anda mungkin ter-logout. Silakan refresh halaman dan login kembali.<br><br>' +
                                     '<button onclick="window.location.reload()" class="btn btn-primary mt-2">Refresh Halaman</button>'
                                 );
                             } else {
                                 showError('Koneksi Gagal',
-                                    'Terjadi kesalahan: ' + error.message + '<br>Cek console (F12) untuk detail.'
+                                    'Terjadi kesalahan: ' + error.message +
+                                    '<br>Cek console (F12) untuk detail.'
                                 );
                             }
                         })
@@ -505,10 +523,12 @@
 
                     // Log form data for debugging
                     console.log('Form data:', {
-                        access_token: accessToken ? 'Set (length: ' + accessToken.length + ')' : 'Empty',
+                        access_token: accessToken ? 'Set (length: ' + accessToken.length + ')' :
+                            'Empty',
                         user_id: userId,
                         app_id: formData.get('app_id') || 'Not set',
-                        app_secret: formData.get('app_secret') ? 'Set (length: ' + formData.get('app_secret').length + ')' : 'Not set',
+                        app_secret: formData.get('app_secret') ? 'Set (length: ' + formData.get(
+                            'app_secret').length + ')' : 'Not set',
                         redirect_uri: formData.get('redirect_uri') || 'Not set',
                         webhook_verify_token: formData.get('webhook_verify_token') || 'Not set',
                         sync_frequency: formData.get('sync_frequency'),
@@ -527,14 +547,15 @@
                         .then(response => {
                             console.log('Save response status:', response.status);
                             console.log('Save response headers:', response.headers.get('content-type'));
-                            
+
                             // Check if response is JSON
                             const contentType = response.headers.get('content-type');
                             if (contentType && contentType.includes('application/json')) {
                                 return response.json();
                             } else {
                                 // Not JSON, probably redirected to login or error page
-                                throw new Error('Response is not JSON. Status: ' + response.status + '. You may have been logged out.');
+                                throw new Error('Response is not JSON. Status: ' + response.status +
+                                    '. You may have been logged out.');
                             }
                         })
                         .then(data => {
@@ -554,16 +575,17 @@
                         .catch(error => {
                             closeLoading();
                             console.error('Save error:', error);
-                            
+
                             // More helpful error message
                             if (error.message.includes('logged out')) {
-                                showError('Session Expired', 
+                                showError('Session Expired',
                                     'Anda mungkin ter-logout. Silakan refresh halaman dan login kembali.<br><br>' +
                                     '<button onclick="window.location.reload()" class="btn btn-primary mt-2">Refresh Halaman</button>'
                                 );
                             } else {
                                 showError('Gagal Menyimpan',
-                                    'Terjadi kesalahan: ' + error.message + '<br>Cek console (F12) untuk detail.'
+                                    'Terjadi kesalahan: ' + error.message +
+                                    '<br>Cek console (F12) untuk detail.'
                                 );
                             }
                         })
