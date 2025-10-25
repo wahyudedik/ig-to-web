@@ -205,7 +205,8 @@
                         <div class="text-sm flex-1">
                             <p class="font-bold text-green-900 mb-2">Authorization Successful!</p>
                             <p class="text-green-700 mb-2">Permissions granted: <code
-                                    class="bg-white px-2 py-1 rounded text-xs"><?php echo e($urlPermissions); ?></code></p>
+                                    class="bg-white px-2 py-1 rounded text-xs"><?php echo e(is_array($urlPermissions) ? implode(', ', $urlPermissions) : $urlPermissions); ?></code>
+                            </p>
                             <?php if($urlExpiresIn): ?>
                                 <p class="text-green-700">Token valid for: <strong><?php echo e(floor($urlExpiresIn / 86400)); ?>
 

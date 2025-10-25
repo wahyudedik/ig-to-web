@@ -194,7 +194,8 @@
                         <div class="text-sm flex-1">
                             <p class="font-bold text-green-900 mb-2">Authorization Successful!</p>
                             <p class="text-green-700 mb-2">Permissions granted: <code
-                                    class="bg-white px-2 py-1 rounded text-xs">{{ $urlPermissions }}</code></p>
+                                    class="bg-white px-2 py-1 rounded text-xs">{{ is_array($urlPermissions) ? implode(', ', $urlPermissions) : $urlPermissions }}</code>
+                            </p>
                             @if ($urlExpiresIn)
                                 <p class="text-green-700">Token valid for: <strong>{{ floor($urlExpiresIn / 86400) }}
                                         days</strong></p>
