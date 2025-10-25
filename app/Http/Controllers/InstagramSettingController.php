@@ -22,6 +22,16 @@ class InstagramSettingController extends Controller
         $urlAccessToken = $request->query('access_token') ?? session('oauth_access_token');
         $urlUserId = $request->query('user_id') ?? session('oauth_user_id');
 
+        // Debug logging
+        Log::info('Instagram Settings Page Loaded', [
+            'has_url_token' => !empty($urlAccessToken),
+            'token_length' => $urlAccessToken ? strlen($urlAccessToken) : 0,
+            'has_url_user_id' => !empty($urlUserId),
+            'url_user_id' => $urlUserId,
+            'has_settings' => !empty($settings),
+            'settings_active' => $settings ? $settings->is_active : false
+        ]);
+
         return view('superadmin.instagram-settings', compact('settings', 'urlAccessToken', 'urlUserId'));
     }
 

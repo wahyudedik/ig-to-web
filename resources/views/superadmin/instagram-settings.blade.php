@@ -145,7 +145,8 @@
                         </label>
                         <input type="text" name="access_token" id="access_token" class="form-input"
                             placeholder="Enter Instagram User Access Token"
-                            value="{{ $urlAccessToken ?? ($settings->access_token ?? '') }}" required>
+                            value="@if (isset($urlAccessToken) && $urlAccessToken) {{ $urlAccessToken }}@elseif(isset($settings) && $settings && $settings->access_token){{ $settings->access_token }} @endif"
+                            required>
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-key mr-1"></i>
                             Instagram User Access Token dari Business Login
@@ -157,7 +158,8 @@
                         </label>
                         <input type="text" name="user_id" id="user_id" class="form-input"
                             placeholder="Enter Instagram Professional Account ID (contoh: 17841428646148329)"
-                            value="{{ $urlUserId ?? ($settings->user_id ?? '') }}" required>
+                            value="@if (isset($urlUserId) && $urlUserId) {{ $urlUserId }}@elseif(isset($settings) && $settings && $settings->user_id){{ $settings->user_id }} @endif"
+                            required>
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-user mr-1"></i>
                             Instagram Business/Creator Account ID (bukan Facebook Page ID). <strong>Contoh:
