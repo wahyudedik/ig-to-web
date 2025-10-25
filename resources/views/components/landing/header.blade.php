@@ -17,7 +17,7 @@
                             <a href="{{ cache('site_setting_social_instagram') }}" target="_blank"><i
                                     class="fab fa-instagram"></i></a>
                         @else
-                            <a href="{{ route('public.instagram') }}" target="_blank"><i
+                            <a href="{{ route('public.kegiatan') }}" target="_blank"><i
                                     class="fab fa-instagram"></i></a>
                         @endif
 
@@ -135,7 +135,7 @@
                                 <ul class="dropdown-menu fade-down">
                                     <li><a class="dropdown-item" href="{{ route('pages.public.index') }}">HALAMAN</a>
                                     </li>
-                                    <li><a class="dropdown-item" href="{{ route('public.instagram') }}">GALERI</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('public.kegiatan') }}">GALERI</a></li>
                                     <li><a class="dropdown-item" href="{{ route('admin.siswa.index') }}">DATA SISWA</a>
                                     </li>
                                 </ul>
@@ -170,7 +170,7 @@
                                     </li>
                                     <li><a class="dropdown-item" href="{{ route('admin.sarpras.index') }}">🏢
                                             E-SARPRAS</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('public.instagram') }}">📸
+                                    <li><a class="dropdown-item" href="{{ route('public.kegiatan') }}">📸
                                             E-GALERI</a></li>
                                 </ul>
                             </li>

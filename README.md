@@ -498,7 +498,7 @@ Untuk bantuan dan pertanyaan:
 
 ### 🌍 Internationalization
 - [ ] **Multi-language Support**: Dukungan multi-bahasa (EN, ID, AR, dll)
-- [ ] **RTL Language Support**: Dukungan bahasa RTL (Arab, Hebrew)
+- [ ] **RTL Language Support**: Dukungan bahasa RTL (Arab, Hebrew) 
 - [ ] **Currency Support**: Dukungan multi-currency untuk pembayaran
 - [ ] **Timezone Support**: Dukungan multiple timezone
 

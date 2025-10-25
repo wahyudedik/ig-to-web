@@ -33,7 +33,7 @@ class InstagramController extends Controller
         // Refresh posts using service
         $this->instagramService->refreshPosts();
 
-        return redirect()->route('instagram.activities')->with('success', 'Data Instagram berhasil diperbarui!');
+        return redirect()->route('public.kegiatan')->with('success', 'Data Instagram berhasil diperbarui!');
     }
 
     /**

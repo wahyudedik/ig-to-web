@@ -11,7 +11,7 @@ class InstagramService
 {
     protected $accessToken;
     protected $userId;
-    protected $baseUrl = 'https://graph.instagram.com/v12.0';
+    protected $baseUrl = 'https://graph.instagram.com/v20.0'; // Updated to latest version
 
     public function __construct()
     {
@@ -30,33 +30,46 @@ class InstagramService
 
     /**
      * Fetch Instagram posts from API
+     * Using Instagram Platform API with Instagram Login
      */
     public function fetchPosts($limit = 20)
     {
         try {
-            // For demo purposes, return mock data
-            // In production, uncomment the real API call below
-            return $this->getMockPosts();
+            // Check if credentials are available
+            if (empty($this->accessToken) || empty($this->userId)) {
+                Log::warning('Instagram credentials not configured');
+                return $this->getMockPosts();
+            }
 
-            // Real Instagram API call (uncomment when ready)
-            /*
-            $response = Http::get($this->baseUrl . "/{$this->userId}/media", [
-                'fields' => 'id,caption,media_type,media_url,permalink,timestamp,like_count,comment_count',
+            // Real Instagram Platform API call
+            $response = Http::timeout(30)->get($this->baseUrl . "/{$this->userId}/media", [
+                'fields' => 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count,children{media_url,media_type}',
                 'access_token' => $this->accessToken,
                 'limit' => $limit
             ]);
 
             if ($response->successful()) {
                 $data = $response->json();
+
+                // Log success
+                Log::info('Instagram API: Successfully fetched ' . count($data['data'] ?? []) . ' posts');
+
                 return $data['data'] ?? [];
             }
 
-            Log::error('Instagram API error: ' . $response->body());
-            return [];
-            */
+            // Log error with details
+            $error = $response->json();
+            Log::error('Instagram API error', [
+                'status' => $response->status(),
+                'error' => $error['error']['message'] ?? 'Unknown error',
+                'code' => $error['error']['code'] ?? null
+            ]);
+
+            // Return mock data as fallback
+            return $this->getMockPosts();
         } catch (\Exception $e) {
             Log::error('Instagram service error: ' . $e->getMessage());
-            return [];
+            return $this->getMockPosts();
         }
     }
 
@@ -178,24 +191,18 @@ class InstagramService
 
     /**
      * Get Instagram account information
+     * Using Instagram Platform API
      */
     public function getAccountInfo()
     {
         try {
-            // Mock account info
-            return [
-                'id' => $this->userId,
-                'username' => 'sekolah_official',
-                'account_type' => 'BUSINESS',
-                'media_count' => 156,
-                'followers_count' => 1234,
-                'following_count' => 89
-            ];
+            if (empty($this->accessToken) || empty($this->userId)) {
+                return null;
+            }
 
-            // Real API call (uncomment when ready)
-            /*
-            $response = Http::get($this->baseUrl . "/{$this->userId}", [
-                'fields' => 'id,username,account_type,media_count',
+            // Real Instagram Platform API call
+            $response = Http::timeout(15)->get($this->baseUrl . "/{$this->userId}", [
+                'fields' => 'id,username,name,account_type,media_count,profile_picture_url',
                 'access_token' => $this->accessToken
             ]);
 
@@ -203,8 +210,12 @@ class InstagramService
                 return $response->json();
             }
 
+            Log::error('Instagram account info error', [
+                'status' => $response->status(),
+                'error' => $response->json()
+            ]);
+
             return null;
-            */
         } catch (\Exception $e) {
             Log::error('Instagram account info error: ' . $e->getMessage());
             return null;
@@ -213,6 +224,7 @@ class InstagramService
 
     /**
      * Validate Instagram access token
+     * Test connection by fetching account info
      */
     public function validateToken()
     {
@@ -222,32 +234,72 @@ class InstagramService
                 return false;
             }
 
-            // Check if token is not expired (basic validation)
-            if (strlen($this->accessToken) < 10) {
-                return false;
+            // Validate by trying to get account info
+            $accountInfo = $this->getAccountInfo();
+
+            if ($accountInfo && isset($accountInfo['id'])) {
+                return true;
             }
 
-            // For now, return true if we have valid-looking credentials
-            // In production, uncomment the real API validation below
-            return true;
+            return false;
+        } catch (\Exception $e) {
+            Log::error('Instagram token validation error: ' . $e->getMessage());
+            return false;
+        }
+    }
 
-            // Real validation (uncomment when ready)
-            /*
-            $response = Http::get($this->baseUrl . "/debug_token", [
-                'input_token' => $this->accessToken,
+    /**
+     * Get media insights
+     * NEW: Instagram Platform API feature
+     */
+    public function getMediaInsights($mediaId, $metrics = ['engagement', 'impressions', 'reach'])
+    {
+        try {
+            if (empty($this->accessToken)) {
+                return null;
+            }
+
+            $response = Http::timeout(15)->get($this->baseUrl . "/{$mediaId}/insights", [
+                'metric' => implode(',', $metrics),
                 'access_token' => $this->accessToken
             ]);
 
             if ($response->successful()) {
-                $data = $response->json();
-                return $data['data']['is_valid'] ?? false;
+                return $response->json();
             }
 
-            return false;
-            */
+            return null;
         } catch (\Exception $e) {
-            Log::error('Instagram token validation error: ' . $e->getMessage());
-            return false;
+            Log::error('Instagram media insights error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get account insights
+     * NEW: Instagram Platform API feature
+     */
+    public function getAccountInsights($period = 'day', $metrics = ['impressions', 'reach', 'profile_views'])
+    {
+        try {
+            if (empty($this->accessToken) || empty($this->userId)) {
+                return null;
+            }
+
+            $response = Http::timeout(15)->get($this->baseUrl . "/{$this->userId}/insights", [
+                'metric' => implode(',', $metrics),
+                'period' => $period, // day, week, days_28, lifetime
+                'access_token' => $this->accessToken
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Instagram account insights error: ' . $e->getMessage());
+            return null;
         }
     }
 }

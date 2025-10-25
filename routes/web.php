@@ -43,13 +43,10 @@ Route::get('/', function () {
 Route::get('/check-graduation', [KelulusanController::class, 'checkStatus'])->name('public.graduation.check');
 Route::post('/check-graduation', [KelulusanController::class, 'processCheck'])->name('public.graduation.check.process');
 
-// Public Instagram activities (Kegiatan Instagram untuk publik)
-Route::get('/instagram', [InstagramController::class, 'index'])->name('public.instagram');
-Route::get('/instagram/refresh', [InstagramController::class, 'refresh'])->name('public.instagram.refresh');
-Route::get('/instagram/posts', [InstagramController::class, 'getPosts'])->name('public.instagram.posts');
-
-// Alternative route for kegiatan (clean URL)
+// Public kegiatan page (Instagram feed integration)
 Route::get('/kegiatan', [InstagramController::class, 'index'])->name('public.kegiatan');
+Route::get('/kegiatan/refresh', [InstagramController::class, 'refresh'])->name('public.kegiatan.refresh');
+Route::get('/kegiatan/posts', [InstagramController::class, 'getPosts'])->name('public.kegiatan.posts');
 
 // Custom pages example
 Route::get('/custom-example', function () {

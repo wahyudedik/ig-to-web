@@ -12,11 +12,14 @@ class InstagramSetting extends Model
     protected $fillable = [
         'access_token',
         'user_id',
+        'username', // NEW: Instagram username
+        'account_type', // NEW: BUSINESS or CREATOR
         'app_id',
         'app_secret',
         'redirect_uri',
         'is_active',
         'last_sync',
+        'token_expires_at', // NEW: Token expiry tracking
         'sync_frequency',
         'auto_sync_enabled',
         'cache_duration',
@@ -28,6 +31,7 @@ class InstagramSetting extends Model
         'is_active' => 'boolean',
         'auto_sync_enabled' => 'boolean',
         'last_sync' => 'datetime',
+        'token_expires_at' => 'datetime', // NEW
         'cache_duration' => 'integer',
         'sync_frequency' => 'integer'
     ];
@@ -121,5 +125,48 @@ class InstagramSetting extends Model
             default:
                 return 'gray';
         }
+    }
+
+    /**
+     * Check if token is expired or will expire soon
+     * NEW: Token expiry checking
+     */
+    public function isTokenExpired()
+    {
+        if (!$this->token_expires_at) {
+            return false; // Unknown expiry, assume valid
+        }
+
+        return $this->token_expires_at->isPast();
+    }
+
+    /**
+     * Check if token will expire soon (within 7 days)
+     * NEW: Token expiry warning
+     */
+    public function isTokenExpiringSoon()
+    {
+        if (!$this->token_expires_at) {
+            return false;
+        }
+
+        return $this->token_expires_at->diffInDays(now()) <= 7 && !$this->isTokenExpired();
+    }
+
+    /**
+     * Get token status
+     * NEW: Token health status
+     */
+    public function getTokenStatusAttribute()
+    {
+        if ($this->isTokenExpired()) {
+            return 'expired';
+        }
+
+        if ($this->isTokenExpiringSoon()) {
+            return 'expiring_soon';
+        }
+
+        return 'active';
     }
 }

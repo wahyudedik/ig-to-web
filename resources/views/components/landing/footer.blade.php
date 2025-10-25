@@ -93,7 +93,7 @@
                                         E-OSIS</a></li>
                                 <li><a href="{{ route('admin.sarpras.index') }}"><i class="fas fa-caret-right"></i>
                                         E-Sarpras</a></li>
-                                <li><a href="{{ route('public.instagram') }}"><i class="fas fa-caret-right"></i>
+                                <li><a href="{{ route('public.kegiatan') }}"><i class="fas fa-caret-right"></i>
                                         E-Galeri</a></li>
                             </ul>
                         </div>
@@ -130,7 +130,7 @@
                     <div class="col-md-6 align-self-center">
                         <ul class="footer-social">
                             <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a href="{{ route('public.instagram') }}" target="_blank"><i
+                            <li><a href="{{ route('public.kegiatan') }}" target="_blank"><i
                                         class="fab fa-instagram"></i></a></li>
                             <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
                             <li><a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a></li>

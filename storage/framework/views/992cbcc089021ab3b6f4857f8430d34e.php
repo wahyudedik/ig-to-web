@@ -1,13 +1,11 @@
-@extends('layouts.landing')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <!-- breadcrumb -->
-    <div class="site-breadcrumb" style="background: url({{ asset('assets/img/breadcrumb/01.jpg') }})">
+    <div class="site-breadcrumb" style="background: url(<?php echo e(asset('assets/img/breadcrumb/01.jpg')); ?>)">
         <div class="container">
             <h2 class="breadcrumb-title">Panduan Setup Instagram API</h2>
             <ul class="breadcrumb-menu">
                 <li><a href="/">Beranda</a></li>
-                <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                <li><a href="<?php echo e(route('admin.dashboard')); ?>">Dashboard</a></li>
                 <li class="active">Setup Instagram</li>
             </ul>
         </div>
@@ -85,30 +83,30 @@
             </div>
 
             <!-- Setup Steps -->
-            @for ($i = 1; $i <= 7; $i++)
+            <?php for($i = 1; $i <= 7; $i++): ?>
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <h2 class="h4 mb-3">
                             <span class="badge bg-primary rounded-circle"
-                                style="width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center;">{{ $i }}</span>
-                            @if ($i == 1)
+                                style="width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center;"><?php echo e($i); ?></span>
+                            <?php if($i == 1): ?>
                                 Buat Meta Business App
-                            @elseif($i == 2)
+                            <?php elseif($i == 2): ?>
                                 Tambahkan Instagram Product
-                            @elseif($i == 3)
+                            <?php elseif($i == 3): ?>
                                 Konfigurasi Business Login for Instagram
-                            @elseif($i == 4)
+                            <?php elseif($i == 4): ?>
                                 Generate Access Token
-                            @elseif($i == 5)
+                            <?php elseif($i == 5): ?>
                                 Dapatkan Instagram Professional Account ID
-                            @elseif($i == 6)
+                            <?php elseif($i == 6): ?>
                                 Konfigurasi Pengaturan Website
-                            @elseif($i == 7)
+                            <?php elseif($i == 7): ?>
                                 Test Koneksi & Lihat Feed
-                            @endif
+                            <?php endif; ?>
                         </h2>
 
-                        @if ($i == 1)
+                        <?php if($i == 1): ?>
                             <ol class="ps-3">
                                 <li>Buka aplikasi <strong>Instagram</strong> di smartphone Anda</li>
                                 <li>Tap <strong>Profile</strong> → <strong>☰ Menu</strong> → <strong>Settings</strong></li>
@@ -123,7 +121,7 @@
                                 <strong>Berhasil!</strong> Instagram sekarang sudah linked ke Facebook Page.
                                 Anda bisa verifikasi dengan membuka Facebook Page → Settings → Instagram.
                             </div>
-                        @elseif($i == 2)
+                        <?php elseif($i == 2): ?>
                             <ol class="ps-3">
                                 <li>Buka Facebook Developers: <a href="https://developers.facebook.com" target="_blank"
                                         class="text-primary">https://developers.facebook.com <i
@@ -140,7 +138,7 @@
                                 <strong>Catatan:</strong> Gunakan tipe "Business" bukan "Consumer" untuk Instagram Platform
                                 API.
                             </div>
-                        @elseif($i == 3)
+                        <?php elseif($i == 3): ?>
                             <ol class="ps-3">
                                 <li>Di dashboard aplikasi Anda, cari menu <strong>"Add products"</strong> di sidebar kiri
                                 </li>
@@ -152,7 +150,7 @@
                                 <i class="fas fa-check-circle mr-2"></i>
                                 <strong>Berhasil!</strong> Instagram Platform API sekarang aktif untuk aplikasi Anda.
                             </div>
-                        @elseif($i == 4)
+                        <?php elseif($i == 4): ?>
                             <ol class="ps-3">
                                 <li>Di dashboard aplikasi, klik <strong>"Instagram"</strong> di sidebar</li>
                                 <li>Klik <strong>"API Setup"</strong></li>
@@ -167,7 +165,7 @@
                                 <strong>Tips:</strong> Pastikan Anda login sebagai admin dari Facebook Page yang sudah
                                 linked ke Instagram.
                             </div>
-                        @elseif($i == 5)
+                        <?php elseif($i == 5): ?>
                             <ol class="ps-3">
                                 <li>Di dashboard aplikasi, buka <strong>"Tools"</strong> → <strong>"Graph API
                                         Explorer"</strong></li>
@@ -192,7 +190,7 @@
                                 Untuk production, Anda perlu menggunakan <strong>long-lived Page Access Token</strong> (60
                                 hari, dapat di-refresh).
                             </div>
-                        @elseif($i == 6)
+                        <?php elseif($i == 6): ?>
                             <ol class="ps-3">
                                 <li>Buka dashboard superadmin website sekolah Anda</li>
                                 <li>Navigasi ke "Instagram Settings"</li>
@@ -200,7 +198,7 @@
                                 <li>Klik "Test Connection" untuk memverifikasi pengaturan Anda</li>
                                 <li>Klik "Save Settings" untuk mengaktifkan integrasi</li>
                             </ol>
-                        @elseif($i == 7)
+                        <?php elseif($i == 7): ?>
                             <ol class="ps-3">
                                 <li>Setelah menyimpan pengaturan, buka halaman feed Instagram website Anda</li>
                                 <li>Kunjungi: <code class="bg-dark text-light px-2 py-1 rounded">/kegiatan</code></li>
@@ -212,10 +210,10 @@
                                 <strong>Berhasil!</strong> Integrasi Instagram Anda sekarang aktif dan menampilkan postingan
                                 di website Anda.
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
-            @endfor
+            <?php endfor; ?>
 
             <!-- Troubleshooting -->
             <div class="card shadow-sm mb-4">
@@ -301,11 +299,11 @@
                             <i class="fas fa-book mr-2"></i>
                             Dokumentasi Instagram API
                         </a>
-                        <a href="{{ route('admin.superadmin.instagram-settings') }}" class="btn btn-success">
+                        <a href="<?php echo e(route('admin.superadmin.instagram-settings')); ?>" class="btn btn-success">
                             <i class="fas fa-cog mr-2"></i>
                             Halaman Pengaturan
                         </a>
-                        <a href="{{ route('public.kegiatan') }}" class="btn btn-warning">
+                        <a href="<?php echo e(route('public.kegiatan')); ?>" class="btn btn-warning">
                             <i class="fas fa-images mr-2"></i>
                             Lihat Feed
                         </a>
@@ -314,4 +312,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.landing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\PROJEK  LARAVEL\ig-to-web\resources\views/docs/instagram-setup.blade.php ENDPATH**/ ?>

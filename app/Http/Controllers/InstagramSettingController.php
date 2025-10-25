@@ -22,6 +22,7 @@ class InstagramSettingController extends Controller
 
     /**
      * Store or update Instagram settings
+     * Updated for Instagram Platform API
      */
     public function store(Request $request)
     {
@@ -37,15 +38,18 @@ class InstagramSettingController extends Controller
         ]);
 
         try {
-            // Test the connection first
-            $isValid = $this->testInstagramConnection($request->access_token, $request->user_id);
+            // Test the connection first and get account info
+            $accountInfo = $this->testInstagramConnectionWithInfo($request->access_token, $request->user_id);
 
-            if (!$isValid) {
+            if (!$accountInfo) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid Instagram credentials. Please check your access token and user ID.'
                 ], 400);
             }
+
+            // Calculate token expiry (Instagram User tokens are typically long-lived: 60 days)
+            $tokenExpiresAt = now()->addDays(60);
 
             // Create or update settings
             $settings = InstagramSetting::updateOrCreate(
@@ -53,10 +57,13 @@ class InstagramSettingController extends Controller
                 [
                     'access_token' => $request->access_token,
                     'user_id' => $request->user_id,
+                    'username' => $accountInfo['username'] ?? null,
+                    'account_type' => $accountInfo['account_type'] ?? null,
                     'app_id' => $request->app_id,
                     'app_secret' => $request->app_secret,
                     'redirect_uri' => $request->redirect_uri,
                     'is_active' => true,
+                    'token_expires_at' => $tokenExpiresAt,
                     'sync_frequency' => $request->sync_frequency,
                     'auto_sync_enabled' => $request->boolean('auto_sync_enabled'),
                     'cache_duration' => $request->cache_duration,
@@ -70,7 +77,7 @@ class InstagramSettingController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Instagram settings saved successfully!',
+                'message' => 'Instagram settings saved successfully! Token will expire on ' . $tokenExpiresAt->format('M d, Y'),
                 'data' => $settings
             ]);
         } catch (\Exception $e) {
@@ -197,11 +204,12 @@ class InstagramSettingController extends Controller
 
     /**
      * Test Instagram connection with provided credentials
+     * Updated for Instagram Platform API v20.0
      */
     private function testInstagramConnection($accessToken, $userId)
     {
         try {
-            $response = Http::timeout(10)->get("https://graph.instagram.com/v12.0/{$userId}", [
+            $response = Http::timeout(10)->get("https://graph.instagram.com/v20.0/{$userId}", [
                 'fields' => 'id,username,account_type',
                 'access_token' => $accessToken
             ]);
@@ -214,13 +222,42 @@ class InstagramSettingController extends Controller
     }
 
     /**
+     * Test connection and get account info in one call
+     * NEW: Combined method for Instagram Platform API
+     */
+    private function testInstagramConnectionWithInfo($accessToken, $userId)
+    {
+        try {
+            $response = Http::timeout(15)->get("https://graph.instagram.com/v20.0/{$userId}", [
+                'fields' => 'id,username,name,account_type,media_count,profile_picture_url',
+                'access_token' => $accessToken
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            Log::error('Instagram API connection test failed', [
+                'status' => $response->status(),
+                'error' => $response->json()
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Instagram API test error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Get Instagram account information
+     * Updated for Instagram Platform API v20.0
      */
     private function getAccountInfo($accessToken, $userId)
     {
         try {
-            $response = Http::timeout(10)->get("https://graph.instagram.com/v12.0/{$userId}", [
-                'fields' => 'id,username,account_type,media_count',
+            $response = Http::timeout(10)->get("https://graph.instagram.com/v20.0/{$userId}", [
+                'fields' => 'id,username,name,account_type,media_count,profile_picture_url',
                 'access_token' => $accessToken
             ]);
 

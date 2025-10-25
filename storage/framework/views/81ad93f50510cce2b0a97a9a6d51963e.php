@@ -1,5 +1,14 @@
-<x-app-layout>
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">
@@ -10,15 +19,15 @@
                 <p class="text-slate-600 mt-1">Configure Instagram API integration for social media feed</p>
             </div>
             <div class="flex items-center space-x-2">
-                <a href="{{ route('docs.instagram-setup') }}" class="btn btn-secondary">
+                <a href="<?php echo e(route('docs.instagram-setup')); ?>" class="btn btn-secondary">
                     <i class="fas fa-book mr-2"></i>
                     Setup Guide
                 </a>
-                <a href="{{ route('public.kegiatan') }}" class="btn btn-secondary">
+                <a href="<?php echo e(route('public.kegiatan')); ?>" class="btn btn-secondary">
                     <i class="fas fa-images mr-2"></i>
                     View Feed
                 </a>
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -27,7 +36,7 @@
                 </a>
             </div>
         </div>
-    </x-slot>
+     <?php $__env->endSlot(); ?>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Current Status -->
@@ -35,9 +44,9 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <div
-                        class="w-12 h-12 {{ $settings && $settings->is_active ? 'bg-green-100' : 'bg-red-100' }} rounded-lg flex items-center justify-center">
+                        class="w-12 h-12 <?php echo e($settings && $settings->is_active ? 'bg-green-100' : 'bg-red-100'); ?> rounded-lg flex items-center justify-center">
                         <div
-                            class="status-indicator {{ $settings && $settings->is_active ? 'status-active' : 'status-inactive' }}">
+                            class="status-indicator <?php echo e($settings && $settings->is_active ? 'status-active' : 'status-inactive'); ?>">
                         </div>
                     </div>
                     <div class="ml-4">
@@ -45,49 +54,51 @@
                             Instagram Integration Status
                         </h3>
                         <p class="text-sm text-slate-600">
-                            @if ($settings && $settings->is_active)
+                            <?php if($settings && $settings->is_active): ?>
                                 <span class="font-medium text-green-600">Active</span>
-                                @if ($settings->username)
-                                    - Connected as <span class="font-medium">@{{ $settings - > username }}</span>
-                                @endif
-                                @if ($settings->account_type)
+                                <?php if($settings->username): ?>
+                                    - Connected as <span class="font-medium">{{ $settings - > username }}</span>
+                                <?php endif; ?>
+                                <?php if($settings->account_type): ?>
                                     <span
                                         class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 ml-2">
-                                        {{ $settings->account_type }}
+                                        <?php echo e($settings->account_type); ?>
+
                                     </span>
-                                @endif
+                                <?php endif; ?>
                                 <br>
                                 <span class="text-xs">Last sync:
-                                    {{ $settings->last_sync ? $settings->last_sync->diffForHumans() : 'Never' }}</span>
-                            @else
+                                    <?php echo e($settings->last_sync ? $settings->last_sync->diffForHumans() : 'Never'); ?></span>
+                            <?php else: ?>
                                 Inactive - No Instagram integration configured
-                            @endif
+                            <?php endif; ?>
                         </p>
 
-                        @if ($settings && $settings->is_active && $settings->token_expires_at)
-                            @if ($settings->isTokenExpired())
+                        <?php if($settings && $settings->is_active && $settings->token_expires_at): ?>
+                            <?php if($settings->isTokenExpired()): ?>
                                 <div class="mt-2 flex items-center text-red-600 text-xs">
                                     <i class="fas fa-exclamation-triangle mr-1"></i>
-                                    Token expired on {{ $settings->token_expires_at->format('M d, Y') }}. Please update
+                                    Token expired on <?php echo e($settings->token_expires_at->format('M d, Y')); ?>. Please update
                                     your access token.
                                 </div>
-                            @elseif ($settings->isTokenExpiringSoon())
+                            <?php elseif($settings->isTokenExpiringSoon()): ?>
                                 <div class="mt-2 flex items-center text-orange-600 text-xs">
                                     <i class="fas fa-exclamation-circle mr-1"></i>
-                                    Token will expire on {{ $settings->token_expires_at->format('M d, Y') }}. Consider
+                                    Token will expire on <?php echo e($settings->token_expires_at->format('M d, Y')); ?>. Consider
                                     refreshing soon.
                                 </div>
-                            @else
+                            <?php else: ?>
                                 <div class="mt-2 flex items-center text-green-600 text-xs">
                                     <i class="fas fa-check-circle mr-1"></i>
-                                    Token valid until {{ $settings->token_expires_at->format('M d, Y') }}
+                                    Token valid until <?php echo e($settings->token_expires_at->format('M d, Y')); ?>
+
                                 </div>
-                            @endif
-                        @endif
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="flex space-x-3">
-                    @if ($settings && $settings->is_active)
+                    <?php if($settings && $settings->is_active): ?>
                         <button id="syncBtn" class="btn btn-success">
                             <i class="fas fa-sync-alt mr-2"></i>
                             Sync Now
@@ -96,7 +107,7 @@
                             <i class="fas fa-power-off mr-2"></i>
                             Deactivate
                         </button>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -115,7 +126,7 @@
                             <p class="font-medium mb-1">Instagram Platform API dengan Instagram Login</p>
                             <p>Dapatkan Access Token dan User ID dari <strong>Instagram Platform API</strong> (bukan
                                 Basic Display API).
-                                Lihat <a href="{{ route('docs.instagram-setup') }}" class="underline font-medium">Setup
+                                Lihat <a href="<?php echo e(route('docs.instagram-setup')); ?>" class="underline font-medium">Setup
                                     Guide</a> untuk panduan lengkap.</p>
                         </div>
                     </div>
@@ -127,7 +138,7 @@
                             Access Token <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="access_token" id="access_token" class="form-input"
-                            placeholder="Enter Instagram User Access Token" value="{{ $settings->access_token ?? '' }}"
+                            placeholder="Enter Instagram User Access Token" value="<?php echo e($settings->access_token ?? ''); ?>"
                             required>
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-key mr-1"></i>
@@ -140,7 +151,7 @@
                         </label>
                         <input type="text" name="user_id" id="user_id" class="form-input"
                             placeholder="Enter Instagram Professional Account ID"
-                            value="{{ $settings->user_id ?? '' }}" required>
+                            value="<?php echo e($settings->user_id ?? ''); ?>" required>
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-user mr-1"></i>
                             Instagram Business/Creator Account ID (bukan Facebook Page ID)
@@ -155,14 +166,14 @@
                             App ID
                         </label>
                         <input type="text" name="app_id" id="app_id" class="form-input"
-                            placeholder="Enter Instagram App ID" value="{{ $settings->app_id ?? '' }}">
+                            placeholder="Enter Instagram App ID" value="<?php echo e($settings->app_id ?? ''); ?>">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">
                             App Secret
                         </label>
                         <input type="password" name="app_secret" id="app_secret" class="form-input"
-                            placeholder="Enter Instagram App Secret" value="{{ $settings->app_secret ?? '' }}">
+                            placeholder="Enter Instagram App Secret" value="<?php echo e($settings->app_secret ?? ''); ?>">
                     </div>
                 </div>
 
@@ -172,7 +183,7 @@
                     </label>
                     <input type="url" name="redirect_uri" id="redirect_uri" class="form-input"
                         placeholder="https://yourdomain.com/instagram/callback"
-                        value="{{ $settings->redirect_uri ?? '' }}">
+                        value="<?php echo e($settings->redirect_uri ?? ''); ?>">
                 </div>
 
                 <!-- Sync Settings -->
@@ -184,22 +195,22 @@
                                 Sync Frequency (minutes)
                             </label>
                             <select name="sync_frequency" id="sync_frequency" class="form-select">
-                                <option value="5" {{ ($settings->sync_frequency ?? 30) == 5 ? 'selected' : '' }}>
+                                <option value="5" <?php echo e(($settings->sync_frequency ?? 30) == 5 ? 'selected' : ''); ?>>
                                     5
                                     minutes</option>
                                 <option value="15"
-                                    {{ ($settings->sync_frequency ?? 30) == 15 ? 'selected' : '' }}>
+                                    <?php echo e(($settings->sync_frequency ?? 30) == 15 ? 'selected' : ''); ?>>
                                     15 minutes</option>
                                 <option value="30"
-                                    {{ ($settings->sync_frequency ?? 30) == 30 ? 'selected' : '' }}>
+                                    <?php echo e(($settings->sync_frequency ?? 30) == 30 ? 'selected' : ''); ?>>
                                     30 minutes</option>
                                 <option value="60"
-                                    {{ ($settings->sync_frequency ?? 30) == 60 ? 'selected' : '' }}>
+                                    <?php echo e(($settings->sync_frequency ?? 30) == 60 ? 'selected' : ''); ?>>
                                     1 hour</option>
                                 <option value="120"
-                                    {{ ($settings->sync_frequency ?? 30) == 120 ? 'selected' : '' }}>2 hours</option>
+                                    <?php echo e(($settings->sync_frequency ?? 30) == 120 ? 'selected' : ''); ?>>2 hours</option>
                                 <option value="240"
-                                    {{ ($settings->sync_frequency ?? 30) == 240 ? 'selected' : '' }}>4 hours</option>
+                                    <?php echo e(($settings->sync_frequency ?? 30) == 240 ? 'selected' : ''); ?>>4 hours</option>
                             </select>
                         </div>
                         <div>
@@ -208,18 +219,18 @@
                             </label>
                             <select name="cache_duration" id="cache_duration" class="form-select">
                                 <option value="300"
-                                    {{ ($settings->cache_duration ?? 3600) == 300 ? 'selected' : '' }}>5 minutes
+                                    <?php echo e(($settings->cache_duration ?? 3600) == 300 ? 'selected' : ''); ?>>5 minutes
                                 </option>
                                 <option value="900"
-                                    {{ ($settings->cache_duration ?? 3600) == 900 ? 'selected' : '' }}>15 minutes
+                                    <?php echo e(($settings->cache_duration ?? 3600) == 900 ? 'selected' : ''); ?>>15 minutes
                                 </option>
                                 <option value="1800"
-                                    {{ ($settings->cache_duration ?? 3600) == 1800 ? 'selected' : '' }}>30 minutes
+                                    <?php echo e(($settings->cache_duration ?? 3600) == 1800 ? 'selected' : ''); ?>>30 minutes
                                 </option>
                                 <option value="3600"
-                                    {{ ($settings->cache_duration ?? 3600) == 3600 ? 'selected' : '' }}>1 hour</option>
+                                    <?php echo e(($settings->cache_duration ?? 3600) == 3600 ? 'selected' : ''); ?>>1 hour</option>
                                 <option value="7200"
-                                    {{ ($settings->cache_duration ?? 3600) == 7200 ? 'selected' : '' }}>2 hours
+                                    <?php echo e(($settings->cache_duration ?? 3600) == 7200 ? 'selected' : ''); ?>>2 hours
                                 </option>
                             </select>
                         </div>
@@ -227,7 +238,7 @@
                             <label class="flex items-center">
                                 <input type="checkbox" name="auto_sync_enabled" id="auto_sync_enabled"
                                     class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                    {{ $settings->auto_sync_enabled ?? true ? 'checked' : '' }}>
+                                    <?php echo e($settings->auto_sync_enabled ?? true ? 'checked' : ''); ?>>
                                 <span class="ml-2 text-sm text-slate-700">
                                     Enable Auto Sync
                                 </span>
@@ -267,11 +278,11 @@
                         feed.
                     </p>
                     <div class="flex flex-wrap gap-3">
-                        <a href="{{ route('docs.instagram-setup') }}" class="btn btn-primary">
+                        <a href="<?php echo e(route('docs.instagram-setup')); ?>" class="btn btn-primary">
                             <i class="fas fa-book mr-2"></i>
                             Setup Guide
                         </a>
-                        <a href="{{ route('public.kegiatan') }}" class="btn btn-success">
+                        <a href="<?php echo e(route('public.kegiatan')); ?>" class="btn btn-success">
                             <i class="fas fa-images mr-2"></i>
                             View Instagram Feed
                         </a>
@@ -281,7 +292,7 @@
         </div>
     </div>
 
-    @push('styles')
+    <?php $__env->startPush('styles'); ?>
         <style>
             .status-indicator {
                 width: 12px;
@@ -311,9 +322,9 @@
                 }
             }
         </style>
-    @endpush
+    <?php $__env->stopPush(); ?>
 
-    @push('scripts')
+    <?php $__env->startPush('scripts'); ?>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const form = document.getElementById('instagramSettingsForm');
@@ -337,7 +348,7 @@
                     testBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
                     showLoading();
 
-                    fetch('{{ route('admin.superadmin.instagram-settings.test-connection') }}', {
+                    fetch('<?php echo e(route('admin.superadmin.instagram-settings.test-connection')); ?>', {
                             method: 'POST',
                             body: JSON.stringify({
                                 access_token: accessToken,
@@ -382,7 +393,7 @@
 
                     const formData = new FormData(form);
 
-                    fetch('{{ route('admin.superadmin.instagram-settings.store') }}', {
+                    fetch('<?php echo e(route('admin.superadmin.instagram-settings.store')); ?>', {
                             method: 'POST',
                             body: formData,
                             headers: {
@@ -419,7 +430,7 @@
                         syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Syncing...';
                         showLoading();
 
-                        fetch('{{ route('admin.superadmin.instagram-settings.sync') }}', {
+                        fetch('<?php echo e(route('admin.superadmin.instagram-settings.sync')); ?>', {
                                 method: 'POST',
                                 headers: {
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
@@ -463,7 +474,7 @@
                                 deactivateBtn.innerHTML =
                                     '<i class="fas fa-spinner fa-spin mr-2"></i>Deactivating...';
 
-                                fetch('{{ route('admin.superadmin.instagram-settings.deactivate') }}', {
+                                fetch('<?php echo e(route('admin.superadmin.instagram-settings.deactivate')); ?>', {
                                         method: 'POST',
                                         headers: {
                                             'X-CSRF-TOKEN': document.querySelector(
@@ -531,5 +542,15 @@
                 }
             });
         </script>
-    @endpush
-</x-app-layout>
+    <?php $__env->stopPush(); ?>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH E:\PROJEK  LARAVEL\ig-to-web\resources\views/superadmin/instagram-settings.blade.php ENDPATH**/ ?>
