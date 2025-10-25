@@ -76,6 +76,23 @@ npm test
 "Apa saja controller yang tersedia?"
 ```
 
+### 🗄️ Database (NEW!)
+
+```
+"Query database: SELECT * FROM instagram_settings"
+"Tampilkan data dari table users"
+"Cek data instagram_settings limit 10"
+"Jalankan PHP code: User::count()"
+```
+
+### 📊 Logs (NEW!)
+
+```
+"Baca log Laravel hari ini"
+"Tampilkan 100 baris terakhir dari log"
+"Lihat log tanggal 2025-01-15"
+```
+
 ### 🔧 Konfigurasi
 
 ```
@@ -148,6 +165,48 @@ npm test
 {
   "tool": "get_controllers",
   "args": {}
+}
+```
+
+### db_query (NEW!)
+```json
+{
+  "tool": "db_query",
+  "args": {
+    "query": "SELECT * FROM instagram_settings"
+  }
+}
+```
+
+### db_table (NEW!)
+```json
+{
+  "tool": "db_table",
+  "args": {
+    "table": "users",
+    "limit": 10
+  }
+}
+```
+
+### read_logs (NEW!)
+```json
+{
+  "tool": "read_logs",
+  "args": {
+    "lines": 100,
+    "date": "2025-01-15"
+  }
+}
+```
+
+### tinker (NEW!)
+```json
+{
+  "tool": "tinker",
+  "args": {
+    "code": "User::count()"
+  }
 }
 ```
 

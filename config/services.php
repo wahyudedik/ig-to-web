@@ -32,12 +32,10 @@ return [
     ],
 
     'instagram' => [
-        'access_token' => env('INSTAGRAM_ACCESS_TOKEN'),
-        'user_id' => env('INSTAGRAM_USER_ID'),
         'app_id' => env('INSTAGRAM_APP_ID'),
         'app_secret' => env('INSTAGRAM_APP_SECRET'),
         'redirect_uri' => env('INSTAGRAM_REDIRECT_URI'),
-        'webhook_verify_token' => env('INSTAGRAM_WEBHOOK_VERIFY_TOKEN', 'mySchoolWebhook2025'),
+        'webhook_token' => env('INSTAGRAM_WEBHOOK_TOKEN', 'mySchoolWebhook2025'),
     ],
 
 ];

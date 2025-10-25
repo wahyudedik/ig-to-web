@@ -74,15 +74,15 @@ async function runArtisanCommand(command) {
 // Helper function to search files
 async function searchInFiles(searchTerm, directory = '.') {
   const results = [];
-  
+
   async function searchDir(dir) {
     try {
       const fullPath = resolve(PROJECT_ROOT, dir);
       const items = await readdir(fullPath, { withFileTypes: true });
-      
+
       for (const item of items) {
         const itemPath = join(dir, item.name);
-        
+
         // Skip certain directories
         if (item.isDirectory()) {
           if (['node_modules', 'vendor', 'storage', '.git'].includes(item.name)) {
@@ -100,7 +100,7 @@ async function searchInFiles(searchTerm, directory = '.') {
                   .map((line, index) => ({ line: line, number: index + 1 }))
                   .filter(({ line }) => line.toLowerCase().includes(searchTerm.toLowerCase()))
                   .slice(0, 3); // Limit to first 3 matches per file
-                
+
                 results.push({
                   file: itemPath,
                   matches: matches,
@@ -116,7 +116,7 @@ async function searchInFiles(searchTerm, directory = '.') {
       // Skip directories that can't be accessed
     }
   }
-  
+
   await searchDir(directory);
   return results;
 }
@@ -208,6 +208,71 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: 'object',
           properties: {},
+        },
+      },
+      {
+        name: 'db_query',
+        description: 'Execute a database query using Laravel DB facade',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'SQL query to execute (SELECT only for safety)',
+            },
+          },
+          required: ['query'],
+        },
+      },
+      {
+        name: 'db_table',
+        description: 'Get all data from a specific table',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            table: {
+              type: 'string',
+              description: 'Table name',
+            },
+            limit: {
+              type: 'number',
+              description: 'Limit number of rows (default: 100)',
+              default: 100,
+            },
+          },
+          required: ['table'],
+        },
+      },
+      {
+        name: 'read_logs',
+        description: 'Read Laravel log file',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            lines: {
+              type: 'number',
+              description: 'Number of lines to read from the end (default: 50)',
+              default: 50,
+            },
+            date: {
+              type: 'string',
+              description: 'Log date (YYYY-MM-DD). If not provided, reads today\'s log',
+            },
+          },
+        },
+      },
+      {
+        name: 'tinker',
+        description: 'Execute PHP code using Laravel Tinker',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            code: {
+              type: 'string',
+              description: 'PHP code to execute (without <?php tag)',
+            },
+          },
+          required: ['code'],
         },
       },
     ],
@@ -306,6 +371,84 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
+      case 'db_query': {
+        // Use artisan tinker to execute query safely
+        const sanitizedQuery = args.query.trim();
+
+        // Only allow SELECT queries for safety
+        if (!sanitizedQuery.toLowerCase().startsWith('select')) {
+          throw new Error('Only SELECT queries are allowed for safety. Use tinker tool for other operations.');
+        }
+
+        const code = `DB::select("${sanitizedQuery.replace(/"/g, '\\"')}");`;
+        const result = await runArtisanCommand(`tinker --execute="${code}"`);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: result.stdout || result.stderr,
+            },
+          ],
+        };
+      }
+
+      case 'db_table': {
+        const table = args.table;
+        const limit = args.limit || 100;
+        const code = `DB::table('${table}')->limit(${limit})->get();`;
+        const result = await runArtisanCommand(`tinker --execute="${code}"`);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: result.stdout || result.stderr,
+            },
+          ],
+        };
+      }
+
+      case 'read_logs': {
+        const lines = args.lines || 50;
+        const date = args.date || new Date().toISOString().split('T')[0];
+        const logFile = `storage/logs/laravel-${date}.log`;
+
+        try {
+          const content = await getFileContent(logFile);
+          const logLines = content.split('\n');
+          const lastLines = logLines.slice(-lines).join('\n');
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `=== Last ${lines} lines of ${logFile} ===\n\n${lastLines}`,
+              },
+            ],
+          };
+        } catch (error) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Log file not found: ${logFile}\nError: ${error.message}`,
+              },
+            ],
+          };
+        }
+      }
+
+      case 'tinker': {
+        const code = args.code;
+        const result = await runArtisanCommand(`tinker --execute="${code}"`);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `=== Tinker Output ===\n${result.stdout}\n\n=== Stderr ===\n${result.stderr}`,
+            },
+          ],
+        };
+      }
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -389,12 +532,12 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
         const items = await listDirectory('app/Models');
         const models = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
         const modelDetails = {};
-        
+
         for (const model of models) {
           const content = await getFileContent(model.path);
           modelDetails[model.name] = content;
         }
-        
+
         return {
           contents: [
             {

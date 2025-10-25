@@ -228,125 +228,55 @@
                     <span
                         class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">1</span>
                     <div>
-                        <h3 class="text-base font-semibold text-slate-900">Required Credentials</h3>
-                        <p class="text-xs text-slate-500">Access token and user ID are required</p>
+                        <h3 class="text-base font-semibold text-slate-900">Access Credentials</h3>
+                        <p class="text-xs text-slate-500">
+                            <span class="font-semibold text-blue-600">Option A:</span> Use OAuth (skip this, fill Card 2
+                            instead) |
+                            <span class="font-semibold text-slate-600">Option B:</span> Enter manually (fill both
+                            fields)
+                        </p>
                     </div>
                 </div>
 
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">
-                            Access Token <span class="text-red-500">*</span>
+                            Access Token <span class="text-slate-400 text-xs">(required for manual setup)</span>
                         </label>
                         <input type="text" name="access_token" id="access_token"
                             class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                            placeholder="IGAAW..."
-                            value="<?php if(isset($urlAccessToken) && $urlAccessToken): ?> <?php echo e($urlAccessToken); ?><?php elseif(isset($settings) && $settings && $settings->access_token): ?><?php echo e($settings->access_token); ?> <?php endif; ?>"
-                            required>
-                        <p class="text-xs text-slate-500 mt-1.5">Long-lived user access token from Instagram Platform
-                            API</p>
+                            placeholder="IGAAW... (leave empty if using OAuth)"
+                            value="<?php if(isset($urlAccessToken) && $urlAccessToken): ?> <?php echo e($urlAccessToken); ?><?php elseif(isset($settings) && $settings && $settings->access_token): ?><?php echo e($settings->access_token); ?> <?php endif; ?>">
+                        <p class="text-xs text-slate-500 mt-1.5">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            Long-lived user access token from Instagram Platform API
+                        </p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">
-                            Instagram User ID <span class="text-red-500">*</span>
+                            Instagram User ID <span class="text-slate-400 text-xs">(required for manual setup)</span>
                         </label>
                         <input type="text" name="user_id" id="user_id"
                             class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                            placeholder="17841428646148329"
-                            value="<?php if(isset($urlUserId) && $urlUserId): ?> <?php echo e($urlUserId); ?><?php elseif(isset($settings) && $settings && $settings->user_id): ?><?php echo e($settings->user_id); ?> <?php endif; ?>"
-                            required>
-                        <p class="text-xs text-slate-500 mt-1.5">Instagram Business/Creator Account ID from Meta
-                            Dashboard</p>
+                            placeholder="17841428646148329 (leave empty if using OAuth)"
+                            value="<?php if(isset($urlUserId) && $urlUserId): ?> <?php echo e($urlUserId); ?><?php elseif(isset($settings) && $settings && $settings->user_id): ?><?php echo e($settings->user_id); ?> <?php endif; ?>">
+                        <p class="text-xs text-slate-500 mt-1.5">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            Instagram Business/Creator Account ID from Meta Dashboard
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 2: Optional Configuration -->
+            <!-- Card 2: Sync & Cache Settings -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <div class="flex items-center gap-3 mb-4">
                     <span
-                        class="w-8 h-8 bg-slate-500 text-white rounded-lg flex items-center justify-center text-sm font-bold">2</span>
-                    <div>
-                        <h3 class="text-base font-semibold text-slate-900">Optional Configuration</h3>
-                        <p class="text-xs text-slate-500">App credentials for advanced features</p>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">App ID</label>
-                        <input type="text" name="app_id" id="app_id"
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                            placeholder="1575539400487129" value="<?php echo e($settings->app_id ?? ''); ?>">
-                        <p class="text-xs text-slate-500 mt-1.5">App ID from Meta for Developers</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">App Secret</label>
-                        <div class="relative">
-                            <input type="password" name="app_secret" id="app_secret"
-                                class="w-full px-4 py-2.5 pr-10 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                                placeholder="••••••••••••" value="<?php echo e($settings->app_secret ?? ''); ?>">
-                            <button type="button" id="toggleAppSecret"
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
-                                <i class="fas fa-eye text-sm" id="appSecretIcon"></i>
-                            </button>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-1.5">App Secret from Meta for Developers</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3: Webhook Configuration -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <div class="flex items-center gap-3 mb-4">
-                    <span
-                        class="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">3</span>
-                    <div>
-                        <h3 class="text-base font-semibold text-slate-900">Webhook Configuration</h3>
-                        <p class="text-xs text-slate-500">OAuth and webhook settings</p>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Redirect URI</label>
-                        <input type="url" name="redirect_uri" id="redirect_uri"
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                            placeholder="<?php echo e(url('/instagram/callback')); ?>"
-                            value="<?php echo e($settings->redirect_uri ?? url('/instagram/callback')); ?>">
-                        <p class="text-xs text-slate-500 mt-1.5">OAuth callback URL (must match Meta Dashboard
-                            settings)</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Webhook Verify Token</label>
-                        <input type="text" name="webhook_verify_token" id="webhook_verify_token"
-                            class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                            placeholder="mySchoolWebhook2025"
-                            value="<?php echo e($settings->webhook_verify_token ?? 'mySchoolWebhook2025'); ?>">
-                        <p class="text-xs text-slate-500 mt-1.5">Custom secret token for webhook verification</p>
-
-                        <div class="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
-                            <p class="text-xs font-semibold text-amber-900 mb-1.5">📍 Webhook Callback URL:</p>
-                            <code
-                                class="block text-xs bg-white px-3 py-2 rounded border border-amber-300 text-amber-900 font-mono"><?php echo e(url('/instagram/webhook')); ?></code>
-                            <p class="text-xs text-amber-700 mt-2">Use this URL and token in Meta Dashboard webhook
-                                settings</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4: Sync & Cache Settings -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <div class="flex items-center gap-3 mb-4">
-                    <span
-                        class="w-8 h-8 bg-green-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">4</span>
+                        class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">2</span>
                     <div>
                         <h3 class="text-base font-semibold text-slate-900">Sync & Cache Settings</h3>
-                        <p class="text-xs text-slate-500">Manage data synchronization and caching</p>
+                        <p class="text-xs text-slate-500">Configure automatic synchronization and caching</p>
                     </div>
                 </div>
 
@@ -510,12 +440,33 @@
     <?php $__env->startPush('scripts'); ?>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                console.log('🚀 Instagram Settings JS Loaded');
+
                 const form = document.getElementById('instagramSettingsForm');
                 const testBtn = document.getElementById('testConnectionBtn');
                 const saveBtn = document.getElementById('saveSettingsBtn');
                 const syncBtn = document.getElementById('syncBtn');
                 const deactivateBtn = document.getElementById('deactivateBtn');
                 const resetBtn = document.getElementById('resetFormBtn');
+
+                console.log('📋 Form elements:', {
+                    form: !!form,
+                    testBtn: !!testBtn,
+                    saveBtn: !!saveBtn,
+                    syncBtn: !!syncBtn,
+                    deactivateBtn: !!deactivateBtn,
+                    resetBtn: !!resetBtn
+                });
+
+                if (!form) {
+                    console.error('❌ Form not found!');
+                    return;
+                }
+
+                if (!saveBtn) {
+                    console.error('❌ Save button not found!');
+                    return;
+                }
 
                 // Toggle App Secret visibility - Simple & Reliable
                 const toggleAppSecretBtn = document.getElementById('toggleAppSecret');
@@ -646,19 +597,38 @@
                         });
                 });
 
-                // Save Settings
+                // Save Settings - USE CAPTURE PHASE for priority
                 form.addEventListener('submit', function(e) {
-                    e.preventDefault();
+                    console.log('📝 Form submit event triggered');
 
+                    // CRITICAL: Prevent default IMMEDIATELY
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+
+                    console.log('✅ Default prevented - processing form');
                     console.log('Save Settings form submitted');
 
-                    const accessToken = document.getElementById('access_token').value;
-                    const userId = document.getElementById('user_id').value;
+                    const accessToken = document.getElementById('access_token').value.trim();
+                    const userId = document.getElementById('user_id').value.trim();
 
-                    if (!accessToken || !userId) {
-                        showError('Error', 'Access Token dan User ID wajib diisi');
+                    // Simplified validation
+                    // If access_token is provided, user_id must also be provided (manual token setup)
+                    if (accessToken && !userId) {
+                        showError('Incomplete Manual Setup',
+                            'If you provide an Access Token, you must also provide the User ID.'
+                        );
                         return;
                     }
+
+                    if (userId && !accessToken) {
+                        showError('Incomplete Manual Setup',
+                            'If you provide a User ID, you must also provide the Access Token.'
+                        );
+                        return;
+                    }
+
+                    console.log('✅ Validation passed, proceeding to save');
 
                     saveBtn.disabled = true;
                     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
@@ -668,14 +638,8 @@
 
                     // Log form data for debugging
                     console.log('Form data:', {
-                        access_token: accessToken ? 'Set (length: ' + accessToken.length + ')' :
-                            'Empty',
-                        user_id: userId,
-                        app_id: formData.get('app_id') || 'Not set',
-                        app_secret: formData.get('app_secret') ? 'Set (length: ' + formData.get(
-                            'app_secret').length + ')' : 'Not set',
-                        redirect_uri: formData.get('redirect_uri') || 'Not set',
-                        webhook_verify_token: formData.get('webhook_verify_token') || 'Not set',
+                        has_access_token: !!accessToken,
+                        has_user_id: !!userId,
                         sync_frequency: formData.get('sync_frequency'),
                         cache_duration: formData.get('cache_duration'),
                         auto_sync_enabled: formData.get('auto_sync_enabled')
@@ -686,7 +650,8 @@
                             body: formData,
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content')
+                                    .getAttribute('content'),
+                                'Accept': 'application/json'
                             }
                         })
                         .then(response => {
@@ -696,25 +661,44 @@
                             // Check if response is JSON
                             const contentType = response.headers.get('content-type');
                             if (contentType && contentType.includes('application/json')) {
-                                return response.json();
+                                return response.json().then(data => ({
+                                    status: response.status,
+                                    ok: response.ok,
+                                    data: data
+                                }));
                             } else {
                                 // Not JSON, probably redirected to login or error page
                                 throw new Error('Response is not JSON. Status: ' + response.status +
                                     '. You may have been logged out.');
                             }
                         })
-                        .then(data => {
+                        .then(result => {
                             closeLoading();
-                            console.log('Save response data:', data);
+                            console.log('Save response data:', result.data);
 
-                            if (data.success) {
-                                showSuccess('Pengaturan Tersimpan!', data.message).then(() => {
-                                    // Clean URL (remove access_token parameter) before reload
+                            // Handle validation errors (422)
+                            if (result.status === 422) {
+                                const errors = result.data.errors || {};
+                                let errorList = '<ul class="text-left">';
+                                for (let field in errors) {
+                                    errorList += `<li><strong>${field}:</strong> ${errors[field][0]}</li>`;
+                                }
+                                errorList += '</ul>';
+
+                                showError('Validation Error',
+                                    result.data.message + '<br><br>' + errorList);
+                                return;
+                            }
+
+                            // Handle success response
+                            if (result.data.success) {
+                                showSuccess('✅ Pengaturan Tersimpan!', result.data.message).then(() => {
+                                    // Reload to show updated settings
                                     window.location.href =
                                         '<?php echo e(route('admin.superadmin.instagram-settings')); ?>';
                                 });
                             } else {
-                                showError('Gagal Menyimpan', data.message || 'Terjadi kesalahan');
+                                showError('Gagal Menyimpan', result.data.message || 'Terjadi kesalahan');
                             }
                         })
                         .catch(error => {
@@ -738,7 +722,7 @@
                             saveBtn.disabled = false;
                             saveBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Save Settings';
                         });
-                });
+                }, true); // USE CAPTURE PHASE!
 
                 // Sync Data
                 if (syncBtn) {

@@ -374,10 +374,12 @@ class InstagramService
     public function getAuthorizationUrl($scopes = null, $state = null)
     {
         try {
-            $settings = InstagramSetting::active()->first();
+            // Get App ID from config (.env)
+            $appId = config('services.instagram.app_id');
+            $redirectUri = config('services.instagram.redirect_uri');
 
-            if (!$settings || !$settings->app_id) {
-                Log::error('Cannot generate authorization URL: App ID not configured');
+            if (!$appId) {
+                Log::error('Cannot generate authorization URL: App ID not configured in .env');
                 return false;
             }
 
@@ -392,8 +394,8 @@ class InstagramService
             }
 
             $params = [
-                'client_id' => $settings->app_id,
-                'redirect_uri' => route('instagram.callback'),
+                'client_id' => $appId,
+                'redirect_uri' => $redirectUri,
                 'response_type' => 'code',
                 'scope' => implode(',', $scopes)
             ];
@@ -411,7 +413,6 @@ class InstagramService
             ]);
 
             return $authUrl;
-
         } catch (\Exception $e) {
             Log::error('Error generating Instagram authorization URL: ' . $e->getMessage());
             return false;
@@ -430,19 +431,22 @@ class InstagramService
     public function exchangeCodeForToken($code)
     {
         try {
-            $settings = InstagramSetting::active()->first();
+            // Get credentials from config (.env)
+            $appId = config('services.instagram.app_id');
+            $appSecret = config('services.instagram.app_secret');
+            $redirectUri = config('services.instagram.redirect_uri');
 
-            if (!$settings || !$settings->app_id || !$settings->app_secret) {
-                Log::error('Cannot exchange code: App credentials not configured');
+            if (!$appId || !$appSecret) {
+                Log::error('Cannot exchange code: App credentials not configured in .env');
                 return false;
             }
 
             // POST to Instagram OAuth endpoint
             $response = Http::asForm()->timeout(30)->post('https://api.instagram.com/oauth/access_token', [
-                'client_id' => $settings->app_id,
-                'client_secret' => $settings->app_secret,
+                'client_id' => $appId,
+                'client_secret' => $appSecret,
                 'grant_type' => 'authorization_code',
-                'redirect_uri' => route('instagram.callback'),
+                'redirect_uri' => $redirectUri,
                 'code' => $code
             ]);
 
@@ -472,7 +476,6 @@ class InstagramService
             ]);
 
             return false;
-
         } catch (\Exception $e) {
             Log::error('Instagram code exchange error: ' . $e->getMessage());
             return false;
@@ -492,16 +495,17 @@ class InstagramService
     public function exchangeForLongLivedToken($shortLivedToken)
     {
         try {
-            $settings = InstagramSetting::active()->first();
+            // Get credentials from config (.env)
+            $appSecret = config('services.instagram.app_secret');
 
-            if (!$settings || !$settings->app_secret) {
-                Log::error('Cannot exchange token: App secret not configured');
+            if (!$appSecret) {
+                Log::error('Cannot exchange token: App secret not configured in .env');
                 return null;
             }
 
             $response = Http::timeout(30)->get('https://graph.instagram.com/access_token', [
                 'grant_type' => 'ig_exchange_token',
-                'client_secret' => $settings->app_secret,
+                'client_secret' => $appSecret,
                 'access_token' => $shortLivedToken
             ]);
 
