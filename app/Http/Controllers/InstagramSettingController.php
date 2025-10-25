@@ -14,10 +14,15 @@ class InstagramSettingController extends Controller
     /**
      * Display Instagram settings management page
      */
-    public function index()
+    public function index(Request $request)
     {
         $settings = InstagramSetting::latest()->first();
-        return view('superadmin.instagram-settings', compact('settings'));
+
+        // Capture access_token from URL parameter (OAuth redirect)
+        $urlAccessToken = $request->query('access_token');
+        $urlUserId = $request->query('user_id');
+
+        return view('superadmin.instagram-settings', compact('settings', 'urlAccessToken', 'urlUserId'));
     }
 
     /**

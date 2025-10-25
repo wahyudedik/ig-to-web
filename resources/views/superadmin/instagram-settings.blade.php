@@ -107,6 +107,23 @@
 
             <form id="instagramSettingsForm" class="space-y-6">
                 <!-- API Credentials -->
+
+                @if ($urlAccessToken)
+                    <!-- OAuth Success Alert -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mt-0.5 mr-3"></i>
+                            <div class="text-sm text-green-800">
+                                <p class="font-medium mb-1">✅ Access Token Berhasil Didapatkan!</p>
+                                <p>Sekarang masukkan <strong>User ID</strong> (Instagram Account ID seperti
+                                    17841428646148329 yang tertera di Meta Dashboard), lalu klik <strong>Test
+                                        Connection</strong> untuk verifikasi, kemudian <strong>Save Settings</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Info Alert -->
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                     <div class="flex items-start">
@@ -127,8 +144,8 @@
                             Access Token <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="access_token" id="access_token" class="form-input"
-                            placeholder="Enter Instagram User Access Token" value="{{ $settings->access_token ?? '' }}"
-                            required>
+                            placeholder="Enter Instagram User Access Token"
+                            value="{{ $urlAccessToken ?? ($settings->access_token ?? '') }}" required>
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-key mr-1"></i>
                             Instagram User Access Token dari Business Login
@@ -139,11 +156,12 @@
                             User ID <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="user_id" id="user_id" class="form-input"
-                            placeholder="Enter Instagram Professional Account ID"
-                            value="{{ $settings->user_id ?? '' }}" required>
+                            placeholder="Enter Instagram Professional Account ID (contoh: 17841428646148329)"
+                            value="{{ $urlUserId ?? ($settings->user_id ?? '') }}" required>
                         <p class="text-xs text-slate-500 mt-1">
                             <i class="fas fa-user mr-1"></i>
-                            Instagram Business/Creator Account ID (bukan Facebook Page ID)
+                            Instagram Business/Creator Account ID (bukan Facebook Page ID). <strong>Contoh:
+                                17841428646148329</strong> (lihat di Meta Dashboard)
                         </p>
                     </div>
                 </div>
@@ -350,14 +368,19 @@
                     const accessToken = document.getElementById('access_token').value;
                     const userId = document.getElementById('user_id').value;
 
+                    console.log('Test Connection clicked', {
+                        accessToken: accessToken ? 'Set (length: ' + accessToken.length + ')' : 'Empty',
+                        userId: userId ? 'Set: ' + userId : 'Empty'
+                    });
+
                     if (!accessToken || !userId) {
-                        showError('Please fill in Access Token and User ID first');
+                        showError('Error', 'Harap isi Access Token dan User ID terlebih dahulu');
                         return;
                     }
 
                     testBtn.disabled = true;
                     testBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
-                    showLoading();
+                    showLoading('Menguji koneksi...', 'Menghubungi Instagram API');
 
                     fetch('{{ route('admin.superadmin.instagram-settings.test-connection') }}', {
                             method: 'POST',
@@ -371,22 +394,28 @@
                                     .getAttribute('content')
                             }
                         })
-                        .then(response => response.json())
+                        .then(response => {
+                            console.log('Response status:', response.status);
+                            return response.json();
+                        })
                         .then(data => {
                             closeLoading();
+                            console.log('Response data:', data);
+
                             if (data.success) {
-                                showSuccess(data.message);
+                                showSuccess('Koneksi Berhasil!', data.message);
                                 if (data.account_info) {
-                                    showAccountInfo(data.account_info);
+                                    setTimeout(() => showAccountInfo(data.account_info), 500);
                                 }
                             } else {
-                                showError(data.message);
+                                showError('Koneksi Gagal', data.message || 'Periksa kredensial Anda');
                             }
                         })
                         .catch(error => {
                             closeLoading();
-                            console.error('Error:', error);
-                            showError('Connection test failed');
+                            console.error('Connection test error:', error);
+                            showError('Koneksi Gagal',
+                                'Terjadi kesalahan saat menguji koneksi. Cek console untuk detail.');
                         })
                         .finally(() => {
                             testBtn.disabled = false;
@@ -398,11 +427,30 @@
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
 
+                    console.log('Save Settings form submitted');
+
+                    const accessToken = document.getElementById('access_token').value;
+                    const userId = document.getElementById('user_id').value;
+
+                    if (!accessToken || !userId) {
+                        showError('Error', 'Access Token dan User ID wajib diisi');
+                        return;
+                    }
+
                     saveBtn.disabled = true;
                     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
-                    showLoading();
+                    showLoading('Menyimpan pengaturan...', 'Mohon tunggu');
 
                     const formData = new FormData(form);
+
+                    // Log form data for debugging
+                    console.log('Form data:', {
+                        access_token: accessToken ? 'Set (length: ' + accessToken.length + ')' :
+                            'Empty',
+                        user_id: userId,
+                        app_id: formData.get('app_id'),
+                        webhook_verify_token: formData.get('webhook_verify_token')
+                    });
 
                     fetch('{{ route('admin.superadmin.instagram-settings.store') }}', {
                             method: 'POST',
@@ -412,21 +460,30 @@
                                     .getAttribute('content')
                             }
                         })
-                        .then(response => response.json())
+                        .then(response => {
+                            console.log('Save response status:', response.status);
+                            return response.json();
+                        })
                         .then(data => {
                             closeLoading();
+                            console.log('Save response data:', data);
+
                             if (data.success) {
-                                showSuccess(data.message).then(() => {
-                                    location.reload();
+                                showSuccess('Pengaturan Tersimpan!', data.message).then(() => {
+                                    // Clean URL (remove access_token parameter) before reload
+                                    window.location.href =
+                                        '{{ route('admin.superadmin.instagram-settings') }}';
                                 });
                             } else {
-                                showError(data.message);
+                                showError('Gagal Menyimpan', data.message || 'Terjadi kesalahan');
                             }
                         })
                         .catch(error => {
                             closeLoading();
-                            console.error('Error:', error);
-                            showError('Failed to save settings');
+                            console.error('Save error:', error);
+                            showError('Gagal Menyimpan',
+                                'Terjadi kesalahan saat menyimpan pengaturan. Cek console untuk detail.'
+                                );
                         })
                         .finally(() => {
                             saveBtn.disabled = false;
