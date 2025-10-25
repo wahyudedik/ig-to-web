@@ -6,6 +6,7 @@ use App\Models\InstagramSetting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class InstagramService
 {
@@ -51,10 +52,26 @@ class InstagramService
             if ($response->successful()) {
                 $data = $response->json();
 
-                // Log success
-                Log::info('Instagram API: Successfully fetched ' . count($data['data'] ?? []) . ' posts');
+                // Transform API response to match expected format
+                $posts = collect($data['data'] ?? [])->map(function ($post) {
+                    return [
+                        'id' => $post['id'],
+                        'caption' => $post['caption'] ?? '',
+                        'media_type' => $post['media_type'] ?? 'IMAGE',
+                        'media_url' => $post['media_url'] ?? null,
+                        'thumbnail_url' => $post['thumbnail_url'] ?? null,
+                        'permalink' => $post['permalink'] ?? '#',
+                        'timestamp' => isset($post['timestamp']) ? Carbon::parse($post['timestamp']) : now(),
+                        'like_count' => $post['like_count'] ?? 0,
+                        'comment_count' => $post['comments_count'] ?? 0, // Transform comments_count -> comment_count
+                        'children' => $post['children'] ?? null,
+                    ];
+                })->toArray();
 
-                return $data['data'] ?? [];
+                // Log success
+                Log::info('Instagram API: Successfully fetched ' . count($posts) . ' posts');
+
+                return $posts;
             }
 
             // Log error with details

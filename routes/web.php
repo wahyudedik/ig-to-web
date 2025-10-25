@@ -36,7 +36,10 @@ Route::get('/', function () {
         ->with('children')
         ->get();
 
-    return view('welcome', compact('headerMenus', 'footerMenus')); // Landing page - fully customizable
+    // Get Instagram posts for gallery section
+    $instagramPosts = app(\App\Services\InstagramService::class)->getCachedPosts(6);
+
+    return view('welcome', compact('headerMenus', 'footerMenus', 'instagramPosts')); // Landing page - fully customizable
 })->name('landing');
 
 // Public graduation check

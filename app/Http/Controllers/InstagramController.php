@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 use App\Services\InstagramService;
 use App\Models\InstagramSetting;
 
@@ -151,10 +153,61 @@ class InstagramController extends Controller
                 'expires_in' => $expiresIn . ' seconds (~60 days)'
             ]);
 
-            // Redirect to settings page with token data
+            // Auto-save token to database immediately (don't wait for user to click Save)
+            try {
+                Log::info('💾 Auto-saving OAuth token to database...');
+
+                $tokenExpiresAt = now()->addSeconds($expiresIn);
+
+                // Get account info for username
+                $accountInfo = null;
+                try {
+                    $response = Http::timeout(15)->get("https://graph.instagram.com/v20.0/{$userId}", [
+                        'fields' => 'id,username,name,account_type,media_count',
+                        'access_token' => $longLivedToken
+                    ]);
+
+                    if ($response->successful()) {
+                        $accountInfo = $response->json();
+                    }
+                } catch (\Exception $e) {
+                    Log::warning('Could not fetch account info during OAuth', ['error' => $e->getMessage()]);
+                }
+
+                $settings = InstagramSetting::updateOrCreate(
+                    ['id' => 1],
+                    [
+                        'access_token' => $longLivedToken,
+                        'user_id' => $userId,
+                        'username' => $accountInfo['username'] ?? null,
+                        'account_type' => $accountInfo['account_type'] ?? null,
+                        'is_active' => true,
+                        'token_expires_at' => $tokenExpiresAt,
+                        'updated_by' => Auth::id(),
+                    ]
+                );
+
+                Log::info('✅ OAuth token auto-saved successfully', [
+                    'id' => $settings->id,
+                    'user_id' => $userId,
+                    'username' => $accountInfo['username'] ?? 'unknown',
+                    'expires_at' => $tokenExpiresAt->format('Y-m-d H:i:s')
+                ]);
+
+                // Clear caches
+                Cache::forget('instagram_posts');
+                Cache::forget('instagram_analytics');
+            } catch (\Exception $e) {
+                Log::error('⚠️ Failed to auto-save OAuth token', [
+                    'error' => $e->getMessage()
+                ]);
+                // Don't fail the whole flow, just log it
+            }
+
+            // Redirect to settings page with token data (for display only)
             return redirect()
                 ->route('admin.superadmin.instagram-settings')
-                ->with('success', 'Authorization berhasil! Access token (valid 60 hari) telah didapatkan. Silakan simpan pengaturan.')
+                ->with('success', 'Authorization berhasil! Access token telah disimpan dan valid selama 60 hari.')
                 ->with('oauth_access_token', $longLivedToken)
                 ->with('oauth_user_id', $userId)
                 ->with('oauth_permissions', $permissions)

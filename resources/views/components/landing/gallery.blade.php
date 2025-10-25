@@ -1,99 +1,79 @@
-<!-- portfolio-area -->
-<div class="portfolio-area py-120">
+<!-- Instagram Gallery -->
+<div class="py-120" style="background-color: #f8f9fa;">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 mx-auto">
                 <div class="site-heading text-center">
                     <span class="site-title-tagline"><i class="far fa-book-open-reader"></i> Kegiatan MAUDU</span>
-                    <h2 class="site-title">{{ cache('site_setting_gallery_title', 'Kegiatan') }}<span> Madrasah</span>
-                    </h2>
-                    <p>{{ cache('site_setting_gallery_subtitle', 'Ket// programmer : ambil data dari dari IG') }}</p>
+                    <h2 class="site-title">Galeri Kegiatan <span>Terbaru</span></h2>
+                    <p>Update kegiatan sekolah dari Instagram</p>
                 </div>
             </div>
         </div>
+
+        <!-- Posts Grid -->
         <div class="row">
-            @php
-                // Ambil data Instagram posts dari database
-                $instagramPosts = \App\Models\InstagramSetting::where('is_active', true)
-                    ->orderBy('created_at', 'desc')
-                    ->limit(6)
-                    ->get()
-                    ->map(function ($post) {
-                        return [
-                            'image' => $post->image_url ?: asset('assets/img/portfolio/01.jpg'),
-                            'title' => $post->caption ?: 'Kegiatan Sekolah',
-                            'category' => $post->category ?: 'Kegiatan',
-                            'url' => $post->post_url ?: '#',
-                        ];
-                    })
-                    ->toArray();
-
-                // Jika tidak ada data Instagram, gunakan dummy data
-                if (empty($instagramPosts)) {
-                    $instagramPosts = [
-                        [
-                            'image' => asset('assets/img/portfolio/01.jpg'),
-                            'title' => 'Student Health Care',
-                            'category' => 'Health',
-                            'url' => '#',
-                        ],
-                        [
-                            'image' => asset('assets/img/portfolio/02.jpg'),
-                            'title' => 'Student Health Care',
-                            'category' => 'Health',
-                            'url' => '#',
-                        ],
-                        [
-                            'image' => asset('assets/img/portfolio/03.jpg'),
-                            'title' => 'Student Health Care',
-                            'category' => 'Health',
-                            'url' => '#',
-                        ],
-                        [
-                            'image' => asset('assets/img/portfolio/04.jpg'),
-                            'title' => 'Student Health Care',
-                            'category' => 'Health',
-                            'url' => '#',
-                        ],
-                        [
-                            'image' => asset('assets/img/portfolio/05.jpg'),
-                            'title' => 'Student Health Care',
-                            'category' => 'Health',
-                            'url' => '#',
-                        ],
-                        [
-                            'image' => asset('assets/img/portfolio/06.jpg'),
-                            'title' => 'Student Health Care',
-                            'category' => 'Health',
-                            'url' => '#',
-                        ],
-                    ];
-                }
-            @endphp
-
-            @foreach ($instagramPosts as $post)
-                <div class="col-md-4">
-                    <div class="portfolio-item">
-                        <div class="portfolio-img">
-                            <img src="{{ $post['image'] }}" alt="{{ $post['title'] }}">
+            @forelse ($posts ?? [] as $post)
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="position-relative">
+                            <img src="{{ $post['media_url'] ?? asset('assets/img/portfolio/01.jpg') }}"
+                                class="card-img-top" alt="Kegiatan Sekolah" style="height: 250px; object-fit: cover;">
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <a href="{{ $post['permalink'] ?? '#' }}" target="_blank" class="btn btn-sm btn-dark">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="portfolio-content">
-                            <div class="portfolio-info">
-                                <div class="portfolio-title-info">
-                                    <h5 class="portfolio-subtitle"><span>//</span> {{ $post['category'] }}
-                                    </h5>
-                                    <a href="{{ $post['url'] }}" target="_blank">
-                                        <h4 class="portfolio-title">{{ $post['title'] }}</h4>
-                                    </a>
+                        <div class="card-body d-flex flex-column">
+                            <p class="card-text flex-grow-1">
+                                {{ Str::limit($post['caption'] ?? 'Kegiatan Sekolah', 150) }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-heart"></i> {{ number_format($post['like_count'] ?? 0) }}
+                                    </span>
+                                    <span class="badge bg-primary ms-1">
+                                        <i class="fas fa-comment"></i>
+                                        {{ number_format($post['comment_count'] ?? 0) }}
+                                    </span>
                                 </div>
-                                <a href="{{ $post['url'] }}" target="_blank" class="portfolio-btn"><i
-                                        class="far fa-arrow-right"></i></a>
+                                <small class="text-muted">
+                                    {{ isset($post['timestamp']) && $post['timestamp'] instanceof \Carbon\Carbon ? $post['timestamp']->diffForHumans() : 'Recently' }}
+                                </small>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{{ $post['permalink'] ?? '#' }}" target="_blank"
+                                    class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fab fa-instagram me-1"></i> Lihat di Instagram
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fab fa-instagram fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted">Belum ada kegiatan</h4>
+                        <p class="text-muted">Kegiatan sekolah akan muncul di sini setelah terhubung dengan Instagram
+                        </p>
+                    </div>
+                </div>
+            @endforelse
         </div>
+
+        <!-- View More Button -->
+        @if (!empty($posts) && count($posts) > 0)
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <a href="{{ route('public.kegiatan') }}" class="theme-btn">
+                        Lihat Semua Kegiatan <i class="far fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
-<!-- portfolio-area end -->
+<!-- Instagram Gallery end -->

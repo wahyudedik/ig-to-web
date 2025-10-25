@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Instagram Settings - Debug Console</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        .log {
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 3px solid;
+        }
+
+        .info {
+            border-color: #4a9eff;
+            background: #1a2332;
+        }
+
+        .success {
+            border-color: #4caf50;
+            background: #1a2e1a;
+        }
+
+        .error {
+            border-color: #f44336;
+            background: #2e1a1a;
+        }
+
+        .warn {
+            border-color: #ff9800;
+            background: #2e2a1a;
+        }
+
+        h1 {
+            color: #4a9eff;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            font-family: monospace;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #4a9eff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🐛 Instagram Settings Debug Tool</h1>
+    <p>Paste nilai Access Token dan User ID, lalu test save:</p>
+
+    <label>Access Token:</label>
+    <input type="text" id="accessToken" placeholder="IGAAW...">
+
+    <label>User ID:</label>
+    <input type="text" id="userId" placeholder="17841428646148329">
+
+    <label>Sync Frequency (minutes):</label>
+    <input type="number" id="syncFreq" value="30">
+
+    <label>Cache Duration (seconds):</label>
+    <input type="number" id="cacheDur" value="3600">
+
+    <button onclick="testSave()">🧪 Test Save Settings</button>
+    <button onclick="clearLogs()">🗑️ Clear Logs</button>
+
+    <div id="logs"></div>
+
+    <script>
+        let logCount = 0;
+
+        function log(message, type = 'info') {
+            logCount++;
+            const logsDiv = document.getElementById('logs');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log ${type}`;
+            logDiv.innerHTML = `[${logCount}] ${new Date().toLocaleTimeString()} - ${message}`;
+            logsDiv.appendChild(logDiv);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+            logCount = 0;
+        }
+
+        async function testSave() {
+            log('🚀 Starting save test...', 'info');
+
+            const accessToken = document.getElementById('accessToken').value.trim();
+            const userId = document.getElementById('userId').value.trim();
+            const syncFreq = document.getElementById('syncFreq').value;
+            const cacheDur = document.getElementById('cacheDur').value;
+
+            log(`Access Token: ${accessToken ? 'Set (length: ' + accessToken.length + ')' : 'EMPTY'}`, 'info');
+            log(`User ID: ${userId || 'EMPTY'}`, 'info');
+            log(`Sync Freq: ${syncFreq} minutes`, 'info');
+            log(`Cache Dur: ${cacheDur} seconds`, 'info');
+
+            // Get CSRF token
+            log('🔐 Fetching CSRF token...', 'info');
+            try {
+                const pageResponse = await fetch('/admin/superadmin/instagram-settings');
+                const pageText = await pageResponse.text();
+                const csrfMatch = pageText.match(/name="csrf-token" content="([^"]+)"/);
+
+                if (!csrfMatch) {
+                    log('❌ CSRF token not found in page!', 'error');
+                    return;
+                }
+
+                const csrfToken = csrfMatch[1];
+                log(`✅ CSRF token: ${csrfToken.substring(0, 20)}...`, 'success');
+
+                // Prepare form data
+                const formData = new FormData();
+                if (accessToken) formData.append('access_token', accessToken);
+                if (userId) formData.append('user_id', userId);
+                formData.append('sync_frequency', syncFreq);
+                formData.append('cache_duration', cacheDur);
+                formData.append('auto_sync_enabled', 'on');
+
+                log('📤 Sending POST request...', 'info');
+                log('URL: /admin/superadmin/instagram-settings', 'info');
+
+                const response = await fetch('/admin/superadmin/instagram-settings', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                log(`📥 Response status: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+                log(`Content-Type: ${response.headers.get('content-type')}`, 'info');
+
+                const contentType = response.headers.get('content-type');
+
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    log('📦 Response data:', 'info');
+                    log(JSON.stringify(data, null, 2), 'info');
+
+                    if (data.success) {
+                        log('✅ SUCCESS! Settings saved!', 'success');
+                        log(`Message: ${data.message}`, 'success');
+                    } else {
+                        log('❌ FAILED! Server returned success=false', 'error');
+                        log(`Message: ${data.message}`, 'error');
+
+                        if (data.errors) {
+                            log('Validation errors:', 'error');
+                            for (let field in data.errors) {
+                                log(`  - ${field}: ${data.errors[field].join(', ')}`, 'error');
+                            }
+                        }
+                    }
+                } else {
+                    // HTML response
+                    const text = await response.text();
+                    log('⚠️ Server returned HTML instead of JSON!', 'warn');
+                    log(`First 500 chars: ${text.substring(0, 500)}`, 'warn');
+
+                    if (text.includes('<!DOCTYPE')) {
+                        log('❌ Got full HTML page - possibly redirected or error page', 'error');
+                    }
+                    if (text.includes('419')) {
+                        log('❌ 419 Error: CSRF token expired', 'error');
+                    }
+                    if (text.includes('login')) {
+                        log('❌ Session expired - redirected to login', 'error');
+                    }
+                }
+
+            } catch (error) {
+                log(`❌ EXCEPTION: ${error.message}`, 'error');
+                log(`Stack: ${error.stack}`, 'error');
+            }
+        }
+
+        log('✅ Debug tool ready. Fill form and click "Test Save Settings"', 'success');
+    </script>
+</body>
+
+</html>

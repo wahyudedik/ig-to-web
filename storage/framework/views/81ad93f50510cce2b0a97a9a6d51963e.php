@@ -469,134 +469,91 @@
                     return;
                 }
 
-                // Toggle App Secret visibility - Simple & Reliable
-                const toggleAppSecretBtn = document.getElementById('toggleAppSecret');
-                const appSecretInput = document.getElementById('app_secret');
-                const appSecretIcon = document.getElementById('appSecretIcon');
-
-                console.log('🔍 Checking Toggle App Secret elements:', {
-                    btn: !!toggleAppSecretBtn,
-                    input: !!appSecretInput,
-                    icon: !!appSecretIcon
-                });
-
-                if (toggleAppSecretBtn && appSecretInput && appSecretIcon) {
-                    // Remove any existing listeners
-                    const newToggleBtn = toggleAppSecretBtn.cloneNode(true);
-                    toggleAppSecretBtn.parentNode.replaceChild(newToggleBtn, toggleAppSecretBtn);
-
-                    const newIcon = appSecretIcon.cloneNode(true);
-                    newToggleBtn.innerHTML = '';
-                    newToggleBtn.appendChild(newIcon);
-
-                    newToggleBtn.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-
-                        console.log('👁️ Toggle clicked! Current type:', appSecretInput.type);
-
-                        if (appSecretInput.type === 'password') {
-                            appSecretInput.type = 'text';
-                            newIcon.className = 'fas fa-eye-slash';
-                            console.log('✅ Changed to visible (text)');
-                        } else {
-                            appSecretInput.type = 'password';
-                            newIcon.className = 'fas fa-eye';
-                            console.log('✅ Changed to hidden (password)');
-                        }
-                    }, {
-                        passive: false
-                    });
-
-                    console.log('✅ Toggle App Secret initialized successfully');
-                } else {
-                    console.error('❌ Toggle App Secret elements not found!', {
-                        btn: toggleAppSecretBtn,
-                        input: appSecretInput,
-                        icon: appSecretIcon
-                    });
-                }
-
                 // Test Connection
-                testBtn.addEventListener('click', function() {
-                    const accessToken = document.getElementById('access_token').value;
-                    const userId = document.getElementById('user_id').value;
+                if (testBtn) {
+                    testBtn.addEventListener('click', function() {
+                        const accessToken = document.getElementById('access_token').value;
+                        const userId = document.getElementById('user_id').value;
 
-                    console.log('Test Connection clicked', {
-                        accessToken: accessToken ? 'Set (length: ' + accessToken.length + ')' : 'Empty',
-                        userId: userId ? 'Set: ' + userId : 'Empty'
-                    });
-
-                    if (!accessToken || !userId) {
-                        showError('Error', 'Harap isi Access Token dan User ID terlebih dahulu');
-                        return;
-                    }
-
-                    testBtn.disabled = true;
-                    testBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
-                    showLoading('Menguji koneksi...', 'Menghubungi Instagram API');
-
-                    fetch('<?php echo e(route('admin.superadmin.instagram-settings.test-connection')); ?>', {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                access_token: accessToken,
-                                user_id: userId
-                            }),
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content')
-                            }
-                        })
-                        .then(response => {
-                            console.log('Response status:', response.status);
-                            console.log('Response headers:', response.headers.get('content-type'));
-
-                            // Check if response is JSON
-                            const contentType = response.headers.get('content-type');
-                            if (contentType && contentType.includes('application/json')) {
-                                return response.json();
-                            } else {
-                                // Not JSON, probably redirected to login or error page
-                                throw new Error('Response is not JSON. Status: ' + response.status +
-                                    '. You may have been logged out.');
-                            }
-                        })
-                        .then(data => {
-                            closeLoading();
-                            console.log('Response data:', data);
-
-                            if (data.success) {
-                                showSuccess('Koneksi Berhasil!', data.message);
-                                if (data.account_info) {
-                                    setTimeout(() => showAccountInfo(data.account_info), 500);
-                                }
-                            } else {
-                                showError('Koneksi Gagal', data.message || 'Periksa kredensial Anda');
-                            }
-                        })
-                        .catch(error => {
-                            closeLoading();
-                            console.error('Connection test error:', error);
-
-                            // More helpful error message
-                            if (error.message.includes('logged out')) {
-                                showError('Session Expired',
-                                    'Anda mungkin ter-logout. Silakan refresh halaman dan login kembali.<br><br>' +
-                                    '<button onclick="window.location.reload()" class="btn btn-primary mt-2">Refresh Halaman</button>'
-                                );
-                            } else {
-                                showError('Koneksi Gagal',
-                                    'Terjadi kesalahan: ' + error.message +
-                                    '<br>Cek console (F12) untuk detail.'
-                                );
-                            }
-                        })
-                        .finally(() => {
-                            testBtn.disabled = false;
-                            testBtn.innerHTML = '<i class="fas fa-plug mr-2"></i>Test Connection';
+                        console.log('Test Connection clicked', {
+                            accessToken: accessToken ? 'Set (length: ' + accessToken.length + ')' :
+                                'Empty',
+                            userId: userId ? 'Set: ' + userId : 'Empty'
                         });
-                });
+
+                        if (!accessToken || !userId) {
+                            showError('Error', 'Harap isi Access Token dan User ID terlebih dahulu');
+                            return;
+                        }
+
+                        testBtn.disabled = true;
+                        testBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+                        showLoading('Menguji koneksi...', 'Menghubungi Instagram API');
+
+                        fetch('<?php echo e(route('admin.superadmin.instagram-settings.test-connection')); ?>', {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                    access_token: accessToken,
+                                    user_id: userId
+                                }),
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                        .getAttribute('content')
+                                }
+                            })
+                            .then(response => {
+                                console.log('Response status:', response.status);
+                                console.log('Response headers:', response.headers.get('content-type'));
+
+                                // Check if response is JSON
+                                const contentType = response.headers.get('content-type');
+                                if (contentType && contentType.includes('application/json')) {
+                                    return response.json();
+                                } else {
+                                    // Not JSON, probably redirected to login or error page
+                                    throw new Error('Response is not JSON. Status: ' + response.status +
+                                        '. You may have been logged out.');
+                                }
+                            })
+                            .then(data => {
+                                closeLoading();
+                                console.log('Response data:', data);
+
+                                if (data.success) {
+                                    showSuccess('Koneksi Berhasil!', data.message);
+                                    if (data.account_info) {
+                                        setTimeout(() => showAccountInfo(data.account_info), 500);
+                                    }
+                                } else {
+                                    showError('Koneksi Gagal', data.message || 'Periksa kredensial Anda');
+                                }
+                            })
+                            .catch(error => {
+                                closeLoading();
+                                console.error('Connection test error:', error);
+
+                                // More helpful error message
+                                if (error.message.includes('logged out')) {
+                                    showError('Session Expired',
+                                        'Anda mungkin ter-logout. Silakan refresh halaman dan login kembali.<br><br>' +
+                                        '<button onclick="window.location.reload()" class="btn btn-primary mt-2">Refresh Halaman</button>'
+                                    );
+                                } else {
+                                    showError('Koneksi Gagal',
+                                        'Terjadi kesalahan: ' + error.message +
+                                        '<br>Cek console (F12) untuk detail.'
+                                    );
+                                }
+                            })
+                            .finally(() => {
+                                testBtn.disabled = false;
+                                testBtn.innerHTML = '<i class="fas fa-plug mr-2"></i>Test Connection';
+                            });
+                    });
+                } else {
+                    console.warn('⚠️ Test Connection button not found');
+                }
 
                 // Save Settings - USE CAPTURE PHASE for priority
                 form.addEventListener('submit', function(e) {

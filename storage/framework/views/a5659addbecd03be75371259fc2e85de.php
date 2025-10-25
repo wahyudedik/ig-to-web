@@ -220,17 +220,17 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
                                         <span class="badge bg-danger">
-                                            <i class="fas fa-heart"></i> <?php echo e(number_format($post['like_count'])); ?>
+                                            <i class="fas fa-heart"></i> <?php echo e(number_format($post['like_count'] ?? 0)); ?>
 
                                         </span>
                                         <span class="badge bg-primary ms-1">
                                             <i class="fas fa-comment"></i>
-                                            <?php echo e(number_format($post['comment_count'])); ?>
+                                            <?php echo e(number_format($post['comment_count'] ?? 0)); ?>
 
                                         </span>
                                     </div>
                                     <small class="text-muted">
-                                        <?php echo e($post['timestamp']->diffForHumans()); ?>
+                                        <?php echo e(isset($post['timestamp']) && $post['timestamp'] instanceof \Carbon\Carbon ? $post['timestamp']->diffForHumans() : 'Recently'); ?>
 
                                     </small>
                                 </div>

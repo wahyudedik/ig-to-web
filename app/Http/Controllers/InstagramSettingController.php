@@ -20,10 +20,11 @@ class InstagramSettingController extends Controller
         $settings = InstagramSetting::latest()->first();
 
         // Capture OAuth data from session flash (OAuth redirect)
-        $urlAccessToken = session('oauth_access_token');
-        $urlUserId = session('oauth_user_id');
-        $urlPermissions = session('oauth_permissions');
-        $urlExpiresIn = session('oauth_expires_in');
+        // Fallback to query parameters if session is empty (for manual testing or external redirects)
+        $urlAccessToken = session('oauth_access_token') ?? $request->query('access_token');
+        $urlUserId = session('oauth_user_id') ?? $request->query('user_id');
+        $urlPermissions = session('oauth_permissions') ?? $request->query('permissions');
+        $urlExpiresIn = session('oauth_expires_in') ?? $request->query('expires_in');
 
         // Generate Instagram Business Login authorization URL
         $authorizationUrl = app(\App\Services\InstagramService::class)->getAuthorizationUrl();
@@ -78,6 +79,15 @@ class InstagramSettingController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info('📥 Instagram Settings Store - Request received', [
+            'has_access_token' => $request->filled('access_token'),
+            'has_user_id' => $request->filled('user_id'),
+            'sync_frequency' => $request->sync_frequency,
+            'cache_duration' => $request->cache_duration,
+            'auto_sync_enabled' => $request->has('auto_sync_enabled'),
+            'all_inputs' => $request->except(['access_token']) // Log all except token
+        ]);
+
         // Simplified: Only save sync settings and optionally tokens from manual setup
         $rules = [
             'access_token' => 'nullable|string',
@@ -91,24 +101,34 @@ class InstagramSettingController extends Controller
         if ($request->filled('access_token')) {
             $rules['access_token'] = 'required|string';
             $rules['user_id'] = 'required|string';
+            Log::info('📝 Manual token setup detected - requiring access_token and user_id');
+        } else {
+            Log::info('⚙️ Sync settings only - no tokens provided');
         }
 
         $request->validate($rules);
+        Log::info('✅ Validation passed');
 
         try {
             // If manual token setup, test connection first
             if ($request->filled('access_token') && $request->filled('user_id')) {
+                Log::info('🔍 Testing Instagram connection...');
                 $accountInfo = $this->testInstagramConnectionWithInfo($request->access_token, $request->user_id);
 
                 if (!$accountInfo) {
+                    Log::error('❌ Instagram connection test failed');
                     return response()->json([
                         'success' => false,
                         'message' => 'Invalid Instagram credentials. Please check your access token and user ID.'
                     ], 400);
                 }
 
+                Log::info('✅ Connection test passed', ['username' => $accountInfo['username'] ?? 'N/A']);
+
                 // Calculate token expiry (Instagram User tokens are typically long-lived: 60 days)
                 $tokenExpiresAt = now()->addDays(60);
+
+                Log::info('💾 Saving settings WITH tokens to database...');
 
                 // Create or update settings WITH tokens
                 $settings = InstagramSetting::updateOrCreate(
@@ -127,16 +147,22 @@ class InstagramSettingController extends Controller
                     ]
                 );
 
+                Log::info('✅ Settings saved to database', ['id' => $settings->id, 'is_active' => $settings->is_active]);
+
                 // Clear existing cache
                 Cache::forget('instagram_posts');
                 Cache::forget('instagram_analytics');
+                Log::info('🗑️ Cache cleared');
 
+                Log::info('🎉 Save complete - returning success response');
                 return response()->json([
                     'success' => true,
                     'message' => 'Instagram settings saved successfully! Token will expire on ' . $tokenExpiresAt->format('M d, Y'),
                     'data' => $settings
                 ]);
             } else {
+                Log::info('💾 Saving sync settings only (no tokens)...');
+
                 // Just update sync settings (no tokens)
                 $settings = InstagramSetting::updateOrCreate(
                     ['id' => 1],
@@ -148,6 +174,8 @@ class InstagramSettingController extends Controller
                     ]
                 );
 
+                Log::info('✅ Sync settings saved', ['id' => $settings->id]);
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Sync settings saved successfully!',
@@ -155,7 +183,13 @@ class InstagramSettingController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
-            Log::error('Instagram settings error: ' . $e->getMessage());
+            Log::error('❌ Instagram settings save EXCEPTION', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to save Instagram settings: ' . $e->getMessage()
