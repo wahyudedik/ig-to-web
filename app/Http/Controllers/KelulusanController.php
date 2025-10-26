@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\KelulusanImport;
 use App\Exports\KelulusanExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class KelulusanController extends Controller
 {
@@ -515,5 +516,108 @@ class KelulusanController extends Controller
             'Administrasi Perkantoran',
             'Pemasaran',
         ];
+    }
+
+    /**
+     * Export kelulusan to PDF.
+     */
+    public function exportPdf(Request $request)
+    {
+        $query = Kelulusan::query();
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('tahun_lulus') && $request->tahun_lulus !== '') {
+            $query->where('tahun_lulus', $request->tahun_lulus);
+        }
+
+        if ($request->has('jurusan') && $request->jurusan !== '') {
+            $query->where('jurusan', $request->jurusan);
+        }
+
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                    ->orWhere('nis', 'like', '%' . $search . '%')
+                    ->orWhere('nisn', 'like', '%' . $search . '%');
+            });
+        }
+
+        $kelulusans = $query->orderBy('tahun_lulus', 'desc')
+            ->orderBy('nama_lengkap', 'asc')
+            ->get();
+
+        $pdf = Pdf::loadView('kelulusan.pdf', compact('kelulusans'));
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->download('data-kelulusan-' . date('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Export kelulusan to JSON.
+     */
+    public function exportJson(Request $request)
+    {
+        $query = Kelulusan::query();
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('tahun_lulus') && $request->tahun_lulus !== '') {
+            $query->where('tahun_lulus', $request->tahun_lulus);
+        }
+
+        $kelulusans = $query->orderBy('tahun_lulus', 'desc')
+            ->orderBy('nama_lengkap', 'asc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $kelulusans,
+            'total' => $kelulusans->count(),
+            'exported_at' => now()->toIso8601String()
+        ]);
+    }
+
+    /**
+     * Export kelulusan to XML.
+     */
+    public function exportXml(Request $request)
+    {
+        $query = Kelulusan::query();
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        $kelulusans = $query->orderBy('tahun_lulus', 'desc')
+            ->orderBy('nama_lengkap', 'asc')
+            ->get();
+
+        $xml = new \SimpleXMLElement('<kelulusan_data/>');
+        $xml->addAttribute('exported_at', now()->toIso8601String());
+        $xml->addAttribute('total', $kelulusans->count());
+
+        foreach ($kelulusans as $kelulusan) {
+            $kelulusanNode = $xml->addChild('kelulusan');
+            $kelulusanNode->addChild('id', $kelulusan->id);
+            $kelulusanNode->addChild('nis', htmlspecialchars($kelulusan->nis));
+            $kelulusanNode->addChild('nisn', htmlspecialchars($kelulusan->nisn ?? ''));
+            $kelulusanNode->addChild('nama_lengkap', htmlspecialchars($kelulusan->nama_lengkap));
+            $kelulusanNode->addChild('tahun_lulus', $kelulusan->tahun_lulus);
+            $kelulusanNode->addChild('jurusan', htmlspecialchars($kelulusan->jurusan ?? ''));
+            $kelulusanNode->addChild('status', $kelulusan->status);
+        }
+
+        return response($xml->asXML(), 200)
+            ->header('Content-Type', 'application/xml')
+            ->header('Content-Disposition', 'attachment; filename="data-kelulusan-' . date('Y-m-d') . '.xml"');
     }
 }

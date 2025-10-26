@@ -79,6 +79,12 @@ Setelah setup, Anda bisa bertanya:
 "Tampilkan isi folder app/Http/Controllers"
 ```
 
+### Baca File .env
+```
+"Baca file .env"
+"Tampilkan .env tanpa mask"
+```
+
 ## Tools yang Tersedia
 
 | Tool | Deskripsi | Contoh |
@@ -90,6 +96,11 @@ Setelah setup, Anda bisa bertanya:
 | `get_routes` | Tampilkan routes | "Tampilkan semua routes" |
 | `get_models` | List models | "Tampilkan models" |
 | `get_controllers` | List controllers | "Tampilkan controllers" |
+| `db_query` | Query database | "SELECT * FROM users" |
+| `db_table` | Baca table | "Tampilkan data users" |
+| `read_logs` | Baca log | "Lihat log hari ini" |
+| `tinker` | PHP Tinker | "User::count()" |
+| `read_env` | Baca .env | "Baca file .env" |
 
 ## Resources yang Tersedia
 

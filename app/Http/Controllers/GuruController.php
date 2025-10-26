@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\GuruImport;
 use App\Exports\GuruExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class GuruController extends Controller
 {
@@ -222,6 +223,109 @@ class GuruController extends Controller
 
         return redirect()->route('admin.guru.index')
             ->with('success', 'Data guru berhasil dihapus.');
+    }
+
+    /**
+     * Export guru to PDF.
+     */
+    public function exportPdf(Request $request)
+    {
+        $query = Guru::with('user');
+
+        // Apply same filters as index
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status_aktif', $request->status);
+        }
+
+        if ($request->has('employment_status') && $request->employment_status !== '') {
+            $query->where('status_kepegawaian', $request->employment_status);
+        }
+
+        if ($request->has('subject') && $request->subject !== '') {
+            $query->whereJsonContains('mata_pelajaran', $request->subject);
+        }
+
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                    ->orWhere('nip', 'like', '%' . $search . '%');
+            });
+        }
+
+        $gurus = $query->orderBy('nama_lengkap', 'asc')->get();
+
+        $pdf = Pdf::loadView('guru.pdf', compact('gurus'));
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->download('data-guru-' . date('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Export guru to JSON.
+     */
+    public function exportJson(Request $request)
+    {
+        $query = Guru::with('user');
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status_aktif', $request->status);
+        }
+
+        $gurus = $query->orderBy('nama_lengkap', 'asc')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $gurus,
+            'total' => $gurus->count(),
+            'exported_at' => now()->toIso8601String()
+        ]);
+    }
+
+    /**
+     * Export guru to XML.
+     */
+    public function exportXml(Request $request)
+    {
+        $query = Guru::with('user');
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status_aktif', $request->status);
+        }
+
+        $gurus = $query->orderBy('nama_lengkap', 'asc')->get();
+
+        $xml = new \SimpleXMLElement('<gurus/>');
+        $xml->addAttribute('exported_at', now()->toIso8601String());
+        $xml->addAttribute('total', $gurus->count());
+
+        foreach ($gurus as $guru) {
+            $guruNode = $xml->addChild('guru');
+            $guruNode->addChild('id', $guru->id);
+            $guruNode->addChild('nip', $guru->nip);
+            $guruNode->addChild('nama_lengkap', htmlspecialchars($guru->nama_lengkap));
+            $guruNode->addChild('full_name', htmlspecialchars($guru->full_name));
+            $guruNode->addChild('jenis_kelamin', $guru->jenis_kelamin);
+            $guruNode->addChild('tanggal_lahir', $guru->tanggal_lahir);
+            $guruNode->addChild('tempat_lahir', htmlspecialchars($guru->tempat_lahir));
+            $guruNode->addChild('status_kepegawaian', $guru->status_kepegawaian);
+            $guruNode->addChild('jabatan', htmlspecialchars($guru->jabatan ?? ''));
+            $guruNode->addChild('status_aktif', $guru->status_aktif);
+
+            // Mata pelajaran
+            if (is_array($guru->mata_pelajaran)) {
+                $mapelNode = $guruNode->addChild('mata_pelajaran');
+                foreach ($guru->mata_pelajaran as $mapel) {
+                    $mapelNode->addChild('item', htmlspecialchars($mapel));
+                }
+            }
+        }
+
+        return response($xml->asXML(), 200)
+            ->header('Content-Type', 'application/xml')
+            ->header('Content-Disposition', 'attachment; filename="data-guru-' . date('Y-m-d') . '.xml"');
     }
 
     /**

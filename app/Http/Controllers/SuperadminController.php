@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UserImport;
@@ -86,32 +87,37 @@ class SuperadminController extends Controller
 
         $validated = $request->validate($validationRules);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'user_type' => $request->user_type,
-            'email_verified_at' => now(), // Auto verify when created by superadmin
-            'is_verified_by_admin' => true, // Mark as verified by admin
-        ]);
+        // Use transaction for user creation with roles and audit log
+        $user = DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'user_type' => $request->user_type,
+                'email_verified_at' => now(), // Auto verify when created by superadmin
+                'is_verified_by_admin' => true, // Mark as verified by admin
+            ]);
 
-        if ($request->has('roles')) {
-            $roleIds = $request->roles;
-            $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
-            $user->assignRole($roleNames);
-        }
+            if ($request->has('roles')) {
+                $roleIds = $request->roles;
+                $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
+                $user->assignRole($roleNames);
+            }
 
-        // Log the action
-        AuditLog::createLog(
-            'user_created',
-            Auth::id(),
-            'User',
-            $user->id,
-            null,
-            $user->toArray(),
-            $request->ip(),
-            $request->userAgent()
-        );
+            // Log the action
+            AuditLog::createLog(
+                'user_created',
+                Auth::id(),
+                'User',
+                $user->id,
+                null,
+                $user->toArray(),
+                $request->ip(),
+                $request->userAgent()
+            );
+
+            return $user;
+        });
 
         // Return JSON for AJAX requests
         if ($isAjax) {
@@ -157,33 +163,36 @@ class SuperadminController extends Controller
 
         $oldValues = $user->toArray();
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'user_type' => $request->user_type,
-        ]);
+        // Use transaction for user update with roles and audit log
+        DB::transaction(function () use ($request, $user, $oldValues) {
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'user_type' => $request->user_type,
+            ]);
 
-        if ($request->filled('password')) {
-            $user->update(['password' => Hash::make($request->password)]);
-        }
+            if ($request->filled('password')) {
+                $user->update(['password' => Hash::make($request->password)]);
+            }
 
-        if ($request->has('roles')) {
-            $roleIds = $request->roles;
-            $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
-            $user->syncRoles($roleNames);
-        }
+            if ($request->has('roles')) {
+                $roleIds = $request->roles;
+                $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
+                $user->syncRoles($roleNames);
+            }
 
-        // Log the action
-        AuditLog::createLog(
-            'user_updated',
-            Auth::id(),
-            'User',
-            $user->id,
-            $oldValues,
-            $user->fresh()->toArray(),
-            $request->ip(),
-            $request->userAgent()
-        );
+            // Log the action
+            AuditLog::createLog(
+                'user_updated',
+                Auth::id(),
+                'User',
+                $user->id,
+                $oldValues,
+                $user->fresh()->toArray(),
+                $request->ip(),
+                $request->userAgent()
+            );
+        });
 
         return redirect()->route('superadmin.users')
             ->with('success', 'User updated successfully.');

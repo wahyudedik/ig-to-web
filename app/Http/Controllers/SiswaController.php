@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Exports\SiswaExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SiswaController extends Controller
 {
@@ -564,5 +565,103 @@ class SiswaController extends Controller
         $siswas = $query->get();
 
         return Excel::download(new SiswaExport($siswas), 'siswa-' . date('Y-m-d') . '.xlsx');
+    }
+
+    /**
+     * Export siswa to PDF.
+     */
+    public function exportPdf(Request $request)
+    {
+        $query = Siswa::with('user');
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('kelas') && $request->kelas !== '') {
+            $query->where('kelas', $request->kelas);
+        }
+
+        if ($request->has('jurusan') && $request->jurusan !== '') {
+            $query->where('jurusan', $request->jurusan);
+        }
+
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                    ->orWhere('nis', 'like', '%' . $search . '%')
+                    ->orWhere('nisn', 'like', '%' . $search . '%');
+            });
+        }
+
+        $siswas = $query->orderBy('nama_lengkap', 'asc')->get();
+
+        $pdf = Pdf::loadView('siswa.pdf', compact('siswas'));
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->download('data-siswa-' . date('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Export siswa to JSON.
+     */
+    public function exportJson(Request $request)
+    {
+        $query = Siswa::with('user');
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('kelas') && $request->kelas !== '') {
+            $query->where('kelas', $request->kelas);
+        }
+
+        $siswas = $query->orderBy('nama_lengkap', 'asc')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $siswas,
+            'total' => $siswas->count(),
+            'exported_at' => now()->toIso8601String()
+        ]);
+    }
+
+    /**
+     * Export siswa to XML.
+     */
+    public function exportXml(Request $request)
+    {
+        $query = Siswa::with('user');
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        $siswas = $query->orderBy('nama_lengkap', 'asc')->get();
+
+        $xml = new \SimpleXMLElement('<siswas/>');
+        $xml->addAttribute('exported_at', now()->toIso8601String());
+        $xml->addAttribute('total', $siswas->count());
+
+        foreach ($siswas as $siswa) {
+            $siswaNode = $xml->addChild('siswa');
+            $siswaNode->addChild('id', $siswa->id);
+            $siswaNode->addChild('nis', $siswa->nis);
+            $siswaNode->addChild('nisn', $siswa->nisn ?? '');
+            $siswaNode->addChild('nama_lengkap', htmlspecialchars($siswa->nama_lengkap));
+            $siswaNode->addChild('jenis_kelamin', $siswa->jenis_kelamin);
+            $siswaNode->addChild('kelas', htmlspecialchars($siswa->kelas ?? ''));
+            $siswaNode->addChild('jurusan', htmlspecialchars($siswa->jurusan ?? ''));
+            $siswaNode->addChild('status', $siswa->status);
+        }
+
+        return response($xml->asXML(), 200)
+            ->header('Content-Type', 'application/xml')
+            ->header('Content-Disposition', 'attachment; filename="data-siswa-' . date('Y-m-d') . '.xml"');
     }
 }

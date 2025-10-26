@@ -12,6 +12,11 @@ Model Context Protocol (MCP) Server untuk project Laravel IG-to-Web. Server ini 
 5. **get_routes** - Mendapatkan semua routes Laravel
 6. **get_models** - Menampilkan semua Eloquent models
 7. **get_controllers** - Menampilkan semua controllers
+8. **db_query** - Menjalankan query database (SELECT only)
+9. **db_table** - Mendapatkan data dari table tertentu
+10. **read_logs** - Membaca file log Laravel
+11. **tinker** - Menjalankan kode PHP via Tinker
+12. **read_env** - Membaca file .env dengan opsi mask nilai sensitif
 
 ### Resources (Sumber Daya)
 1. **laravel://config** - Akses ke file konfigurasi Laravel
@@ -123,6 +128,12 @@ Arguments: {}
 ```
 Tool: get_controllers
 Arguments: {}
+```
+
+### Membaca File .env
+```
+Tool: read_env
+Arguments: { "mask_sensitive": true }
 ```
 
 ## Struktur Project

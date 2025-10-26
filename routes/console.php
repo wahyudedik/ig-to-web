@@ -8,6 +8,13 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Schedule Instagram posts sync
+// Sync posts based on user-defined frequency (default: every 5 minutes)
+Schedule::command('instagram:sync')
+    ->everyFiveMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();
+
 // Schedule Instagram token refresh
 // Instagram long-lived tokens expire in 60 days, refresh them every 30 days
 Schedule::command('instagram:refresh-token')

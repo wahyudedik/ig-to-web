@@ -275,6 +275,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['code'],
         },
       },
+      {
+        name: 'read_env',
+        description: 'Read Laravel .env file configuration',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            mask_sensitive: {
+              type: 'boolean',
+              description: 'Mask sensitive values like passwords, API keys (default: true)',
+              default: true,
+            },
+          },
+        },
+      },
     ],
   };
 });
@@ -449,6 +463,70 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
+      case 'read_env': {
+        try {
+          const content = await getFileContent('.env');
+          const maskSensitive = args.mask_sensitive !== false; // default true
+
+          const sensitiveKeys = [
+            'PASSWORD', 'SECRET', 'KEY', 'TOKEN', 'API',
+            'PRIVATE', 'CREDENTIAL', 'ACCESS', 'AUTH'
+          ];
+
+          let processedContent = content;
+
+          if (maskSensitive) {
+            const lines = content.split('\n');
+            const processedLines = lines.map(line => {
+              // Skip comments and empty lines
+              if (line.trim().startsWith('#') || line.trim() === '') {
+                return line;
+              }
+
+              // Check if line contains sensitive key
+              const isSensitive = sensitiveKeys.some(key =>
+                line.toUpperCase().includes(key + '=')
+              );
+
+              if (isSensitive) {
+                const [key, ...valueParts] = line.split('=');
+                if (valueParts.length > 0) {
+                  const value = valueParts.join('=');
+                  // Mask the value but show first 2 chars if exists
+                  const maskedValue = value.length > 2
+                    ? value.substring(0, 2) + '********'
+                    : '********';
+                  return `${key}=${maskedValue}`;
+                }
+              }
+
+              return line;
+            });
+            processedContent = processedLines.join('\n');
+          }
+
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `=== Laravel .env Configuration ===\n` +
+                  `Mask Sensitive: ${maskSensitive ? 'Yes' : 'No'}\n\n` +
+                  processedContent,
+              },
+            ],
+          };
+        } catch (error) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `.env file not found or cannot be read\nError: ${error.message}`,
+              },
+            ],
+          };
+        }
+      }
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -486,6 +564,72 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
         name: 'Eloquent Models',
         description: 'List of all Eloquent models',
         mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://migrations',
+        name: 'Database Migrations',
+        description: 'All database migration files',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://seeders',
+        name: 'Database Seeders',
+        description: 'All database seeder files',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://middleware',
+        name: 'HTTP Middleware',
+        description: 'All middleware classes',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://policies',
+        name: 'Authorization Policies',
+        description: 'All policy files for authorization',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://requests',
+        name: 'Form Requests',
+        description: 'All form request validation classes',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://controllers',
+        name: 'HTTP Controllers',
+        description: 'All controller files',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://services',
+        name: 'Service Classes',
+        description: 'All service layer classes',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://factories',
+        name: 'Model Factories',
+        description: 'All model factory files',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://tests',
+        name: 'Test Files',
+        description: 'All PHPUnit test files',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://views',
+        name: 'Blade Views',
+        description: 'Blade template structure overview',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'laravel://env-example',
+        name: 'Environment Example',
+        description: 'Environment configuration template',
+        mimeType: 'text/plain',
       },
     ],
   };
@@ -547,6 +691,271 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
             },
           ],
         };
+      }
+
+      case 'laravel://migrations': {
+        const items = await listDirectory('database/migrations');
+        const migrations = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
+        const migrationDetails = {};
+
+        for (const migration of migrations) {
+          const content = await getFileContent(migration.path);
+          migrationDetails[migration.name] = content;
+        }
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(migrationDetails, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://seeders': {
+        const items = await listDirectory('database/seeders');
+        const seeders = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
+        const seederDetails = {};
+
+        for (const seeder of seeders) {
+          const content = await getFileContent(seeder.path);
+          seederDetails[seeder.name] = content;
+        }
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(seederDetails, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://middleware': {
+        const items = await listDirectory('app/Http/Middleware');
+        const middleware = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
+        const middlewareDetails = {};
+
+        for (const mw of middleware) {
+          const content = await getFileContent(mw.path);
+          middlewareDetails[mw.name] = content;
+        }
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(middlewareDetails, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://policies': {
+        const items = await listDirectory('app/Policies');
+        const policies = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
+        const policyDetails = {};
+
+        for (const policy of policies) {
+          const content = await getFileContent(policy.path);
+          policyDetails[policy.name] = content;
+        }
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(policyDetails, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://requests': {
+        const items = await listDirectory('app/Http/Requests');
+        const requests = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
+        const requestDetails = {};
+
+        for (const request of requests) {
+          const content = await getFileContent(request.path);
+          requestDetails[request.name] = content;
+        }
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(requestDetails, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://controllers': {
+        const items = await listDirectory('app/Http/Controllers');
+        const controllers = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
+        const controllerDetails = {};
+
+        for (const controller of controllers) {
+          const content = await getFileContent(controller.path);
+          controllerDetails[controller.name] = content;
+        }
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(controllerDetails, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://services': {
+        try {
+          const items = await listDirectory('app/Services');
+          const services = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
+          const serviceDetails = {};
+
+          for (const service of services) {
+            const content = await getFileContent(service.path);
+            serviceDetails[service.name] = content;
+          }
+
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: 'application/json',
+                text: JSON.stringify(serviceDetails, null, 2),
+              },
+            ],
+          };
+        } catch (error) {
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: 'application/json',
+                text: JSON.stringify({ message: 'Services directory not found or empty' }, null, 2),
+              },
+            ],
+          };
+        }
+      }
+
+      case 'laravel://factories': {
+        const items = await listDirectory('database/factories');
+        const factories = items.filter(item => item.type === 'file' && item.name.endsWith('.php'));
+        const factoryDetails = {};
+
+        for (const factory of factories) {
+          const content = await getFileContent(factory.path);
+          factoryDetails[factory.name] = content;
+        }
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(factoryDetails, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://tests': {
+        const featureTests = await listDirectory('tests/Feature');
+        const unitTests = await listDirectory('tests/Unit');
+        const allTests = {};
+
+        allTests.feature = {};
+        for (const test of featureTests.filter(item => item.type === 'file' && item.name.endsWith('.php'))) {
+          const content = await getFileContent(test.path);
+          allTests.feature[test.name] = content;
+        }
+
+        allTests.unit = {};
+        for (const test of unitTests.filter(item => item.type === 'file' && item.name.endsWith('.php'))) {
+          const content = await getFileContent(test.path);
+          allTests.unit[test.name] = content;
+        }
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(allTests, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://views': {
+        async function getViewStructure(dir, basePath = '') {
+          const items = await listDirectory(dir);
+          const structure = {};
+
+          for (const item of items) {
+            if (item.type === 'directory') {
+              structure[item.name] = await getViewStructure(item.path, `${basePath}${item.name}/`);
+            } else if (item.name.endsWith('.blade.php')) {
+              structure[item.name] = {
+                path: item.path,
+                viewName: `${basePath}${item.name.replace('.blade.php', '')}`
+              };
+            }
+          }
+
+          return structure;
+        }
+
+        const viewStructure = await getViewStructure('resources/views');
+
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: JSON.stringify(viewStructure, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'laravel://env-example': {
+        try {
+          const content = await getFileContent('.env.example');
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: 'text/plain',
+                text: content,
+              },
+            ],
+          };
+        } catch (error) {
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: 'text/plain',
+                text: '.env.example file not found',
+              },
+            ],
+          };
+        }
       }
 
       default:

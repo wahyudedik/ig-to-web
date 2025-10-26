@@ -2,6 +2,21 @@
 
 Sistem manajemen sekolah berbasis web yang terintegrasi dengan Instagram untuk menampilkan kegiatan sekolah secara real-time.
 
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-red.svg)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-blue.svg)](https://php.net)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+---
+
+## 📑 Daftar Isi
+
+- [Fitur Utama](#-fitur-utama)
+- [Fitur Masa Depan](#-fitur-masa-depan-roadmap)
+- [Setup Development](#-setup-development-local)
+- [Setup Production VPS](#-setup-production-vps-ubuntu)
+
+---
+
 ## 🚀 Fitur Utama
 
 ### 📊 Dashboard & Analytics
@@ -20,6 +35,8 @@ Sistem manajemen sekolah berbasis web yang terintegrasi dengan Instagram untuk m
 - **Siswa Management**: Data siswa dengan NIS/NISN, kelas, jurusan, dan prestasi
 - **Kelulusan (E-Lulus)**: Sistem kelulusan dengan sertifikat digital
 - **Mata Pelajaran**: Manajemen mata pelajaran dan kurikulum
+- **Jadwal Pelajaran**: Sistem penjadwalan mata pelajaran dengan manajemen kelas dan pengajar
+- **Import/Export**: Excel import/export untuk data bulk
 
 ### 🗳️ Sistem OSIS
 - **Pemilihan OSIS**: Sistem voting online yang aman dan transparan
@@ -31,19 +48,23 @@ Sistem manajemen sekolah berbasis web yang terintegrasi dengan Instagram untuk m
 - **Inventory Management**: Manajemen barang dengan barcode dan QR code
 - **Kategori & Ruang**: Organisasi sarana prasarana yang terstruktur
 - **Maintenance Tracking**: Sistem perawatan dan maintenance
+- **Barcode System**: Generate dan scan barcode untuk tracking barang
 - **Laporan**: Export data sarpras dalam berbagai format
 
 ### 📱 Instagram Integration
-- **Auto Posting**: Integrasi dengan Instagram API untuk posting otomatis
+- **OAuth Integration**: Login dengan Instagram Business/Creator Account
+- **Auto-Sync Posts**: Sinkronisasi otomatis posts Instagram ke website
+- **Manual Sync**: Sync manual via button atau command
+- **Customizable Sync**: Atur frequency sync (5-60 menit)
 - **Gallery Management**: Manajemen galeri kegiatan sekolah
-- **Content Scheduling**: Penjadwalan konten Instagram
-- **Analytics**: Tracking engagement dan reach
+- **Real-time Display**: Posts tampil di homepage dan halaman kegiatan
+- **Analytics**: Tracking engagement (likes, comments) dan reach
 
 ### 📄 Content Management
 - **Page Management**: CMS untuk halaman website sekolah
 - **Menu Management**: Sistem menu dinamis dengan hierarki
 - **SEO Optimization**: Meta tags dan struktur SEO yang optimal
-- **Version Control**: Tracking perubahan konten
+- **Version Control**: Tracking perubahan konten dengan rollback
 
 ### 🎨 Landing Page Customization
 - **Hero Section**: Slider dengan konten yang dapat dikustomisasi
@@ -66,11 +87,27 @@ Sistem manajemen sekolah berbasis web yang terintegrasi dengan Instagram untuk m
 - **CSV Export**: Export data untuk analisis
 - **Custom Reports**: Laporan yang dapat dikustomisasi
 
+### 🔒 Security & Authorization
+- **CSRF Protection**: Perlindungan dari serangan CSRF
+- **XSS Protection**: Filter input untuk mencegah XSS
+- **SQL Injection Protection**: Menggunakan Eloquent ORM
+- **Role-Based Access Control**: Permission granular dengan policies
+- **Audit Logging**: Tracking semua aktivitas penting
+- **Rate Limiting**: Pembatasan request untuk mencegah abuse
+
+### 🤖 MCP Server (Model Context Protocol)
+- **AI Integration**: Claude AI dapat berinteraksi langsung dengan codebase
+- **Quick Commands**: Jalankan artisan commands, lihat routes, inspect models
+- **Natural Language**: Tanya ke Claude dengan bahasa natural
+- **Documentation**: [README_MCP.md](README_MCP.md) | [QUICKSTART](mcp-server/QUICKSTART.md)
+
+---
+
 ## 🛠️ Teknologi yang Digunakan
 
 ### Backend
-- **Laravel 11**: Framework PHP modern dengan fitur terbaru
-- **MySQL**: Database relasional yang powerful
+- **Laravel 12**: Framework PHP modern dengan fitur terbaru
+- **MySQL 8.0**: Database relasional yang powerful
 - **Spatie Permission**: Sistem role dan permission yang robust
 - **Laravel Excel**: Import/Export data Excel
 - **DomPDF**: Generate PDF reports
@@ -82,366 +119,23 @@ Sistem manajemen sekolah berbasis web yang terintegrasi dengan Instagram untuk m
 - **Alpine.js**: JavaScript framework yang ringan
 - **Chart.js**: Library grafik interaktif
 - **Owl Carousel**: Slider dan carousel yang responsif
+- **SweetAlert2**: Modal dialog yang cantik
 
 ### Integrasi
-- **Instagram Basic Display API**: Integrasi dengan Instagram
-- **Mailtrap**: Testing email development
+- **Instagram Graph API**: Integrasi dengan Instagram Business
 - **Laravel Sanctum**: API authentication
-- **Laravel Telescope**: Debugging dan monitoring
-
-### 🤖 AI Integration (NEW!)
-- **MCP Server**: Model Context Protocol untuk integrasi dengan Claude AI
-  - Baca dokumentasi lengkap: [README_MCP.md](README_MCP.md)
-  - Quick start dalam 5 menit!
-  - Tools untuk eksplorasi codebase, artisan commands, dan lebih banyak lagi
-
-## 🤖 MCP Server (Model Context Protocol)
-
-Project ini dilengkapi dengan **MCP Server** yang memungkinkan Claude AI untuk berinteraksi langsung dengan codebase Laravel!
-
-### ⚡ Quick Setup
-
-```bash
-cd mcp-server
-npm install
-npm test
-```
-
-Kemudian konfigurasi di Claude Desktop. Lihat dokumentasi lengkap: **[README_MCP.md](README_MCP.md)**
-
-### 🎯 Apa yang Bisa Dilakukan?
-
-- 📖 Baca file dari codebase
-- 🔍 Search di seluruh project
-- 🗂️ Explore struktur folder
-- ⚙️ Jalankan artisan commands
-- 🛣️ Lihat semua routes
-- 🎨 Inspect models dan controllers
-
-**Tanya ke Claude dengan bahasa natural:**
-- "Baca file User.php di Models"
-- "Tampilkan semua routes"
-- "Cari kata 'Instagram' di folder app"
-
-📚 **Dokumentasi Lengkap**: [README_MCP.md](README_MCP.md) | [QUICKSTART](mcp-server/QUICKSTART.md) | [CHEATSHEET](mcp-server/CHEATSHEET.md)
+- **Vite**: Modern asset bundler
 
 ---
 
-## 📋 Persyaratan Sistem
-
-### Server Requirements
-- **PHP**: 8.1 atau lebih tinggi
-- **MySQL**: 5.7 atau lebih tinggi
-- **Composer**: Untuk dependency management
-- **Node.js**: 16 atau lebih tinggi (untuk asset compilation)
-- **Web Server**: Apache/Nginx
-
-### PHP Extensions
-- BCMath
-- Ctype
-- cURL
-- DOM
-- Fileinfo
-- JSON
-- Mbstring
-- OpenSSL
-- PDO
-- Tokenizer
-- XML
-
-## 🚀 Instalasi & Setup
-
-### 1. Clone Repository
-
-#### Development (Local)
-```bash
-# Clone repository
-git clone https://github.com/your-username/ig-to-web.git
-cd ig-to-web
-
-# Install dependencies
-composer install
-npm install
-```
-
-#### Production (VPS Ubuntu)
-```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
-
-# Install PHP 8.1+ dan extensions
-sudo apt install php8.1 php8.1-cli php8.1-fpm php8.1-mysql php8.1-xml php8.1-mbstring php8.1-curl php8.1-zip php8.1-bcmath php8.1-gd php8.1-intl php8.1-xmlrpc php8.1-soap php8.1-readline php8.1-common php8.1-opcache php8.1-tokenizer php8.1-json
-
-# Install Composer
-curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-
-# Install Node.js
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-# Install MySQL
-sudo apt install mysql-server
-sudo mysql_secure_installation
-
-# Install Nginx
-sudo apt install nginx
-
-# Clone repository
-git clone https://github.com/your-username/ig-to-web.git
-cd ig-to-web
-
-# Install dependencies
-composer install --optimize-autoloader --no-dev
-npm install && npm run build
-```
-
-### 2. Environment Configuration
-
-```bash
-# Copy environment file
-cp .env.example .env
-
-# Generate application key
-php artisan key:generate
-```
-
-#### Konfigurasi Database (.env)
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=ig_to_web
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-```
-
-#### Konfigurasi Email (.env)
-```env
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=your_mailtrap_username
-MAIL_PASSWORD=your_mailtrap_password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=noreply@sekolah.com
-MAIL_FROM_NAME="${APP_NAME}"
-```
-
-#### Konfigurasi Instagram (.env)
-```env
-INSTAGRAM_CLIENT_ID=your_instagram_client_id
-INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret
-INSTAGRAM_REDIRECT_URI=https://yourdomain.com/instagram/callback
-```
-
-### 3. Database Setup
-
-```bash
-# Create database
-mysql -u root -p
-CREATE DATABASE ig_to_web;
-exit
-
-# Run migrations and seeders
-php artisan migrate:fresh --seed
-```
-
-### 4. Storage & Permissions
-
-```bash
-# Create storage link
-php artisan storage:link
-
-# Set permissions (Linux/Mac)
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
-
-# Set permissions (Windows - jika menggunakan XAMPP)
-# Pastikan folder storage dan bootstrap/cache dapat ditulis
-```
-
-### 5. Asset Compilation
-
-```bash
-# Development
-npm run dev
-
-# Production
-npm run build
-```
-
-### 6. Queue & Scheduler (Production)
-
-```bash
-# Setup queue worker
-php artisan queue:work --daemon
-
-# Setup cron job untuk scheduler
-* * * * * cd /path/to/your/project && php artisan schedule:run >> /dev/null 2>&1
-```
-
-## 🔧 Konfigurasi Nginx (Production)
-
-```nginx
-server {
-    listen 80;
-    server_name yourdomain.com;
-    root /path/to/ig-to-web/public;
-
-    add_header X-Frame-Options "SAMEORIGIN";
-    add_header X-Content-Type-Options "nosniff";
-
-    index index.php;
-
-    charset utf-8;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
-
-    error_page 404 /index.php;
-
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    location ~ /\.(?!well-known).* {
-        deny all;
-    }
-}
-```
-
-## 👤 Default Login
-
-Setelah menjalankan seeder, Anda dapat login dengan:
-
-- **Email**: superadmin@sekolah.com
-- **Password**: password
-
-## 📱 Fitur Mobile Responsive
-
-- **Responsive Design**: Optimal di semua device (desktop, tablet, mobile)
-- **Touch Friendly**: Interface yang mudah digunakan di touchscreen
-- **Progressive Web App**: Dapat diinstall sebagai aplikasi mobile
-
-## 🔒 Keamanan & Authorization
-
-### Role-Based Access Control (RBAC)
-Sistem permission yang terintegrasi dengan 3 komponen utama:
-
-1. **Policies** (`app/Policies/`):
-   - Mendefinisikan logika authorization untuk setiap model
-   - Setiap policy memiliki fallback `|| $user->hasRole('superadmin')` untuk akses penuh superadmin
-   - Menggunakan permission granular (contoh: `guru.view`, `guru.create`, `guru.edit`, `guru.delete`)
-
-2. **Seeders** (`database/seeders/`):
-   - `PermissionSeeder.php`: Membuat 73 permissions untuk semua modul
-   - `UserSeeder.php`: Membuat user superadmin dengan role `superadmin`
-   - Superadmin otomatis mendapat semua 73 permissions
-   - Jalankan `php artisan migrate:fresh --seed` untuk setup lengkap
-
-3. **Navigation** (`resources/views/layouts/navigation.blade.php`):
-   - Menu dinamis berdasarkan role user
-   - Menggunakan `@can()` directive untuk permission granular
-   - Menggunakan `hasRole()` dan `hasAnyRole()` untuk role-based menu
-   - Superadmin melihat semua menu dan fitur
-
-### Hubungan Ketiga Komponen
-
-```
-┌─────────────┐      ┌──────────────┐      ┌──────────────┐
-│   Seeders   │─────>│  Permissions │<─────│   Policies   │
-│             │      │      &       │      │              │
-│ Create 73   │      │    Roles     │      │  Check Auth  │
-│ Permissions │      │              │      │  with Role   │
-└─────────────┘      └──────────────┘      │  Fallback    │
-                            │               └──────────────┘
-                            │                       │
-                            v                       v
-                     ┌──────────────┐      ┌──────────────┐
-                     │   Superadmin │      │  Navigation  │
-                     │     User     │      │    Menus     │
-                     │              │      │              │
-                     │  73 Perms    │      │  Dynamic UI  │
-                     │  All Access  │      │  Based Role  │
-                     └──────────────┘      └──────────────┘
-```
-
-### Fitur Keamanan Lainnya
-
-- **CSRF Protection**: Perlindungan dari serangan CSRF
-- **XSS Protection**: Filter input untuk mencegah XSS
-- **SQL Injection Protection**: Menggunakan Eloquent ORM
-- **Audit Logging**: Tracking semua aktivitas penting
-- **Rate Limiting**: Pembatasan request untuk mencegah abuse
-- **Permission Cache**: Cache permission untuk performa optimal
-
-## 📊 Monitoring & Analytics
-
-- **Laravel Telescope**: Monitoring aplikasi development
-- **Error Tracking**: Log error dan exception
-- **Performance Monitoring**: Tracking performa aplikasi
-- **User Analytics**: Analisis penggunaan sistem
-
-## 🚀 Deployment
-
-### Development
-```bash
-# Jalankan development server
-php artisan serve
-
-# Jalankan asset watcher
-npm run dev
-```
-
-### Production
-```bash
-# Optimize untuk production
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan optimize
-
-# Build assets
-npm run build
-```
-
-## 📝 API Documentation
-
-Sistem menyediakan API endpoints untuk integrasi:
-
-- **Authentication**: `/api/auth/*`
-- **Users**: `/api/users/*`
-- **Instagram**: `/api/instagram/*`
-- **OSIS**: `/api/osis/*`
-- **Sarpras**: `/api/sarpras/*`
-
-## 🤝 Contributing
-
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## 📞 Support
-
-Untuk bantuan dan pertanyaan:
-- **Email**: support@sekolah.com
-- **Documentation**: [Wiki Repository](https://github.com/wahyudedik/ig-to-web/wiki)
-- **Issues**: [GitHub Issues](https://github.com/wahyudedik/ig-to-web/issues)
-
-## 🎯 Roadmap & Future Enhancements
+## 🎯 Fitur Masa Depan (Roadmap)
+
+### ⏰ Penjadwalan Pembelajaran (Jadwal Pelajaran) - DONE
+- [X] **Otomatisasi Pembuatan Jadwal Pelajaran**: Fitur untuk generate jadwal/mapel kelas secara otomatis dan berkala
+- [X] **Tampilan Kustomisasi Jadwal**: UI pengaturan jadwal pelajaran di dashboard admin (drag&drop)
+- [X] **Manual & Instan Generate**: Tombol "Generate Sekarang" untuk jadwal
+- [X] **Monitoring Status**: Log dan notifikasi proses pembuatan jadwal/mapel
+- [X] **Error Handling**: Penanganan gagal generate & otomatis retry
 
 ### 📱 Mobile & Cross-Platform
 - [ ] **Mobile App (React Native)**: Aplikasi mobile untuk iOS dan Android
@@ -450,10 +144,16 @@ Untuk bantuan dan pertanyaan:
 - [ ] **Push Notifications**: Notifikasi real-time di mobile devices
 
 ### 📊 Analytics & Reporting
+- [x] **Export to Multiple Formats**: PDF, Excel, JSON, XML ✅ **IMPLEMENTED**
+  - ✅ Guru: Excel, PDF, JSON, XML export dengan filter support
+  - ✅ Siswa: Excel, PDF, JSON, XML export dengan filter support
+  - ✅ Jadwal Pelajaran: Excel, PDF, JSON, XML export dengan grouping by day
+  - ✅ Barang Sarpras: Excel, PDF, JSON, XML export dengan kategori/status filter
+  - ✅ OSIS Voting Results: PDF, JSON, XML export dengan statistik lengkap
+  - ✅ Kelulusan: Excel, PDF, JSON, XML export dengan filter tahun/jurusan
 - [ ] **Advanced Analytics Dashboard**: Dashboard analytics yang lebih mendalam
 - [ ] **Custom Report Designer**: Pembuat laporan dengan drag-and-drop
 - [ ] **Data Visualization**: Grafik dan chart interaktif yang lebih kaya
-- [ ] **Export to Multiple Formats**: PDF, Excel, CSV, JSON, XML
 
 ### 🤖 AI & Automation
 - [ ] **AI-powered Content Suggestions**: Rekomendasi konten otomatis
@@ -526,11 +226,254 @@ Untuk bantuan dan pertanyaan:
 
 ---
 
-## 🖥️ Panduan Lengkap Setup VPS Ubuntu
+## 💻 Setup Development (Local)
 
-### Persiapan Server
+### 📋 Persyaratan Sistem
 
-#### 1. Update dan Upgrade System
+**Software yang Diperlukan:**
+- PHP 8.2 atau lebih tinggi
+- Composer
+- Node.js 18.x atau lebih tinggi
+- MySQL 5.7 atau lebih tinggi
+- Git
+
+**PHP Extensions:**
+- BCMath, Ctype, cURL, DOM, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML, GD, Zip
+
+### 🚀 Langkah Instalasi
+
+#### 1. Clone Repository
+```bash
+# Clone repository
+git clone https://github.com/your-username/ig-to-web.git
+cd ig-to-web
+```
+
+#### 2. Install Dependencies
+```bash
+# Install PHP dependencies
+composer install
+
+# Install Node.js dependencies
+npm install
+```
+
+#### 3. Setup Environment
+```bash
+# Copy environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+```
+
+#### 4. Konfigurasi Database
+Edit file `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ig_to_web
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
+
+Buat database:
+```bash
+mysql -u root -p
+CREATE DATABASE ig_to_web;
+exit
+```
+
+#### 5. Run Migrations & Seeders
+```bash
+# Run migrations and seeders
+php artisan migrate:fresh --seed
+
+# Create storage link
+php artisan storage:link
+```
+
+#### 6. Konfigurasi Email (Development)
+Edit file `.env`:
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_mailtrap_username
+MAIL_PASSWORD=your_mailtrap_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=noreply@sekolah.com
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+**Catatan:** Gunakan [Mailtrap](https://mailtrap.io) untuk testing email di development.
+
+#### 7. Konfigurasi Instagram (Opsional)
+Edit file `.env`:
+```env
+INSTAGRAM_APP_ID=your_instagram_app_id
+INSTAGRAM_APP_SECRET=your_instagram_app_secret
+INSTAGRAM_REDIRECT_URI=http://localhost:8000/instagram/callback
+INSTAGRAM_WEBHOOK_TOKEN=your_webhook_token
+```
+
+**Cara mendapatkan Instagram credentials:**
+1. Buat aplikasi di [Facebook Developers](https://developers.facebook.com/)
+2. Tambahkan Instagram Graph API
+3. Copy App ID dan App Secret
+4. Set redirect URI di Facebook App Settings
+
+#### 8. Compile Assets
+```bash
+# Development mode (with hot reload)
+npm run dev
+
+# Or build for development
+npm run build
+```
+
+#### 9. Jalankan Development Server
+```bash
+# Terminal 1: Laravel development server
+php artisan serve
+
+# Terminal 2: Asset watcher (optional, jika pakai npm run dev)
+npm run dev
+
+# Terminal 3: Queue worker (optional)
+php artisan queue:work
+
+# Terminal 4: Scheduler (untuk Instagram auto-sync)
+php artisan schedule:work
+```
+
+Akses aplikasi di: **http://localhost:8000**
+
+#### 10. Login Default
+```
+Email: superadmin@sekolah.com
+Password: password
+```
+
+### 🔧 Setup Instagram Auto-Sync (Development)
+
+#### Option 1: Menggunakan `schedule:work` (Recommended)
+```bash
+# Run scheduler terus menerus
+php artisan schedule:work
+```
+
+#### Option 2: Manual Testing
+```bash
+# Sync Instagram posts sekali
+php artisan instagram:sync --force
+
+# List scheduled tasks
+php artisan schedule:list
+```
+
+#### Konfigurasi di Admin Panel
+1. Login sebagai superadmin
+2. Dashboard → System → Instagram Settings
+3. Klik "Connect with Instagram"
+4. Login dengan Instagram Business/Creator Account
+5. Atur Sync Frequency (5-60 menit)
+6. Enable Auto Sync
+7. Klik "Save Settings"
+
+### 🛠️ Development Tools
+
+#### Laravel Debugbar (Included)
+```bash
+# Sudah terinstall, otomatis muncul di development
+# Disable dengan set di .env:
+DEBUGBAR_ENABLED=false
+```
+
+#### Laravel Telescope (Optional)
+```bash
+# Install Telescope untuk debugging
+composer require laravel/telescope --dev
+php artisan telescope:install
+php artisan migrate
+```
+
+Akses Telescope di: **http://localhost:8000/telescope**
+
+#### MCP Server untuk AI Integration
+```bash
+cd mcp-server
+npm install
+npm test
+```
+
+Lihat dokumentasi lengkap: [README_MCP.md](README_MCP.md)
+
+### 📝 Useful Development Commands
+
+```bash
+# Clear cache
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Regenerate optimizations
+php artisan optimize
+
+# Database commands
+php artisan migrate:fresh --seed  # Reset database
+php artisan db:seed               # Run seeders only
+
+# Tinker (Laravel REPL)
+php artisan tinker
+
+# Test Instagram sync
+php artisan instagram:sync --force
+
+# View logs
+tail -f storage/logs/laravel.log
+```
+
+### 🐛 Troubleshooting
+
+**Problem:** `Class "..." not found`
+```bash
+composer dump-autoload
+```
+
+**Problem:** Permission denied pada storage
+```bash
+chmod -R 775 storage bootstrap/cache
+```
+
+**Problem:** Assets tidak muncul
+```bash
+npm run build
+php artisan storage:link
+```
+
+**Problem:** Database connection error
+- Pastikan MySQL running
+- Check credentials di `.env`
+- Pastikan database sudah dibuat
+
+---
+
+## 🖥️ Setup Production (VPS Ubuntu)
+
+### 📋 Persyaratan Server
+
+- **OS**: Ubuntu 20.04 LTS atau 22.04 LTS
+- **RAM**: Minimum 2GB (Recommended 4GB+)
+- **Storage**: Minimum 20GB
+- **CPU**: 2 cores atau lebih
+- **Domain**: Domain yang sudah pointing ke IP server
+
+### 🚀 Instalasi Server (VPS Ubuntu)
+
+#### 1. Update System
 ```bash
 # Login sebagai root
 ssh root@your-server-ip
@@ -547,7 +490,7 @@ sudo apt install -y software-properties-common curl wget git unzip
 # Enable UFW firewall
 sudo ufw enable
 
-# Allow SSH
+# Allow SSH (IMPORTANT!)
 sudo ufw allow 22/tcp
 
 # Allow HTTP and HTTPS
@@ -558,43 +501,48 @@ sudo ufw allow 443/tcp
 sudo ufw status
 ```
 
-#### 3. Install PHP 8.1 dan Extensions
+#### 3. Install PHP 8.2 dan Extensions
 ```bash
 # Add PHP repository
 sudo add-apt-repository ppa:ondrej/php -y
 sudo apt update
 
-# Install PHP 8.1 dan extensions yang diperlukan
-sudo apt install -y php8.1 \
-    php8.1-cli \
-    php8.1-fpm \
-    php8.1-mysql \
-    php8.1-xml \
-    php8.1-mbstring \
-    php8.1-curl \
-    php8.1-zip \
-    php8.1-bcmath \
-    php8.1-gd \
-    php8.1-intl \
-    php8.1-xmlrpc \
-    php8.1-soap \
-    php8.1-readline \
-    php8.1-common \
-    php8.1-opcache \
-    php8.1-tokenizer
+# Install PHP 8.2 dan extensions
+sudo apt install -y php8.2 \
+    php8.2-cli \
+    php8.2-fpm \
+    php8.2-mysql \
+    php8.2-xml \
+    php8.2-mbstring \
+    php8.2-curl \
+    php8.2-zip \
+    php8.2-bcmath \
+    php8.2-gd \
+    php8.2-intl \
+    php8.2-soap \
+    php8.2-readline \
+    php8.2-opcache \
+    php8.2-tokenizer
 
 # Verify PHP installation
 php -v
 
 # Configure PHP
-sudo nano /etc/php/8.1/fpm/php.ini
-# Set: upload_max_filesize = 100M
-# Set: post_max_size = 100M
-# Set: memory_limit = 256M
-# Set: max_execution_time = 300
+sudo nano /etc/php/8.2/fpm/php.ini
+```
 
-# Restart PHP-FPM
-sudo systemctl restart php8.1-fpm
+Edit PHP configuration:
+```ini
+upload_max_filesize = 100M
+post_max_size = 100M
+memory_limit = 256M
+max_execution_time = 300
+date.timezone = Asia/Jakarta
+```
+
+Restart PHP-FPM:
+```bash
+sudo systemctl restart php8.2-fpm
 ```
 
 #### 4. Install Composer
@@ -612,7 +560,7 @@ composer --version
 sudo chmod +x /usr/local/bin/composer
 ```
 
-#### 5. Install Node.js dan NPM
+#### 5. Install Node.js 18.x
 ```bash
 # Install Node.js 18.x LTS
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
@@ -621,9 +569,6 @@ sudo apt-get install -y nodejs
 # Verify installation
 node --version
 npm --version
-
-# Install Yarn (optional)
-sudo npm install -g yarn
 ```
 
 #### 6. Install MySQL 8.0
@@ -633,13 +578,17 @@ sudo apt install mysql-server -y
 
 # Secure MySQL installation
 sudo mysql_secure_installation
-# Answer prompts:
-# - Set root password: YES
-# - Remove anonymous users: YES
-# - Disallow root login remotely: YES
-# - Remove test database: YES
-# - Reload privilege tables: YES
+```
 
+Jawab prompts:
+- Set root password: **YES**
+- Remove anonymous users: **YES**
+- Disallow root login remotely: **YES**
+- Remove test database: **YES**
+- Reload privilege tables: **YES**
+
+Create database and user:
+```bash
 # Login to MySQL
 sudo mysql -u root -p
 
@@ -649,15 +598,22 @@ CREATE USER 'ig_to_web_user'@'localhost' IDENTIFIED BY 'your_strong_password';
 GRANT ALL PRIVILEGES ON ig_to_web.* TO 'ig_to_web_user'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
+```
 
-# Configure MySQL for better performance
+Optimize MySQL:
+```bash
 sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
-# Add under [mysqld]:
-# max_connections = 200
-# innodb_buffer_pool_size = 256M
-# innodb_log_file_size = 64M
+```
 
-# Restart MySQL
+Add under `[mysqld]`:
+```ini
+max_connections = 200
+innodb_buffer_pool_size = 256M
+innodb_log_file_size = 64M
+```
+
+Restart MySQL:
+```bash
 sudo systemctl restart mysql
 ```
 
@@ -679,7 +635,7 @@ sudo systemctl status nginx
 # Install Certbot
 sudo apt install certbot python3-certbot-nginx -y
 
-# Obtain SSL certificate (setelah domain sudah pointing)
+# Obtain SSL certificate (setelah domain pointing)
 sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
 
 # Auto-renewal test
@@ -690,7 +646,7 @@ sudo crontab -e
 # Add: 0 3 * * * certbot renew --quiet
 ```
 
-### Deploy Aplikasi
+### 📦 Deploy Aplikasi
 
 #### 1. Clone Repository
 ```bash
@@ -708,7 +664,7 @@ cd ig-to-web
 
 #### 2. Install Dependencies
 ```bash
-# Install PHP dependencies
+# Install PHP dependencies (production)
 composer install --optimize-autoloader --no-dev
 
 # Install Node dependencies
@@ -730,7 +686,7 @@ php artisan key:generate
 nano .env
 ```
 
-Configure `.env`:
+Configure `.env` untuk production:
 ```env
 APP_NAME="IG to Web"
 APP_ENV=production
@@ -756,6 +712,12 @@ MAIL_FROM_NAME="${APP_NAME}"
 
 SESSION_DRIVER=file
 QUEUE_CONNECTION=database
+
+# Instagram Configuration
+INSTAGRAM_APP_ID=your_instagram_app_id
+INSTAGRAM_APP_SECRET=your_instagram_app_secret
+INSTAGRAM_REDIRECT_URI=https://yourdomain.com/instagram/callback
+INSTAGRAM_WEBHOOK_TOKEN=your_webhook_token
 ```
 
 #### 4. Run Migrations
@@ -828,7 +790,6 @@ server {
     gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/json application/javascript;
 
     index index.php index.html;
-
     charset utf-8;
 
     # Increase max upload size
@@ -851,7 +812,7 @@ server {
     error_page 404 /index.php;
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
         fastcgi_hide_header X-Powered-By;
@@ -889,7 +850,7 @@ sudo systemctl reload nginx
 
 #### 7. Setup Queue Worker
 ```bash
-# Create systemd service for queue worker
+# Create systemd service
 sudo nano /etc/systemd/system/laravel-worker.service
 ```
 
@@ -925,13 +886,32 @@ sudo systemctl start laravel-worker
 sudo systemctl status laravel-worker
 ```
 
-#### 8. Setup Scheduler (Cron)
+#### 8. Setup Scheduler (Cron) - PENTING!
 ```bash
-# Edit crontab
-sudo crontab -e
+# Edit crontab for www-data user
+sudo crontab -u www-data -e
 
 # Add Laravel scheduler
 * * * * * cd /var/www/ig-to-web && php artisan schedule:run >> /dev/null 2>&1
+
+# Verify cron is added
+sudo crontab -u www-data -l
+```
+
+**Scheduler akan menjalankan:**
+- `instagram:sync` - Setiap 5 menit (auto-sync Instagram posts)
+- `instagram:refresh-token` - Monthly (refresh long-lived token)
+
+**Test Scheduler:**
+```bash
+# Run scheduler manually
+sudo -u www-data php /var/www/ig-to-web/artisan schedule:run
+
+# Check if Instagram sync works
+sudo -u www-data php /var/www/ig-to-web/artisan instagram:sync --force
+
+# Monitor logs
+tail -f /var/www/ig-to-web/storage/logs/laravel.log
 ```
 
 #### 9. Setup Log Rotation
@@ -952,21 +932,18 @@ Add:
     create 0640 www-data www-data
     sharedscripts
     postrotate
-        systemctl reload php8.1-fpm > /dev/null 2>&1
+        systemctl reload php8.2-fpm > /dev/null 2>&1
     endscript
 }
 ```
 
-#### 10. Monitoring & Maintenance
+#### 10. Setup Backup Script
 ```bash
-# Install monitoring tools
-sudo apt install htop iotop nethogs -y
-
 # Create backup script
 sudo nano /usr/local/bin/backup-ig-to-web.sh
 ```
 
-Add backup script:
+Add:
 ```bash
 #!/bin/bash
 BACKUP_DIR="/var/backups/ig-to-web"
@@ -996,7 +973,7 @@ sudo crontab -e
 # Add: 0 2 * * * /usr/local/bin/backup-ig-to-web.sh
 ```
 
-### Security Hardening
+### 🔒 Security Hardening
 
 #### 1. Setup Fail2Ban
 ```bash
@@ -1039,7 +1016,7 @@ sudo nano /etc/ssh/sshd_config
 sudo systemctl restart sshd
 ```
 
-### Maintenance Commands
+### 🛠️ Maintenance Commands
 
 ```bash
 # Clear cache
@@ -1054,8 +1031,14 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Instagram commands
+php artisan instagram:sync --force          # Force sync posts
+php artisan instagram:refresh-token         # Refresh token
+php artisan schedule:list                   # List scheduled tasks
+
 # View logs
 tail -f storage/logs/laravel.log
+tail -f storage/logs/laravel.log | grep -i instagram  # Instagram only
 
 # Check queue status
 php artisan queue:failed
@@ -1067,18 +1050,14 @@ df -h
 free -m
 ```
 
----
+### 📊 Monitoring Tips
 
-## 📊 Monitoring & Performance
+**Install Monitoring Tools:**
+```bash
+sudo apt install htop iotop nethogs -y
+```
 
-### Server Monitoring
-- **htop**: Monitor CPU, RAM, dan processes
-- **iotop**: Monitor disk I/O
-- **nethogs**: Monitor network bandwidth
-- **Laravel Telescope**: Application debugging (development)
-- **New Relic/DataDog**: APM tools (optional)
-
-### Performance Tips
+**Performance Optimization:**
 1. Enable OPcache untuk PHP
 2. Setup Redis untuk cache dan sessions
 3. Use CDN untuk static assets
@@ -1087,6 +1066,46 @@ free -m
 6. Setup load balancing untuk high traffic
 
 ---
+
+## 📞 Support & Documentation
+
+### Bantuan & Pertanyaan
+- **Email**: support@sekolah.com
+- **Documentation**: [Wiki Repository](https://github.com/wahyudedik/ig-to-web/wiki)
+- **Issues**: [GitHub Issues](https://github.com/wahyudedik/ig-to-web/issues)
+
+### Resources
+- [MCP Server Documentation](README_MCP.md)
+- [Instagram Setup Guide](mcp-server/QUICKSTART.md)
+- [API Documentation](#) (Coming Soon)
+
+### Default Login
+```
+Email: superadmin@sekolah.com
+Password: password
+```
+
+⚠️ **PENTING**: Ganti password default setelah instalasi!
+
+---
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+## ❤️ Credits
 
 **IG to Web** - Sistem Manajemen Sekolah Terintegrasi dengan Instagram
 

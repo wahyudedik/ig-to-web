@@ -45,15 +45,30 @@
                                     </a>
                                 @endcan
                                 @can('export', App\Models\Barang::class)
+                                    <div class="px-2 py-1">
+                                        <p class="text-xs text-gray-500 font-semibold mb-1">Export Formats:</p>
+                                    </div>
                                     <a href="{{ route('admin.sarpras.barang.export') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        Export Data
+                                        <i class="fas fa-file-excel mr-2 text-green-600"></i>
+                                        Excel (.xlsx)
                                     </a>
+                                    <a href="{{ route('admin.sarpras.barang.export.pdf') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-file-pdf mr-2 text-red-600"></i>
+                                        PDF (.pdf)
+                                    </a>
+                                    <a href="{{ route('admin.sarpras.barang.export.json') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" target="_blank">
+                                        <i class="fas fa-code mr-2 text-blue-600"></i>
+                                        JSON (.json)
+                                    </a>
+                                    <a href="{{ route('admin.sarpras.barang.export.xml') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-file-code mr-2 text-purple-600"></i>
+                                        XML (.xml)
+                                    </a>
+                                    <div class="border-t my-1"></div>
                                 @endcan
                                 @can('import', App\Models\Barang::class)
                                     <a href="{{ route('admin.sarpras.barang.downloadTemplate') }}"

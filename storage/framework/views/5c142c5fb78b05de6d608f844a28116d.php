@@ -47,6 +47,12 @@
                                         <i class="fas fa-user-graduate mr-2"></i>Siswa Management
                                     </a>
                                 <?php endif; ?>
+                                <?php if(Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin'])): ?>
+                                    <a href="<?php echo e(route('admin.jadwal-pelajaran.index')); ?>"
+                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fas fa-calendar-alt mr-2"></i>Jadwal Pelajaran
+                                    </a>
+                                <?php endif; ?>
                                 <?php if(Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin'])): ?>
                                     <a href="<?php echo e(route('admin.sarpras.index')); ?>"
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -454,6 +460,12 @@
                                 <a href="<?php echo e(route('admin.siswa.index')); ?>"
                                     class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                     <i class="fas fa-user-graduate mr-2"></i>Siswa Management
+                                </a>
+                            <?php endif; ?>
+                            <?php if(Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin'])): ?>
+                                <a href="<?php echo e(route('admin.jadwal-pelajaran.index')); ?>"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-calendar-alt mr-2"></i>Jadwal Pelajaran
                                 </a>
                             <?php endif; ?>
                             <?php if(Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin'])): ?>

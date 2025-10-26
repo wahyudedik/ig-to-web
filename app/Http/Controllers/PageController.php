@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PageController extends Controller
@@ -134,10 +135,15 @@ class PageController extends Controller
             $data['published_at'] = now();
         }
 
-        $page = Page::create($data);
+        // Use transaction for page creation with version
+        $page = DB::transaction(function () use ($data) {
+            $page = Page::create($data);
 
-        // Create initial version
-        PageVersion::createFromPage($page, 'Initial version');
+            // Create initial version
+            PageVersion::createFromPage($page, 'Initial version');
+
+            return $page;
+        });
 
         return redirect()->route('admin.pages.index')
             ->with('success', 'Page created successfully.');

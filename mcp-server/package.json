@@ -1,18 +1,25 @@
 {
   "name": "ig-to-web-mcp-server",
-  "version": "1.0.0",
-  "description": "MCP Server for Laravel IG-to-Web Project",
+  "version": "3.0.0",
+  "description": "🔥 ULTIMATE MCP Server - 31 Tools, 14 Resources, Code Generator, DB Schema, Git Integration",
   "type": "module",
-  "main": "index.js",
+  "main": "index-v2.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js",
+    "start": "node index-v2.js",
+    "start:v1": "node index.js",
+    "start:v2": "node index-v2.js",
+    "dev": "node --watch index-v2.js",
+    "dev:v1": "node --watch index.js",
     "test": "node test.js"
   },
   "keywords": [
     "mcp",
     "laravel",
-    "server"
+    "server",
+    "bug-detection",
+    "code-analysis",
+    "security-scan",
+    "performance-profiling"
   ],
   "author": "",
   "license": "MIT",

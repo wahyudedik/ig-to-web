@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InstagramSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -93,7 +94,7 @@ class InstagramSettingController extends Controller
             'access_token' => 'nullable|string',
             'user_id' => 'nullable|string',
             'sync_frequency' => 'required|integer|min:5|max:1440',
-            'auto_sync_enabled' => 'nullable|boolean',
+            'auto_sync_enabled' => 'nullable|in:on,off,1,0,true,false', // Accept checkbox values
             'cache_duration' => 'required|integer|min:300|max:86400',
         ];
 
@@ -248,17 +249,26 @@ class InstagramSettingController extends Controller
                 ], 400);
             }
 
-            // Clear cache and force refresh
-            Cache::forget('instagram_posts');
-            Cache::forget('instagram_analytics');
+            Log::info('🔄 Manual sync triggered via button');
 
-            // Update last sync time
-            $settings->updateLastSync();
+            // Run sync command with force flag
+            Artisan::call('instagram:sync', ['--force' => true]);
+            $output = Artisan::output();
+
+            // Get updated settings
+            $settings = $settings->fresh();
+
+            // Extract posts count from output
+            preg_match('/Fetched \{(\d+)\} posts/', $output, $matches);
+            $postsCount = $matches[1] ?? 0;
+
+            Log::info('✅ Manual sync completed', ['posts_count' => $postsCount]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Instagram data synced successfully!',
-                'last_sync' => $settings->fresh()->last_sync
+                'message' => 'Instagram data synced successfully! Fetched ' . $postsCount . ' posts.',
+                'last_sync' => $settings->last_sync,
+                'posts_count' => $postsCount
             ]);
         } catch (\Exception $e) {
             Log::error('Instagram sync error: ' . $e->getMessage());
@@ -276,9 +286,22 @@ class InstagramSettingController extends Controller
     {
         $settings = InstagramSetting::latest()->first();
 
+        if (!$settings) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No settings found'
+            ], 404);
+        }
+
         return response()->json([
             'success' => true,
-            'data' => $settings
+            'sync_frequency' => $settings->sync_frequency,
+            'cache_duration' => $settings->cache_duration,
+            'auto_sync_enabled' => $settings->auto_sync_enabled,
+            'is_active' => $settings->is_active,
+            'last_sync' => $settings->last_sync,
+            'token_expires_at' => $settings->token_expires_at,
+            'username' => $settings->username
         ]);
     }
 

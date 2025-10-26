@@ -16,6 +16,8 @@ use App\Imports\CalonImport;
 use App\Exports\CalonExport;
 use App\Imports\PemilihImport;
 use App\Exports\PemilihExport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class OSISController extends Controller
 {
@@ -1015,5 +1017,119 @@ class OSISController extends Controller
         $pemilihs = $query->get();
 
         return Excel::download(new PemilihExport($pemilihs), 'pemilih-osis-' . date('Y-m-d') . '.xlsx');
+    }
+
+    /**
+     * Export voting results to PDF.
+     */
+    public function exportVotingResultsPdf(Request $request)
+    {
+        $electionId = $request->election_id;
+
+        $election = OsisElection::findOrFail($electionId);
+
+        $results = Calon::where('election_id', $electionId)
+            ->withCount('votings')
+            ->orderBy('votings_count', 'desc')
+            ->get();
+
+        $totalVoters = Pemilih::where('election_id', $electionId)->count();
+        $totalVoted = Voting::where('election_id', $electionId)->count();
+        $votePercentage = $totalVoters > 0 ? ($totalVoted / $totalVoters) * 100 : 0;
+
+        $pdf = Pdf::loadView('osis.voting-results-pdf', compact('election', 'results', 'totalVoters', 'totalVoted', 'votePercentage'));
+        $pdf->setPaper('a4', 'portrait');
+
+        return $pdf->download('hasil-voting-osis-' . date('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Export voting results to JSON.
+     */
+    public function exportVotingResultsJson(Request $request)
+    {
+        $electionId = $request->election_id;
+
+        $election = OsisElection::findOrFail($electionId);
+
+        $results = Calon::where('election_id', $electionId)
+            ->withCount('votings')
+            ->with(['siswa'])
+            ->orderBy('votings_count', 'desc')
+            ->get();
+
+        $totalVoters = Pemilih::where('election_id', $electionId)->count();
+        $totalVoted = Voting::where('election_id', $electionId)->count();
+
+        return response()->json([
+            'success' => true,
+            'election' => [
+                'id' => $election->id,
+                'nama' => $election->nama,
+                'tahun' => $election->tahun,
+                'status' => $election->status
+            ],
+            'statistics' => [
+                'total_voters' => $totalVoters,
+                'total_voted' => $totalVoted,
+                'vote_percentage' => $totalVoters > 0 ? round(($totalVoted / $totalVoters) * 100, 2) : 0
+            ],
+            'results' => $results->map(function ($calon) {
+                return [
+                    'id' => $calon->id,
+                    'nama' => $calon->siswa->nama_lengkap ?? $calon->nama,
+                    'visi' => $calon->visi,
+                    'misi' => $calon->misi,
+                    'total_votes' => $calon->votings_count,
+                    'vote_percentage' => Voting::where('calon_id', $calon->id)->count()
+                ];
+            }),
+            'exported_at' => now()->toIso8601String()
+        ]);
+    }
+
+    /**
+     * Export voting results to XML.
+     */
+    public function exportVotingResultsXml(Request $request)
+    {
+        $electionId = $request->election_id;
+
+        $election = OsisElection::findOrFail($electionId);
+
+        $results = Calon::where('election_id', $electionId)
+            ->withCount('votings')
+            ->with(['siswa'])
+            ->orderBy('votings_count', 'desc')
+            ->get();
+
+        $totalVoters = Pemilih::where('election_id', $electionId)->count();
+        $totalVoted = Voting::where('election_id', $electionId)->count();
+
+        $xml = new \SimpleXMLElement('<voting_results/>');
+        $xml->addAttribute('exported_at', now()->toIso8601String());
+
+        $electionNode = $xml->addChild('election');
+        $electionNode->addChild('id', $election->id);
+        $electionNode->addChild('nama', htmlspecialchars($election->nama));
+        $electionNode->addChild('tahun', $election->tahun);
+        $electionNode->addChild('status', $election->status);
+
+        $statsNode = $xml->addChild('statistics');
+        $statsNode->addChild('total_voters', $totalVoters);
+        $statsNode->addChild('total_voted', $totalVoted);
+        $statsNode->addChild('vote_percentage', $totalVoters > 0 ? round(($totalVoted / $totalVoters) * 100, 2) : 0);
+
+        $resultsNode = $xml->addChild('results');
+        foreach ($results as $calon) {
+            $calonNode = $resultsNode->addChild('candidate');
+            $calonNode->addChild('id', $calon->id);
+            $calonNode->addChild('nama', htmlspecialchars($calon->siswa->nama_lengkap ?? $calon->nama));
+            $calonNode->addChild('total_votes', $calon->votings_count);
+        }
+
+        return response($xml->asXML(), 200)
+            ->header('Content-Type', 'application/xml')
+            ->header('Content-Disposition', 'attachment; filename="hasil-voting-osis-' . date('Y-m-d') . '.xml"');
     }
 }

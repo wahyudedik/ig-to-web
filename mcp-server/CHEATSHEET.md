@@ -99,6 +99,21 @@ npm test
 "Tampilkan konfigurasi database"
 "Lihat konfigurasi mail"
 "Baca config aplikasi"
+"Baca file .env"
+"Tampilkan .env dengan nilai sensitif"
+```
+
+### 🔥 NEW! Bug Detection & Analysis (v2.0)
+
+```
+"Scan Blade templates for errors"
+"Find PHP backend bugs"
+"Detect N+1 queries"
+"Run security scan"
+"Find unused code"
+"Analyze code quality of InstagramController"
+"Profile performance issues"
+"Run full bug scan on entire project"
 ```
 
 ## Tool Reference
@@ -207,6 +222,94 @@ npm test
   "args": {
     "code": "User::count()"
   }
+}
+```
+
+### read_env (NEW!)
+```json
+{
+  "tool": "read_env",
+  "args": {
+    "mask_sensitive": true
+  }
+}
+```
+
+### detect_blade_errors (v2.0 NEW!)
+```json
+{
+  "tool": "detect_blade_errors",
+  "args": {
+    "path": "resources/views"
+  }
+}
+```
+
+### detect_php_errors (v2.0 NEW!)
+```json
+{
+  "tool": "detect_php_errors",
+  "args": {
+    "directory": "app"
+  }
+}
+```
+
+### detect_n1_queries (v2.0 NEW!)
+```json
+{
+  "tool": "detect_n1_queries",
+  "args": {
+    "directory": "app/Http/Controllers"
+  }
+}
+```
+
+### scan_security (v2.0 NEW!)
+```json
+{
+  "tool": "scan_security",
+  "args": {
+    "directory": "app"
+  }
+}
+```
+
+### analyze_dead_code (v2.0 NEW!)
+```json
+{
+  "tool": "analyze_dead_code",
+  "args": {
+    "directory": "app"
+  }
+}
+```
+
+### analyze_code_quality (v2.0 NEW!)
+```json
+{
+  "tool": "analyze_code_quality",
+  "args": {
+    "file": "app/Http/Controllers/InstagramController.php"
+  }
+}
+```
+
+### profile_performance (v2.0 NEW!)
+```json
+{
+  "tool": "profile_performance",
+  "args": {
+    "directory": "app/Http/Controllers"
+  }
+}
+```
+
+### full_bug_scan (v2.0 NEW!)
+```json
+{
+  "tool": "full_bug_scan",
+  "args": {}
 }
 ```
 

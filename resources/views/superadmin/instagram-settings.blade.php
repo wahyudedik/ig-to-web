@@ -1,4 +1,9 @@
 <x-app-layout>
+    @push('styles')
+        <!-- Animate.css for SweetAlert animations -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    @endpush
+
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
@@ -50,8 +55,10 @@
                                         </span>
                                     @endif
                                 </div>
-                                @if ($settings->username)
-                                    <p class="text-sm text-slate-600">@{{ $settings - > username }}</p>
+                                @if ($settings && $settings->username)
+                                    <p class="text-sm text-slate-600 font-medium">{{ $settings->username }}</p>
+                                @else
+                                    <p class="text-sm text-slate-400 italic">Username not set</p>
                                 @endif
                                 <p class="text-xs text-slate-400 mt-0.5">
                                     Last sync:
@@ -72,12 +79,14 @@
                     @if ($settings && $settings->is_active)
                         <div class="flex gap-2">
                             <button id="syncBtn"
-                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+                                title="Clear cache & fetch latest posts from Instagram (useful after deleting posts)">
                                 <i class="fas fa-sync-alt mr-2"></i>
                                 Sync
                             </button>
                             <button id="deactivateBtn"
-                                class="inline-flex items-center px-4 py-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-sm font-medium rounded-lg transition-colors">
+                                class="inline-flex items-center px-4 py-2 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-sm font-medium rounded-lg transition-colors"
+                                title="Disconnect Instagram integration">
                                 <i class="fas fa-power-off mr-2"></i>
                                 Disconnect
                             </button>
@@ -219,7 +228,8 @@
                     <div>
                         <h3 class="text-base font-semibold text-slate-900">Access Credentials</h3>
                         <p class="text-xs text-slate-500">
-                            <span class="font-semibold text-blue-600">Option A:</span> Use OAuth (skip this, fill Card 2
+                            <span class="font-semibold text-blue-600">Option A:</span> Use OAuth (skip this, fill Card
+                            2
                             instead) |
                             <span class="font-semibold text-slate-600">Option B:</span> Enter manually (fill both
                             fields)
@@ -260,12 +270,18 @@
 
             <!-- Card 2: Sync & Cache Settings -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <div class="flex items-center gap-3 mb-4">
-                    <span
-                        class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">2</span>
-                    <div>
-                        <h3 class="text-base font-semibold text-slate-900">Sync & Cache Settings</h3>
-                        <p class="text-xs text-slate-500">Configure automatic synchronization and caching</p>
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">2</span>
+                        <div>
+                            <h3 class="text-base font-semibold text-slate-900">Sync & Cache Settings</h3>
+                            <p class="text-xs text-slate-500">Configure automatic synchronization and caching</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-lg">
+                        <i class="fas fa-check-circle text-green-600 text-sm"></i>
+                        <span class="text-xs font-medium text-green-700">Customizable</span>
                     </div>
                 </div>
 
@@ -323,28 +339,74 @@
                         <p class="text-xs text-slate-500 mt-1.5">Automatic background sync</p>
                     </div>
                 </div>
+
+                <!-- Info: How to Use Custom Sync -->
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-info-circle text-blue-600 text-sm mt-0.5"></i>
+                        <div class="flex-1 text-xs text-blue-800">
+                            <p class="font-semibold mb-1">💡 How to customize sync settings:</p>
+                            <ol class="list-decimal list-inside space-y-0.5 ml-1">
+                                <li>Change <strong>Sync Frequency</strong> (how often posts are fetched)</li>
+                                <li>Change <strong>Cache Duration</strong> (how long to cache data)</li>
+                                <li>Toggle <strong>Auto Sync</strong> ON/OFF</li>
+                                <li>Click <strong>"Save Settings"</strong> button below</li>
+                                <li>Done! Settings will be applied immediately ✅</li>
+                            </ol>
+                            <p class="mt-2 text-blue-600 font-medium">
+                                <i class="fas fa-arrow-down mr-1"></i>
+                                These settings work independently from token configuration
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info: Cache Behavior -->
+                <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-exclamation-triangle text-amber-600 text-sm mt-0.5"></i>
+                        <div class="flex-1 text-xs text-amber-800">
+                            <p class="font-semibold mb-1">⚠️ Deleted Posts on Instagram?</p>
+                            <p class="mb-2">If you delete posts on Instagram, they may still appear on the website
+                                due to caching.</p>
+                            <p class="font-semibold text-amber-900">Solution:</p>
+                            <ol class="list-decimal list-inside space-y-0.5 ml-1">
+                                <li>Click the <strong class="text-green-700">"Sync"</strong> button above (clears cache
+                                    + fetches latest)</li>
+                                <li>Or wait for cache to expire (based on your Cache Duration setting)</li>
+                                <li>Or reduce <strong>Cache Duration</strong> to 5 minutes for faster updates</li>
+                            </ol>
+                            <p class="mt-2 text-green-700 font-medium">
+                                <i class="fas fa-sync-alt mr-1"></i>
+                                Pro tip: Always click "Sync" after deleting/editing posts on Instagram!
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Action Buttons Card -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
-                    <button type="button" id="testConnectionBtn"
-                        class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 bg-amber-50 border-2 border-amber-400 hover:bg-amber-100 text-amber-700 font-semibold rounded-lg transition-all">
-                        <i class="fas fa-plug mr-2"></i>
-                        Test Connection
-                    </button>
-                    <div class="flex gap-3 w-full sm:w-auto">
-                        <button type="button" id="resetFormBtn"
-                            class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-white border-2 border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded-lg transition-all">
-                            <i class="fas fa-undo mr-2"></i>
-                            Reset
-                        </button>
-                        <button type="submit" id="saveSettingsBtn"
-                            class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/30">
-                            <i class="fas fa-save mr-2"></i>
-                            Save Settings
-                        </button>
+                <!-- Info: What This Button Does -->
+                <div class="mb-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+                    <div class="flex items-center gap-2 text-sm mb-2">
+                        <i class="fas fa-info-circle text-blue-600"></i>
+                        <span class="font-semibold text-slate-800">Save Settings button will save:</span>
                     </div>
+                    <ul class="text-xs text-slate-700 space-y-1 ml-6 list-disc">
+                        <li><strong>Sync Frequency</strong> - How often to auto-sync (5-60 minutes)</li>
+                        <li><strong>Cache Duration</strong> - How long to cache posts (5 min - 2 hours)</li>
+                        <li><strong>Auto Sync Toggle</strong> - Enable/disable automatic background sync</li>
+                        <li class="text-blue-600 font-medium">No token required to change these settings!</li>
+                    </ul>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" id="saveSettingsBtn"
+                        class="inline-flex items-center justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/30">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Settings
+                    </button>
                 </div>
             </div>
         </form>
@@ -432,19 +494,15 @@
                 console.log('🚀 Instagram Settings JS Loaded');
 
                 const form = document.getElementById('instagramSettingsForm');
-                const testBtn = document.getElementById('testConnectionBtn');
                 const saveBtn = document.getElementById('saveSettingsBtn');
                 const syncBtn = document.getElementById('syncBtn');
                 const deactivateBtn = document.getElementById('deactivateBtn');
-                const resetBtn = document.getElementById('resetFormBtn');
 
                 console.log('📋 Form elements:', {
                     form: !!form,
-                    testBtn: !!testBtn,
                     saveBtn: !!saveBtn,
                     syncBtn: !!syncBtn,
-                    deactivateBtn: !!deactivateBtn,
-                    resetBtn: !!resetBtn
+                    deactivateBtn: !!deactivateBtn
                 });
 
                 if (!form) {
@@ -457,91 +515,20 @@
                     return;
                 }
 
-                // Test Connection
-                if (testBtn) {
-                    testBtn.addEventListener('click', function() {
-                        const accessToken = document.getElementById('access_token').value;
-                        const userId = document.getElementById('user_id').value;
-
-                        console.log('Test Connection clicked', {
-                            accessToken: accessToken ? 'Set (length: ' + accessToken.length + ')' :
-                                'Empty',
-                            userId: userId ? 'Set: ' + userId : 'Empty'
-                        });
-
-                        if (!accessToken || !userId) {
-                            showError('Error', 'Harap isi Access Token dan User ID terlebih dahulu');
-                            return;
-                        }
-
-                        testBtn.disabled = true;
-                        testBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
-                        showLoading('Menguji koneksi...', 'Menghubungi Instagram API');
-
-                        fetch('{{ route('admin.superadmin.instagram-settings.test-connection') }}', {
-                                method: 'POST',
-                                body: JSON.stringify({
-                                    access_token: accessToken,
-                                    user_id: userId
-                                }),
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                        .getAttribute('content')
-                                }
-                            })
-                            .then(response => {
-                                console.log('Response status:', response.status);
-                                console.log('Response headers:', response.headers.get('content-type'));
-
-                                // Check if response is JSON
-                                const contentType = response.headers.get('content-type');
-                                if (contentType && contentType.includes('application/json')) {
-                                    return response.json();
-                                } else {
-                                    // Not JSON, probably redirected to login or error page
-                                    throw new Error('Response is not JSON. Status: ' + response.status +
-                                        '. You may have been logged out.');
-                                }
-                            })
-                            .then(data => {
-                                closeLoading();
-                                console.log('Response data:', data);
-
-                                if (data.success) {
-                                    showSuccess('Koneksi Berhasil!', data.message);
-                                    if (data.account_info) {
-                                        setTimeout(() => showAccountInfo(data.account_info), 500);
-                                    }
-                                } else {
-                                    showError('Koneksi Gagal', data.message || 'Periksa kredensial Anda');
-                                }
-                            })
-                            .catch(error => {
-                                closeLoading();
-                                console.error('Connection test error:', error);
-
-                                // More helpful error message
-                                if (error.message.includes('logged out')) {
-                                    showError('Session Expired',
-                                        'Anda mungkin ter-logout. Silakan refresh halaman dan login kembali.<br><br>' +
-                                        '<button onclick="window.location.reload()" class="btn btn-primary mt-2">Refresh Halaman</button>'
-                                    );
-                                } else {
-                                    showError('Koneksi Gagal',
-                                        'Terjadi kesalahan: ' + error.message +
-                                        '<br>Cek console (F12) untuk detail.'
-                                    );
-                                }
-                            })
-                            .finally(() => {
-                                testBtn.disabled = false;
-                                testBtn.innerHTML = '<i class="fas fa-plug mr-2"></i>Test Connection';
-                            });
-                    });
-                } else {
-                    console.warn('⚠️ Test Connection button not found');
-                }
+                // Welcome toast
+                setTimeout(() => {
+                    @if (session('success'))
+                        showToast('✅ {{ session('success') }}', 'success');
+                    @elseif (session('error'))
+                        showToast('❌ {{ session('error') }}', 'error');
+                    @elseif (session('warning'))
+                        showToast('⚠️ {{ session('warning') }}', 'warning');
+                    @elseif (session('info'))
+                        showToast('ℹ️ {{ session('info') }}', 'info');
+                    @else
+                        showToast('📸 Instagram Settings', 'info');
+                    @endif
+                }, 500);
 
                 // Save Settings - USE CAPTURE PHASE for priority
                 form.addEventListener('submit', function(e) {
@@ -631,20 +618,25 @@
                                 }
                                 errorList += '</ul>';
 
-                                showError('Validation Error',
+                                showError('❌ Validation Error',
                                     result.data.message + '<br><br>' + errorList);
+                                showToast('⚠️ Ada kesalahan validasi', 'error');
                                 return;
                             }
 
                             // Handle success response
                             if (result.data.success) {
                                 showSuccess('✅ Pengaturan Tersimpan!', result.data.message).then(() => {
+                                    showToast('🎉 Settings berhasil diperbarui!', 'success');
                                     // Reload to show updated settings
-                                    window.location.href =
-                                        '{{ route('admin.superadmin.instagram-settings') }}';
+                                    setTimeout(() => {
+                                        window.location.href =
+                                            '{{ route('admin.superadmin.instagram-settings') }}';
+                                    }, 500);
                                 });
                             } else {
-                                showError('Gagal Menyimpan', result.data.message || 'Terjadi kesalahan');
+                                showError('❌ Gagal Menyimpan', result.data.message || 'Terjadi kesalahan');
+                                showToast('⚠️ Gagal menyimpan pengaturan', 'error');
                             }
                         })
                         .catch(error => {
@@ -653,15 +645,17 @@
 
                             // More helpful error message
                             if (error.message.includes('logged out')) {
-                                showError('Session Expired',
+                                showError('🔒 Session Expired',
                                     'Anda mungkin ter-logout. Silakan refresh halaman dan login kembali.<br><br>' +
                                     '<button onclick="window.location.reload()" class="btn btn-primary mt-2">Refresh Halaman</button>'
                                 );
+                                showToast('⏰ Sesi telah berakhir', 'warning');
                             } else {
-                                showError('Gagal Menyimpan',
+                                showError('❌ Gagal Menyimpan',
                                     'Terjadi kesalahan: ' + error.message +
                                     '<br>Cek console (F12) untuk detail.'
                                 );
+                                showToast('⚠️ Terjadi kesalahan', 'error');
                             }
                         })
                         .finally(() => {
@@ -675,7 +669,9 @@
                     syncBtn.addEventListener('click', function() {
                         syncBtn.disabled = true;
                         syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Syncing...';
-                        showLoading();
+
+                        showToast('🔄 Memulai sinkronisasi...', 'info');
+                        showLoading('Syncing Instagram Data', 'Fetching latest posts...');
 
                         fetch('{{ route('admin.superadmin.instagram-settings.sync') }}', {
                                 method: 'POST',
@@ -688,17 +684,19 @@
                             .then(data => {
                                 closeLoading();
                                 if (data.success) {
-                                    showSuccess(data.message).then(() => {
-                                        location.reload();
+                                    showSuccess('✅ Sinkronisasi Berhasil!', data.message).then(() => {
+                                        showToast('📸 Postingan berhasil diperbarui!', 'success');
+                                        setTimeout(() => location.reload(), 500);
                                     });
                                 } else {
-                                    showError(data.message);
+                                    showError('❌ Sinkronisasi Gagal', data.message);
                                 }
                             })
                             .catch(error => {
                                 closeLoading();
                                 console.error('Error:', error);
-                                showError('Sync failed');
+                                showError('❌ Sync Failed',
+                                    'Terjadi kesalahan saat sinkronisasi. Cek console untuk detail.');
                             })
                             .finally(() => {
                                 syncBtn.disabled = false;
@@ -719,7 +717,7 @@
                             if (result.isConfirmed) {
                                 deactivateBtn.disabled = true;
                                 deactivateBtn.innerHTML =
-                                    '<i class="fas fa-spinner fa-spin mr-2"></i>Deactivating...';
+                                    '<i class="fas fa-spinner fa-spin mr-2"></i>Disconnecting...';
 
                                 fetch('{{ route('admin.superadmin.instagram-settings.deactivate') }}', {
                                         method: 'POST',
@@ -732,61 +730,188 @@
                                     .then(response => response.json())
                                     .then(data => {
                                         if (data.success) {
-                                            showSuccess(data.message).then(() => {
-                                                location.reload();
-                                            });
+                                            showSuccess('✅ Instagram Disconnected!', data.message)
+                                                .then(() => {
+                                                    showToast('👋 Instagram berhasil diputus',
+                                                        'success');
+                                                    setTimeout(() => location.reload(), 500);
+                                                });
                                         } else {
-                                            showError(data.message);
+                                            showError('❌ Disconnect Failed', data.message);
+                                            showToast('⚠️ Gagal memutus koneksi', 'error');
                                         }
                                     })
                                     .catch(error => {
                                         console.error('Error:', error);
-                                        showError('Deactivation failed');
+                                        showError('❌ Disconnect Failed',
+                                            'Terjadi kesalahan saat memutus koneksi');
+                                        showToast('⚠️ Gagal memutus koneksi', 'error');
                                     })
                                     .finally(() => {
                                         deactivateBtn.disabled = false;
                                         deactivateBtn.innerHTML =
-                                            '<i class="fas fa-power-off mr-2"></i>Deactivate';
+                                            '<i class="fas fa-power-off mr-2"></i>Disconnect';
                                     });
                             }
                         });
                     });
                 }
 
-                // Reset Form
-                resetBtn.addEventListener('click', function() {
-                    showConfirm(
-                        'Konfirmasi',
-                        'Apakah Anda yakin ingin mereset form?',
-                        'Ya, Reset',
-                        'Batal'
-                    ).then((result) => {
-                        if (result.isConfirmed) {
-                            form.reset();
-                            showSuccess('Form berhasil direset');
+                // ============================================
+                // SWEETALERT HELPER FUNCTIONS WITH ANIMATIONS
+                // ============================================
+
+                function showSuccess(title, text = '') {
+                    return Swal.fire({
+                        icon: 'success',
+                        title: title,
+                        text: text,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#10b981',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        showClass: {
+                            popup: 'animate__animated animate__bounceIn animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOut animate__faster'
+                        },
+                        didOpen: () => {
+                            // Confetti effect for success
+                            if (typeof confetti !== 'undefined') {
+                                confetti({
+                                    particleCount: 100,
+                                    spread: 70,
+                                    origin: {
+                                        y: 0.6
+                                    }
+                                });
+                            }
                         }
                     });
-                });
-
-                // Helper functions
-                function showAccountInfo(accountInfo) {
-                    const modal = document.createElement('div');
-                    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-                    modal.innerHTML = `
-                    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-                        <h3 class="text-lg font-semibold text-slate-900 mb-4">Account Information</h3>
-                        <div class="space-y-2">
-                            <p class="text-slate-700"><strong>Username:</strong> ${accountInfo.username || 'N/A'}</p>
-                            <p class="text-slate-700"><strong>Account Type:</strong> ${accountInfo.account_type || 'N/A'}</p>
-                            <p class="text-slate-700"><strong>Media Count:</strong> ${accountInfo.media_count || 'N/A'}</p>
-                        </div>
-                        <button onclick="this.closest('.fixed').remove()" class="mt-4 btn btn-primary">
-                            Close
-                        </button>
-                    </div>
-                `;
-                    document.body.appendChild(modal);
                 }
+
+                function showError(title, text = '') {
+                    return Swal.fire({
+                        icon: 'error',
+                        title: title,
+                        text: text || 'Terjadi kesalahan. Silakan coba lagi.',
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#ef4444',
+                        showClass: {
+                            popup: 'animate__animated animate__shakeX animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOut animate__faster'
+                        }
+                    });
+                }
+
+                function showWarning(title, text = '') {
+                    return Swal.fire({
+                        icon: 'warning',
+                        title: title,
+                        text: text,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#f59e0b',
+                        showClass: {
+                            popup: 'animate__animated animate__headShake animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOut animate__faster'
+                        }
+                    });
+                }
+
+                function showInfo(title, text = '') {
+                    return Swal.fire({
+                        icon: 'info',
+                        title: title,
+                        text: text,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3b82f6',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOut animate__faster'
+                        }
+                    });
+                }
+
+                function showLoading(title = 'Loading...', text = 'Please wait...') {
+                    Swal.fire({
+                        title: title,
+                        text: text,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        },
+                        showClass: {
+                            popup: 'animate__animated animate__zoomIn animate__faster'
+                        }
+                    });
+                }
+
+                function closeLoading() {
+                    Swal.close();
+                }
+
+                function showConfirm(title, text, confirmText = 'Yes', cancelText = 'Cancel') {
+                    return Swal.fire({
+                        title: title,
+                        text: text,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: confirmText,
+                        cancelButtonText: cancelText,
+                        confirmButtonColor: '#3b82f6',
+                        cancelButtonColor: '#6b7280',
+                        reverseButtons: true,
+                        showClass: {
+                            popup: 'animate__animated animate__zoomIn animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__zoomOut animate__faster'
+                        }
+                    });
+                }
+
+                function showToast(title, icon = 'success', position = 'top-end') {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: position,
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer);
+                            toast.addEventListener('mouseleave', Swal.resumeTimer);
+                        },
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp animate__faster'
+                        }
+                    });
+
+                    return Toast.fire({
+                        icon: icon,
+                        title: title
+                    });
+                }
+
+                // Add confetti script
+                const confettiScript = document.createElement('script');
+                confettiScript.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+                document.head.appendChild(confettiScript);
             });
         </script>
     @endpush

@@ -13,6 +13,7 @@ use App\Models\Guru;
 use App\Models\Kelulusan;
 use App\Models\Page;
 use App\Models\AuditLog;
+use App\Models\JadwalPelajaran;
 use App\Policies\UserPolicy;
 use App\Policies\SarprasPolicy;
 use App\Policies\OSISPolicy;
@@ -22,6 +23,7 @@ use App\Policies\GuruPolicy;
 use App\Policies\KelulusanPolicy;
 use App\Policies\PagePolicy;
 use App\Policies\AuditLogPolicy;
+use App\Policies\JadwalPelajaranPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -40,6 +42,7 @@ class AuthServiceProvider extends ServiceProvider
         Kelulusan::class => KelulusanPolicy::class,
         Page::class => PagePolicy::class,
         AuditLog::class => AuditLogPolicy::class,
+        JadwalPelajaran::class => JadwalPelajaranPolicy::class,
     ];
 
     /**

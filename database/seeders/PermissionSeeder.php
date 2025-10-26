@@ -400,6 +400,56 @@ class PermissionSeeder extends Seeder
                 'guard_name' => 'web'
             ],
 
+            // Jadwal Pelajaran Management permissions
+            [
+                'name' => 'jadwal.view',
+                'display_name' => 'Jadwal Pelajaran - Lihat Data',
+                'description' => 'Permission untuk melihat jadwal pelajaran',
+                'module' => 'jadwal',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'jadwal.create',
+                'display_name' => 'Jadwal Pelajaran - Tambah Data',
+                'description' => 'Permission untuk menambah jadwal pelajaran',
+                'module' => 'jadwal',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'jadwal.edit',
+                'display_name' => 'Jadwal Pelajaran - Edit Data',
+                'description' => 'Permission untuk mengedit jadwal pelajaran',
+                'module' => 'jadwal',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'jadwal.delete',
+                'display_name' => 'Jadwal Pelajaran - Hapus Data',
+                'description' => 'Permission untuk menghapus jadwal pelajaran',
+                'module' => 'jadwal',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'jadwal.export',
+                'display_name' => 'Jadwal Pelajaran - Export Data',
+                'description' => 'Permission untuk export jadwal pelajaran',
+                'module' => 'jadwal',
+                'action' => 'export',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'jadwal.import',
+                'display_name' => 'Jadwal Pelajaran - Import Data',
+                'description' => 'Permission untuk import jadwal pelajaran',
+                'module' => 'jadwal',
+                'action' => 'import',
+                'guard_name' => 'web'
+            ],
+
             // Page Management permissions
             [
                 'name' => 'pages.view',

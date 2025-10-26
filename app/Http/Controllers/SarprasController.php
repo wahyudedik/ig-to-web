@@ -16,6 +16,7 @@ use Milon\Barcode\Facades\DNS2DFacade;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\BarangImport;
 use App\Exports\BarangExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SarprasController extends Controller
 {
@@ -1161,5 +1162,106 @@ class SarprasController extends Controller
         $barangs = $query->get();
 
         return Excel::download(new BarangExport($barangs), 'barang-sarpras-' . date('Y-m-d') . '.xlsx');
+    }
+
+    /**
+     * Export barang to PDF.
+     */
+    public function exportBarangPdf(Request $request)
+    {
+        $query = Barang::with(['kategori', 'ruang']);
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('kondisi') && $request->kondisi !== '') {
+            $query->where('kondisi', $request->kondisi);
+        }
+
+        if ($request->has('kategori_id') && $request->kategori_id !== '') {
+            $query->where('kategori_id', $request->kategori_id);
+        }
+
+        if ($request->has('ruang_id') && $request->ruang_id !== '') {
+            $query->where('ruang_id', $request->ruang_id);
+        }
+
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_barang', 'like', '%' . $search . '%')
+                    ->orWhere('kode_barang', 'like', '%' . $search . '%');
+            });
+        }
+
+        $barangs = $query->orderBy('kode_barang', 'asc')->get();
+
+        $pdf = Pdf::loadView('sarpras.barang-pdf', compact('barangs'));
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->download('data-barang-sarpras-' . date('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Export barang to JSON.
+     */
+    public function exportBarangJson(Request $request)
+    {
+        $query = Barang::with(['kategori', 'ruang']);
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('kondisi') && $request->kondisi !== '') {
+            $query->where('kondisi', $request->kondisi);
+        }
+
+        $barangs = $query->orderBy('kode_barang', 'asc')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $barangs,
+            'total' => $barangs->count(),
+            'exported_at' => now()->toIso8601String()
+        ]);
+    }
+
+    /**
+     * Export barang to XML.
+     */
+    public function exportBarangXml(Request $request)
+    {
+        $query = Barang::with(['kategori', 'ruang']);
+
+        // Apply filters
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        $barangs = $query->orderBy('kode_barang', 'asc')->get();
+
+        $xml = new \SimpleXMLElement('<barangs/>');
+        $xml->addAttribute('exported_at', now()->toIso8601String());
+        $xml->addAttribute('total', $barangs->count());
+
+        foreach ($barangs as $barang) {
+            $barangNode = $xml->addChild('barang');
+            $barangNode->addChild('id', $barang->id);
+            $barangNode->addChild('kode_barang', htmlspecialchars($barang->kode_barang));
+            $barangNode->addChild('nama_barang', htmlspecialchars($barang->nama_barang));
+            $barangNode->addChild('kategori', htmlspecialchars($barang->kategori->nama ?? ''));
+            $barangNode->addChild('ruang', htmlspecialchars($barang->ruang->nama ?? ''));
+            $barangNode->addChild('jumlah', $barang->jumlah);
+            $barangNode->addChild('kondisi', $barang->kondisi);
+            $barangNode->addChild('status', $barang->status);
+        }
+
+        return response($xml->asXML(), 200)
+            ->header('Content-Type', 'application/xml')
+            ->header('Content-Disposition', 'attachment; filename="data-barang-sarpras-' . date('Y-m-d') . '.xml"');
     }
 }

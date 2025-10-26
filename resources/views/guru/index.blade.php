@@ -16,14 +16,40 @@
                     </a>
                 @endcan
                 @can('export', App\Models\Guru::class)
-                    <a href="{{ route('admin.guru.export') }}"
-                        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Export
-                    </a>
+                    <div class="relative inline-block" x-data="{ open: false }">
+                        <button @click="open = !open"
+                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Export
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.away="open = false"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50" style="display: none;">
+                            <div class="py-1">
+                                <a href="{{ route('admin.guru.export') }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-file-excel mr-2 text-green-600"></i>Excel (.xlsx)
+                                </a>
+                                <a href="{{ route('admin.guru.export.pdf') }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-file-pdf mr-2 text-red-600"></i>PDF (.pdf)
+                                </a>
+                                <a href="{{ route('admin.guru.export.json') }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" target="_blank">
+                                    <i class="fas fa-code mr-2 text-blue-600"></i>JSON (.json)
+                                </a>
+                                <a href="{{ route('admin.guru.export.xml') }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-file-code mr-2 text-purple-600"></i>XML (.xml)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 @endcan
                 @can('create', App\Models\Guru::class)
                     <a href="{{ route('admin.guru.create') }}"
@@ -138,7 +164,8 @@
                                             <div class="flex items-center">
                                                 @if ($guru->foto)
                                                     <img class="h-10 w-10 rounded-full object-cover mr-3"
-                                                        src="{{ $guru->photo_url }}" alt="{{ $guru->nama_lengkap }}">
+                                                        src="{{ $guru->photo_url }}"
+                                                        alt="{{ $guru->nama_lengkap }}">
                                                 @else
                                                     <div
                                                         class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center mr-3">
@@ -194,8 +221,8 @@
                                                         class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                                 @endcan
                                                 @can('delete', $guru)
-                                                    <form method="POST" action="{{ route('admin.guru.destroy', $guru) }}"
-                                                        class="inline"
+                                                    <form method="POST"
+                                                        action="{{ route('admin.guru.destroy', $guru) }}" class="inline"
                                                         data-confirm="Apakah Anda yakin ingin menghapus data guru {{ $guru->full_name }}?">
                                                         @csrf
                                                         @method('DELETE')
