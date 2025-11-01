@@ -823,6 +823,36 @@ sudo systemctl restart laravel-worker
 sudo journalctl -u laravel-worker -f
 ```
 
+**Problem:** Class "Phiki\Adapters\Laravel\PhikiServiceProvider" not found atau service provider class not found lainnya
+- **Penyebab**: Cache bootstrap masih menyimpan service provider dari package yang sudah dihapus atau tidak terinstall
+- **Solusi**:
+```bash
+cd /var/www/ig-to-web
+
+# 1. Hapus semua cache bootstrap
+rm -f bootstrap/cache/services.php
+rm -f bootstrap/cache/packages.php
+rm -f bootstrap/cache/config.php
+
+# 2. Clear semua Laravel cache
+php artisan optimize:clear
+
+# 3. Regenerate cache (pastikan composer dependencies sudah benar)
+composer dump-autoload --optimize
+php artisan package:discover --ansi
+
+# 4. Cache ulang untuk production
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+```
+
+**Catatan Penting:**
+- Pastikan semua package di `composer.json` sudah terinstall: `composer install --optimize-autoloader --no-dev`
+- Jangan commit file `bootstrap/cache/*.php` ke git (harus di `.gitignore`)
+- Setelah deploy atau update code, selalu clear cache: `php artisan optimize:clear`
+
 **Problem:** Push notifications tidak bekerja
 - Pastikan VAPID keys sudah di-set di `.env` dengan format yang benar
 - Verify keys: `php artisan push:vapid-keys --show`
