@@ -327,7 +327,16 @@ php artisan migrate:status | grep push_subscriptions
 # Create storage link
 php artisan storage:link
 
-# Cache configuration
+# CRITICAL: Clear semua cache SEBELUM cache ulang (mencegah error service provider)
+php artisan optimize:clear
+
+# Regenerate composer autoload (untuk memastikan hanya package yang terinstall)
+composer dump-autoload --optimize
+
+# Rediscover packages (hanya register packages yang benar-benar terinstall)
+php artisan package:discover --ansi
+
+# Cache configuration (setelah clear dan rediscover)
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
@@ -335,6 +344,109 @@ php artisan optimize
 ```
 
 **Catatan:** Migration `push_subscriptions` akan dibuat otomatis untuk menyimpan subscription push notifications dari user.
+
+---
+
+## 🔄 Update/Deploy Workflow (Sangat Penting!)
+
+**Setiap kali melakukan `git pull` atau update code, WAJIB jalankan workflow berikut untuk mencegah error:**
+
+### Workflow Update Aplikasi
+
+```bash
+# 1. Masuk ke direktori aplikasi
+cd /var/www/ig-to-web
+
+# 2. Backup database (opsional tapi recommended)
+mysqldump -u ig_to_web_user -p ig_to_web > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# 3. Pull latest code dari GitHub
+git pull origin main
+
+# 4. CRITICAL: Hapus cache bootstrap yang corrupt (jika ada)
+rm -f bootstrap/cache/services.php
+rm -f bootstrap/cache/packages.php
+rm -f bootstrap/cache/config.php
+
+# 5. Clear semua Laravel cache SEBELUM install dependencies
+php artisan optimize:clear
+
+# 6. Install/Update dependencies
+composer install --optimize-autoloader --no-dev
+composer dump-autoload --optimize
+
+# 7. Rediscover packages (hanya register packages yang terinstall)
+php artisan package:discover --ansi
+
+# 8. Build assets (jika ada perubahan di frontend)
+npm install
+npm run build
+
+# 9. Run migrations (jika ada migration baru)
+php artisan migrate --force
+
+# 10. Create storage link (jika belum ada)
+php artisan storage:link
+
+# 11. Cache ulang untuk production
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+
+# 12. Restart queue worker (jika menggunakan queue)
+sudo systemctl restart laravel-worker
+
+# 13. Verifikasi aplikasi masih berjalan
+php artisan about
+curl -I https://yourdomain.com
+```
+
+### ⚠️ ALWAYS DO THIS After Git Pull:
+
+**Workflow Singkat (Quick Update):**
+```bash
+cd /var/www/ig-to-web
+git pull origin main
+rm -f bootstrap/cache/*.php
+php artisan optimize:clear
+composer dump-autoload --optimize
+php artisan package:discover --ansi
+npm run build
+php artisan migrate --force
+php artisan optimize
+sudo systemctl restart laravel-worker
+```
+
+**Workflow Lengkap (Full Update):**
+```bash
+cd /var/www/ig-to-web
+git pull origin main
+rm -f bootstrap/cache/*.php
+php artisan optimize:clear
+composer install --optimize-autoloader --no-dev
+composer dump-autoload --optimize
+php artisan package:discover --ansi
+npm install && npm run build
+php artisan migrate --force
+php artisan storage:link
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+sudo systemctl restart laravel-worker
+php artisan about
+```
+
+### 🚨 Mengapa Workflow Ini Penting?
+
+1. **`rm -f bootstrap/cache/*.php`**: Menghapus cache yang mungkin menyimpan service provider dari package yang sudah dihapus
+2. **`php artisan optimize:clear`**: Menghapus semua cache Laravel sebelum regenerate
+3. **`composer dump-autoload --optimize`**: Regenerate autoload berdasarkan package yang benar-benar terinstall
+4. **`php artisan package:discover --ansi`**: Rediscover dan register hanya package yang ada di `composer.json` dan terinstall
+5. **Baru kemudian cache ulang**: Setelah semua clear dan regenerate, baru cache untuk production
+
+**Tanpa workflow ini, error seperti "PhikiServiceProvider not found" akan terus muncul!**
 
 ### 5. Set Permissions
 
@@ -690,16 +802,110 @@ sudo systemctl restart sshd
 
 ---
 
+## 🔄 Deployment Script (Otomatis)
+
+Untuk memudahkan deployment, buat script otomatis:
+
+```bash
+# Buat deployment script
+nano /var/www/ig-to-web/deploy.sh
+```
+
+Tambahkan isi script berikut:
+```bash
+#!/bin/bash
+
+set -e  # Exit on error
+
+echo "🚀 Starting deployment..."
+
+cd /var/www/ig-to-web
+
+# Pull latest code
+echo "📥 Pulling latest code..."
+git pull origin main
+
+# Remove corrupt cache (CRITICAL untuk mencegah error service provider)
+echo "🧹 Clearing bootstrap cache..."
+rm -f bootstrap/cache/*.php
+
+# Clear Laravel cache
+echo "🗑️ Clearing Laravel cache..."
+php artisan optimize:clear
+
+# Update dependencies
+echo "📦 Updating dependencies..."
+composer install --optimize-autoloader --no-dev
+composer dump-autoload --optimize
+
+# Rediscover packages (CRITICAL untuk mencegah error)
+echo "🔍 Rediscovering packages..."
+php artisan package:discover --ansi
+
+# Build assets
+echo "🎨 Building assets..."
+npm install
+npm run build
+
+# Run migrations
+echo "🗄️ Running migrations..."
+php artisan migrate --force
+
+# Create storage link
+echo "🔗 Creating storage link..."
+php artisan storage:link
+
+# Cache for production
+echo "⚡ Caching for production..."
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+
+# Restart queue worker
+echo "🔄 Restarting queue worker..."
+sudo systemctl restart laravel-worker
+
+# Verify
+echo "✅ Verifying application..."
+php artisan about
+
+echo "🎉 Deployment completed successfully!"
+```
+
+Beri permission execute:
+```bash
+chmod +x /var/www/ig-to-web/deploy.sh
+```
+
+**Cara menggunakan script:**
+```bash
+cd /var/www/ig-to-web
+./deploy.sh
+```
+
+**Atau jalankan manual step-by-step mengikuti workflow di section "Update/Deploy Workflow" di atas.**
+
+---
+
 ## 🛠️ Maintenance Commands
 
 ```bash
-# Clear cache
+# Clear cache (lengkap)
+php artisan optimize:clear
+rm -f bootstrap/cache/*.php
+
+# Clear cache (individual)
 php artisan cache:clear
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
-# Optimize for production
+# Regenerate dan rediscover (WAJIB setelah clear cache)
+composer dump-autoload --optimize
+php artisan package:discover --ansi
+
+# Optimize for production (setelah regenerate)
 php artisan optimize
 php artisan config:cache
 php artisan route:cache
