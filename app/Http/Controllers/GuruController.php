@@ -23,28 +23,36 @@ class GuruController extends Controller
     {
         $query = Guru::with('user');
 
-        // Filter by status
-        if ($request->has('status') && $request->status !== '') {
+        // Filter by status (lebih robust: check filled)
+        if ($request->filled('status')) {
             $query->where('status_aktif', $request->status);
         }
 
-        // Filter by employment status
-        if ($request->has('employment_status') && $request->employment_status !== '') {
+        // Filter by employment status (lebih robust: check filled)
+        if ($request->filled('employment_status')) {
             $query->where('status_kepegawaian', $request->employment_status);
         }
 
-        // Filter by subject
-        if ($request->has('subject') && $request->subject !== '') {
-            $query->whereJsonContains('mata_pelajaran', $request->subject);
+        // Filter by subject (lebih robust: check filled dan handle null)
+        if ($request->filled('subject')) {
+            $query->where(function ($q) use ($request) {
+                // Handle jika mata_pelajaran null atau empty array
+                $q->whereNotNull('mata_pelajaran')
+                    ->where('mata_pelajaran', '!=', '[]')
+                    ->where('mata_pelajaran', '!=', '')
+                    ->whereJsonContains('mata_pelajaran', $request->subject);
+            });
         }
 
-        // Search by name or NIP
-        if ($request->has('search') && $request->search !== '') {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', '%' . $search . '%')
-                    ->orWhere('nip', 'like', '%' . $search . '%');
-            });
+        // Search by name or NIP (lebih robust: check filled)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            if ($search !== '') {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                        ->orWhere('nip', 'like', '%' . $search . '%');
+                });
+            }
         }
 
         // Sort
@@ -52,7 +60,7 @@ class GuruController extends Controller
         $sortOrder = $request->get('sort_order', 'asc');
         $query->orderBy($sortBy, $sortOrder);
 
-        $gurus = $query->paginate(15);
+        $gurus = $query->paginate(15)->withQueryString(); // Preserve query string saat pagination
         $statuses = ['aktif', 'tidak_aktif', 'pensiun', 'meninggal'];
         $employmentStatuses = ['PNS', 'CPNS', 'GTT', 'GTY', 'Honorer'];
         $subjects = $this->getAvailableSubjects();

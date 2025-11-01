@@ -68,7 +68,7 @@
 
                     <!-- Filters -->
                     <div class="mb-6 bg-gray-50 p-4 rounded-lg">
-                        <form method="GET" action="{{ route('admin.guru.index') }}"
+                        <form method="GET" action="{{ route('admin.guru.index') }}" id="filterForm"
                             class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
@@ -79,7 +79,8 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                                 <select name="status"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    onchange="document.getElementById('filterForm').submit();">
                                     <option value="">Semua Status</option>
                                     @foreach ($statuses as $status)
                                         <option value="{{ $status }}"
@@ -92,7 +93,8 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Kepegawaian</label>
                                 <select name="employment_status"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    onchange="document.getElementById('filterForm').submit();">
                                     <option value="">Semua Status</option>
                                     @foreach ($employmentStatuses as $status)
                                         <option value="{{ $status }}"
@@ -105,7 +107,8 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
                                 <select name="subject"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    onchange="document.getElementById('filterForm').submit();">
                                     <option value="">Semua Mapel</option>
                                     @foreach ($subjects as $subject)
                                         <option value="{{ $subject }}"
