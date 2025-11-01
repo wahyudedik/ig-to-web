@@ -54,10 +54,12 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Filters -->
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <form method="GET" action="{{ route('admin.osis.calon.index') }}" id="filterForm"
+                class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-input">
+                    <select name="status" class="form-input"
+                        onchange="document.getElementById('filterForm').submit();">
                         <option value="">Semua Status</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
                         <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Tidak Aktif
@@ -66,7 +68,8 @@
                 </div>
                 <div>
                     <label class="form-label">Jenis Pencalonan</label>
-                    <select name="jenis_pencalonan" class="form-input">
+                    <select name="jenis_pencalonan" class="form-input"
+                        onchange="document.getElementById('filterForm').submit();">
                         <option value="">Semua Jenis</option>
                         <option value="ketua" {{ request('jenis_pencalonan') === 'ketua' ? 'selected' : '' }}>Ketua
                         </option>

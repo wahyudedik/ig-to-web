@@ -50,8 +50,8 @@ class OSISController extends Controller
     {
         $query = Calon::query();
 
-        // Filter by status
-        if ($request->has('status') && $request->status !== '') {
+        // Filter by status (lebih robust: check filled)
+        if ($request->filled('status')) {
             if ($request->status === 'active') {
                 $query->where('is_active', true);
             } elseif ($request->status === 'inactive') {
@@ -59,21 +59,23 @@ class OSISController extends Controller
             }
         }
 
-        // Filter by pencalonan type
-        if ($request->has('jenis_pencalonan') && $request->jenis_pencalonan !== '') {
+        // Filter by pencalonan type (lebih robust: check filled)
+        if ($request->filled('jenis_pencalonan')) {
             $query->where('jenis_pencalonan', $request->jenis_pencalonan);
         }
 
-        // Search by name
-        if ($request->has('search') && $request->search !== '') {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_ketua', 'like', '%' . $search . '%')
-                    ->orWhere('nama_wakil', 'like', '%' . $search . '%');
-            });
+        // Search by name (lebih robust: check filled dan trim)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            if ($search !== '') {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_ketua', 'like', '%' . $search . '%')
+                        ->orWhere('nama_wakil', 'like', '%' . $search . '%');
+                });
+            }
         }
 
-        $calons = $query->withCount('votings')->paginate(15);
+        $calons = $query->withCount('votings')->paginate(15)->withQueryString(); // Preserve query string saat pagination
         $pencalonanTypes = ['ketua', 'wakil', 'pasangan'];
 
         return view('osis.calon.index', compact('calons', 'pencalonanTypes'));
