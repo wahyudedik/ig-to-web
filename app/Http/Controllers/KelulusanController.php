@@ -22,29 +22,31 @@ class KelulusanController extends Controller
     {
         $query = Kelulusan::query();
 
-        // Filter by status
-        if ($request->has('status') && $request->status !== '') {
+        // Filter by status (lebih robust: check filled)
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter by year
-        if ($request->has('tahun_ajaran') && $request->tahun_ajaran !== '') {
+        // Filter by year (lebih robust: check filled)
+        if ($request->filled('tahun_ajaran')) {
             $query->where('tahun_ajaran', $request->tahun_ajaran);
         }
 
-        // Filter by major
-        if ($request->has('jurusan') && $request->jurusan !== '') {
+        // Filter by major (lebih robust: check filled)
+        if ($request->filled('jurusan')) {
             $query->where('jurusan', $request->jurusan);
         }
 
-        // Search by name, NISN, or NIS
-        if ($request->has('search') && $request->search !== '') {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama', 'like', '%' . $search . '%')
-                    ->orWhere('nisn', 'like', '%' . $search . '%')
-                    ->orWhere('nis', 'like', '%' . $search . '%');
-            });
+        // Search by name, NISN, or NIS (lebih robust: check filled dan trim)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            if ($search !== '') {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama', 'like', '%' . $search . '%')
+                        ->orWhere('nisn', 'like', '%' . $search . '%')
+                        ->orWhere('nis', 'like', '%' . $search . '%');
+                });
+            }
         }
 
         // Sort
@@ -52,7 +54,7 @@ class KelulusanController extends Controller
         $sortOrder = $request->get('sort_order', 'asc');
         $query->orderBy($sortBy, $sortOrder);
 
-        $kelulusans = $query->paginate(15);
+        $kelulusans = $query->paginate(15)->withQueryString(); // Preserve query string saat pagination
         $statuses = ['lulus', 'tidak_lulus', 'mengulang'];
         $tahunAjaran = Kelulusan::distinct()->pluck('tahun_ajaran')->sort()->values();
         $jurusan = Kelulusan::distinct()->pluck('jurusan')->filter();

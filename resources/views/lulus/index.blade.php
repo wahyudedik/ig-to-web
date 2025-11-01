@@ -34,7 +34,8 @@
             <!-- Filters -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <form method="GET" action="{{ route('admin.lulus.index') }}" id="filterForm"
+                        class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
                             <input type="text" name="search" id="search" value="{{ request('search') }}"
@@ -44,7 +45,8 @@
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                             <select name="status" id="status"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                onchange="document.getElementById('filterForm').submit();">
                                 <option value="">Semua Status</option>
                                 @foreach ($statuses as $status)
                                     <option value="{{ $status }}"
@@ -58,7 +60,8 @@
                             <label for="tahun_ajaran" class="block text-sm font-medium text-gray-700">Tahun
                                 Ajaran</label>
                             <select name="tahun_ajaran" id="tahun_ajaran"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                onchange="document.getElementById('filterForm').submit();">
                                 <option value="">Semua Tahun</option>
                                 @foreach ($tahunAjaran as $tahun)
                                     <option value="{{ $tahun }}"
@@ -71,7 +74,8 @@
                         <div>
                             <label for="jurusan" class="block text-sm font-medium text-gray-700">Jurusan</label>
                             <select name="jurusan" id="jurusan"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                onchange="document.getElementById('filterForm').submit();">
                                 <option value="">Semua Jurusan</option>
                                 @foreach ($jurusan as $j)
                                     <option value="{{ $j }}"
