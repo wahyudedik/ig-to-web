@@ -823,7 +823,7 @@ class SarprasController extends Controller
                 ->header('Content-Type', 'image/png')
                 ->header('Cache-Control', 'public, max-age=31536000');
         } catch (\Exception $e) {
-            \Log::error('Barcode generation failed: ' . $e->getMessage());
+            Log::error('Barcode generation failed: ' . $e->getMessage());
 
             // Return a simple error image
             return response()->view('errors.barcode-error', ['message' => 'Barcode generation failed'], 500);
@@ -844,7 +844,7 @@ class SarprasController extends Controller
                 ->header('Content-Type', 'image/png')
                 ->header('Cache-Control', 'public, max-age=31536000');
         } catch (\Exception $e) {
-            \Log::error('QR Code generation failed: ' . $e->getMessage());
+            Log::error('QR Code generation failed: ' . $e->getMessage());
 
             // Return a simple error image
             return response()->view('errors.barcode-error', ['message' => 'QR Code generation failed'], 500);
