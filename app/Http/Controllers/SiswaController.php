@@ -23,29 +23,31 @@ class SiswaController extends Controller
     {
         $query = Siswa::with('user');
 
-        // Filter by status
-        if ($request->has('status') && $request->status !== '') {
+        // Filter by status (lebih robust: check filled)
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter by class
-        if ($request->has('kelas') && $request->kelas !== '') {
+        // Filter by class (lebih robust: check filled)
+        if ($request->filled('kelas')) {
             $query->where('kelas', $request->kelas);
         }
 
-        // Filter by year
-        if ($request->has('tahun_masuk') && $request->tahun_masuk !== '') {
+        // Filter by year (lebih robust: check filled)
+        if ($request->filled('tahun_masuk')) {
             $query->where('tahun_masuk', $request->tahun_masuk);
         }
 
-        // Search by name, NIS, or NISN
-        if ($request->has('search') && $request->search !== '') {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', '%' . $search . '%')
-                    ->orWhere('nis', 'like', '%' . $search . '%')
-                    ->orWhere('nisn', 'like', '%' . $search . '%');
-            });
+        // Search by name, NIS, or NISN (lebih robust: check filled)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            if ($search !== '') {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                        ->orWhere('nis', 'like', '%' . $search . '%')
+                        ->orWhere('nisn', 'like', '%' . $search . '%');
+                });
+            }
         }
 
         // Sort
@@ -53,7 +55,7 @@ class SiswaController extends Controller
         $sortOrder = $request->get('sort_order', 'asc');
         $query->orderBy($sortBy, $sortOrder);
 
-        $siswas = $query->paginate(15);
+        $siswas = $query->paginate(15)->withQueryString(); // Preserve query string saat pagination
         $statuses = ['aktif', 'lulus', 'pindah', 'keluar', 'meninggal'];
         $kelas = $this->getAvailableClasses();
         $tahunMasuk = Siswa::distinct()->pluck('tahun_masuk')->sort()->values();
