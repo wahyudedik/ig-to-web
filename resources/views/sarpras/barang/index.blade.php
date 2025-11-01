@@ -224,14 +224,15 @@
 
         <!-- Filters and Search -->
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <form method="GET" action="{{ route('admin.sarpras.barang.index') }}"
+            <form method="GET" action="{{ route('admin.sarpras.barang.index') }}" id="filterForm"
                 class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}"
                         placeholder="Cari nama barang..." class="form-input">
                 </div>
                 <div class="flex gap-2">
-                    <select name="kategori" class="form-input">
+                    <select name="kategori" class="form-input"
+                        onchange="document.getElementById('filterForm').submit();">
                         <option value="">Semua Kategori</option>
                         @foreach ($kategoris as $k)
                             <option value="{{ $k->id }}"
@@ -239,7 +240,8 @@
                                 {{ $k->nama_kategori }}</option>
                         @endforeach
                     </select>
-                    <select name="kondisi" class="form-input">
+                    <select name="kondisi" class="form-input"
+                        onchange="document.getElementById('filterForm').submit();">
                         <option value="">Semua Kondisi</option>
                         <option value="baik" {{ request('kondisi') == 'baik' ? 'selected' : '' }}>Baik</option>
                         <option value="rusak_ringan" {{ request('kondisi') == 'rusak_ringan' ? 'selected' : '' }}>

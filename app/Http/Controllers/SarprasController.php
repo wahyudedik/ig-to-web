@@ -174,14 +174,17 @@ class SarprasController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Filter by condition
+        // Filter by condition (lebih robust: check filled)
         if ($request->filled('kondisi')) {
             $query->where('kondisi', $request->kondisi);
         }
 
-        // Filter by category
-        if ($request->filled('kategori_id')) {
-            $query->where('kategori_id', $request->kategori_id);
+        // Filter by category (handle both 'kategori' and 'kategori_id' for compatibility)
+        if ($request->filled('kategori') || $request->filled('kategori_id')) {
+            $kategoriId = $request->filled('kategori') ? $request->kategori : $request->kategori_id;
+            if ($kategoriId !== '') {
+                $query->where('kategori_id', $kategoriId);
+            }
         }
 
         // Filter by room
@@ -189,16 +192,18 @@ class SarprasController extends Controller
             $query->where('ruang_id', $request->ruang_id);
         }
 
-        // Search
+        // Search (lebih robust: check filled dan trim)
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_barang', 'like', "%{$search}%")
-                    ->orWhere('kode_barang', 'like', "%{$search}%")
-                    ->orWhere('merk', 'like', "%{$search}%")
-                    ->orWhere('model', 'like', "%{$search}%")
-                    ->orWhere('serial_number', 'like', "%{$search}%");
-            });
+            $search = trim($request->search);
+            if ($search !== '') {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_barang', 'like', "%{$search}%")
+                        ->orWhere('kode_barang', 'like', "%{$search}%")
+                        ->orWhere('merk', 'like', "%{$search}%")
+                        ->orWhere('model', 'like', "%{$search}%")
+                        ->orWhere('serial_number', 'like', "%{$search}%");
+                });
+            }
         }
 
         // Handle AJAX request for all data (e.g., for bulk print modal)
@@ -220,7 +225,7 @@ class SarprasController extends Controller
             }
         }
 
-        $barangs = $query->orderBy('nama_barang')->paginate(15);
+        $barangs = $query->orderBy('nama_barang')->paginate(15)->withQueryString(); // Preserve query string saat pagination
         $kategoris = KategoriSarpras::active()->ordered()->get();
         $ruangs = Ruang::active()->orderBy('nama_ruang')->get();
 
