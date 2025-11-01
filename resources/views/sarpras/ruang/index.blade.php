@@ -102,17 +102,18 @@
 
         <!-- Filters and Search -->
         <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-            <form method="GET" action="{{ route('admin.sarpras.ruang.index') }}"
+            <form method="GET" action="{{ route('admin.sarpras.ruang.index') }}" id="filterForm"
                 class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}"
                         placeholder="Cari nama ruang..." class="form-input">
                 </div>
                 <div class="flex gap-2">
-                    <select name="status" class="form-input">
+                    <select name="status" class="form-input"
+                        onchange="document.getElementById('filterForm').submit();">
                         <option value="">Semua Status</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif
+                        <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="tidak_aktif" {{ request('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif
                         </option>
                     </select>
                     <button type="submit" class="btn btn-primary">

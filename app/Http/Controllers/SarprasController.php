@@ -404,19 +404,22 @@ class SarprasController extends Controller
             $query->where('gedung', $request->gedung);
         }
 
-        // Search
+        // Search (lebih robust: check filled dan trim)
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_ruang', 'like', "%{$search}%")
-                    ->orWhere('kode_ruang', 'like', "%{$search}%")
-                    ->orWhere('gedung', 'like', "%{$search}%");
-            });
+            $search = trim($request->search);
+            if ($search !== '') {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_ruang', 'like', "%{$search}%")
+                        ->orWhere('kode_ruang', 'like', "%{$search}%")
+                        ->orWhere('gedung', 'like', "%{$search}%");
+                });
+            }
         }
 
         $ruangs = $query->withCount('barang')
             ->orderBy('nama_ruang')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString(); // Preserve query string saat pagination
 
         return view('sarpras.ruang.index', compact('ruangs'));
     }
