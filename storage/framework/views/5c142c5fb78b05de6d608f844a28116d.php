@@ -369,6 +369,35 @@
                                 </a>
                             </div>
 
+                            <!-- Language Switcher -->
+                            <div class="py-2 border-t border-slate-100">
+                                <div class="px-4 py-2">
+                                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Language
+                                    </p>
+                                </div>
+                                <?php
+                                    $currentLocale = app()->getLocale();
+                                    $availableLocales = function_exists('get_available_locales')
+                                        ? get_available_locales()
+                                        : config('i18n.locales', []);
+                                ?>
+                                <?php $__currentLoopData = $availableLocales; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $code => $locale): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <a href="<?php echo e(route('locale.switch', $code)); ?>"
+                                        class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors <?php echo e($code === $currentLocale ? 'bg-slate-50 font-medium' : ''); ?>">
+                                        <span class="mr-3"><?php echo e($locale['flag']); ?></span>
+                                        <span><?php echo e($locale['native']); ?></span>
+                                        <?php if($code === $currentLocale): ?>
+                                            <svg class="w-4 h-4 ml-auto text-blue-600" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        <?php endif; ?>
+                                    </a>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+
                             <!-- Quick Settings -->
                             <div class="py-2 border-t border-slate-100">
                                 <div class="px-4 py-2">

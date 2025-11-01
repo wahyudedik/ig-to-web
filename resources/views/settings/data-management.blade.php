@@ -131,12 +131,12 @@
                                             </div>
                                             <div class="flex space-x-2">
                                                 <button
-                                                    onclick="editItem('kelas', {{ $item->id }}, '{{ $item->nama }}', '{{ $item->deskripsi }}')"
+                                                    onclick="editItem('kelas', {{ $item->id }}, {{ json_encode($item->nama) }}, {{ json_encode($item->deskripsi ?? '') }})"
                                                     class="text-blue-600 hover:text-blue-900 text-sm font-medium">
                                                     <i class="fas fa-edit mr-1"></i>Edit
                                                 </button>
                                                 <button
-                                                    onclick="deleteItem('kelas', {{ $item->id }}, '{{ $item->nama }}')"
+                                                    onclick="deleteItem('kelas', {{ $item->id }}, {{ json_encode($item->nama) }})"
                                                     class="text-red-600 hover:text-red-900 text-sm font-medium">
                                                     <i class="fas fa-trash mr-1"></i>Hapus
                                                 </button>
@@ -174,12 +174,12 @@
                                             </div>
                                             <div class="flex space-x-2">
                                                 <button
-                                                    onclick="editItem('jurusan', {{ $item->id }}, '{{ $item->nama }}', '{{ $item->deskripsi }}')"
+                                                    onclick="editItem('jurusan', {{ $item->id }}, {{ json_encode($item->nama) }}, {{ json_encode($item->deskripsi ?? '') }})"
                                                     class="text-blue-600 hover:text-blue-900 text-sm font-medium">
                                                     <i class="fas fa-edit mr-1"></i>Edit
                                                 </button>
                                                 <button
-                                                    onclick="deleteItem('jurusan', {{ $item->id }}, '{{ $item->nama }}')"
+                                                    onclick="deleteItem('jurusan', {{ $item->id }}, {{ json_encode($item->nama) }})"
                                                     class="text-red-600 hover:text-red-900 text-sm font-medium">
                                                     <i class="fas fa-trash mr-1"></i>Hapus
                                                 </button>
@@ -217,12 +217,12 @@
                                             </div>
                                             <div class="flex space-x-2">
                                                 <button
-                                                    onclick="editItem('ekstrakurikuler', {{ $item->id }}, '{{ $item->nama }}', '{{ $item->deskripsi }}')"
+                                                    onclick="editItem('ekstrakurikuler', {{ $item->id }}, {{ json_encode($item->nama) }}, {{ json_encode($item->deskripsi ?? '') }})"
                                                     class="text-blue-600 hover:text-blue-900 text-sm font-medium">
                                                     <i class="fas fa-edit mr-1"></i>Edit
                                                 </button>
                                                 <button
-                                                    onclick="deleteItem('ekstrakurikuler', {{ $item->id }}, '{{ $item->nama }}')"
+                                                    onclick="deleteItem('ekstrakurikuler', {{ $item->id }}, {{ json_encode($item->nama) }})"
                                                     class="text-red-600 hover:text-red-900 text-sm font-medium">
                                                     <i class="fas fa-trash mr-1"></i>Hapus
                                                 </button>
@@ -257,12 +257,12 @@
                                             </div>
                                             <div class="flex space-x-2">
                                                 <button
-                                                    onclick="editItem('mata-pelajaran', {{ $item->id }}, '{{ $item->nama }}', '')"
+                                                    onclick="editItem('mata-pelajaran', {{ $item->id }}, {{ json_encode($item->nama) }}, '')"
                                                     class="text-blue-600 hover:text-blue-900 text-sm font-medium">
                                                     <i class="fas fa-edit mr-1"></i>Edit
                                                 </button>
                                                 <button
-                                                    onclick="deleteItem('mata-pelajaran', {{ $item->id }}, '{{ $item->nama }}')"
+                                                    onclick="deleteItem('mata-pelajaran', {{ $item->id }}, {{ json_encode($item->nama) }})"
                                                     class="text-red-600 hover:text-red-900 text-sm font-medium">
                                                     <i class="fas fa-trash mr-1"></i>Hapus
                                                 </button>
@@ -460,14 +460,57 @@
             fetch(url, {
                     method: method,
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
-                        'Content-Type': 'application/json'
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute(
+                            'content') || '',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(async response => {
+                    // Check if response is JSON
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return {
+                            ok: response.ok,
+                            status: response.status,
+                            data: await response.json()
+                        };
+                    } else {
+                        // Not JSON response (probably redirect or HTML error)
+                        const text = await response.text();
+                        throw new Error(
+                            `Unexpected response format. Status: ${response.status}. Response may not be JSON.`
+                        );
+                    }
+                })
+                .then(result => {
+                    if (!result.ok) {
+                        // Handle non-2xx responses
+                        if (result.status === 422) {
+                            // Validation errors
+                            const errors = result.data.errors || {};
+                            let errorMessage = 'Validation errors:<br>';
+                            for (const [field, fieldErrors] of Object.entries(errors)) {
+                                if (Array.isArray(fieldErrors)) {
+                                    errorMessage += `<strong>${field}:</strong> ${fieldErrors.join(', ')}<br>`;
+                                } else {
+                                    errorMessage += `<strong>${field}:</strong> ${fieldErrors}<br>`;
+                                }
+                            }
+                            showError(errorMessage);
+                            return;
+                        } else if (result.status === 401 || result.status === 403) {
+                            showError('Unauthorized: Anda tidak memiliki izin untuk melakukan aksi ini.');
+                            return;
+                        } else if (result.status >= 500) {
+                            showError('Server error: Terjadi kesalahan pada server. Silakan coba lagi.');
+                            return;
+                        }
+                    }
+
+                    const data = result.data;
                     if (data.success) {
                         showSuccess(data.message);
                         closeModal();

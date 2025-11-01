@@ -266,10 +266,32 @@
                         }
 
                         // Fetch new data
-                        fetch('/kegiatan/posts')
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
+                        fetch('/kegiatan/posts', {
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(async response => {
+                                const contentType = response.headers.get('content-type');
+                                if (!contentType || !contentType.includes('application/json')) {
+                                    throw new Error(
+                                        `Unexpected response format. Status: ${response.status}`);
+                                }
+                                const data = await response.json();
+                                return {
+                                    ok: response.ok,
+                                    status: response.status,
+                                    data
+                                };
+                            })
+                            .then(result => {
+                                if (!result.ok) {
+                                    showError('Gagal', 'Gagal memperbarui data: Status ' + result.status);
+                                    return;
+                                }
+
+                                if (result.data.success) {
                                     // Update last updated time
                                     if (lastUpdated) {
                                         lastUpdated.textContent = new Date().toLocaleString('id-ID', {
@@ -282,17 +304,20 @@
                                     }
 
                                     // Show success message
-                                    showNotification('Data berhasil diperbarui!', 'success');
+                                    showSuccess('Berhasil', 'Data berhasil diperbarui!');
 
                                     // Reload page to show new data
                                     setTimeout(() => {
                                         window.location.reload();
                                     }, 1000);
+                                } else {
+                                    showError('Gagal', 'Gagal memperbarui data: ' + (result.data.message ||
+                                        'Unknown error'));
                                 }
                             })
                             .catch(error => {
                                 console.error('Error:', error);
-                                showNotification('Gagal memperbarui data', 'error');
+                                showError('Gagal', 'Gagal memperbarui data: ' + error.message);
                             })
                             .finally(() => {
                                 // Reset button state
@@ -306,32 +331,31 @@
                     });
                 }
 
-                // Notification function
-                function showNotification(message, type) {
-                    const notification = document.createElement('div');
-                    notification.className =
-                        `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
-                    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-                    notification.innerHTML = `
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                `;
-
-                    document.body.appendChild(notification);
-
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.remove();
-                        }
-                    }, 5000);
-                }
+                // showNotification sekarang menggunakan SweetAlert2 helper functions yang sudah didefinisikan di app.js
+                // Tidak perlu didefinisikan lagi di sini
 
                 // Auto refresh every 30 minutes
                 setInterval(() => {
-                    fetch('/kegiatan/posts')
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success && lastUpdated) {
+                    fetch('/kegiatan/posts', {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(async response => {
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                return null; // Silent fail for auto refresh
+                            }
+                            const data = await response.json();
+                            return {
+                                ok: response.ok,
+                                status: response.status,
+                                data
+                            };
+                        })
+                        .then(result => {
+                            if (result && result.ok && result.data.success && lastUpdated) {
                                 lastUpdated.textContent = new Date().toLocaleString('id-ID', {
                                     day: 'numeric',
                                     month: 'short',
@@ -341,7 +365,10 @@
                                 });
                             }
                         })
-                        .catch(error => console.error('Auto refresh error:', error));
+                        .catch(error => {
+                            console.error('Auto refresh error:', error);
+                            // Silent fail for auto refresh to avoid annoying users
+                        });
                 }, 30 * 60 * 1000); // 30 minutes
             });
         </script>

@@ -176,21 +176,25 @@
     <!-- Session Flash Messages -->
     @if (session('success'))
         <script>
-            const successKey = 'osis_teacher_view_success_' + '{{ md5(session('success') . time()) }}';
-            if (!sessionStorage.getItem(successKey)) {
-                showSuccess('{{ session('success') }}');
-                sessionStorage.setItem(successKey, 'shown');
-            }
+            document.addEventListener('DOMContentLoaded', function() {
+                const successKey = 'osis_teacher_view_success_' + '{{ md5(session('success') . time()) }}';
+                if (!sessionStorage.getItem(successKey) && typeof showSuccess !== 'undefined') {
+                    showSuccess('{{ session('success') }}');
+                    sessionStorage.setItem(successKey, 'shown');
+                }
+            });
         </script>
     @endif
 
     @if (session('error'))
         <script>
-            const errorKey = 'osis_teacher_view_error_' + '{{ md5(session('error') . time()) }}';
-            if (!sessionStorage.getItem(errorKey)) {
-                showError('{{ session('error') }}');
-                sessionStorage.setItem(errorKey, 'shown');
-            }
+            document.addEventListener('DOMContentLoaded', function() {
+                const errorKey = 'osis_teacher_view_error_' + '{{ md5(session('error') . time()) }}';
+                if (!sessionStorage.getItem(errorKey) && typeof showError !== 'undefined') {
+                    showError('{{ session('error') }}');
+                    sessionStorage.setItem(errorKey, 'shown');
+                }
+            });
         </script>
     @endif
 

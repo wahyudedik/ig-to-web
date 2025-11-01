@@ -274,10 +274,33 @@
                     btn.disabled = true;
                     text.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memperbarui...';
 
-                    fetch('/instagram/analytics/refresh')
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
+                    fetch('/instagram/analytics/refresh', {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(async response => {
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                throw new Error(
+                                    `Unexpected response format. Status: ${response.status}`);
+                            }
+                            const data = await response.json();
+                            return {
+                                ok: response.ok,
+                                status: response.status,
+                                data
+                            };
+                        })
+                        .then(result => {
+                            if (!result.ok) {
+                                showError('Gagal', 'Gagal memperbarui analytics: ' + (result.data
+                                    .message || 'Status ' + result.status));
+                                return;
+                            }
+
+                            if (result.data.success) {
                                 lastUpdated.textContent = new Date().toLocaleString('id-ID', {
                                     day: 'numeric',
                                     month: 'short',
@@ -287,29 +310,18 @@
                                 });
 
                                 // Show success notification
-                                const notification = document.createElement('div');
-                                notification.className =
-                                    'fixed top-20 right-4 z-50 px-6 py-3 rounded-lg text-white bg-green-500';
-                                notification.textContent = 'Analytics berhasil diperbarui!';
-                                document.body.appendChild(notification);
-
-                                setTimeout(() => notification.remove(), 3000);
-
-                                // Reload page after 1 second
-                                setTimeout(() => window.location.reload(), 1000);
+                                showSuccess('Berhasil', 'Analytics berhasil diperbarui!').then(() => {
+                                    // Reload page after 1 second
+                                    setTimeout(() => window.location.reload(), 1000);
+                                });
+                            } else {
+                                showError('Gagal', 'Gagal memperbarui analytics: ' + (result.data
+                                    .message || 'Unknown error'));
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-
-                            // Show error notification
-                            const notification = document.createElement('div');
-                            notification.className =
-                                'fixed top-20 right-4 z-50 px-6 py-3 rounded-lg text-white bg-red-500';
-                            notification.textContent = 'Gagal memperbarui analytics';
-                            document.body.appendChild(notification);
-
-                            setTimeout(() => notification.remove(), 3000);
+                            showError('Gagal', 'Gagal memperbarui analytics: ' + error.message);
                         })
                         .finally(() => {
                             btn.disabled = false;

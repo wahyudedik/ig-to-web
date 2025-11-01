@@ -154,31 +154,37 @@
     <!-- Session Flash Messages -->
     @if (session('success'))
         <script>
-            const successKey = 'calon_create_success_' + '{{ md5(session('success') . time()) }}';
-            if (!sessionStorage.getItem(successKey)) {
-                showSuccess('{{ session('success') }}');
-                sessionStorage.setItem(successKey, 'shown');
-            }
+            document.addEventListener('DOMContentLoaded', function() {
+                const successKey = 'calon_create_success_' + '{{ md5(session('success') . time()) }}';
+                if (!sessionStorage.getItem(successKey) && typeof showSuccess !== 'undefined') {
+                    showSuccess('{{ session('success') }}');
+                    sessionStorage.setItem(successKey, 'shown');
+                }
+            });
         </script>
     @endif
 
     @if (session('error'))
         <script>
-            const errorKey = 'calon_create_error_' + '{{ md5(session('error') . time()) }}';
-            if (!sessionStorage.getItem(errorKey)) {
-                showError('{{ session('error') }}');
-                sessionStorage.setItem(errorKey, 'shown');
-            }
+            document.addEventListener('DOMContentLoaded', function() {
+                const errorKey = 'calon_create_error_' + '{{ md5(session('error') . time()) }}';
+                if (!sessionStorage.getItem(errorKey) && typeof showError !== 'undefined') {
+                    showError('{{ session('error') }}');
+                    sessionStorage.setItem(errorKey, 'shown');
+                }
+            });
         </script>
     @endif
 
     @if ($errors->any())
         <script>
-            const errorsKey = 'calon_create_errors_' + '{{ md5(json_encode($errors->all()) . time()) }}';
-            if (!sessionStorage.getItem(errorsKey)) {
-                showError('{{ $errors->first() }}');
-                sessionStorage.setItem(errorsKey, 'shown');
-            }
+            document.addEventListener('DOMContentLoaded', function() {
+                const errorsKey = 'calon_create_errors_' + '{{ md5(json_encode($errors->all()) . time()) }}';
+                if (!sessionStorage.getItem(errorsKey) && typeof showError !== 'undefined') {
+                    showError('{{ $errors->first() }}');
+                    sessionStorage.setItem(errorsKey, 'shown');
+                }
+            });
         </script>
     @endif
 </x-app-layout>

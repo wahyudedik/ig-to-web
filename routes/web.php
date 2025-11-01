@@ -14,6 +14,7 @@ use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\SarprasController;
 use App\Http\Controllers\DataManagementController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
 
 // ========================================
@@ -62,6 +63,11 @@ Route::post('/instagram/webhook', [InstagramController::class, 'handleWebhook'])
 Route::get('/custom-example', function () {
     return view('pages.custom-example');
 })->name('public.custom.example');
+
+// Locale & Internationalization Routes
+Route::get('/locale/{locale}', [LocaleController::class, 'switchLocale'])->name('locale.switch');
+Route::post('/currency/{currency}', [LocaleController::class, 'switchCurrency'])->name('currency.switch');
+Route::post('/timezone', [LocaleController::class, 'switchTimezone'])->name('timezone.switch');
 
 // ========================================
 // ADMIN PANEL (All authenticated users)
@@ -401,6 +407,14 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/
 });
 
 // ========================================
+// OFFLINE MODE ROUTE (For Service Worker)
+// ========================================
+
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
+
+// ========================================
 // PUBLIC PAGE ROUTES (Must be last to avoid conflicts)
 // ========================================
 
@@ -486,6 +500,8 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin'
 
     // Analytics Dashboard
     Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics');
+    Route::get('/analytics/data', [App\Http\Controllers\AnalyticsController::class, 'getData'])->name('analytics.data');
+    Route::get('/analytics/export', [App\Http\Controllers\AnalyticsController::class, 'export'])->name('analytics.export');
 
     // System Health Dashboard
     Route::get('/system/health', [App\Http\Controllers\SystemHealthController::class, 'index'])->name('system.health');
@@ -494,6 +510,11 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin'
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
     Route::post('/notifications/{id}/mark-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
     Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+
+    // Push Notifications
+    Route::post('/push/subscribe', [App\Http\Controllers\PushNotificationController::class, 'subscribe'])->name('push.subscribe');
+    Route::post('/push/unsubscribe', [App\Http\Controllers\PushNotificationController::class, 'unsubscribe'])->name('push.unsubscribe');
+    Route::get('/push/vapid-key', [App\Http\Controllers\PushNotificationController::class, 'vapidPublicKey'])->name('push.vapid-key');
     Route::delete('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'delete'])->name('notifications.delete');
 
 

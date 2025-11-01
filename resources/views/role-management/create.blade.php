@@ -120,7 +120,8 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                             'content'),
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         name: formData.get('name'),
@@ -129,20 +130,45 @@
                         permissions: permissions
                     })
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => Promise.reject(err));
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response format. Status: ${response.status}`);
                     }
-                    return response.json();
+                    const data = await response.json();
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        data
+                    };
                 })
-                .then(data => {
-                    if (data.success) {
+                .then(result => {
+                    if (!result.ok) {
+                        if (result.status === 422) {
+                            const errors = result.data.errors || {};
+                            let errorMsg = 'Validation errors:<br>';
+                            for (const [field, fieldErrors] of Object.entries(errors)) {
+                                errorMsg +=
+                                    `<strong>${field}:</strong> ${Array.isArray(fieldErrors) ? fieldErrors.join(', ') : fieldErrors}<br>`;
+                            }
+                            showError('Error Validasi!', errorMsg);
+                        } else if (result.status === 401 || result.status === 403) {
+                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                        } else {
+                            showError('Error!', result.data.message || 'Gagal membuat role');
+                        }
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
+
+                    if (result.data.success) {
                         showSuccess('Role created successfully!');
                         setTimeout(() => {
                             window.location.href = '{{ route('admin.roles.index') }}';
                         }, 1500);
                     } else {
-                        showError('Error creating role: ' + data.message);
+                        showError('Error creating role: ' + (result.data.message || 'Unknown error'));
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }

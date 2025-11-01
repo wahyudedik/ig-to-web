@@ -1,0 +1,61 @@
+<?php
+
+return [
+    // Common
+    'welcome' => 'Selamat Datang',
+    'dashboard' => 'Dashboard',
+    'profile' => 'Profil',
+    'settings' => 'Pengaturan',
+    'logout' => 'Keluar',
+    'login' => 'Masuk',
+    'register' => 'Daftar',
+    'search' => 'Cari',
+    'save' => 'Simpan',
+    'cancel' => 'Batal',
+    'delete' => 'Hapus',
+    'edit' => 'Ubah',
+    'create' => 'Buat',
+    'update' => 'Perbarui',
+    'back' => 'Kembali',
+    'next' => 'Selanjutnya',
+    'previous' => 'Sebelumnya',
+    'submit' => 'Kirim',
+    'reset' => 'Reset',
+    'filter' => 'Filter',
+    'export' => 'Ekspor',
+    'import' => 'Impor',
+    'actions' => 'Aksi',
+    'status' => 'Status',
+    'active' => 'Aktif',
+    'inactive' => 'Tidak Aktif',
+    'yes' => 'Ya',
+    'no' => 'Tidak',
+    'confirm' => 'Konfirmasi',
+    'close' => 'Tutup',
+
+    // Navigation
+    'home' => 'Beranda',
+    'users' => 'Pengguna',
+    'students' => 'Siswa',
+    'teachers' => 'Guru',
+    'schedule' => 'Jadwal',
+    'graduation' => 'Kelulusan',
+    'facilities' => 'Sarana Prasarana',
+    'election' => 'Pemilihan',
+
+    // Messages
+    'success' => 'Berhasil',
+    'error' => 'Kesalahan',
+    'warning' => 'Peringatan',
+    'info' => 'Informasi',
+    'saved_successfully' => 'Berhasil disimpan',
+    'updated_successfully' => 'Berhasil diperbarui',
+    'deleted_successfully' => 'Berhasil dihapus',
+    'are_you_sure' => 'Apakah Anda yakin?',
+    'this_action_cannot_be_undone' => 'Tindakan ini tidak dapat dibatalkan.',
+
+    // Validation
+    'required' => 'Field ini wajib diisi',
+    'invalid' => 'Nilai tidak valid',
+    'email_invalid' => 'Format email tidak valid',
+];

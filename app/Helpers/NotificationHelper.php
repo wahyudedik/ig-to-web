@@ -3,7 +3,9 @@
 namespace App\Helpers;
 
 use App\Models\User;
+use App\Services\WebPushService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class NotificationHelper
@@ -36,6 +38,28 @@ class NotificationHelper
                 'updated_at' => now(),
             ]);
         }
+
+        // Send push notifications if enabled
+        try {
+            $pushService = new WebPushService();
+            $pushOptions = [
+                'icon' => asset('assets/img/logo/favicon.png'),
+                'badge' => asset('assets/img/logo/favicon.png'),
+                'tag' => 'notification',
+                'url' => url('/admin/notifications'),
+                'data' => array_merge(['type' => $type], $metadata),
+            ];
+
+            // Map type to urgency/requireInteraction
+            if ($type === 'error' || ($metadata['priority'] ?? '') === 'urgent') {
+                $pushOptions['requireInteraction'] = true;
+            }
+
+            $pushService->sendToUsers($users, $title, $message, $pushOptions);
+        } catch (\Exception $e) {
+            // Log error but don't fail the notification
+            Log::warning('Push notification failed: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -52,8 +76,13 @@ class NotificationHelper
      */
     public static function sendToRole(string $role, string $title, string $message, string $type = 'info')
     {
-        $users = User::role($role)->get();
-        self::send($users, $title, $message, $type, ['role' => $role]);
+        try {
+            $users = User::role($role)->get();
+            self::send($users, $title, $message, $type, ['role' => $role]);
+        } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
+            // Role doesn't exist, skip sending
+            Log::warning("Role '{$role}' does not exist. Notification not sent.");
+        }
     }
 
     /**
@@ -92,8 +121,13 @@ class NotificationHelper
      */
     public static function sendVotingNotification(string $title, string $message, string $type = 'info')
     {
-        $users = User::role(['siswa', 'guru'])->get();
-        self::send($users, $title, $message, $type, ['type' => 'voting']);
+        try {
+            $users = User::role(['siswa', 'guru'])->get();
+            self::send($users, $title, $message, $type, ['type' => 'voting']);
+        } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
+            // Role doesn't exist, skip sending
+            Log::warning("One or more roles (siswa, guru) do not exist. Voting notification not sent.");
+        }
     }
 
     /**
@@ -115,8 +149,13 @@ class NotificationHelper
      */
     public static function sendSarprasAlert(string $title, string $message, string $severity = 'warning')
     {
-        $users = User::role(['sarpras', 'admin', 'superadmin'])->get();
-        self::send($users, $title, $message, $severity, ['type' => 'sarpras']);
+        try {
+            $users = User::role(['sarpras', 'admin', 'superadmin'])->get();
+            self::send($users, $title, $message, $severity, ['type' => 'sarpras']);
+        } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
+            // Role doesn't exist, skip sending
+            Log::warning("One or more roles (sarpras, admin, superadmin) do not exist. Sarpras alert not sent.");
+        }
     }
 
     /**

@@ -299,26 +299,52 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                             'content'),
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         name: formData.get('name'),
                         permissions: permissions
                     })
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => Promise.reject(err));
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response format. Status: ${response.status}`);
                     }
-                    return response.json();
+                    const data = await response.json();
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        data
+                    };
                 })
-                .then(data => {
-                    if (data.success) {
+                .then(result => {
+                    if (!result.ok) {
+                        if (result.status === 422) {
+                            const errors = result.data.errors || {};
+                            let errorMsg = 'Validation errors:<br>';
+                            for (const [field, fieldErrors] of Object.entries(errors)) {
+                                errorMsg +=
+                                    `<strong>${field}:</strong> ${Array.isArray(fieldErrors) ? fieldErrors.join(', ') : fieldErrors}<br>`;
+                            }
+                            showError('Error Validasi!', errorMsg);
+                        } else if (result.status === 401 || result.status === 403) {
+                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                        } else {
+                            showError('Error!', result.data.message || 'Gagal membuat role');
+                        }
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
+
+                    if (result.data.success) {
                         showSuccess('Berhasil!', 'Role berhasil dibuat').then(() => {
                             location.reload();
                         });
                     } else {
-                        showError('Error!', 'Gagal membuat role: ' + data.message);
+                        showError('Error!', 'Gagal membuat role: ' + (result.data.message || 'Unknown error'));
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
@@ -353,26 +379,53 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                             'content'),
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         name: formData.get('name'),
                         permissions: permissions
                     })
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => Promise.reject(err));
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response format. Status: ${response.status}`);
                     }
-                    return response.json();
+                    const data = await response.json();
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        data
+                    };
                 })
-                .then(data => {
-                    if (data.success) {
+                .then(result => {
+                    if (!result.ok) {
+                        if (result.status === 422) {
+                            const errors = result.data.errors || {};
+                            let errorMsg = 'Validation errors:<br>';
+                            for (const [field, fieldErrors] of Object.entries(errors)) {
+                                errorMsg +=
+                                    `<strong>${field}:</strong> ${Array.isArray(fieldErrors) ? fieldErrors.join(', ') : fieldErrors}<br>`;
+                            }
+                            showError('Error Validasi!', errorMsg);
+                        } else if (result.status === 401 || result.status === 403) {
+                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                        } else {
+                            showError('Error!', result.data.message || 'Gagal mengupdate role');
+                        }
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
+
+                    if (result.data.success) {
                         showSuccess('Berhasil!', 'Role berhasil diupdate').then(() => {
                             location.reload();
                         });
                     } else {
-                        showError('Error!', 'Gagal mengupdate role: ' + data.message);
+                        showError('Error!', 'Gagal mengupdate role: ' + (result.data.message ||
+                            'Unknown error'));
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
@@ -398,12 +451,33 @@
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response format. Status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        data
+                    };
+                })
+                .then(result => {
+                    if (!result.ok) {
+                        if (result.status === 401 || result.status === 403) {
+                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                        } else {
+                            showError('Error!', result.data.message || 'Gagal memuat data role');
+                        }
+                        return;
+                    }
+
+                    if (result.data.success) {
                         // Fill edit modal
                         document.getElementById('editRoleId').value = roleId;
                         document.getElementById('editRoleName').value = roleName;
@@ -414,8 +488,8 @@
                         });
 
                         // Check the permissions this role has
-                        if (data.permissions) {
-                            data.permissions.forEach(permissionName => {
+                        if (result.data.permissions) {
+                            result.data.permissions.forEach(permissionName => {
                                 const checkbox = document.querySelector(
                                     `#editRoleModal input[value="${permissionName}"]`);
                                 if (checkbox) {
@@ -427,12 +501,12 @@
                         // Show edit modal
                         document.getElementById('editRoleModal').classList.remove('hidden');
                     } else {
-                        showError('Error!', 'Gagal memuat data role: ' + data.message);
+                        showError('Error!', 'Gagal memuat data role: ' + (result.data.message || 'Unknown error'));
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showError('Error!', 'Gagal memuat data role');
+                    showError('Error!', 'Gagal memuat data role: ' + error.message);
                 });
         }
 

@@ -1,0 +1,61 @@
+<?php
+
+return [
+    // Common
+    'welcome' => 'Welcome',
+    'dashboard' => 'Dashboard',
+    'profile' => 'Profile',
+    'settings' => 'Settings',
+    'logout' => 'Logout',
+    'login' => 'Login',
+    'register' => 'Register',
+    'search' => 'Search',
+    'save' => 'Save',
+    'cancel' => 'Cancel',
+    'delete' => 'Delete',
+    'edit' => 'Edit',
+    'create' => 'Create',
+    'update' => 'Update',
+    'back' => 'Back',
+    'next' => 'Next',
+    'previous' => 'Previous',
+    'submit' => 'Submit',
+    'reset' => 'Reset',
+    'filter' => 'Filter',
+    'export' => 'Export',
+    'import' => 'Import',
+    'actions' => 'Actions',
+    'status' => 'Status',
+    'active' => 'Active',
+    'inactive' => 'Inactive',
+    'yes' => 'Yes',
+    'no' => 'No',
+    'confirm' => 'Confirm',
+    'close' => 'Close',
+
+    // Navigation
+    'home' => 'Home',
+    'users' => 'Users',
+    'students' => 'Students',
+    'teachers' => 'Teachers',
+    'schedule' => 'Schedule',
+    'graduation' => 'Graduation',
+    'facilities' => 'Facilities',
+    'election' => 'Election',
+
+    // Messages
+    'success' => 'Success',
+    'error' => 'Error',
+    'warning' => 'Warning',
+    'info' => 'Information',
+    'saved_successfully' => 'Saved successfully',
+    'updated_successfully' => 'Updated successfully',
+    'deleted_successfully' => 'Deleted successfully',
+    'are_you_sure' => 'Are you sure?',
+    'this_action_cannot_be_undone' => 'This action cannot be undone.',
+
+    // Validation
+    'required' => 'This field is required',
+    'invalid' => 'Invalid value',
+    'email_invalid' => 'Invalid email format',
+];

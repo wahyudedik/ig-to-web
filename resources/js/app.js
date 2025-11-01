@@ -8,6 +8,288 @@ window.Swal = Swal;
 
 Alpine.start();
 
+// Service Worker Registration for Offline Support
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('SW registered: ', registration);
+
+                // Initialize Push Notifications after SW registration
+                if (window.location.pathname.includes('/admin') || window.location.pathname === '/') {
+                    initializePushNotifications(registration);
+                }
+
+                // Check for updates every hour
+                setInterval(() => {
+                    registration.update();
+                }, 3600000);
+
+                // Handle updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // New service worker available, show notification
+                            if (window.showConfirm) {
+                                window.showConfirm('Update Tersedia', 'Versi baru aplikasi tersedia. Muat ulang halaman?', 'Ya, Muat Ulang', 'Nanti')
+                                    .then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.reload();
+                                        }
+                                    });
+                            } else {
+                                // Fallback to confirm if showConfirm not available (shouldn't happen in normal usage)
+                                if (confirm('Update tersedia! Muat ulang halaman?')) {
+                                    window.location.reload();
+                                }
+                            }
+                        }
+                    });
+                });
+            })
+            .catch((error) => {
+                console.log('SW registration failed: ', error);
+            });
+
+        // Handle service worker updates
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) {
+                refreshing = true;
+                window.location.reload();
+            }
+        });
+    });
+
+    // Listen for online/offline events
+    window.addEventListener('online', () => {
+        console.log('App is online');
+        // Show notification that app is back online
+        if (window.showSuccess) {
+            window.showSuccess('Koneksi Internet Tersedia', 'Aplikasi kembali online');
+        }
+    });
+
+    window.addEventListener('offline', () => {
+        console.log('App is offline');
+        // Show notification that app is offline
+        if (window.showAlert) {
+            window.showAlert('Mode Offline', 'Aplikasi berjalan dalam mode offline. Beberapa fitur mungkin terbatas.', 'info');
+        }
+    });
+}
+
+// Push Notifications Setup
+async function initializePushNotifications(registration) {
+    if (!('PushManager' in window)) {
+        console.log('Push messaging is not supported');
+        return;
+    }
+
+    // Check if user is authenticated (check for CSRF token)
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+        console.log('User not authenticated, skipping push notification setup');
+        return;
+    }
+
+    try {
+        // Get VAPID public key
+        const vapidResponse = await fetch('/admin/push/vapid-key', {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        });
+
+        if (!vapidResponse.ok) {
+            console.log('VAPID keys not configured');
+            return;
+        }
+
+        const vapidData = await vapidResponse.json();
+        if (!vapidData.success || !vapidData.publicKey) {
+            console.log('VAPID public key not available');
+            return;
+        }
+
+        const publicKey = vapidData.publicKey;
+
+        // Validate key format
+        if (!publicKey || typeof publicKey !== 'string' || publicKey.length < 40) {
+            console.error('Invalid VAPID public key format. Key length:', publicKey?.length);
+            console.error('Please generate proper VAPID keys and add them to .env file.');
+            console.error('Visit: https://web-push-codelab.glitch.me/ to generate keys');
+            return;
+        }
+
+        // Check current subscription
+        let subscription = await registration.pushManager.getSubscription();
+
+        // If not subscribed, ask for permission
+        if (!subscription) {
+            try {
+                // Convert VAPID key to Uint8Array
+                const applicationServerKey = urlBase64ToUint8Array(publicKey);
+
+                console.log('Subscribing to push notifications with key length:', applicationServerKey.length);
+
+                subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: applicationServerKey
+                });
+
+                console.log('Subscription created:', subscription.endpoint);
+
+                // Send subscription to server
+                await sendSubscriptionToServer(subscription);
+            } catch (keyError) {
+                console.error('Error with VAPID key conversion or subscription:', keyError);
+                throw keyError;
+            }
+        } else {
+            console.log('Already subscribed, updating server...');
+            // Update existing subscription on server
+            await sendSubscriptionToServer(subscription);
+        }
+
+        console.log('Push notification subscription successful');
+    } catch (error) {
+        console.error('Push notification subscription failed:', error);
+        if (error.name === 'NotAllowedError') {
+            console.log('Push notification permission denied');
+        }
+    }
+}
+
+// Send subscription to server
+async function sendSubscriptionToServer(subscription) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    if (!csrfToken) {
+        console.log('CSRF token not found');
+        return;
+    }
+
+    const subscriptionData = {
+        endpoint: subscription.endpoint,
+        public_key: arrayBufferToBase64(subscription.getKey('p256dh')),
+        auth_token: arrayBufferToBase64(subscription.getKey('auth')),
+    };
+
+    try {
+        const response = await fetch('/admin/push/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify(subscriptionData),
+        });
+
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('Non-JSON response from server:', response.status);
+            return;
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            console.log('Subscription saved to server');
+        } else {
+            console.error('Failed to save subscription:', data.message || 'Unknown error');
+        }
+    } catch (error) {
+        console.error('Error sending subscription to server:', error);
+    }
+}
+
+// Utility: Convert VAPID key from base64url to Uint8Array
+// VAPID keys should be in base64url format (RFC 4648)
+function urlBase64ToUint8Array(base64String) {
+    // Remove any whitespace
+    base64String = base64String.trim();
+
+    // Add padding if needed
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+
+    // Convert base64url to base64 (replace - with + and _ with /)
+    const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+    try {
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+
+        // Validate length - VAPID public key should be 65 bytes (uncompressed) or 32 bytes (compressed)
+        // For Web Push, we typically use 65 bytes (0x04 + 32 bytes X + 32 bytes Y)
+        if (outputArray.length !== 65 && outputArray.length !== 32) {
+            console.warn('VAPID key length is unexpected:', outputArray.length, 'Expected 65 or 32 bytes');
+        }
+
+        return outputArray;
+    } catch (error) {
+        console.error('Error converting VAPID key:', error);
+        throw new Error('Invalid VAPID key format');
+    }
+}
+
+// Utility: Convert ArrayBuffer to base64
+function arrayBufferToBase64(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+
+// Unsubscribe function (can be called from UI)
+window.unsubscribePushNotifications = async function () {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        return false;
+    }
+
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+
+        if (subscription) {
+            await subscription.unsubscribe();
+
+            // Notify server
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (csrfToken) {
+                await fetch('/admin/push/unsubscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ endpoint: subscription.endpoint }),
+                });
+            }
+
+            console.log('Push notifications unsubscribed');
+            return true;
+        }
+    } catch (error) {
+        console.error('Error unsubscribing:', error);
+        return false;
+    }
+    return false;
+};
+
 // SweetAlert2 Helper Functions
 window.showAlert = function (title, text, icon = 'success') {
     return Swal.fire({

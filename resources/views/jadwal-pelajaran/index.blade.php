@@ -258,12 +258,11 @@
                                             <a href="{{ route('admin.jadwal-pelajaran.edit', $jadwal) }}"
                                                 class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                             <form action="{{ route('admin.jadwal-pelajaran.destroy', $jadwal) }}"
-                                                method="POST" class="inline">
+                                                method="POST" class="inline"
+                                                data-confirm="Yakin ingin menghapus jadwal ini?">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                    onclick="return confirm('Yakin ingin menghapus jadwal ini?')"
-                                                    class="text-red-600 hover:text-red-900">
+                                                <button type="submit" class="text-red-600 hover:text-red-900">
                                                     Hapus
                                                 </button>
                                             </form>

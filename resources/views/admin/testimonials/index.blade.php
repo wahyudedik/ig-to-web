@@ -357,15 +357,33 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response format. Status: ${response.status}`);
                     }
-                    return response.json();
+                    const data = await response.json();
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        data
+                    };
                 })
-                .then(data => {
-                        if (data.success) {
-                            const testimonial = data.testimonial;
+                .then(result => {
+                        if (!result.ok) {
+                            if (result.status === 404) {
+                                showError('Error!', 'Testimonial tidak ditemukan');
+                            } else if (result.status === 401 || result.status === 403) {
+                                showError('Unauthorized!', 'Anda tidak memiliki izin untuk melihat testimonial ini.');
+                            } else {
+                                showError('Error!', result.data.message || 'Gagal memuat testimonial');
+                            }
+                            document.getElementById('testimonialModal').classList.add('hidden');
+                            return;
+                        }
+
+                        if (result.data.success) {
+                            const testimonial = result.data.testimonial;
                             document.getElementById('testimonialContent').innerHTML = `
                             <div class="space-y-4">
                                 <!-- Author Info -->
@@ -423,37 +441,37 @@
                 /div> < /
                 div >
                 `;
-                                            } else {
-                                                document.getElementById('testimonialContent').innerHTML = ` <
+                                                    } else {
+                                                        document.getElementById('testimonialContent').innerHTML = ` <
                 div class = "text-center py-8" >
                 <
                 i class = "fas fa-exclamation-triangle text-2xl text-red-400 mb-4" > < /i> <
                 p class = "text-red-500" > Error loading testimonial details < /p> < /
                 div >
                 `;
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error:', error);
+                                                    document.getElementById('testimonialContent').innerHTML = ` <
+                div class = "text-center py-8" >
+                <
+                i class = "fas fa-exclamation-triangle text-2xl text-red-400 mb-4" > < /i> <
+                p class = "text-red-500" > Error loading testimonial details < /p> < /
+                div >
+                `;
+                                                });
+                                        }
+
+                                        function closeModal() {
+                                            document.getElementById('testimonialModal').classList.add('hidden');
+                                        }
+
+                                        // Close modal when clicking outside
+                                        document.getElementById('testimonialModal').addEventListener('click', function(e) {
+                                            if (e.target === this) {
+                                                closeModal();
                                             }
-                                        })
-                                        .catch(error => {
-                                            console.error('Error:', error);
-                                            document.getElementById('testimonialContent').innerHTML = ` <
-                div class = "text-center py-8" >
-                <
-                i class = "fas fa-exclamation-triangle text-2xl text-red-400 mb-4" > < /i> <
-                p class = "text-red-500" > Error loading testimonial details < /p> < /
-                div >
-                `;
                                         });
-                                }
-
-                                function closeModal() {
-                                    document.getElementById('testimonialModal').classList.add('hidden');
-                                }
-
-                                // Close modal when clicking outside
-                                document.getElementById('testimonialModal').addEventListener('click', function(e) {
-                                    if (e.target === this) {
-                                        closeModal();
-                                    }
-                                });
     </script>
 </x-app-layout>

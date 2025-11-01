@@ -1,0 +1,61 @@
+<?php
+
+return [
+    // Common
+    'welcome' => 'مرحبا',
+    'dashboard' => 'لوحة التحكم',
+    'profile' => 'الملف الشخصي',
+    'settings' => 'الإعدادات',
+    'logout' => 'تسجيل الخروج',
+    'login' => 'تسجيل الدخول',
+    'register' => 'تسجيل',
+    'search' => 'بحث',
+    'save' => 'حفظ',
+    'cancel' => 'إلغاء',
+    'delete' => 'حذف',
+    'edit' => 'تعديل',
+    'create' => 'إنشاء',
+    'update' => 'تحديث',
+    'back' => 'رجوع',
+    'next' => 'التالي',
+    'previous' => 'السابق',
+    'submit' => 'إرسال',
+    'reset' => 'إعادة تعيين',
+    'filter' => 'تصفية',
+    'export' => 'تصدير',
+    'import' => 'استيراد',
+    'actions' => 'الإجراءات',
+    'status' => 'الحالة',
+    'active' => 'نشط',
+    'inactive' => 'غير نشط',
+    'yes' => 'نعم',
+    'no' => 'لا',
+    'confirm' => 'تأكيد',
+    'close' => 'إغلاق',
+
+    // Navigation
+    'home' => 'الرئيسية',
+    'users' => 'المستخدمون',
+    'students' => 'الطلاب',
+    'teachers' => 'المعلمون',
+    'schedule' => 'الجدول',
+    'graduation' => 'التخرج',
+    'facilities' => 'المرافق',
+    'election' => 'الانتخابات',
+
+    // Messages
+    'success' => 'نجح',
+    'error' => 'خطأ',
+    'warning' => 'تحذير',
+    'info' => 'معلومات',
+    'saved_successfully' => 'تم الحفظ بنجاح',
+    'updated_successfully' => 'تم التحديث بنجاح',
+    'deleted_successfully' => 'تم الحذف بنجاح',
+    'are_you_sure' => 'هل أنت متأكد؟',
+    'this_action_cannot_be_undone' => 'لا يمكن التراجع عن هذا الإجراء.',
+
+    // Validation
+    'required' => 'هذا الحقل مطلوب',
+    'invalid' => 'قيمة غير صحيحة',
+    'email_invalid' => 'صيغة البريد الإلكتروني غير صحيحة',
+];

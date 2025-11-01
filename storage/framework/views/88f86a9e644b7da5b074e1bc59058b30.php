@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>"
+    dir="<?php echo e(function_exists('is_rtl') && is_rtl() ? 'rtl' : 'ltr'); ?>">
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#116E63">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="IG to Web">
+    <link rel="manifest" href="<?php echo e(asset('manifest.json')); ?>">
+
+    <!-- Apple Touch Icons -->
+    <?php if(cache('site_setting_favicon')): ?>
+        <link rel="apple-touch-icon" href="<?php echo e(Storage::url(cache('site_setting_favicon'))); ?>">
+    <?php else: ?>
+        <link rel="apple-touch-icon" href="<?php echo e(asset('assets/img/logo/favicon.png')); ?>">
+    <?php endif; ?>
 
     <!-- title -->
     <title><?php echo e($pageTitle ?? cache('site_setting_site_name', 'Halaman Sekolah')); ?> - <?php echo e(config('app.name')); ?></title>
@@ -21,7 +37,7 @@
         <link rel="icon" type="image/x-icon" href="<?php echo e(Storage::url(cache('site_setting_favicon'))); ?>">
     <?php else: ?>
         <link rel="icon" type="image/x-icon" href="<?php echo e(asset('assets/img/logo/favicon.png')); ?>">
-    <?php endif; ?> 
+    <?php endif; ?>
 
     <!-- Scripts -->
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
@@ -47,6 +63,9 @@
 
         </main>
     </div>
+
+    <!-- Additional Scripts -->
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
 </html>

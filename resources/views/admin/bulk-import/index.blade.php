@@ -441,11 +441,7 @@
                         const submitBtn = this.querySelector('button[type="submit"]');
 
                         if (!fileInput.files.length) {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'No File Selected',
-                                text: 'Please select a file to import'
-                            });
+                            showAlert('Peringatan', 'Silakan pilih file untuk diimport', 'warning');
                             return;
                         }
 
@@ -470,27 +466,16 @@
                             const result = await response.json();
 
                             if (result.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Import Successful!',
-                                    html: `
-                                    <p class="mb-2">${result.message}</p>
-                                    <p class="text-sm text-gray-600">Imported: ${result.data.imported} records</p>
-                                `,
-                                    timer: 3000,
-                                    timerProgressBar: true
-                                }).then(() => {
+                                showSuccess('Import Berhasil!',
+                                    `${result.message}<br><small class="text-gray-600">Imported: ${result.data.imported} records</small>`
+                                ).then(() => {
                                     window.location.reload();
                                 });
                             } else {
                                 throw new Error(result.message || 'Import failed');
                             }
                         } catch (error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Import Failed',
-                                text: error.message
-                            });
+                            showError('Import Gagal', error.message);
                         } finally {
                             // Re-enable button
                             submitBtn.disabled = false;

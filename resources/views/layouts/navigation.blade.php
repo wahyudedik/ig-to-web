@@ -365,6 +365,35 @@
                                 </a>
                             </div>
 
+                            <!-- Language Switcher -->
+                            <div class="py-2 border-t border-slate-100">
+                                <div class="px-4 py-2">
+                                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Language
+                                    </p>
+                                </div>
+                                @php
+                                    $currentLocale = app()->getLocale();
+                                    $availableLocales = function_exists('get_available_locales')
+                                        ? get_available_locales()
+                                        : config('i18n.locales', []);
+                                @endphp
+                                @foreach ($availableLocales as $code => $locale)
+                                    <a href="{{ route('locale.switch', $code) }}"
+                                        class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors {{ $code === $currentLocale ? 'bg-slate-50 font-medium' : '' }}">
+                                        <span class="mr-3">{{ $locale['flag'] }}</span>
+                                        <span>{{ $locale['native'] }}</span>
+                                        @if ($code === $currentLocale)
+                                            <svg class="w-4 h-4 ml-auto text-blue-600" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        @endif
+                                    </a>
+                                @endforeach
+                            </div>
+
                             <!-- Quick Settings -->
                             <div class="py-2 border-t border-slate-100">
                                 <div class="px-4 py-2">

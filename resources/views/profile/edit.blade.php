@@ -26,4 +26,34 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Profile updated success message
+                @if (session('status') === 'profile-updated')
+                    if (typeof showSuccess !== 'undefined') {
+                        showSuccess('{{ __('Profile Updated') }}',
+                            '{{ __('Your profile information has been saved successfully.') }}');
+                    }
+                @endif
+
+                // Password updated success message
+                @if (session('status') === 'password-updated')
+                    if (typeof showSuccess !== 'undefined') {
+                        showSuccess('{{ __('Password Updated') }}',
+                            '{{ __('Your password has been updated successfully.') }}');
+                    }
+                @endif
+
+                // Verification link sent
+                @if (session('status') === 'verification-link-sent')
+                    if (typeof showSuccess !== 'undefined') {
+                        showSuccess('{{ __('Verification Email Sent') }}',
+                            '{{ __('A new verification link has been sent to your email address.') }}');
+                    }
+                @endif
+            });
+        </script>
+    @endpush
 </x-app-layout>

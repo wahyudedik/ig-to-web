@@ -199,11 +199,15 @@
     <script>
         function confirmVote() {
             showConfirm(
+                'Konfirmasi Voting',
                 'Apakah Anda yakin dengan pilihan Anda? Setelah memilih, Anda tidak dapat mengubah pilihan.',
-                () => {
+                'Ya, Pilih',
+                'Batal'
+            ).then((result) => {
+                if (result.isConfirmed) {
                     document.querySelector('form').submit();
                 }
-            );
+            });
         }
     </script>
 </x-app-layout>

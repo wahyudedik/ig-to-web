@@ -310,24 +310,55 @@
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                             'content'),
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showSuccess('Berhasil!', 'User berhasil diundang. Password sementara: ' + data
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response format. Status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        data
+                    };
+                })
+                .then(result => {
+                    if (!result.ok) {
+                        if (result.status === 422) {
+                            const errors = result.data.errors || {};
+                            let errorMsg = 'Validation errors:<br>';
+                            for (const [field, fieldErrors] of Object.entries(errors)) {
+                                errorMsg +=
+                                    `<strong>${field}:</strong> ${Array.isArray(fieldErrors) ? fieldErrors.join(', ') : fieldErrors}<br>`;
+                            }
+                            showError('Error Validasi!', errorMsg);
+                        } else if (result.status === 401 || result.status === 403) {
+                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                        } else {
+                            showError('Error!', result.data.message || 'Gagal mengundang user');
+                        }
+                        return;
+                    }
+
+                    if (result.data.success) {
+                        showSuccess('Berhasil!', 'User berhasil diundang. Password sementara: ' + result.data
                             .temp_password).then(() => {
                             location.reload();
                         });
                     } else {
-                        showError('Error!', 'Gagal mengundang user: ' + data.message);
+                        showError('Error!', 'Gagal mengundang user: ' + (result.data.message ||
+                            'Unknown error'));
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showError('Error!', 'Gagal mengundang user');
+                    showError('Error!', 'Gagal mengundang user: ' + error.message);
                 });
         });
 
@@ -348,23 +379,53 @@
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                             'content'),
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response format. Status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        data
+                    };
+                })
+                .then(result => {
+                    if (!result.ok) {
+                        if (result.status === 422) {
+                            const errors = result.data.errors || {};
+                            let errorMsg = 'Validation errors:<br>';
+                            for (const [field, fieldErrors] of Object.entries(errors)) {
+                                errorMsg +=
+                                    `<strong>${field}:</strong> ${Array.isArray(fieldErrors) ? fieldErrors.join(', ') : fieldErrors}<br>`;
+                            }
+                            showError('Error Validasi!', errorMsg);
+                        } else if (result.status === 401 || result.status === 403) {
+                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                        } else {
+                            showError('Error!', result.data.message || 'Gagal membuat user');
+                        }
+                        return;
+                    }
+
+                    if (result.data.success) {
                         showSuccess('Berhasil!', 'User berhasil dibuat').then(() => {
                             location.reload();
                         });
                     } else {
-                        showError('Error!', 'Gagal membuat user: ' + data.message);
+                        showError('Error!', 'Gagal membuat user: ' + (result.data.message || 'Unknown error'));
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showError('Error!', 'Gagal membuat user');
+                    showError('Error!', 'Gagal membuat user: ' + error.message);
                 });
         });
 
@@ -388,24 +449,48 @@
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
+                                    'content'),
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
                             }
                         })
-                        .then(response => response.json())
-                        .then(data => {
+                        .then(async response => {
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                throw new Error(`Unexpected response format. Status: ${response.status}`);
+                            }
+                            const data = await response.json();
+                            return {
+                                ok: response.ok,
+                                status: response.status,
+                                data
+                            };
+                        })
+                        .then(result => {
                             closeLoading();
-                            if (data.success) {
+                            if (!result.ok) {
+                                if (result.status === 401 || result.status === 403) {
+                                    showError('Unauthorized!',
+                                        'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                                } else {
+                                    showError('Error!', result.data.message || 'Gagal mengubah status user');
+                                }
+                                return;
+                            }
+
+                            if (result.data.success) {
                                 showSuccess('Berhasil!', 'Status user berhasil diubah').then(() => {
                                     location.reload();
                                 });
                             } else {
-                                showError('Error!', 'Gagal mengubah status: ' + data.message);
+                                showError('Error!', 'Gagal mengubah status: ' + (result.data.message ||
+                                    'Unknown error'));
                             }
                         })
                         .catch(error => {
                             closeLoading();
                             console.error('Error:', error);
-                            showError('Error!', 'Gagal mengubah status user');
+                            showError('Error!', 'Gagal mengubah status user: ' + error.message);
                         });
                 }
             });
@@ -425,24 +510,48 @@
                             method: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
+                                    'content'),
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
                             }
                         })
-                        .then(response => response.json())
-                        .then(data => {
+                        .then(async response => {
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                throw new Error(`Unexpected response format. Status: ${response.status}`);
+                            }
+                            const data = await response.json();
+                            return {
+                                ok: response.ok,
+                                status: response.status,
+                                data
+                            };
+                        })
+                        .then(result => {
                             closeLoading();
-                            if (data.success) {
+                            if (!result.ok) {
+                                if (result.status === 401 || result.status === 403) {
+                                    showError('Unauthorized!',
+                                        'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                                } else {
+                                    showError('Error!', result.data.message || 'Gagal menghapus user');
+                                }
+                                return;
+                            }
+
+                            if (result.data.success) {
                                 showSuccess('Berhasil!', 'User berhasil dihapus').then(() => {
                                     location.reload();
                                 });
                             } else {
-                                showError('Error!', 'Gagal menghapus user: ' + data.message);
+                                showError('Error!', 'Gagal menghapus user: ' + (result.data.message ||
+                                    'Unknown error'));
                             }
                         })
                         .catch(error => {
                             closeLoading();
                             console.error('Error:', error);
-                            showError('Error!', 'Gagal menghapus user');
+                            showError('Error!', 'Gagal menghapus user: ' + error.message);
                         });
                 }
             });

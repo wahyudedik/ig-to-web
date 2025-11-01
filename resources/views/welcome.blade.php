@@ -23,7 +23,7 @@
     <x-landing.programs />
 
     {{-- Instagram Gallery --}}
-    <x-landing.gallery :posts="$instagramPosts" />
+    <x-landing.gallery :posts="$instagramPosts ?? []" />
 
     {{-- Testimonials --}}
     <x-landing.testimonials />

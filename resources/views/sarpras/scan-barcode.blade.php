@@ -233,20 +233,54 @@
             document.getElementById('loading-section').classList.remove('hidden');
 
             // Make API call
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!csrfToken) {
+                showError('CSRF token tidak ditemukan. Silakan refresh halaman.');
+                hideAllSections();
+                return;
+            }
+
             fetch('{{ route('admin.sarpras.barcode.scan.process') }}', {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json'
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
                     },
                     body: JSON.stringify({
                         code: code
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response format. Status: ${response.status}`);
+                    }
+                    return {
+                        ok: response.ok,
+                        status: response.status,
+                        data: await response.json()
+                    };
+                })
+                .then(result => {
                     hideAllSections();
 
+                    if (!result.ok) {
+                        if (result.status === 404) {
+                            showError('Barang tidak ditemukan');
+                        } else if (result.status === 422) {
+                            const errors = result.data.errors || {};
+                            const errorMsg = Object.values(errors).flat().join(', ') || result.data.message ||
+                                'Validation error';
+                            showError(errorMsg);
+                        } else {
+                            showError(result.data.message || 'Terjadi kesalahan saat mencari data');
+                        }
+                        return;
+                    }
+
+                    const data = result.data;
                     if (data.success) {
                         displayResults(data.data);
                     } else {
@@ -256,7 +290,7 @@
                 .catch(error => {
                     console.error('Error:', error);
                     hideAllSections();
-                    showError('Terjadi kesalahan saat mencari data');
+                    showError('Terjadi kesalahan saat mencari data: ' + error.message);
                 });
         }
 

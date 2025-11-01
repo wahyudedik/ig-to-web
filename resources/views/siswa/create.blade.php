@@ -497,11 +497,11 @@
                                 <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
                                     <span class="text-sm">{{ $k }}</span>
                                     <div class="flex gap-1">
-                                        <button onclick="editKelas('{{ $k }}')"
+                                        <button onclick="editKelas({{ json_encode($k) }})"
                                             class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">
                                             Edit
                                         </button>
-                                        <button onclick="deleteKelas('{{ $k }}')"
+                                        <button onclick="deleteKelas({{ json_encode($k) }})"
                                             class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
                                             Hapus
                                         </button>
@@ -547,11 +547,11 @@
                                 <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
                                     <span class="text-sm">{{ $j }}</span>
                                     <div class="flex gap-1">
-                                        <button onclick="editJurusan('{{ $j }}')"
+                                        <button onclick="editJurusan({{ json_encode($j) }})"
                                             class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">
                                             Edit
                                         </button>
-                                        <button onclick="deleteJurusan('{{ $j }}')"
+                                        <button onclick="deleteJurusan({{ json_encode($j) }})"
                                             class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
                                             Hapus
                                         </button>
@@ -597,11 +597,11 @@
                                 <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
                                     <span class="text-sm">{{ $eks }}</span>
                                     <div class="flex gap-1">
-                                        <button onclick="editEkstrakurikuler('{{ $eks }}')"
+                                        <button onclick="editEkstrakurikuler({{ json_encode($eks) }})"
                                             class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">
                                             Edit
                                         </button>
-                                        <button onclick="deleteEkstrakurikuler('{{ $eks }}')"
+                                        <button onclick="deleteEkstrakurikuler({{ json_encode($eks) }})"
                                             class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">
                                             Hapus
                                         </button>
@@ -661,7 +661,7 @@
                                     </div>
                                     <div class="flex gap-1">
                                         <button
-                                            onclick="editUser({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->user_type }}')"
+                                            onclick="editUser({{ $user->id }}, {{ json_encode($user->name) }}, {{ json_encode($user->email) }}, {{ json_encode($user->user_type) }})"
                                             class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">
                                             Edit
                                         </button>
@@ -757,8 +757,8 @@
                             div.innerHTML = `
                             <span class="text-sm">${data.data.nama}</span>
                             <div class="flex gap-1">
-                                <button onclick="editKelas('${data.data.nama}', ${data.data.id})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
-                                <button onclick="deleteKelas('${data.data.nama}', ${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
+                                <button onclick="editKelas(${JSON.stringify(data.data.nama)}, ${data.data.id})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
+                                <button onclick="deleteKelas(${JSON.stringify(data.data.nama)}, ${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
                             </div>
                         `;
                             list.appendChild(div);
@@ -813,8 +813,8 @@
                             div.innerHTML = `
                             <span class="text-sm">${data.data.nama}</span>
                             <div class="flex gap-1">
-                                <button onclick="editJurusan('${data.data.nama}', ${data.data.id})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
-                                <button onclick="deleteJurusan('${data.data.nama}', ${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
+                                <button onclick="editJurusan(${JSON.stringify(data.data.nama)}, ${data.data.id})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
+                                <button onclick="deleteJurusan(${JSON.stringify(data.data.nama)}, ${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
                             </div>
                         `;
                             list.appendChild(div);
@@ -863,8 +863,8 @@
                             div.innerHTML = `
                             <span class="text-sm">${data.data.nama}</span>
                             <div class="flex gap-1">
-                                <button onclick="editEkstrakurikuler('${data.data.nama}', ${data.data.id})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
-                                <button onclick="deleteEkstrakurikuler('${data.data.nama}', ${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
+                                <button onclick="editEkstrakurikuler(${JSON.stringify(data.data.nama)}, ${data.data.id})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
+                                <button onclick="deleteEkstrakurikuler(${JSON.stringify(data.data.nama)}, ${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
                             </div>
                         `;
                             list.appendChild(div);
@@ -956,7 +956,7 @@
                                 <span class="text-xs text-gray-500 ml-2">(${data.data.email})</span>
                             </div>
                             <div class="flex gap-1">
-                                <button onclick="editUser(${data.data.id}, '${data.data.name}', '${data.data.email}', '${data.data.user_type}')" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
+                                <button onclick="editUser(${data.data.id}, ${JSON.stringify(data.data.name)}, ${JSON.stringify(data.data.email)}, ${JSON.stringify(data.data.user_type)})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
                                 <button onclick="deleteUser(${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
                             </div>
                         `;
@@ -994,8 +994,24 @@
         }
 
         // Edit functions
-        function editKelas(oldValue) {
-            const newValue = prompt('Edit kelas:', oldValue);
+        async function editKelas(oldValue) {
+            const {
+                value: newValue
+            } = await Swal.fire({
+                title: 'Edit Kelas',
+                input: 'text',
+                inputLabel: 'Nama Kelas',
+                inputValue: oldValue,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Nama kelas tidak boleh kosong!';
+                    }
+                }
+            });
+
             if (newValue && newValue !== oldValue) {
                 // Update in select
                 const select = document.getElementById('kelas');
@@ -1017,15 +1033,31 @@
                         // Update onclick attributes
                         const editBtn = item.querySelector('button[onclick*="editKelas"]');
                         const deleteBtn = item.querySelector('button[onclick*="deleteKelas"]');
-                        editBtn.setAttribute('onclick', `editKelas('${newValue}')`);
-                        deleteBtn.setAttribute('onclick', `deleteKelas('${newValue}')`);
+                        editBtn.setAttribute('onclick', `editKelas(${JSON.stringify(newValue)})`);
+                        deleteBtn.setAttribute('onclick', `deleteKelas(${JSON.stringify(newValue)})`);
                     }
                 });
             }
         }
 
-        function editJurusan(oldValue) {
-            const newValue = prompt('Edit jurusan:', oldValue);
+        async function editJurusan(oldValue) {
+            const {
+                value: newValue
+            } = await Swal.fire({
+                title: 'Edit Jurusan',
+                input: 'text',
+                inputLabel: 'Nama Jurusan',
+                inputValue: oldValue,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Nama jurusan tidak boleh kosong!';
+                    }
+                }
+            });
+
             if (newValue && newValue !== oldValue) {
                 const select = document.getElementById('jurusan');
                 const options = select.querySelectorAll('option');
@@ -1044,15 +1076,31 @@
                         span.textContent = newValue;
                         const editBtn = item.querySelector('button[onclick*="editJurusan"]');
                         const deleteBtn = item.querySelector('button[onclick*="deleteJurusan"]');
-                        editBtn.setAttribute('onclick', `editJurusan('${newValue}')`);
-                        deleteBtn.setAttribute('onclick', `deleteJurusan('${newValue}')`);
+                        editBtn.setAttribute('onclick', `editJurusan(${JSON.stringify(newValue)})`);
+                        deleteBtn.setAttribute('onclick', `deleteJurusan(${JSON.stringify(newValue)})`);
                     }
                 });
             }
         }
 
-        function editEkstrakurikuler(oldValue) {
-            const newValue = prompt('Edit ekstrakurikuler:', oldValue);
+        async function editEkstrakurikuler(oldValue) {
+            const {
+                value: newValue
+            } = await Swal.fire({
+                title: 'Edit Ekstrakurikuler',
+                input: 'text',
+                inputLabel: 'Nama Ekstrakurikuler',
+                inputValue: oldValue,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Nama ekstrakurikuler tidak boleh kosong!';
+                    }
+                }
+            });
+
             if (newValue && newValue !== oldValue) {
                 const list = document.getElementById('ekstrakurikulerList');
                 const items = list.querySelectorAll('div');
@@ -1069,30 +1117,62 @@
             }
         }
 
-        function editUser(id, name, email, userType) {
-            const newName = prompt('Edit nama:', name);
-            const newEmail = prompt('Edit email:', email);
-            if (newName && newEmail && (newName !== name || newEmail !== email)) {
-                // Update in select
-                const select = document.getElementById('user_id');
-                const options = select.querySelectorAll('option');
-                options.forEach(option => {
-                    if (option.value === id) {
-                        option.textContent = `${newName} (${newEmail})`;
+        async function editUser(id, name, email, userType) {
+            const {
+                value: formValues
+            } = await Swal.fire({
+                title: 'Edit User',
+                html: `
+                    <input id="swal-name" class="swal2-input" placeholder="Nama" value="${name}" required>
+                    <input id="swal-email" class="swal2-input" placeholder="Email" type="email" value="${email}" required>
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                preConfirm: () => {
+                    const nameInput = document.getElementById('swal-name');
+                    const emailInput = document.getElementById('swal-email');
+                    if (!nameInput.value || !emailInput.value) {
+                        Swal.showValidationMessage('Nama dan email harus diisi!');
+                        return false;
                     }
-                });
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+                        Swal.showValidationMessage('Format email tidak valid!');
+                        return false;
+                    }
+                    return {
+                        name: nameInput.value,
+                        email: emailInput.value
+                    };
+                }
+            });
 
-                // Update in list
-                const list = document.getElementById('userList');
-                const items = list.querySelectorAll('div');
-                items.forEach(item => {
-                    const span = item.querySelector('span');
-                    if (span.textContent === name) {
-                        span.textContent = newName;
-                        const emailSpan = item.querySelector('.text-gray-500');
-                        emailSpan.textContent = `(${newEmail})`;
-                    }
-                });
+            if (formValues) {
+                const newName = formValues.name;
+                const newEmail = formValues.email;
+                if (newName !== name || newEmail !== email) {
+                    // Update in select
+                    const select = document.getElementById('user_id');
+                    const options = select.querySelectorAll('option');
+                    options.forEach(option => {
+                        if (option.value === id) {
+                            option.textContent = `${newName} (${newEmail})`;
+                        }
+                    });
+
+                    // Update in list
+                    const list = document.getElementById('userList');
+                    const items = list.querySelectorAll('div');
+                    items.forEach(item => {
+                        const span = item.querySelector('span');
+                        if (span.textContent === name) {
+                            span.textContent = newName;
+                            const emailSpan = item.querySelector('.text-gray-500');
+                            emailSpan.textContent = `(${newEmail})`;
+                        }
+                    });
+                }
             }
         }
 
@@ -1105,12 +1185,37 @@
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
+                                    'content'),
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
                             }
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
+                        .then(async response => {
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                throw new Error(`Unexpected response format. Status: ${response.status}`);
+                            }
+                            const data = await response.json();
+                            return {
+                                ok: response.ok,
+                                status: response.status,
+                                data
+                            };
+                        })
+                        .then(result => {
+                            if (!result.ok) {
+                                if (result.status === 404) {
+                                    showError('Error!', 'Kelas tidak ditemukan');
+                                } else if (result.status === 401 || result.status === 403) {
+                                    showError('Unauthorized!',
+                                        'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                                } else {
+                                    showError('Error!', result.data.message || 'Gagal menghapus kelas');
+                                }
+                                return;
+                            }
+
+                            if (result.data.success) {
                                 // Remove from select
                                 const select = document.getElementById('kelas');
                                 const options = select.querySelectorAll('option');
@@ -1131,12 +1236,12 @@
                                 });
                                 showSuccess('Kelas berhasil dihapus!');
                             } else {
-                                showError(data.message || 'Terjadi kesalahan saat menghapus kelas');
+                                showError(result.data.message || 'Terjadi kesalahan saat menghapus kelas');
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            showError('Terjadi kesalahan saat menghapus kelas');
+                            showError('Terjadi kesalahan saat menghapus kelas: ' + error.message);
                         });
                 }
             });
@@ -1150,12 +1255,37 @@
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
+                                    'content'),
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
                             }
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
+                        .then(async response => {
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                throw new Error(`Unexpected response format. Status: ${response.status}`);
+                            }
+                            const data = await response.json();
+                            return {
+                                ok: response.ok,
+                                status: response.status,
+                                data
+                            };
+                        })
+                        .then(result => {
+                            if (!result.ok) {
+                                if (result.status === 404) {
+                                    showError('Error!', 'Jurusan tidak ditemukan');
+                                } else if (result.status === 401 || result.status === 403) {
+                                    showError('Unauthorized!',
+                                        'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                                } else {
+                                    showError('Error!', result.data.message || 'Gagal menghapus jurusan');
+                                }
+                                return;
+                            }
+
+                            if (result.data.success) {
                                 const select = document.getElementById('jurusan');
                                 const options = select.querySelectorAll('option');
                                 options.forEach(option => {
@@ -1174,12 +1304,12 @@
                                 });
                                 showSuccess('Jurusan berhasil dihapus!');
                             } else {
-                                showError(data.message || 'Terjadi kesalahan saat menghapus jurusan');
+                                showError(result.data.message || 'Terjadi kesalahan saat menghapus jurusan');
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            showError('Terjadi kesalahan saat menghapus jurusan');
+                            showError('Terjadi kesalahan saat menghapus jurusan: ' + error.message);
                         });
                 }
             });
@@ -1193,12 +1323,38 @@
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
+                                    'content'),
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
                             }
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
+                        .then(async response => {
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('application/json')) {
+                                throw new Error(`Unexpected response format. Status: ${response.status}`);
+                            }
+                            const data = await response.json();
+                            return {
+                                ok: response.ok,
+                                status: response.status,
+                                data
+                            };
+                        })
+                        .then(result => {
+                            if (!result.ok) {
+                                if (result.status === 404) {
+                                    showError('Error!', 'Ekstrakurikuler tidak ditemukan');
+                                } else if (result.status === 401 || result.status === 403) {
+                                    showError('Unauthorized!',
+                                        'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                                } else {
+                                    showError('Error!', result.data.message ||
+                                        'Gagal menghapus ekstrakurikuler');
+                                }
+                                return;
+                            }
+
+                            if (result.data.success) {
                                 const list = document.getElementById('ekstrakurikulerList');
                                 const items = list.querySelectorAll('div');
                                 items.forEach(item => {
@@ -1209,12 +1365,13 @@
                                 });
                                 showSuccess('Ekstrakurikuler berhasil dihapus!');
                             } else {
-                                showError(data.message || 'Terjadi kesalahan saat menghapus ekstrakurikuler');
+                                showError(result.data.message ||
+                                    'Terjadi kesalahan saat menghapus ekstrakurikuler');
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            showError('Terjadi kesalahan saat menghapus ekstrakurikuler');
+                            showError('Terjadi kesalahan saat menghapus ekstrakurikuler: ' + error.message);
                         });
                 }
             });

@@ -121,7 +121,8 @@
                             <td>{{ $jadwal->mataPelajaran->nama ?? '-' }}</td>
                             <td>{{ $jadwal->guru->full_name ?? '-' }}</td>
                             <td>{{ $jadwal->kelas->nama ?? '-' }}</td>
-                            <td>{{ substr($jadwal->jam_mulai, 0, 5) }} - {{ substr($jadwal->jam_selesai, 0, 5) }}</td>
+                            <td>{{ $jadwal->jam_mulai ? substr($jadwal->jam_mulai, 0, 5) : '-' }} -
+                                {{ $jadwal->jam_selesai ? substr($jadwal->jam_selesai, 0, 5) : '-' }}</td>
                             <td>{{ $jadwal->ruang ?? '-' }}</td>
                             <td>
                                 <span class="badge badge-success">

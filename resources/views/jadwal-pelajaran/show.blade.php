@@ -107,7 +107,7 @@
                     <!-- Actions -->
                     <div class="mt-8 pt-6 border-t border-gray-200 flex justify-between">
                         <form action="{{ route('admin.jadwal-pelajaran.destroy', $jadwalPelajaran) }}" method="POST"
-                            onsubmit="return confirm('Yakin ingin menghapus jadwal ini?');">
+                            data-confirm="Yakin ingin menghapus jadwal ini?">
                             @csrf
                             @method('DELETE')
                             <button type="submit"

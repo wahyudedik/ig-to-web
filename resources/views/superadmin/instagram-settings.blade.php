@@ -515,18 +515,16 @@
                     return;
                 }
 
-                // Welcome toast
+                // Welcome notification using global helpers
                 setTimeout(() => {
                     @if (session('success'))
-                        showToast('✅ {{ session('success') }}', 'success');
+                        showSuccess('Berhasil', '{{ session('success') }}');
                     @elseif (session('error'))
-                        showToast('❌ {{ session('error') }}', 'error');
+                        showError('Error', '{{ session('error') }}');
                     @elseif (session('warning'))
-                        showToast('⚠️ {{ session('warning') }}', 'warning');
+                        showAlert('Peringatan', '{{ session('warning') }}', 'warning');
                     @elseif (session('info'))
-                        showToast('ℹ️ {{ session('info') }}', 'info');
-                    @else
-                        showToast('📸 Instagram Settings', 'info');
+                        showAlert('Info', '{{ session('info') }}', 'info');
                     @endif
                 }, 500);
 
@@ -620,14 +618,12 @@
 
                                 showError('❌ Validation Error',
                                     result.data.message + '<br><br>' + errorList);
-                                showToast('⚠️ Ada kesalahan validasi', 'error');
                                 return;
                             }
 
                             // Handle success response
                             if (result.data.success) {
                                 showSuccess('✅ Pengaturan Tersimpan!', result.data.message).then(() => {
-                                    showToast('🎉 Settings berhasil diperbarui!', 'success');
                                     // Reload to show updated settings
                                     setTimeout(() => {
                                         window.location.href =
@@ -636,7 +632,6 @@
                                 });
                             } else {
                                 showError('❌ Gagal Menyimpan', result.data.message || 'Terjadi kesalahan');
-                                showToast('⚠️ Gagal menyimpan pengaturan', 'error');
                             }
                         })
                         .catch(error => {
@@ -649,13 +644,11 @@
                                     'Anda mungkin ter-logout. Silakan refresh halaman dan login kembali.<br><br>' +
                                     '<button onclick="window.location.reload()" class="btn btn-primary mt-2">Refresh Halaman</button>'
                                 );
-                                showToast('⏰ Sesi telah berakhir', 'warning');
                             } else {
                                 showError('❌ Gagal Menyimpan',
                                     'Terjadi kesalahan: ' + error.message +
                                     '<br>Cek console (F12) untuk detail.'
                                 );
-                                showToast('⚠️ Terjadi kesalahan', 'error');
                             }
                         })
                         .finally(() => {
@@ -670,7 +663,6 @@
                         syncBtn.disabled = true;
                         syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Syncing...';
 
-                        showToast('🔄 Memulai sinkronisasi...', 'info');
                         showLoading('Syncing Instagram Data', 'Fetching latest posts...');
 
                         fetch('{{ route('admin.superadmin.instagram-settings.sync') }}', {
@@ -685,7 +677,6 @@
                                 closeLoading();
                                 if (data.success) {
                                     showSuccess('✅ Sinkronisasi Berhasil!', data.message).then(() => {
-                                        showToast('📸 Postingan berhasil diperbarui!', 'success');
                                         setTimeout(() => location.reload(), 500);
                                     });
                                 } else {
@@ -732,20 +723,16 @@
                                         if (data.success) {
                                             showSuccess('✅ Instagram Disconnected!', data.message)
                                                 .then(() => {
-                                                    showToast('👋 Instagram berhasil diputus',
-                                                        'success');
                                                     setTimeout(() => location.reload(), 500);
                                                 });
                                         } else {
                                             showError('❌ Disconnect Failed', data.message);
-                                            showToast('⚠️ Gagal memutus koneksi', 'error');
                                         }
                                     })
                                     .catch(error => {
                                         console.error('Error:', error);
                                         showError('❌ Disconnect Failed',
                                             'Terjadi kesalahan saat memutus koneksi');
-                                        showToast('⚠️ Gagal memutus koneksi', 'error');
                                     })
                                     .finally(() => {
                                         deactivateBtn.disabled = false;
@@ -758,155 +745,10 @@
                 }
 
                 // ============================================
-                // SWEETALERT HELPER FUNCTIONS WITH ANIMATIONS
+                // SWEETALERT HELPER FUNCTIONS
                 // ============================================
-
-                function showSuccess(title, text = '') {
-                    return Swal.fire({
-                        icon: 'success',
-                        title: title,
-                        text: text,
-                        showConfirmButton: true,
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#10b981',
-                        timer: 3000,
-                        timerProgressBar: true,
-                        showClass: {
-                            popup: 'animate__animated animate__bounceIn animate__faster'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOut animate__faster'
-                        },
-                        didOpen: () => {
-                            // Confetti effect for success
-                            if (typeof confetti !== 'undefined') {
-                                confetti({
-                                    particleCount: 100,
-                                    spread: 70,
-                                    origin: {
-                                        y: 0.6
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-
-                function showError(title, text = '') {
-                    return Swal.fire({
-                        icon: 'error',
-                        title: title,
-                        text: text || 'Terjadi kesalahan. Silakan coba lagi.',
-                        showConfirmButton: true,
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#ef4444',
-                        showClass: {
-                            popup: 'animate__animated animate__shakeX animate__faster'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOut animate__faster'
-                        }
-                    });
-                }
-
-                function showWarning(title, text = '') {
-                    return Swal.fire({
-                        icon: 'warning',
-                        title: title,
-                        text: text,
-                        showConfirmButton: true,
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#f59e0b',
-                        showClass: {
-                            popup: 'animate__animated animate__headShake animate__faster'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOut animate__faster'
-                        }
-                    });
-                }
-
-                function showInfo(title, text = '') {
-                    return Swal.fire({
-                        icon: 'info',
-                        title: title,
-                        text: text,
-                        showConfirmButton: true,
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#3b82f6',
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInDown animate__faster'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOut animate__faster'
-                        }
-                    });
-                }
-
-                function showLoading(title = 'Loading...', text = 'Please wait...') {
-                    Swal.fire({
-                        title: title,
-                        text: text,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        showConfirmButton: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        },
-                        showClass: {
-                            popup: 'animate__animated animate__zoomIn animate__faster'
-                        }
-                    });
-                }
-
-                function closeLoading() {
-                    Swal.close();
-                }
-
-                function showConfirm(title, text, confirmText = 'Yes', cancelText = 'Cancel') {
-                    return Swal.fire({
-                        title: title,
-                        text: text,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: confirmText,
-                        cancelButtonText: cancelText,
-                        confirmButtonColor: '#3b82f6',
-                        cancelButtonColor: '#6b7280',
-                        reverseButtons: true,
-                        showClass: {
-                            popup: 'animate__animated animate__zoomIn animate__faster'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__zoomOut animate__faster'
-                        }
-                    });
-                }
-
-                function showToast(title, icon = 'success', position = 'top-end') {
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: position,
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer);
-                            toast.addEventListener('mouseleave', Swal.resumeTimer);
-                        },
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInDown animate__faster'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOutUp animate__faster'
-                        }
-                    });
-
-                    return Toast.fire({
-                        icon: icon,
-                        title: title
-                    });
-                }
+                // All helper functions (showSuccess, showError, showAlert, showConfirm, showLoading, closeLoading)
+                // are now globally available from app.js - removed local definitions for consistency
 
                 // Add confetti script
                 const confettiScript = document.createElement('script');
