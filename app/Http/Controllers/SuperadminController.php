@@ -101,7 +101,18 @@ class SuperadminController extends Controller
             if ($request->has('roles')) {
                 $roleIds = $request->roles;
                 $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
-                $user->assignRole($roleNames);
+
+                // IMPORTANT: Use syncRoles() to ensure user has ONLY the selected roles
+                // If only one role provided, user will have only that one role
+                // If multiple roles provided, user will have all of them (but typically only one)
+                $user->syncRoles($roleNames);
+            }
+
+            // Sync user_type with primary role
+            $user->load('roles');
+            $primaryRole = $user->roles->first();
+            if ($primaryRole && $user->user_type !== $primaryRole->name) {
+                $user->updateQuietly(['user_type' => $primaryRole->name]);
             }
 
             // Log the action
@@ -179,6 +190,16 @@ class SuperadminController extends Controller
                 $roleIds = $request->roles;
                 $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
                 $user->syncRoles($roleNames);
+            }
+
+            // Sync user_type with primary role
+            $user->load('roles');
+            $primaryRole = $user->roles->first();
+            if ($primaryRole && $user->user_type !== $primaryRole->name) {
+                $user->updateQuietly(['user_type' => $primaryRole->name]);
+            } elseif (!$primaryRole && $user->user_type) {
+                // If user has no roles, set default
+                $user->updateQuietly(['user_type' => 'siswa']); // Default fallback
             }
 
             // Log the action

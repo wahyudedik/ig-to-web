@@ -101,13 +101,17 @@
                                     {{ $user->email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @foreach ($user->roles as $role)
+                                    @forelse ($user->roles as $role)
                                         <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                    {{ $role->name === 'superadmin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
-                                            {{ ucfirst($role->name) }}
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ get_role_badge_color($role->name) }}">
+                                            {{ get_role_display_name($role) }}
                                         </span>
-                                    @endforeach
+                                    @empty
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            No Role
+                                        </span>
+                                    @endforelse
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if ($user->is_verified_by_admin)
@@ -195,7 +199,7 @@
                         <select id="inviteRole" name="role_id" class="form-select" required>
                             <option value="">Select a role</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                                <option value="{{ $role->id }}">{{ get_role_display_name($role) }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -243,7 +247,7 @@
                         <select id="createRole" name="role_id" class="form-select" required>
                             <option value="">Select a role</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                                <option value="{{ $role->id }}">{{ get_role_display_name($role) }}</option>
                             @endforeach
                         </select>
                     </div>

@@ -80,8 +80,14 @@
                                             </div>
                                         </div>
                                         <div class="ml-4">
-                                            <div class="text-sm font-medium text-slate-900">{{ ucfirst($role->name) }}
+                                            <div class="text-sm font-medium text-slate-900">
+                                                {{ get_role_display_name($role) }}
                                             </div>
+                                            @if (is_core_role($role->name))
+                                                <div class="text-xs text-gray-500">
+                                                    <i class="fas fa-lock mr-1"></i>Core Role
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
@@ -623,9 +629,10 @@
                 return;
             }
 
-            // Check if it's a core role
-            const coreRoles = ['superadmin', 'admin', 'guru', 'siswa', 'sarpras'];
-            const isCoreRole = coreRoles.includes(roleName);
+            // Check if it's a core role - using dynamic check from backend
+            // Core roles are defined in RoleHelper
+            const coreRoles = @json(get_core_roles());
+            const isCoreRole = coreRoles.map(r => r.toLowerCase()).includes(roleName.toLowerCase());
             const warningEl = document.getElementById('editRoleWarning');
             const nameSelect = document.getElementById('editRoleName');
 
@@ -679,9 +686,9 @@
                         nameSelect.value = apiRoleName.toLowerCase();
 
                         // Re-check if it's core role for disabled state
-                        const coreRoles = ['superadmin', 'admin', 'guru', 'siswa', 'sarpras'];
+                        const coreRoles = @json(get_core_roles());
                         const finalRoleName = apiRoleName.toLowerCase();
-                        const isCoreRole = coreRoles.includes(finalRoleName);
+                        const isCoreRole = coreRoles.map(r => r.toLowerCase()).includes(finalRoleName);
                         if (isCoreRole) {
                             warningEl.style.display = 'block';
                             nameSelect.disabled = true;

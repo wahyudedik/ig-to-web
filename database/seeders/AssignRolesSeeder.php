@@ -6,15 +6,23 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use App\Helpers\RoleHelper;
 
 class AssignRolesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * 
+     * This seeder assigns core system roles to users based on their email.
+     * Uses RoleHelper to get core roles dynamically.
      */
     public function run(): void
     {
-        // Assign roles to existing users based on their user_type
+        // Get core roles dynamically from RoleHelper
+        $coreRoles = RoleHelper::getCoreRoles();
+
+        // Assign roles to existing users based on their email
+        // Format: email => role_name (must be a core role)
         $userRoles = [
             'superadmin@sekolah.com' => 'superadmin',
             'admin@sekolah.com' => 'admin',
@@ -24,12 +32,30 @@ class AssignRolesSeeder extends Seeder
         ];
 
         foreach ($userRoles as $email => $roleName) {
+            // Validate that roleName is a core role
+            if (!RoleHelper::isCoreRole($roleName)) {
+                echo "Warning: Role '{$roleName}' is not a core role. Skipping...\n";
+                continue;
+            }
+
             $user = User::where('email', $email)->first();
             $role = Role::where('name', $roleName)->first();
 
             if ($user && $role) {
                 $user->assignRole($role);
+
+                // Sync user_type with role (ensure consistency)
+                $user->load('roles');
+                $primaryRole = $user->roles->first();
+                if ($primaryRole && $user->user_type !== $primaryRole->name) {
+                    $user->updateQuietly(['user_type' => $primaryRole->name]);
+                }
+
                 echo "Assigned role '{$roleName}' to user '{$user->name}'\n";
+            } elseif (!$user) {
+                echo "Warning: User with email '{$email}' not found. Skipping...\n";
+            } elseif (!$role) {
+                echo "Warning: Role '{$roleName}' not found. Run RoleSeeder first.\n";
             }
         }
     }

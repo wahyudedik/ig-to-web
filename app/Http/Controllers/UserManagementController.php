@@ -9,13 +9,16 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Helpers\RoleHelper;
 
 class UserManagementController extends Controller
 {
     public function index()
     {
         $users = User::with('roles')->paginate(20);
-        $roles = Role::where('name', '!=', 'superadmin')->get();
+        // Exclude superadmin role (core role that shouldn't be assigned via this interface)
+        $superadminRoleName = RoleHelper::getCoreRoles()[0]; // First core role is superadmin
+        $roles = Role::where('name', '!=', $superadminRoleName)->get();
 
         return view('admin.user-management.index', compact('users', 'roles'));
     }
@@ -33,22 +36,29 @@ class UserManagementController extends Controller
             // Generate temporary password
             $tempPassword = Str::random(12);
 
-            // Get user type from role
+            // Get role
             $role = Role::findOrFail($request->role_id);
-            $userType = $role->name; // Use role name as user_type
 
-            // Create user
+            // Create user (user_type will be synced by observer after role assignment)
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($tempPassword),
-                'user_type' => $userType,
+                'user_type' => $role->name, // Temporary, will be synced by observer
                 'email_verified_at' => now(), // ✅ Auto-verify invited users
                 'is_verified_by_admin' => true,
             ]);
 
-            // Assign role
-            $user->assignRole($role);
+            // IMPORTANT: Use syncRoles([$role]) to ensure user has ONLY ONE role
+            // assignRole() would ADD role (allowing multiple), syncRoles() REPLACES all roles
+            $user->syncRoles([$role]);
+
+            // Ensure user_type is synced
+            $user->load('roles');
+            $primaryRole = $user->roles->first();
+            if ($primaryRole && $user->user_type !== $primaryRole->name) {
+                $user->updateQuietly(['user_type' => $primaryRole->name]);
+            }
 
             // Send invitation email if requested
             if ($request->has('send_invitation') && $request->send_invitation) {
@@ -86,22 +96,29 @@ class UserManagementController extends Controller
                 'role_id' => 'required|exists:roles,id',
             ]);
 
-            // Get user type from role
+            // Get role
             $role = Role::findOrFail($request->role_id);
-            $userType = $role->name; // Use role name as user_type
 
-            // Create user
+            // Create user (user_type will be synced by observer after role assignment)
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'user_type' => $userType,
+                'user_type' => $role->name, // Temporary, will be synced by observer
                 'email_verified_at' => now(), // ✅ Auto-verify admin-created users
                 'is_verified_by_admin' => true,
             ]);
 
-            // Assign role
-            $user->assignRole($role);
+            // IMPORTANT: Use syncRoles([$role]) to ensure user has ONLY ONE role
+            // assignRole() would ADD role (allowing multiple), syncRoles() REPLACES all roles
+            $user->syncRoles([$role]);
+
+            // Ensure user_type is synced
+            $user->load('roles');
+            $primaryRole = $user->roles->first();
+            if ($primaryRole && $user->user_type !== $primaryRole->name) {
+                $user->updateQuietly(['user_type' => $primaryRole->name]);
+            }
 
             return response()->json([
                 'success' => true,
@@ -125,13 +142,15 @@ class UserManagementController extends Controller
 
     public function editUser(User $user)
     {
-        // Prevent editing superadmin
-        if ($user->hasRole('superadmin')) {
+        // Prevent editing superadmin (check using RoleHelper for dynamic check)
+        $superadminRoleName = RoleHelper::getCoreRoles()[0]; // First core role is superadmin
+        if ($user->hasRole($superadminRoleName) || RoleHelper::isSuperadmin($user)) {
             return redirect()->route('admin.user-management.index')
                 ->with('error', 'Cannot edit superadmin user.');
         }
 
-        $roles = Role::where('name', '!=', 'superadmin')->get();
+        // Exclude superadmin role from available roles
+        $roles = Role::where('name', '!=', $superadminRoleName)->get();
         $user->load('roles');
 
         return view('admin.user-management.edit', compact('user', 'roles'));
@@ -139,8 +158,9 @@ class UserManagementController extends Controller
 
     public function updateUser(Request $request, User $user)
     {
-        // Prevent updating superadmin
-        if ($user->hasRole('superadmin')) {
+        // Prevent updating superadmin (check using RoleHelper for dynamic check)
+        $superadminRoleName = RoleHelper::getCoreRoles()[0]; // First core role is superadmin
+        if ($user->hasRole($superadminRoleName) || RoleHelper::isSuperadmin($user)) {
             return redirect()->route('admin.user-management.index')
                 ->with('error', 'Cannot update superadmin user.');
         }
@@ -163,9 +183,16 @@ class UserManagementController extends Controller
             $user->update(['password' => Hash::make($request->password)]);
         }
 
-        // Update role
+        // Update role using Spatie Permission
         $role = Role::findOrFail($request->role_id);
         $user->syncRoles([$role]);
+
+        // Sync user_type with primary role (auto-handled by UserObserver, but ensure it's updated)
+        $user->load('roles');
+        $primaryRole = $user->roles->first();
+        if ($primaryRole && $user->user_type !== $primaryRole->name) {
+            $user->updateQuietly(['user_type' => $primaryRole->name]);
+        }
 
         return redirect()->route('admin.user-management.index')
             ->with('success', 'User updated successfully.');
@@ -173,8 +200,9 @@ class UserManagementController extends Controller
 
     public function deleteUser(User $user)
     {
-        // Prevent deleting superadmin
-        if ($user->hasRole('superadmin')) {
+        // Prevent deleting superadmin (check using RoleHelper for dynamic check)
+        $superadminRoleName = RoleHelper::getCoreRoles()[0]; // First core role is superadmin
+        if ($user->hasRole($superadminRoleName) || RoleHelper::isSuperadmin($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot delete superadmin user.'
@@ -191,8 +219,9 @@ class UserManagementController extends Controller
 
     public function toggleUserStatus(User $user)
     {
-        // Prevent disabling superadmin
-        if ($user->hasRole('superadmin')) {
+        // Prevent disabling superadmin (check using RoleHelper for dynamic check)
+        $superadminRoleName = RoleHelper::getCoreRoles()[0]; // First core role is superadmin
+        if ($user->hasRole($superadminRoleName) || RoleHelper::isSuperadmin($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot disable superadmin user.'
@@ -231,7 +260,9 @@ class UserManagementController extends Controller
 
     public function getUserRoles()
     {
-        $roles = Role::where('name', '!=', 'superadmin')->get();
+        // Exclude superadmin role from available roles
+        $superadminRoleName = RoleHelper::getCoreRoles()[0]; // First core role is superadmin
+        $roles = Role::where('name', '!=', $superadminRoleName)->get();
         return response()->json($roles);
     }
 }

@@ -42,7 +42,19 @@
                         <?php $__empty_1 = true; $__currentLoopData = $roles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $role): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="font-semibold"><?php echo e($role->name); ?></span>
+                                    <div>
+                                        <span class="font-semibold"><?php echo e(get_role_display_name($role)); ?></span>
+                                        <?php if(is_core_role($role->name)): ?>
+                                            <span class="ml-2 text-xs text-gray-500">
+                                                <i class="fas fa-lock"></i> Core
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if($role->description): ?>
+                                        <p class="text-xs text-gray-500 mt-1"><?php echo e(Str::limit($role->description, 50)); ?>
+
+                                        </p>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?php echo e($role->users_count); ?> users</td>
                                 <td class="px-6 py-4"><?php echo e($role->permissions->count()); ?> permissions</td>
@@ -56,7 +68,7 @@
                                             class="text-green-600 hover:text-green-900" title="Assign Users">
                                             <i class="fas fa-users"></i>
                                         </a>
-                                        <?php if(!in_array($role->name, ['superadmin', 'admin', 'guru', 'siswa', 'sarpras'])): ?>
+                                        <?php if(!is_core_role($role->name)): ?>
                                             <form method="POST" action="<?php echo e(route('admin.roles.destroy', $role)); ?>"
                                                 class="inline"
                                                 data-confirm="Apakah Anda yakin ingin menghapus role <?php echo e($role->name); ?>? Tindakan ini tidak dapat dibatalkan.">

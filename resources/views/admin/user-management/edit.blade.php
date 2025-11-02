@@ -79,7 +79,7 @@
                             @foreach ($roles as $role)
                                 <option value="{{ $role->id }}"
                                     {{ old('role_id', $user->roles->first()?->id) == $role->id ? 'selected' : '' }}>
-                                    {{ ucfirst($role->name) }}
+                                    {{ get_role_display_name($role) }}
                                 </option>
                             @endforeach
                         </select>

@@ -43,7 +43,15 @@
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Display Name</label>
-                                        <p class="text-sm text-gray-900"><?php echo e($role->display_name ?? 'N/A'); ?></p>
+                                        <p class="text-sm text-gray-900">
+                                            <?php if($role->display_name): ?>
+                                                <?php echo e($role->display_name); ?>
+
+                                            <?php else: ?>
+                                                <span class="text-yellow-600 italic">Not set - will use:
+                                                    <?php echo e(ucfirst($role->name)); ?></span>
+                                            <?php endif; ?>
+                                        </p>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Current Users</label>
@@ -57,7 +65,7 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Select Users</h3>
                             <div class="max-h-96 overflow-y-auto border border-gray-300 rounded-md p-4">
                                 <div class="space-y-2">
-                                    <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                         <label class="flex items-center p-2 hover:bg-gray-50 rounded">
                                             <input type="checkbox" name="user_ids[]" value="<?php echo e($user->id); ?>"
                                                 <?php echo e(in_array($user->id, $roleUsers) ? 'checked' : ''); ?>
@@ -72,22 +80,42 @@
                                                         <p class="text-sm text-gray-500"><?php echo e($user->email); ?></p>
                                                     </div>
                                                     <div class="text-right">
-                                                        <span
-                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                            <?php if($user->user_type === 'superadmin'): ?> bg-red-100 text-red-800
-                                                            <?php elseif($user->user_type === 'admin'): ?> bg-blue-100 text-blue-800
-                                                            <?php elseif($user->user_type === 'guru'): ?> bg-green-100 text-green-800
-                                                            <?php elseif($user->user_type === 'sarpras'): ?> bg-yellow-100 text-yellow-800
-                                                            <?php elseif($user->user_type === 'siswa'): ?> bg-purple-100 text-purple-800
-                                                            <?php else: ?> bg-gray-100 text-gray-800 <?php endif; ?>">
-                                                            <?php echo e(ucfirst($user->user_type)); ?>
+                                                        <?php
+                                                            $userRoles = $user->roles;
+                                                            $primaryRole = $userRoles->first();
+                                                            $roleName = $primaryRole
+                                                                ? $primaryRole->name
+                                                                : $user->user_type ?? 'user';
+                                                            $badgeColor = get_role_badge_color($roleName);
+                                                        ?>
+                                                        <div class="flex flex-col items-end">
+                                                            <?php if($userRoles->count() > 1): ?>
+                                                                <span
+                                                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800 mb-1">
+                                                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                                                    Multiple Roles (<?php echo e($userRoles->count()); ?>)
+                                                                </span>
+                                                            <?php endif; ?>
+                                                            <span
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo e($badgeColor); ?>">
+                                                                <?php echo e(get_role_display_name($primaryRole ?? $roleName)); ?>
 
-                                                        </span>
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </label>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                        <div class="text-center py-8 text-gray-500">
+                                            <i class="fas fa-users text-4xl mb-2"></i>
+                                            <p>No users available to assign to this role.</p>
+                                            <?php if(!is_core_role($role->name) || strtolower($role->name) !== 'superadmin'): ?>
+                                                <p class="text-sm mt-1">Superadmin users are automatically excluded as
+                                                    they already have all permissions.</p>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -167,10 +195,9 @@
                     }
 
                     if (result.data.success) {
-                        showSuccess('User assignments updated successfully!');
-                        setTimeout(() => {
+                        showSuccess('Berhasil!', 'User assignments berhasil diupdate').then(() => {
                             window.location.href = '<?php echo e(route('admin.roles.index')); ?>';
-                        }, 1500);
+                        });
                     } else {
                         showError('Error updating user assignments: ' + (result.data.message ||
                             'Unknown error'));

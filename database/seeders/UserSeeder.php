@@ -18,15 +18,15 @@ class UserSeeder extends Seeder
         // Create Superadmin User (Only one superadmin)
         $superadmin = User::create([
             'name' => 'Super Administrator',
-            'email' => 'superadmin@sekolah.com', 
+            'email' => 'superadmin@sekolah.com',
             'password' => Hash::make('password'),
             'user_type' => 'superadmin',
             'email_verified_at' => now(),
             'is_verified_by_admin' => true,
         ]);
 
-        // Assign superadmin role
+        // Assign superadmin role (use syncRoles to ensure only one role)
         $superadminRole = Role::firstOrCreate(['name' => 'superadmin']);
-        $superadmin->assignRole($superadminRole);
+        $superadmin->syncRoles([$superadminRole]);
     }
 }

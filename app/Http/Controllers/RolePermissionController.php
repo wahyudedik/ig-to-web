@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use App\Helpers\RoleHelper;
 
 class RolePermissionController extends Controller
 {
@@ -86,8 +87,7 @@ class RolePermissionController extends Controller
     {
         try {
             // Check if it's a core role
-            $coreRoles = ['superadmin', 'admin', 'guru', 'siswa', 'sarpras'];
-            $isCoreRole = in_array($role->name, $coreRoles);
+            $isCoreRole = RoleHelper::isCoreRole($role->name);
 
             // Normalize role name: lowercase, no spaces, only alphanumeric and hyphens
             $roleName = strtolower(str_replace(' ', '', $request->name));
@@ -150,7 +150,7 @@ class RolePermissionController extends Controller
     {
         try {
             // Prevent deletion of core roles
-            if (in_array($role->name, ['superadmin', 'admin', 'guru', 'sarpras', 'siswa'])) {
+            if (RoleHelper::isCoreRole($role->name)) {
                 if (request()->expectsJson() || request()->ajax()) {
                     return response()->json([
                         'success' => false,
@@ -203,7 +203,16 @@ class RolePermissionController extends Controller
         $user = User::findOrFail($request->user_id);
         $role = Role::findOrFail($request->role_id);
 
-        $user->assignRole($role);
+        // IMPORTANT: Use syncRoles([$role]) to ensure user has ONLY ONE role
+        // assignRole() would ADD role (allowing multiple), syncRoles() REPLACES all roles
+        $user->syncRoles([$role]);
+
+        // Sync user_type with primary role
+        $user->load('roles');
+        $primaryRole = $user->roles->first();
+        if ($primaryRole && $user->user_type !== $primaryRole->name) {
+            $user->updateQuietly(['user_type' => $primaryRole->name]);
+        }
 
         return redirect()->back()->with('success', 'Role assigned to user successfully.');
     }
@@ -219,6 +228,16 @@ class RolePermissionController extends Controller
         $role = Role::findOrFail($request->role_id);
 
         $user->removeRole($role);
+
+        // Sync user_type with primary role (after removal)
+        $user->load('roles');
+        $primaryRole = $user->roles->first();
+        if ($primaryRole && $user->user_type !== $primaryRole->name) {
+            $user->updateQuietly(['user_type' => $primaryRole->name]);
+        } elseif (!$primaryRole) {
+            // If user has no roles, set default
+            $user->updateQuietly(['user_type' => 'siswa']); // Default fallback
+        }
 
         return redirect()->back()->with('success', 'Role removed from user successfully.');
     }

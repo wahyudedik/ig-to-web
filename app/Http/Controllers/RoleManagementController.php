@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use App\Helpers\RoleHelper;
 
 class RoleManagementController extends Controller
 {
@@ -17,7 +18,10 @@ class RoleManagementController extends Controller
 
     public function create()
     {
-        $permissions = Permission::all()->groupBy('module');
+        // Group permissions by module (extract from permission name: module.action)
+        $permissions = Permission::all()->groupBy(function ($permission) {
+            return explode('.', $permission->name)[0] ?? 'other';
+        });
         return view('role-management.create', compact('permissions'));
     }
 
@@ -73,7 +77,10 @@ class RoleManagementController extends Controller
 
     public function edit(Role $role)
     {
-        $permissions = Permission::all()->groupBy('module');
+        // Group permissions by module (extract from permission name: module.action)
+        $permissions = Permission::all()->groupBy(function ($permission) {
+            return explode('.', $permission->name)[0] ?? 'other';
+        });
         $rolePermissions = $role->permissions->pluck('name')->toArray();
 
         return view('role-management.edit', compact('role', 'permissions', 'rolePermissions'));
@@ -83,8 +90,7 @@ class RoleManagementController extends Controller
     {
         try {
             // Check if it's a core role
-            $coreRoles = ['superadmin', 'admin', 'guru', 'siswa', 'sarpras'];
-            $isCoreRole = in_array($role->name, $coreRoles);
+            $isCoreRole = RoleHelper::isCoreRole($role->name);
 
             // Normalize role name: lowercase, no spaces, only alphanumeric and hyphens
             $roleName = strtolower(str_replace(' ', '', $request->name));
@@ -144,7 +150,7 @@ class RoleManagementController extends Controller
     public function destroy(Role $role)
     {
         // Prevent deletion of core roles
-        if (in_array($role->name, ['superadmin', 'admin', 'guru', 'sarpras'])) {
+        if (RoleHelper::isCoreRole($role->name)) {
             return back()->with('error', 'Cannot delete core system role');
         }
 
@@ -156,7 +162,22 @@ class RoleManagementController extends Controller
 
     public function assignUsers(Role $role)
     {
-        $users = User::all();
+        // Exclude superadmin users when assigning to non-superadmin roles
+        // Superadmin already has all permissions, doesn't need role assignment
+        $usersQuery = User::with('roles');
+
+        // If assigning to non-superadmin role, exclude superadmin users
+        // Superadmin users have all permissions by default, don't need additional roles
+        if (strtolower($role->name) !== 'superadmin') {
+            $usersQuery->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'superadmin');
+            })->where(function ($q) {
+                $q->where('user_type', '!=', 'superadmin')
+                    ->orWhereNull('user_type'); // Include users with no user_type set
+            });
+        }
+
+        $users = $usersQuery->get();
         $roleUsers = $role->users->pluck('id')->toArray();
 
         return view('role-management.assign-users', compact('role', 'users', 'roleUsers'));
@@ -169,7 +190,55 @@ class RoleManagementController extends Controller
                 'user_ids' => 'array',
             ]);
 
-            $role->users()->sync($request->user_ids ?? []);
+            // IMPORTANT: Ensure one user has only ONE role (not multiple roles)
+            // Strategy: Remove user from ALL other roles before assigning to this role
+
+            $selectedUserIds = $request->user_ids ?? [];
+
+            // Get previous users before sync
+            $previousUserIds = $role->users->pluck('id')->toArray();
+
+            // Get all affected user IDs (both added and removed)
+            $affectedUserIds = array_unique(array_merge($selectedUserIds, $previousUserIds));
+
+            // BEFORE syncing: Remove all users from this role first (clean slate)
+            // This prevents users from having multiple roles
+            foreach ($affectedUserIds as $userId) {
+                $user = User::find($userId);
+                if ($user) {
+                    // Remove this user from ALL roles first
+                    $user->roles()->detach();
+                }
+            }
+
+            // NOW sync: Assign selected users to THIS role only (one role per user)
+            $role->users()->sync($selectedUserIds);
+
+            // Refresh role to get updated users
+            $role->refresh();
+
+            // Sync user_type for all affected users
+            User::whereIn('id', $affectedUserIds)
+                ->with('roles')
+                ->get()
+                ->each(function ($user) use ($role) {
+                    // User should now have only one role (the one we just assigned)
+                    $userRoles = $user->roles;
+
+                    if ($userRoles->count() > 1) {
+                        // Safety check: If user somehow has multiple roles, keep only the assigned one
+                        $user->syncRoles([$role]);
+                        $user->load('roles');
+                    }
+
+                    $primaryRole = $user->roles->first();
+                    if ($primaryRole && $user->user_type !== $primaryRole->name) {
+                        $user->updateQuietly(['user_type' => $primaryRole->name]);
+                    } elseif (!$primaryRole && $user->user_type) {
+                        // If user has no roles but has user_type, set default
+                        $user->updateQuietly(['user_type' => 'siswa']); // Default fallback
+                    }
+                });
 
             // Return JSON for AJAX requests
             if ($request->expectsJson() || $request->ajax()) {

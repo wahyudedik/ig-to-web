@@ -33,7 +33,14 @@
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Display Name</label>
-                                        <p class="text-sm text-gray-900">{{ $role->display_name ?? 'N/A' }}</p>
+                                        <p class="text-sm text-gray-900">
+                                            @if ($role->display_name)
+                                                {{ $role->display_name }}
+                                            @else
+                                                <span class="text-yellow-600 italic">Not set - will use:
+                                                    {{ ucfirst($role->name) }}</span>
+                                            @endif
+                                        </p>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Current Users</label>
@@ -47,7 +54,7 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Select Users</h3>
                             <div class="max-h-96 overflow-y-auto border border-gray-300 rounded-md p-4">
                                 <div class="space-y-2">
-                                    @foreach ($users as $user)
+                                    @forelse ($users as $user)
                                         <label class="flex items-center p-2 hover:bg-gray-50 rounded">
                                             <input type="checkbox" name="user_ids[]" value="{{ $user->id }}"
                                                 {{ in_array($user->id, $roleUsers) ? 'checked' : '' }}
@@ -60,21 +67,41 @@
                                                         <p class="text-sm text-gray-500">{{ $user->email }}</p>
                                                     </div>
                                                     <div class="text-right">
-                                                        <span
-                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                            @if ($user->user_type === 'superadmin') bg-red-100 text-red-800
-                                                            @elseif($user->user_type === 'admin') bg-blue-100 text-blue-800
-                                                            @elseif($user->user_type === 'guru') bg-green-100 text-green-800
-                                                            @elseif($user->user_type === 'sarpras') bg-yellow-100 text-yellow-800
-                                                            @elseif($user->user_type === 'siswa') bg-purple-100 text-purple-800
-                                                            @else bg-gray-100 text-gray-800 @endif">
-                                                            {{ ucfirst($user->user_type) }}
-                                                        </span>
+                                                        @php
+                                                            $userRoles = $user->roles;
+                                                            $primaryRole = $userRoles->first();
+                                                            $roleName = $primaryRole
+                                                                ? $primaryRole->name
+                                                                : $user->user_type ?? 'user';
+                                                            $badgeColor = get_role_badge_color($roleName);
+                                                        @endphp
+                                                        <div class="flex flex-col items-end">
+                                                            @if ($userRoles->count() > 1)
+                                                                <span
+                                                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800 mb-1">
+                                                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                                                    Multiple Roles ({{ $userRoles->count() }})
+                                                                </span>
+                                                            @endif
+                                                            <span
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeColor }}">
+                                                                {{ get_role_display_name($primaryRole ?? $roleName) }}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </label>
-                                    @endforeach
+                                    @empty
+                                        <div class="text-center py-8 text-gray-500">
+                                            <i class="fas fa-users text-4xl mb-2"></i>
+                                            <p>No users available to assign to this role.</p>
+                                            @if (!is_core_role($role->name) || strtolower($role->name) !== 'superadmin')
+                                                <p class="text-sm mt-1">Superadmin users are automatically excluded as
+                                                    they already have all permissions.</p>
+                                            @endif
+                                        </div>
+                                    @endforelse
                                 </div>
                             </div>
                         </div>
@@ -154,10 +181,9 @@
                     }
 
                     if (result.data.success) {
-                        showSuccess('User assignments updated successfully!');
-                        setTimeout(() => {
+                        showSuccess('Berhasil!', 'User assignments berhasil diupdate').then(() => {
                             window.location.href = '{{ route('admin.roles.index') }}';
-                        }, 1500);
+                        });
                     } else {
                         showError('Error updating user assignments: ' + (result.data.message ||
                             'Unknown error'));
