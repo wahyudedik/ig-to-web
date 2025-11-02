@@ -215,6 +215,14 @@ class SarprasSeeder extends Seeder
             Barang::create($barang);
         }
 
+        // Get superadmin user for maintenance user_id
+        $superadmin = \App\Models\User::where('user_type', 'superadmin')->first();
+        
+        if (!$superadmin) {
+            $this->command->warn('Superadmin user not found. Please run UserSeeder first.');
+            return;
+        }
+
         // Create Maintenance
         $maintenances = [
             [
@@ -230,7 +238,7 @@ class SarprasSeeder extends Seeder
                 'biaya' => 0,
                 'teknisi' => 'Ahmad Teknisi',
                 'catatan' => 'Maintenance rutin bulanan',
-                'user_id' => 1,
+                'user_id' => $superadmin->id,
             ],
             [
                 'kode_maintenance' => 'MTN-DEF67890',
@@ -245,7 +253,7 @@ class SarprasSeeder extends Seeder
                 'biaya' => 0,
                 'teknisi' => 'Petugas Kebersihan',
                 'catatan' => 'Pembersihan rutin ruang',
-                'user_id' => 1,
+                'user_id' => $superadmin->id,
             ],
             [
                 'kode_maintenance' => 'MTN-GHI11111',
@@ -260,7 +268,7 @@ class SarprasSeeder extends Seeder
                 'biaya' => 500000,
                 'teknisi' => 'Teknisi Elektronik',
                 'catatan' => 'Perbaikan lampu proyektor',
-                'user_id' => 1,
+                'user_id' => $superadmin->id,
             ],
         ];
 

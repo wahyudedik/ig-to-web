@@ -14,26 +14,27 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // Core system seeders
+            // Core system seeders (urut sesuai dependency)
             RoleSeeder::class, // Create roles first (superadmin, admin, guru, siswa, sarpras)
-            PermissionSeeder::class,
-            UserSeeder::class,
+            PermissionSeeder::class, // Create permissions and assign to superadmin
+            UserSeeder::class, // Create superadmin user and assign role
+            TestimonialLinksPermissionSeeder::class, // Assign testimonial-links permissions
 
             // Data management seeders
-            DataManagementSeeder::class,
-            MataPelajaranSeeder::class,
+            DataManagementSeeder::class, // Create kelas, jurusan, ekstrakurikuler
+            MataPelajaranSeeder::class, // Create mata pelajaran
 
-            // Module-specific seeders
-            GuruSeeder::class,
-            SiswaSeeder::class,
-            KelulusanSeeder::class,
-            SarprasSeeder::class,
-            OSISSeeder::class,
+            // Module-specific seeders (butuh UserSeeder untuk user_id)
+            GuruSeeder::class, // Butuh UserSeeder
+            SiswaSeeder::class, // Butuh UserSeeder
+            KelulusanSeeder::class, // Tidak ada dependency
+            SarprasSeeder::class, // Butuh UserSeeder untuk maintenance user_id
+            OSISSeeder::class, // Tidak ada dependency
 
-            // Content management seeders
-            MenuSeeder::class,
-            PageSeeder::class,
-            NotificationSeeder::class,
+            // Content management seeders (butuh UserSeeder untuk user_id)
+            MenuSeeder::class, // Butuh UserSeeder
+            PageSeeder::class, // Butuh UserSeeder
+            NotificationSeeder::class, // Butuh UserSeeder
         ]);
     }
 }
