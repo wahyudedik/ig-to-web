@@ -431,8 +431,8 @@
 
         // Edit user
         function editUser(userId) {
-            // Implementation for editing user
-            console.log('Edit user:', userId);
+            // Redirect to edit page
+            window.location.href = `{{ url('/admin/user-management/users') }}/${userId}/edit`;
         }
 
         // Toggle user status

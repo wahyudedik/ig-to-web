@@ -408,8 +408,14 @@
 
         function deleteItem(type, id, nama) {
             showConfirm(
-                `Apakah Anda yakin ingin menghapus ${nama}?`,
-                () => {
+                'Konfirmasi Hapus',
+                `Apakah Anda yakin ingin menghapus ${nama}? Tindakan ini tidak dapat dibatalkan.`,
+                'Ya, Hapus',
+                'Batal'
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    showLoading('Menghapus...', 'Mohon tunggu sebentar');
+
                     const url = `{{ url('admin/settings/data-management') }}/${type}/${id}`;
 
                     fetch(url, {
@@ -422,19 +428,22 @@
                         })
                         .then(response => response.json())
                         .then(data => {
+                            closeLoading();
                             if (data.success) {
-                                showSuccess(data.message);
-                                setTimeout(() => location.reload(), 1500);
+                                showSuccess('Berhasil!', data.message || 'Data berhasil dihapus').then(() => {
+                                    location.reload();
+                                });
                             } else {
-                                showError(data.message);
+                                showError('Error!', data.message || 'Gagal menghapus data');
                             }
                         })
                         .catch(error => {
+                            closeLoading();
                             console.error('Error:', error);
-                            showError('Terjadi kesalahan saat menghapus data');
+                            showError('Error!', 'Terjadi kesalahan saat menghapus data');
                         });
                 }
-            );
+            });
         }
 
         // Form submission
@@ -499,37 +508,38 @@
                                     errorMessage += `<strong>${field}:</strong> ${fieldErrors}<br>`;
                                 }
                             }
-                            showError(errorMessage);
+                            showError('Error Validasi!', errorMessage);
                             return;
                         } else if (result.status === 401 || result.status === 403) {
-                            showError('Unauthorized: Anda tidak memiliki izin untuk melakukan aksi ini.');
+                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
                             return;
                         } else if (result.status >= 500) {
-                            showError('Server error: Terjadi kesalahan pada server. Silakan coba lagi.');
+                            showError('Server Error!', 'Terjadi kesalahan pada server. Silakan coba lagi.');
                             return;
                         }
                     }
 
                     const data = result.data;
                     if (data.success) {
-                        showSuccess(data.message);
-                        closeModal();
-                        setTimeout(() => location.reload(), 1500);
+                        showSuccess('Berhasil!', data.message || 'Data berhasil disimpan').then(() => {
+                            closeModal();
+                            location.reload();
+                        });
                     } else {
                         if (data.errors) {
                             let errorMessage = 'Validation errors:<br>';
                             for (const [field, errors] of Object.entries(data.errors)) {
                                 errorMessage += `${field}: ${errors.join(', ')}<br>`;
                             }
-                            showError(errorMessage);
+                            showError('Error!', errorMessage);
                         } else {
-                            showError(data.message);
+                            showError('Error!', data.message || 'Gagal menyimpan data');
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showError('Terjadi kesalahan saat menyimpan data');
+                    showError('Error!', 'Terjadi kesalahan saat menyimpan data');
                 });
         });
     </script>

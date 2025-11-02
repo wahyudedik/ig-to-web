@@ -1,5 +1,14 @@
-<x-app-layout>
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">Role & Permission Manager</h1>
@@ -13,7 +22,7 @@
                     </svg>
                     Create New Role
                 </button>
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -22,7 +31,7 @@
                 </a>
             </div>
         </div>
-    </x-slot>
+     <?php $__env->endSlot(); ?>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Current Roles Table -->
@@ -66,21 +75,23 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-slate-200">
-                        @foreach ($roles as $role)
-                            <tr class="role-row" data-role-name="{{ strtolower($role->name) }}"
-                                data-role-id="{{ $role->id }}">
+                        <?php $__currentLoopData = $roles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $role): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <tr class="role-row" data-role-name="<?php echo e(strtolower($role->name)); ?>"
+                                data-role-id="<?php echo e($role->id); ?>">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-8 w-8">
                                             <div
                                                 class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                                                 <span class="text-sm font-medium text-blue-600">
-                                                    {{ strtoupper(substr($role->name, 0, 2)) }}
+                                                    <?php echo e(strtoupper(substr($role->name, 0, 2))); ?>
+
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="ml-4">
-                                            <div class="text-sm font-medium text-slate-900">{{ ucfirst($role->name) }}
+                                            <div class="text-sm font-medium text-slate-900"><?php echo e(ucfirst($role->name)); ?>
+
                                             </div>
                                         </div>
                                     </div>
@@ -88,31 +99,33 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-800">
-                                        {{ strtoupper(substr($role->name, 0, 3)) }}
+                                        <?php echo e(strtoupper(substr($role->name, 0, 3))); ?>
+
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                                    {{ $role->users_count ?? $role->users->count() }} users
+                                    <?php echo e($role->users_count ?? $role->users->count()); ?> users
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex flex-wrap gap-1">
-                                        @foreach ($role->permissions->take(3) as $permission)
+                                        <?php $__currentLoopData = $role->permissions->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $permission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <span
                                                 class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                {{ $permission->name }}
+                                                <?php echo e($permission->name); ?>
+
                                             </span>
-                                        @endforeach
-                                        @if ($role->permissions->count() > 3)
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php if($role->permissions->count() > 3): ?>
                                             <span
                                                 class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
-                                                +{{ $role->permissions->count() - 3 }} more
+                                                +<?php echo e($role->permissions->count() - 3); ?> more
                                             </span>
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="editRole({{ $role->id }})"
+                                        <button onclick="editRole(<?php echo e($role->id); ?>)"
                                             class="text-blue-600 hover:text-blue-900">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -120,7 +133,7 @@
                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                         </button>
-                                        <button onclick="deleteRole({{ $role->id }})"
+                                        <button onclick="deleteRole(<?php echo e($role->id); ?>)"
                                             class="text-red-600 hover:text-red-900">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -131,7 +144,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
             </div>
@@ -139,34 +152,34 @@
 
         <!-- Permission Groups -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            @foreach ($permissions as $group => $groupPermissions)
+            <?php $__currentLoopData = $permissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group => $groupPermissions): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="bg-white rounded-xl border border-slate-200">
                     <div class="px-6 py-4 border-b border-slate-200">
-                        <h3 class="text-lg font-semibold text-slate-900">{{ ucfirst($group) }} Permissions</h3>
+                        <h3 class="text-lg font-semibold text-slate-900"><?php echo e(ucfirst($group)); ?> Permissions</h3>
                     </div>
                     <div class="p-6">
                         <div class="space-y-3">
-                            @foreach ($groupPermissions as $permission)
+                            <?php $__currentLoopData = $groupPermissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $permission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <div class="text-sm font-medium text-slate-900">{{ $permission->name }}</div>
-                                        <div class="text-xs text-slate-500">{{ $permission->name }}</div>
+                                        <div class="text-sm font-medium text-slate-900"><?php echo e($permission->name); ?></div>
+                                        <div class="text-xs text-slate-500"><?php echo e($permission->name); ?></div>
                                     </div>
                                     <div class="flex items-center space-x-2">
-                                        @foreach ($roles as $role)
+                                        <?php $__currentLoopData = $roles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $role): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <input type="checkbox"
                                                 class="permission-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                                data-role="{{ $role->id }}"
-                                                data-permission="{{ $permission->id }}"
-                                                {{ $role->hasPermissionTo($permission) ? 'checked' : '' }}>
-                                        @endforeach
+                                                data-role="<?php echo e($role->id); ?>"
+                                                data-permission="<?php echo e($permission->id); ?>"
+                                                <?php echo e($role->hasPermissionTo($permission) ? 'checked' : ''); ?>>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </div>
                                 </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
                 </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </div>
 
@@ -183,11 +196,11 @@
                         <select id="roleName" name="name" class="form-input w-full" required
                             onchange="handleRoleNameChange()">
                             <option value="">-- Pilih Role --</option>
-                            @foreach ($predefinedRoles as $roleKey => $roleLabel)
-                                @if (!in_array($roleKey, $existingRoleNames))
-                                    <option value="{{ $roleKey }}">{{ $roleLabel }}</option>
-                                @endif
-                            @endforeach
+                            <?php $__currentLoopData = $predefinedRoles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $roleKey => $roleLabel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(!in_array($roleKey, $existingRoleNames)): ?>
+                                    <option value="<?php echo e($roleKey); ?>"><?php echo e($roleLabel); ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             <option value="custom">+ Buat Role Baru (Custom)</option>
                         </select>
                         <div id="customRoleNameField" class="mt-2 hidden">
@@ -219,30 +232,30 @@
                             </div>
                         </div>
                         <div class="max-h-96 overflow-y-auto border border-gray-300 rounded-md p-4">
-                            @foreach ($permissions as $group => $groupPermissions)
+                            <?php $__currentLoopData = $permissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group => $groupPermissions): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="mb-4 pb-3 border-b border-gray-200 last:border-b-0">
                                     <div class="flex items-center justify-between mb-2">
-                                        <div class="text-sm font-semibold text-gray-800">{{ ucfirst($group) }}</div>
+                                        <div class="text-sm font-semibold text-gray-800"><?php echo e(ucfirst($group)); ?></div>
                                         <button type="button"
-                                            onclick="toggleGroupPermissions('createRoleModal', '{{ $group }}')"
+                                            onclick="toggleGroupPermissions('createRoleModal', '<?php echo e($group); ?>')"
                                             class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                                             Toggle Group
                                         </button>
                                     </div>
                                     <div class="space-y-1">
-                                        @foreach ($groupPermissions as $permission)
+                                        <?php $__currentLoopData = $groupPermissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $permission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <label class="flex items-center hover:bg-gray-50 px-2 py-1 rounded">
                                                 <input type="checkbox" name="permissions[]"
-                                                    value="{{ $permission->name }}"
+                                                    value="<?php echo e($permission->name); ?>"
                                                     class="permission-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                                    data-group="{{ $group }}">
+                                                    data-group="<?php echo e($group); ?>">
                                                 <span
-                                                    class="ml-2 text-sm text-gray-700">{{ $permission->name }}</span>
+                                                    class="ml-2 text-sm text-gray-700"><?php echo e($permission->name); ?></span>
                                             </label>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </div>
                                 </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
                     <div class="flex justify-end space-x-3">
@@ -267,9 +280,9 @@
                                 class="text-red-500">*</span></label>
                         <select id="editRoleName" name="name" class="form-input w-full" required>
                             <option value="">-- Pilih Role --</option>
-                            @foreach ($predefinedRoles as $roleKey => $roleLabel)
-                                <option value="{{ $roleKey }}">{{ $roleLabel }}</option>
-                            @endforeach
+                            <?php $__currentLoopData = $predefinedRoles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $roleKey => $roleLabel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($roleKey); ?>"><?php echo e($roleLabel); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                         <p class="mt-1 text-xs text-gray-500">Pilih role dari daftar untuk memastikan penamaan seragam
                         </p>
@@ -292,30 +305,30 @@
                             </div>
                         </div>
                         <div class="max-h-96 overflow-y-auto border border-gray-300 rounded-md p-4">
-                            @foreach ($permissions as $group => $groupPermissions)
+                            <?php $__currentLoopData = $permissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group => $groupPermissions): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="mb-4 pb-3 border-b border-gray-200 last:border-b-0">
                                     <div class="flex items-center justify-between mb-2">
-                                        <div class="text-sm font-semibold text-gray-800">{{ ucfirst($group) }}</div>
+                                        <div class="text-sm font-semibold text-gray-800"><?php echo e(ucfirst($group)); ?></div>
                                         <button type="button"
-                                            onclick="toggleGroupPermissions('editRoleModal', '{{ $group }}')"
+                                            onclick="toggleGroupPermissions('editRoleModal', '<?php echo e($group); ?>')"
                                             class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                                             Toggle Group
                                         </button>
                                     </div>
                                     <div class="space-y-1">
-                                        @foreach ($groupPermissions as $permission)
+                                        <?php $__currentLoopData = $groupPermissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $permission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <label class="flex items-center hover:bg-gray-50 px-2 py-1 rounded">
                                                 <input type="checkbox" name="permissions[]"
-                                                    value="{{ $permission->name }}"
+                                                    value="<?php echo e($permission->name); ?>"
                                                     class="permission-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                                    data-group="{{ $group }}">
+                                                    data-group="<?php echo e($group); ?>">
                                                 <span
-                                                    class="ml-2 text-sm text-gray-700">{{ $permission->name }}</span>
+                                                    class="ml-2 text-sm text-gray-700"><?php echo e($permission->name); ?></span>
                                             </label>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </div>
                                 </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
                     <div class="flex justify-end space-x-3">
@@ -423,7 +436,7 @@
             submitBtn.textContent = 'Creating...';
             submitBtn.disabled = true;
 
-            fetch('{{ route('admin.role-permissions.store') }}', {
+            fetch('<?php echo e(route('admin.role-permissions.store')); ?>', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
@@ -763,4 +776,14 @@
             });
         }
     </script>
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH E:\PROJEK  LARAVEL\ig-to-web\resources\views/admin/role-permissions/index.blade.php ENDPATH**/ ?>

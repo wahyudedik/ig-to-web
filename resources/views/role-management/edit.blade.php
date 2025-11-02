@@ -168,20 +168,20 @@
                     }
 
                     if (result.data.success) {
-                        showSuccess('Role updated successfully!');
-                        setTimeout(() => {
+                        showSuccess('Berhasil!', 'Role berhasil diupdate').then(() => {
                             window.location.href = '{{ route('admin.roles.index') }}';
-                        }, 1500);
+                        });
                     } else {
-                        showError('Error updating role: ' + (result.data.message || 'Unknown error'));
+                        showError('Error!', result.data.message || 'Gagal mengupdate role');
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    const errorMessage = error.message || 'Unknown error occurred';
-                    showError('Error updating role: ' + errorMessage);
+                    closeLoading();
+                    const errorMessage = error.message || 'Terjadi kesalahan saat mengupdate role';
+                    showError('Error!', errorMessage);
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 });

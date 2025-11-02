@@ -163,20 +163,20 @@
                     }
 
                     if (result.data.success) {
-                        showSuccess('Role created successfully!');
-                        setTimeout(() => {
+                        showSuccess('Berhasil!', 'Role berhasil dibuat').then(() => {
                             window.location.href = '{{ route('admin.roles.index') }}';
-                        }, 1500);
+                        });
                     } else {
-                        showError('Error creating role: ' + (result.data.message || 'Unknown error'));
+                        showError('Error!', result.data.message || 'Gagal membuat role');
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    const errorMessage = error.message || 'Unknown error occurred';
-                    showError('Error creating role: ' + errorMessage);
+                    closeLoading();
+                    const errorMessage = error.message || 'Terjadi kesalahan saat membuat role';
+                    showError('Error!', errorMessage);
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 });

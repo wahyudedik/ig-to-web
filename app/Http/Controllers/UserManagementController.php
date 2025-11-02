@@ -7,6 +7,7 @@ use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class UserManagementController extends Controller
@@ -67,7 +68,7 @@ class UserManagementController extends Controller
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('Error inviting user: ' . $e->getMessage());
+            Log::error('Error inviting user: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error inviting user: ' . $e->getMessage()
@@ -114,7 +115,7 @@ class UserManagementController extends Controller
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('Error creating user: ' . $e->getMessage());
+            Log::error('Error creating user: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error creating user: ' . $e->getMessage()
@@ -122,14 +123,26 @@ class UserManagementController extends Controller
         }
     }
 
+    public function editUser(User $user)
+    {
+        // Prevent editing superadmin
+        if ($user->hasRole('superadmin')) {
+            return redirect()->route('admin.user-management.index')
+                ->with('error', 'Cannot edit superadmin user.');
+        }
+
+        $roles = Role::where('name', '!=', 'superadmin')->get();
+        $user->load('roles');
+
+        return view('admin.user-management.edit', compact('user', 'roles'));
+    }
+
     public function updateUser(Request $request, User $user)
     {
         // Prevent updating superadmin
         if ($user->hasRole('superadmin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot update superadmin user.'
-            ], 403);
+            return redirect()->route('admin.user-management.index')
+                ->with('error', 'Cannot update superadmin user.');
         }
 
         $request->validate([
@@ -154,11 +167,8 @@ class UserManagementController extends Controller
         $role = Role::findOrFail($request->role_id);
         $user->syncRoles([$role]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User updated successfully.',
-            'user' => $user
-        ]);
+        return redirect()->route('admin.user-management.index')
+            ->with('success', 'User updated successfully.');
     }
 
     public function deleteUser(User $user)
@@ -204,7 +214,7 @@ class UserManagementController extends Controller
     {
         try {
             // Send invitation email with temporary password
-            \Mail::send('emails.user-invitation', [
+            Mail::send('emails.user-invitation', [
                 'user' => $user,
                 'tempPassword' => $tempPassword,
                 'loginUrl' => url('/login'),
@@ -213,9 +223,9 @@ class UserManagementController extends Controller
                     ->subject('Welcome to Portal Sekolah - Account Invitation');
             });
 
-            \Log::info("Invitation email sent to {$user->email}");
+            Log::info("Invitation email sent to {$user->email}");
         } catch (\Exception $e) {
-            \Log::error("Failed to send invitation email to {$user->email}: " . $e->getMessage());
+            Log::error("Failed to send invitation email to {$user->email}: " . $e->getMessage());
         }
     }
 

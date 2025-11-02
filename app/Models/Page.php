@@ -87,13 +87,29 @@ class Page extends Model
         parent::boot();
 
         static::creating(function ($page) {
-            if (empty($page->slug)) {
+            // Always ensure slug is generated correctly from title
+            if (!empty($page->title)) {
                 $page->slug = Str::slug($page->title);
+            } elseif (empty($page->slug)) {
+                // If no title and no slug, set a default
+                $page->slug = Str::random(10);
+            } else {
+                // Sanitize existing slug if it contains invalid characters
+                $page->slug = Str::slug($page->slug);
             }
         });
 
         static::updating(function ($page) {
-            if ($page->isDirty('title') && empty($page->slug)) {
+            // If title changed, regenerate slug
+            if ($page->isDirty('title') && !empty($page->title)) {
+                $page->slug = Str::slug($page->title);
+            }
+            // Always sanitize slug to ensure no invalid characters (spaces, special chars)
+            if ($page->isDirty('slug') && !empty($page->slug)) {
+                $page->slug = Str::slug($page->slug);
+            }
+            // If slug is empty but title exists, generate slug from title
+            if (empty($page->slug) && !empty($page->title)) {
                 $page->slug = Str::slug($page->title);
             }
         });
@@ -177,8 +193,31 @@ class Page extends Model
      */
     public function getMenuUrlAttribute(): string
     {
-        if ($this->getRawOriginal('menu_url')) {
-            return $this->getRawOriginal('menu_url');
+        $customUrl = $this->getRawOriginal('menu_url');
+
+        // If custom URL is provided and it's a full URL or starts with /
+        if (!empty($customUrl)) {
+            // If it's a full URL (http/https), return as is
+            if (filter_var($customUrl, FILTER_VALIDATE_URL)) {
+                return $customUrl;
+            }
+            // If it starts with /, it's a relative path, return as is
+            if (str_starts_with($customUrl, '/')) {
+                return $customUrl;
+            }
+            // If custom URL looks like a slug (contains spaces or not a valid route), treat it as slug
+            // This fixes the issue where slug was saved in menu_url field
+            if (str_contains($customUrl, ' ') || !str_starts_with($customUrl, '/')) {
+                // Treat it as slug and generate proper route
+                $sanitizedSlug = Str::slug($customUrl);
+                return route('pages.public.show', $sanitizedSlug);
+            }
+            return $customUrl;
+        }
+
+        // If no custom URL, generate from slug
+        if (empty($this->slug)) {
+            return '#';
         }
 
         return route('pages.public.show', $this->slug);

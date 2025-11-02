@@ -112,10 +112,19 @@ class PageController extends Controller
             'seo_title' => 'nullable|string|max:60',
             'seo_description' => 'nullable|string|max:160',
             'seo_keywords' => 'nullable|string|max:255',
+            'is_menu' => 'boolean',
+            'menu_title' => 'nullable|string|max:255',
+            'menu_position' => 'nullable|in:header,footer',
+            'parent_id' => 'nullable|exists:pages,id',
+            'menu_icon' => 'nullable|string|max:100',
+            'menu_url' => 'nullable|string|max:500',
+            'menu_sort_order' => 'nullable|integer|min:0',
+            'menu_target_blank' => 'boolean',
         ]);
 
         $data = $request->all();
         $data['user_id'] = Auth::id();
+        // Ensure slug is always generated correctly (remove any spaces, special chars)
         $data['slug'] = Str::slug($request->title);
 
         // ✅ Fix: Ensure is_featured has a default value
@@ -133,6 +142,38 @@ class PageController extends Controller
             'keywords' => $request->seo_keywords,
         ];
 
+        // Handle menu settings
+        $data['is_menu'] = $request->boolean('is_menu', false);
+        $data['menu_target_blank'] = $request->boolean('menu_target_blank', false);
+        if (!$data['is_menu']) {
+            // Reset menu fields if not a menu item
+            $data['menu_title'] = null;
+            $data['menu_position'] = 'header';
+            $data['parent_id'] = null;
+            $data['menu_icon'] = null;
+            $data['menu_url'] = null;
+            $data['menu_sort_order'] = 0;
+            $data['menu_target_blank'] = false;
+        } else {
+            $data['menu_title'] = $request->menu_title ?: null;
+            $data['menu_position'] = $request->menu_position ?: 'header';
+            $data['parent_id'] = $request->parent_id ?: null;
+            $data['menu_icon'] = $request->menu_icon ?: null;
+
+            // Handle menu_url: if it's a slug (no / or http), treat as invalid and set to null
+            // This ensures menu_url is only used for custom URLs, not slugs
+            $menuUrl = $request->menu_url ?: null;
+            if (!empty($menuUrl)) {
+                // If it's not a full URL and doesn't start with /, it's probably a slug - ignore it
+                if (!filter_var($menuUrl, FILTER_VALIDATE_URL) && !str_starts_with($menuUrl, '/')) {
+                    $menuUrl = null; // Will use auto-generated route instead
+                }
+            }
+            $data['menu_url'] = $menuUrl;
+
+            $data['menu_sort_order'] = $request->menu_sort_order ?? 0;
+        }
+
         // Set published_at if status is published
         if ($request->status === 'published') {
             $data['published_at'] = now();
@@ -144,6 +185,12 @@ class PageController extends Controller
 
             // Create initial version
             PageVersion::createFromPage($page, 'Initial version');
+
+            // Clear menu cache after creating page with menu
+            if ($data['is_menu'] ?? false) {
+                cache()->forget('header_menus');
+                cache()->forget('footer_menus');
+            }
 
             return $page;
         });
@@ -198,8 +245,9 @@ class PageController extends Controller
     {
         $templates = $this->getAvailableTemplates();
         $categories = Page::distinct()->pluck('category')->filter();
+        $parentPages = Page::whereNull('parent_id')->where('is_menu', true)->where('id', '!=', $page->id)->get();
 
-        return view('pages.edit', compact('page', 'templates', 'categories'));
+        return view('pages.edit', compact('page', 'templates', 'categories', 'parentPages'));
     }
 
     /**
@@ -219,9 +267,18 @@ class PageController extends Controller
             'seo_title' => 'nullable|string|max:60',
             'seo_description' => 'nullable|string|max:160',
             'seo_keywords' => 'nullable|string|max:255',
+            'is_menu' => 'boolean',
+            'menu_title' => 'nullable|string|max:255',
+            'menu_position' => 'nullable|in:header,footer',
+            'parent_id' => 'nullable|exists:pages,id',
+            'menu_icon' => 'nullable|string|max:100',
+            'menu_url' => 'nullable|string|max:500',
+            'menu_sort_order' => 'nullable|integer|min:0',
+            'menu_target_blank' => 'boolean',
         ]);
 
         $data = $request->all();
+        // Ensure slug is always generated correctly (remove any spaces, special chars)
         $data['slug'] = Str::slug($request->title);
 
         // Handle featured image upload
@@ -240,6 +297,38 @@ class PageController extends Controller
             'keywords' => $request->seo_keywords,
         ];
 
+        // Handle menu settings
+        $data['is_menu'] = $request->boolean('is_menu', false);
+        $data['menu_target_blank'] = $request->boolean('menu_target_blank', false);
+        if (!$data['is_menu']) {
+            // Reset menu fields if not a menu item
+            $data['menu_title'] = null;
+            $data['menu_position'] = 'header';
+            $data['parent_id'] = null;
+            $data['menu_icon'] = null;
+            $data['menu_url'] = null;
+            $data['menu_sort_order'] = 0;
+            $data['menu_target_blank'] = false;
+        } else {
+            $data['menu_title'] = $request->menu_title ?: null;
+            $data['menu_position'] = $request->menu_position ?: 'header';
+            $data['parent_id'] = $request->parent_id ?: null;
+            $data['menu_icon'] = $request->menu_icon ?: null;
+
+            // Handle menu_url: if it's a slug (no / or http), treat as invalid and set to null
+            // This ensures menu_url is only used for custom URLs, not slugs
+            $menuUrl = $request->menu_url ?: null;
+            if (!empty($menuUrl)) {
+                // If it's not a full URL and doesn't start with /, it's probably a slug - ignore it
+                if (!filter_var($menuUrl, FILTER_VALIDATE_URL) && !str_starts_with($menuUrl, '/')) {
+                    $menuUrl = null; // Will use auto-generated route instead
+                }
+            }
+            $data['menu_url'] = $menuUrl;
+
+            $data['menu_sort_order'] = $request->menu_sort_order ?? 0;
+        }
+
         // Set published_at if status is published
         if ($request->status === 'published' && $page->status !== 'published') {
             $data['published_at'] = now();
@@ -250,6 +339,12 @@ class PageController extends Controller
         // Create new version if there are changes
         if ($page->wasChanged()) {
             PageVersion::createFromPage($page, $request->change_summary ?? 'Page updated');
+        }
+
+        // Clear menu cache after updating page with menu
+        if ($data['is_menu'] ?? $page->is_menu) {
+            cache()->forget('header_menus');
+            cache()->forget('footer_menus');
         }
 
         return redirect()->route('admin.pages.index')
@@ -385,9 +480,29 @@ class PageController extends Controller
      */
     public function publicShow($slug)
     {
-        $page = Page::where('slug', $slug)
+        // Decode URL-encoded slug if needed (handles %20 for spaces)
+        $decodedSlug = urldecode($slug);
+
+        // Try to find page by slug
+        $page = Page::where(function ($query) use ($slug, $decodedSlug) {
+            $query->where('slug', $decodedSlug)
+                ->orWhere('slug', $slug); // Also try original slug
+        })
             ->where('status', 'published')
-            ->firstOrFail();
+            ->first();
+
+        // If not found, try to sanitize and search again
+        if (!$page) {
+            $sanitizedSlug = Str::slug($decodedSlug);
+            $page = Page::where('slug', $sanitizedSlug)
+                ->where('status', 'published')
+                ->first();
+        }
+
+        // If still not found, return 404
+        if (!$page) {
+            abort(404, 'Page not found.');
+        }
 
         // Increment views count (optional)
         // $page->increment('views_count');

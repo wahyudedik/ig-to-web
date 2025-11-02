@@ -24,15 +24,21 @@ class RoleManagementController extends Controller
     public function store(Request $request)
     {
         try {
+            // Normalize role name: lowercase, no spaces, only alphanumeric and hyphens
+            $roleName = strtolower(str_replace(' ', '', $request->name));
+            $roleName = preg_replace('/[^a-z0-9-]/', '', $roleName);
+
+            $request->merge(['name' => $roleName]);
+
             $request->validate([
-                'name' => 'required|string|unique:roles,name',
-                'display_name' => 'required|string',
-                'description' => 'nullable|string',
+                'name' => 'required|string|unique:roles,name|max:255|regex:/^[a-z0-9-]+$/',
+                'display_name' => 'required|string|max:255',
+                'description' => 'nullable|string|max:1000',
                 'permissions' => 'array',
             ]);
 
             $role = Role::create([
-                'name' => $request->name,
+                'name' => $roleName,
                 'display_name' => $request->display_name,
                 'description' => $request->description,
                 'guard_name' => 'web',
@@ -76,17 +82,38 @@ class RoleManagementController extends Controller
     public function update(Request $request, Role $role)
     {
         try {
+            // Check if it's a core role
+            $coreRoles = ['superadmin', 'admin', 'guru', 'siswa', 'sarpras'];
+            $isCoreRole = in_array($role->name, $coreRoles);
+
+            // Normalize role name: lowercase, no spaces, only alphanumeric and hyphens
+            $roleName = strtolower(str_replace(' ', '', $request->name));
+            $roleName = preg_replace('/[^a-z0-9-]/', '', $roleName);
+
+            // Prevent changing core roles name (but allow updating permissions and other fields)
+            if ($isCoreRole && $roleName !== $role->name) {
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Cannot change name of core system role. You can only update display name, description, and permissions.'
+                    ], 403);
+                }
+                return redirect()->back()->with('error', 'Cannot change name of core system role');
+            }
+
+            $request->merge(['name' => $roleName]);
+
             $request->validate([
-                'name' => 'required|string|unique:roles,name,' . $role->id,
-                'display_name' => 'nullable|string',
-                'description' => 'nullable|string',
+                'name' => 'required|string|unique:roles,name,' . $role->id . '|max:255|regex:/^[a-z0-9-]+$/',
+                'display_name' => 'nullable|string|max:255',
+                'description' => 'nullable|string|max:1000',
                 'permissions' => 'array',
             ]);
 
             $role->update([
-                'name' => $request->name,
-                'display_name' => $request->display_name,
-                'description' => $request->description,
+                'name' => $roleName,
+                'display_name' => $request->display_name ?? $role->display_name,
+                'description' => $request->description ?? $role->description,
             ]);
 
             $role->syncPermissions($request->permissions ?? []);
@@ -165,7 +192,7 @@ class RoleManagementController extends Controller
                     'message' => 'Error assigning users: ' . $e->getMessage()
                 ], 422);
             }
-            
+
             return redirect()->back()->with('error', 'Error assigning users: ' . $e->getMessage());
         }
     }

@@ -113,7 +113,8 @@
                         onchange="document.getElementById('filterForm').submit();">
                         <option value="">Semua Status</option>
                         <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                        <option value="tidak_aktif" {{ request('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif
+                        <option value="tidak_aktif" {{ request('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak
+                            Aktif
                         </option>
                     </select>
                     <button type="submit" class="btn btn-primary">

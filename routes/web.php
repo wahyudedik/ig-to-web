@@ -523,6 +523,7 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin'
         Route::get('/', [App\Http\Controllers\UserManagementController::class, 'index'])->name('index');
         Route::post('/invite', [App\Http\Controllers\UserManagementController::class, 'inviteUser'])->name('invite');
         Route::post('/create', [App\Http\Controllers\UserManagementController::class, 'createUser'])->name('create');
+        Route::get('/users/{user}/edit', [App\Http\Controllers\UserManagementController::class, 'editUser'])->name('edit');
         Route::put('/users/{user}', [App\Http\Controllers\UserManagementController::class, 'updateUser'])->name('update');
         Route::delete('/users/{user}', [App\Http\Controllers\UserManagementController::class, 'deleteUser'])->name('delete');
         Route::post('/users/{user}/toggle-status', [App\Http\Controllers\UserManagementController::class, 'toggleUserStatus'])->name('toggle-status');

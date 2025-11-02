@@ -198,11 +198,110 @@
                                             class="block text-sm font-medium text-gray-700 mb-1">SEO Keywords</label>
                                         <input type="text" name="seo_keywords" id="seo_keywords"
                                             value="{{ old('seo_keywords', $page->seo_meta['keywords'] ?? '') }}"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('seo_keywords') border-red-500 @enderror">
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('seo_keywords') border-red-500 @enderror"
+                                            placeholder="keyword1, keyword2, keyword3">
                                         <p class="text-gray-500 text-xs mt-1">Comma-separated keywords</p>
                                         @error('seo_keywords')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Menu Settings -->
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Menu Settings</h3>
+
+                                    <div class="mb-4">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="is_menu" id="is_menu" value="1"
+                                                {{ old('is_menu', $page->is_menu) ? 'checked' : '' }}
+                                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                            <span class="ml-2 text-sm text-gray-700">Add to Menu</span>
+                                        </label>
+                                    </div>
+
+                                    <div id="menu-settings" class="space-y-4"
+                                        style="display: {{ old('is_menu', $page->is_menu) ? 'block' : 'none' }};">
+                                        <div>
+                                            <label for="menu_title"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Menu
+                                                Title</label>
+                                            <input type="text" name="menu_title" id="menu_title"
+                                                value="{{ old('menu_title', $page->menu_title) }}"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <p class="text-sm text-gray-500 mt-1">Leave empty to use page title</p>
+                                        </div>
+
+                                        <div>
+                                            <label for="menu_position"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Menu
+                                                Position</label>
+                                            <select name="menu_position" id="menu_position"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="header"
+                                                    {{ old('menu_position', $page->menu_position) == 'header' ? 'selected' : '' }}>
+                                                    Header</option>
+                                                <option value="footer"
+                                                    {{ old('menu_position', $page->menu_position) == 'footer' ? 'selected' : '' }}>
+                                                    Footer</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label for="parent_id"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Parent
+                                                Menu</label>
+                                            <select name="parent_id" id="parent_id"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="">Main Menu Item</option>
+                                                @foreach ($parentPages as $parentPage)
+                                                    <option value="{{ $parentPage->id }}"
+                                                        {{ old('parent_id', $page->parent_id) == $parentPage->id ? 'selected' : '' }}>
+                                                        {{ $parentPage->title }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label for="menu_icon"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Menu
+                                                Icon</label>
+                                            <input type="text" name="menu_icon" id="menu_icon"
+                                                value="{{ old('menu_icon', $page->menu_icon) }}"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="fas fa-home">
+                                            <p class="text-sm text-gray-500 mt-1">FontAwesome icon class</p>
+                                        </div>
+
+                                        <div>
+                                            <label for="menu_url"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Custom
+                                                URL</label>
+                                            <input type="text" name="menu_url" id="menu_url"
+                                                value="{{ old('menu_url', $page->menu_url) }}"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="/custom-url or https://external.com">
+                                            <p class="text-sm text-gray-500 mt-1">Leave empty to use page URL</p>
+                                        </div>
+
+                                        <div>
+                                            <label for="menu_sort_order"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+                                            <input type="number" name="menu_sort_order" id="menu_sort_order"
+                                                value="{{ old('menu_sort_order', $page->menu_sort_order ?? 0) }}"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+
+                                        <div class="flex items-center">
+                                            <input type="checkbox" name="menu_target_blank" id="menu_target_blank"
+                                                value="1"
+                                                {{ old('menu_target_blank', $page->menu_target_blank) ? 'checked' : '' }}
+                                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                            <label for="menu_target_blank" class="ml-2 block text-sm text-gray-700">
+                                                Open in New Tab
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -230,7 +329,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let contentEditor = null;
-            
+
             // Initialize CKEditor on wrapper div instead of textarea
             ClassicEditor
                 .create(document.querySelector('#content-editor-wrapper'), {
@@ -252,7 +351,7 @@
                 .then(editor => {
                     contentEditor = editor;
                     window.contentEditor = editor;
-                    
+
                     // Listen for content changes
                     editor.model.document.on('change:data', () => {
                         document.getElementById('content').value = editor.getData();
@@ -265,6 +364,21 @@
                     document.querySelector('#content-editor-wrapper').style.display = 'none';
                 });
 
+            // Menu settings toggle
+            const menuCheckbox = document.getElementById('is_menu');
+            const menuSettings = document.getElementById('menu-settings');
+
+            function toggleMenuSettings() {
+                if (menuCheckbox.checked) {
+                    menuSettings.style.display = 'block';
+                } else {
+                    menuSettings.style.display = 'none';
+                }
+            }
+
+            menuCheckbox.addEventListener('change', toggleMenuSettings);
+            toggleMenuSettings(); // Initial check
+
             // Update textarea before form submit and validate
             const form = document.querySelector('form');
             if (form) {
@@ -272,18 +386,19 @@
                     if (contentEditor) {
                         const editorData = contentEditor.getData();
                         const plainText = editorData.replace(/<[^>]*>/g, '').trim();
-                        
+
                         // Custom validation
                         if (!plainText || plainText === '') {
                             e.preventDefault();
                             if (typeof showError !== 'undefined') {
-                                showError('Content is required', 'Please enter some content for this page.');
+                                showError('Content is required',
+                                    'Please enter some content for this page.');
                             } else {
                                 alert('Content is required. Please enter some content for this page.');
                             }
                             return false;
                         }
-                        
+
                         // Sync content to textarea
                         document.getElementById('content').value = editorData;
                         // Remove required attribute to prevent browser validation
@@ -293,4 +408,23 @@
             }
         });
     </script>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Show success message if page was updated
+                @if (session('success'))
+                    if (typeof showSuccess !== 'undefined') {
+                        showSuccess('{{ __('Success') }}', '{{ session('success') }}');
+                    }
+                @endif
+
+                @if (session('error'))
+                    if (typeof showError !== 'undefined') {
+                        showError('{{ __('Error') }}', '{{ session('error') }}');
+                    }
+                @endif
+            });
+        </script>
+    @endpush
 </x-app-layout>

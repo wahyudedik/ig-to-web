@@ -175,8 +175,8 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex items-center justify-end space-x-2">
-                                                <a href="{{ route('pages.public.show', $page->slug) }}" target="_blank"
-                                                    class="text-blue-600 hover:text-blue-900">
+                                                <a href="{{ route('pages.public.show', $page->slug) }}"
+                                                    target="_blank" class="text-blue-600 hover:text-blue-900">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -250,4 +250,23 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Show success message if page was created/updated/deleted
+                @if (session('success'))
+                    if (typeof showSuccess !== 'undefined') {
+                        showSuccess('{{ __('Success') }}', '{{ session('success') }}');
+                    }
+                @endif
+
+                @if (session('error'))
+                    if (typeof showError !== 'undefined') {
+                        showError('{{ __('Error') }}', '{{ session('error') }}');
+                    }
+                @endif
+            });
+        </script>
+    @endpush
 </x-app-layout>

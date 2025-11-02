@@ -16,20 +16,43 @@ class RolePermissionController extends Controller
             return explode('.', $permission->name)[0];
         });
 
-        return view('admin.role-permissions.index', compact('roles', 'permissions'));
+        // Predefined roles for dropdown
+        $predefinedRoles = [
+            'admin' => 'Admin',
+            'guru' => 'Guru',
+            'siswa' => 'Siswa',
+            'sarpras' => 'Sarpras',
+            'osis' => 'OSIS',
+            'bendahara' => 'Bendahara',
+            'tatausaha' => 'Tata Usaha',
+            'kepalasekolah' => 'Kepala Sekolah',
+            'wakil' => 'Wakil Kepala Sekolah',
+            'kepalabidang' => 'Kepala Bidang',
+        ];
+
+        // Get existing role names
+        $existingRoleNames = $roles->pluck('name')->toArray();
+
+        return view('admin.role-permissions.index', compact('roles', 'permissions', 'predefinedRoles', 'existingRoleNames'));
     }
 
 
     public function createRole(Request $request)
     {
         try {
+            // Normalize role name: lowercase, no spaces, only alphanumeric and hyphens
+            $roleName = strtolower(str_replace(' ', '', $request->name));
+            $roleName = preg_replace('/[^a-z0-9-]/', '', $roleName);
+
+            $request->merge(['name' => $roleName]);
+
             $request->validate([
-                'name' => 'required|string|max:255|unique:roles,name',
+                'name' => 'required|string|max:255|unique:roles,name|regex:/^[a-z0-9-]+$/',
                 'permissions' => 'array'
             ]);
 
             $role = Role::create([
-                'name' => $request->name,
+                'name' => $roleName,
                 'guard_name' => 'web'
             ]);
 
@@ -62,12 +85,43 @@ class RolePermissionController extends Controller
     public function updateRole(Request $request, Role $role)
     {
         try {
-            $request->validate([
-                'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-                'permissions' => 'array'
-            ]);
+            // Check if it's a core role
+            $coreRoles = ['superadmin', 'admin', 'guru', 'siswa', 'sarpras'];
+            $isCoreRole = in_array($role->name, $coreRoles);
 
-            $role->update(['name' => $request->name]);
+            // Normalize role name: lowercase, no spaces, only alphanumeric and hyphens
+            $roleName = strtolower(str_replace(' ', '', $request->name));
+            $roleName = preg_replace('/[^a-z0-9-]/', '', $roleName);
+
+            // Prevent changing core roles name (but allow updating permissions)
+            if ($isCoreRole && $roleName !== $role->name) {
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Cannot change name of core system role. You can only update permissions.'
+                    ], 403);
+                }
+                return redirect()->back()->with('error', 'Cannot change name of core system role');
+            }
+
+            // Only validate and update name if it's changed or not a core role
+            if (!$isCoreRole || $roleName !== $role->name) {
+                $request->merge(['name' => $roleName]);
+
+                $request->validate([
+                    'name' => 'required|string|max:255|unique:roles,name,' . $role->id . '|regex:/^[a-z0-9-]+$/',
+                    'permissions' => 'array'
+                ]);
+
+                $role->update(['name' => $roleName]);
+            } else {
+                // For core roles, only validate permissions
+                $request->validate([
+                    'permissions' => 'array'
+                ]);
+            }
+
+            // Always allow updating permissions (even for core roles)
             $role->syncPermissions($request->permissions ?? []);
 
             // Return JSON for AJAX requests
@@ -176,6 +230,7 @@ class RolePermissionController extends Controller
 
             return response()->json([
                 'success' => true,
+                'role_name' => $role->name,
                 'permissions' => $permissions
             ]);
         } catch (\Exception $e) {
