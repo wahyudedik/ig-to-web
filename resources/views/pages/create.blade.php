@@ -53,8 +53,10 @@
                             <div>
                                 <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content
                                     *</label>
-                                <textarea name="content" id="content" rows="10" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('content') }}</textarea>
+                                <textarea name="content" id="content" rows="10"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    style="display: none;">{{ old('content') }}</textarea>
+                                <div id="content-editor-wrapper"></div>
                                 @error('content')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -291,9 +293,12 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/classic/ckeditor.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize CKEditor
+            let contentEditor = null;
+            
+            // Initialize CKEditor on wrapper div instead of textarea
             ClassicEditor
-                .create(document.querySelector('#content'), {
+                .create(document.querySelector('#content-editor-wrapper'), {
+                    initialData: document.querySelector('#content').value,
                     toolbar: {
                         items: [
                             'heading', '|',
@@ -309,11 +314,19 @@
                     language: '{{ app()->getLocale() }}'
                 })
                 .then(editor => {
-                    // Store editor instance for form submission
+                    contentEditor = editor;
                     window.contentEditor = editor;
+                    
+                    // Listen for content changes
+                    editor.model.document.on('change:data', () => {
+                        document.getElementById('content').value = editor.getData();
+                    });
                 })
                 .catch(error => {
                     console.error('Error initializing CKEditor:', error);
+                    // Fallback: show textarea if editor fails
+                    document.querySelector('#content').style.display = 'block';
+                    document.querySelector('#content-editor-wrapper').style.display = 'none';
                 });
 
             // Menu settings toggle
@@ -331,13 +344,29 @@
             menuCheckbox.addEventListener('change', toggleMenuSettings);
             toggleMenuSettings(); // Initial check
 
-            // Update textarea before form submit
+            // Update textarea before form submit and validate
             const form = document.querySelector('form');
             if (form) {
                 form.addEventListener('submit', function(e) {
-                    if (window.contentEditor) {
-                        const editorData = window.contentEditor.getData();
+                    if (contentEditor) {
+                        const editorData = contentEditor.getData();
+                        const plainText = editorData.replace(/<[^>]*>/g, '').trim();
+                        
+                        // Custom validation
+                        if (!plainText || plainText === '') {
+                            e.preventDefault();
+                            if (typeof showError !== 'undefined') {
+                                showError('Content is required', 'Please enter some content for this page.');
+                            } else {
+                                alert('Content is required. Please enter some content for this page.');
+                            }
+                            return false;
+                        }
+                        
+                        // Sync content to textarea
                         document.getElementById('content').value = editorData;
+                        // Remove required attribute to prevent browser validation
+                        document.getElementById('content').removeAttribute('required');
                     }
                 });
             }
