@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Kelulusan;
+use App\Models\Siswa;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -146,6 +147,20 @@ class KelulusanSeeder extends Seeder
         ];
 
         foreach ($kelulusans as $kelulusanData) {
+            // Try to find related siswa by NISN or NIS
+            $siswa = null;
+            if (isset($kelulusanData['nisn'])) {
+                $siswa = Siswa::where('nisn', $kelulusanData['nisn'])->first();
+            }
+            if (!$siswa && isset($kelulusanData['nis'])) {
+                $siswa = Siswa::where('nis', $kelulusanData['nis'])->first();
+            }
+
+            // Link siswa_id if found
+            if ($siswa) {
+                $kelulusanData['siswa_id'] = $siswa->id;
+            }
+
             Kelulusan::create($kelulusanData);
         }
 

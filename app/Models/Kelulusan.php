@@ -279,12 +279,19 @@ class Kelulusan extends Model
      */
     public function isEligibleForCheck(): bool
     {
+        // If already graduated, always eligible
+        if ($this->status === 'lulus') {
+            return true;
+        }
+
         // Only students in grade 12 or graduated can check
         if ($this->siswa) {
             $kelas = $this->siswa->kelas;
-            return str_contains($kelas, 'XII') || $this->status === 'lulus';
+            return str_contains($kelas, 'XII');
         }
 
+        // If no siswa relation but has graduation data, consider eligible if status is lulus
+        // This handles cases where kelulusan data exists but siswa_id is not linked
         return false;
     }
 
