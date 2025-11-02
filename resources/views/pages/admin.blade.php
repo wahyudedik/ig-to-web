@@ -27,7 +27,8 @@
         <!-- Filter Section -->
         <div class="card mb-8">
             <div class="card-body">
-                <form method="GET" class="flex flex-wrap gap-4 items-center">
+                <form method="GET" action="{{ route('admin.pages.index') }}" id="filterForm"
+                    class="flex flex-wrap gap-4 items-center">
                     <div class="flex-1 min-w-64">
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Search pages..."
@@ -35,7 +36,8 @@
                     </div>
                     <div>
                         <select name="category"
-                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onchange="document.getElementById('filterForm').submit();">
                             <option value="">All Categories</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category }}"
@@ -47,7 +49,8 @@
                     </div>
                     <div>
                         <select name="status"
-                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onchange="document.getElementById('filterForm').submit();">
                             <option value="">All Status</option>
                             @foreach ($statuses as $status)
                                 <option value="{{ $status }}"

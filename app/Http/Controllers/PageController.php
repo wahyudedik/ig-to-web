@@ -51,19 +51,22 @@ class PageController extends Controller
 
         $query = Page::with('user');
 
-        // Filter by status
-        if ($request->has('status') && $request->status !== '') {
+        // Filter by status (lebih robust: check filled)
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter by category
-        if ($request->has('category') && $request->category !== '') {
+        // Filter by category (lebih robust: check filled)
+        if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
 
-        // Search by title
-        if ($request->has('search') && $request->search !== '') {
-            $query->where('title', 'like', '%' . $request->search . '%');
+        // Search by title (lebih robust: check filled dan trim)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            if ($search !== '') {
+                $query->where('title', 'like', '%' . $search . '%');
+            }
         }
 
         // Sort
@@ -71,7 +74,7 @@ class PageController extends Controller
         $sortOrder = $request->get('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
-        $pages = $query->paginate(15);
+        $pages = $query->paginate(15)->withQueryString(); // Preserve query string saat pagination
         $categories = Page::distinct()->pluck('category')->filter();
         $statuses = ['draft', 'published', 'archived'];
 

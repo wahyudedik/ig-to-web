@@ -287,8 +287,36 @@
         </form>
     </div>
 
+    <!-- CKEditor 5 (Rich Text Editor - No API key required) -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/classic/ckeditor.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize CKEditor
+            ClassicEditor
+                .create(document.querySelector('#content'), {
+                    toolbar: {
+                        items: [
+                            'heading', '|',
+                            'bold', 'italic', 'link', '|',
+                            'bulletedList', 'numberedList', '|',
+                            'outdent', 'indent', '|',
+                            'blockQuote', 'insertTable', '|',
+                            'undo', 'redo'
+                        ],
+                        shouldNotGroupWhenFull: true
+                    },
+                    height: 400,
+                    language: '{{ app()->getLocale() }}'
+                })
+                .then(editor => {
+                    // Store editor instance for form submission
+                    window.contentEditor = editor;
+                })
+                .catch(error => {
+                    console.error('Error initializing CKEditor:', error);
+                });
+
+            // Menu settings toggle
             const menuCheckbox = document.getElementById('is_menu');
             const menuSettings = document.getElementById('menu-settings');
 
@@ -302,6 +330,17 @@
 
             menuCheckbox.addEventListener('change', toggleMenuSettings);
             toggleMenuSettings(); // Initial check
+
+            // Update textarea before form submit
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (window.contentEditor) {
+                        const editorData = window.contentEditor.getData();
+                        document.getElementById('content').value = editorData;
+                    }
+                });
+            }
         });
     </script>
 </x-app-layout>
