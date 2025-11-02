@@ -14,7 +14,7 @@
                         <p class="text-gray-600">Masukkan NISN atau NIS untuk mengecek status kelulusan</p>
                     </div>
 
-                    <form method="POST" action="{{ route('lulus.processCheck') }}" class="space-y-6">
+                    <form method="POST" action="{{ route('admin.lulus.check.process') }}" class="space-y-6">
                         @csrf
 
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
