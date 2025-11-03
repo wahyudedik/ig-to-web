@@ -119,18 +119,69 @@ class SystemHealthController extends Controller
 
     private function checkDiskSpace(): array
     {
-        $totalSpace = disk_total_space('/');
-        $freeSpace = disk_free_space('/');
-        $usedSpace = $totalSpace - $freeSpace;
-        $usagePercentage = ($usedSpace / $totalSpace) * 100;
+        try {
+            // Try multiple paths that are likely to be within open_basedir restrictions
+            // Priority: storage_path (most likely to be accessible), then base_path, then '/tmp'
+            $pathsToTry = [
+                storage_path(),  // Usually: /www/wwwroot/domain.com/storage
+                base_path(),     // Usually: /www/wwwroot/domain.com
+                '/tmp',          // Usually allowed by open_basedir
+            ];
 
-        return [
-            'status' => $usagePercentage < 90 ? 'healthy' : 'warning',
-            'total_gb' => round($totalSpace / 1024 / 1024 / 1024, 2),
-            'used_gb' => round($usedSpace / 1024 / 1024 / 1024, 2),
-            'free_gb' => round($freeSpace / 1024 / 1024 / 1024, 2),
-            'usage_percentage' => round($usagePercentage, 2)
-        ];
+            $totalSpace = null;
+            $freeSpace = null;
+            $usedPath = null;
+
+            foreach ($pathsToTry as $path) {
+                try {
+                    // Check if path exists and is readable
+                    if (!is_dir($path)) {
+                        continue;
+                    }
+
+                    $totalSpace = @disk_total_space($path);
+                    $freeSpace = @disk_free_space($path);
+
+                    // If we got valid values, use this path
+                    if ($totalSpace !== false && $freeSpace !== false && $totalSpace > 0) {
+                        $usedPath = $path;
+                        break;
+                    }
+                } catch (\Exception $e) {
+                    // Try next path
+                    continue;
+                }
+            }
+
+            // If we couldn't get disk space info, return warning
+            if ($totalSpace === null || $freeSpace === null || $totalSpace === false || $freeSpace === false) {
+                return [
+                    'status' => 'warning',
+                    'message' => 'Disk space information unavailable (open_basedir restriction)',
+                    'note' => 'This is normal in shared hosting environments with security restrictions.'
+                ];
+            }
+
+            $usedSpace = $totalSpace - $freeSpace;
+            $usagePercentage = ($usedSpace / $totalSpace) * 100;
+
+            return [
+                'status' => $usagePercentage < 90 ? 'healthy' : 'warning',
+                'total_gb' => round($totalSpace / 1024 / 1024 / 1024, 2),
+                'used_gb' => round($usedSpace / 1024 / 1024 / 1024, 2),
+                'free_gb' => round($freeSpace / 1024 / 1024 / 1024, 2),
+                'usage_percentage' => round($usagePercentage, 2),
+                'monitored_path' => $usedPath,
+                'note' => $usedPath !== '/' ? 'Showing disk space for monitored path (not root filesystem)' : null
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'warning',
+                'error' => 'Unable to retrieve disk space information',
+                'message' => $e->getMessage(),
+                'note' => 'This may be due to open_basedir restrictions on shared hosting.'
+            ];
+        }
     }
 
     private function getSystemMetrics(): array
