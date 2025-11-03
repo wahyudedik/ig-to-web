@@ -18,7 +18,8 @@ class WebPushService
         $subscriptions = $user->pushSubscriptions;
 
         if ($subscriptions->isEmpty()) {
-            return false;
+            // Return empty array instead of false to avoid array_merge error
+            return [];
         }
 
         $results = [];
@@ -46,7 +47,10 @@ class WebPushService
         $results = [];
         foreach ($users as $user) {
             $userResults = $this->sendToUser($user, $title, $body, $options);
-            $results = array_merge($results, $userResults);
+            // Ensure userResults is always an array before merging
+            if (is_array($userResults)) {
+                $results = array_merge($results, $userResults);
+            }
         }
 
         return $results;
