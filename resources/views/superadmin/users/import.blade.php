@@ -5,7 +5,7 @@
                 <h1 class="text-2xl font-bold text-slate-900">Import Users</h1>
                 <p class="text-slate-600 mt-1">Import user data from Excel file</p>
             </div>
-            <a href="{{ route('superadmin.users') }}" class="btn btn-secondary">
+            <a href="{{ route('admin.superadmin.users') }}" class="btn btn-secondary">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -25,7 +25,7 @@
                     <!-- Upload Form -->
                     <div>
                         <h4 class="text-md font-medium text-slate-900 mb-4">Upload Excel File</h4>
-                        <form action="{{ route('superadmin.users.processImport') }}" method="POST"
+                        <form action="{{ route('admin.superadmin.users.processImport') }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             <div class="space-y-4">
@@ -68,7 +68,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <a href="{{ route('superadmin.users.downloadTemplate') }}" class="btn btn-secondary">
+                            <a href="{{ route('admin.superadmin.users.downloadTemplate') }}" class="btn btn-secondary">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

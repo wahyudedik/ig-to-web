@@ -145,10 +145,18 @@
                             <div
                                 class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div class="py-2">
-                                    <a href="<?php echo e(route('admin.user-management.index')); ?>"
-                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                        <i class="fas fa-users mr-2"></i>User Management
-                                    </a>
+                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['users.view', 'users.create', 'users.edit', 'users.delete'])): ?>
+                                        <a href="<?php echo e(route('admin.user-management.index')); ?>"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-users mr-2"></i>User Management
+                                        </a>
+                                    <?php endif; ?>
+                                    <?php if(Auth::check() && (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))): ?>
+                                        <a href="<?php echo e(route('admin.superadmin.users')); ?>"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-users-cog mr-2"></i>User Management (System)
+                                        </a>
+                                    <?php endif; ?>
                                     <a href="<?php echo e(route('admin.role-permissions.index')); ?>"
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                         <i class="fas fa-shield-alt mr-2"></i>Role & Permissions
@@ -533,6 +541,33 @@
                         </div>
                     <?php endif; ?>
 
+                    <!-- Student Menu (Siswa) -->
+                    <?php if(Auth::check() && Auth::user()->hasAnyRole(['siswa'])): ?>
+                        <div class="px-3 py-2">
+                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Student</div>
+                            <div class="space-y-1 ml-2">
+                                <?php if(Auth::check() && (Auth::user()->hasRole('siswa') || Auth::user()->can('osis.vote'))): ?>
+                                    <a href="<?php echo e(route('admin.osis.voting')); ?>"
+                                        class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                        <i class="fas fa-vote-yea mr-2"></i>OSIS Voting
+                                    </a>
+                                <?php endif; ?>
+                                <?php if(Auth::check() && (Auth::user()->hasRole('siswa') || Auth::user()->can('osis.results'))): ?>
+                                    <a href="<?php echo e(route('admin.osis.results')); ?>"
+                                        class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                        <i class="fas fa-chart-bar mr-2"></i>Voting Results
+                                    </a>
+                                <?php endif; ?>
+                                <?php if(Auth::check() && Auth::user()->hasRole('siswa')): ?>
+                                    <a href="<?php echo e(route('admin.siswa.index')); ?>"
+                                        class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                        <i class="fas fa-user-graduate mr-2"></i>View Students
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <!-- Content Management -->
                     <?php if(Auth::check() && Auth::user()->hasAnyRole(['admin', 'superadmin'])): ?>
                         <div class="px-3 py-2">
@@ -566,10 +601,18 @@
                             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">System
                                 Management</div>
                             <div class="space-y-1 ml-2">
-                                <a href="<?php echo e(route('admin.superadmin.users')); ?>"
-                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                                    <i class="fas fa-users mr-2"></i>User Management
-                                </a>
+                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['users.view', 'users.create', 'users.edit', 'users.delete'])): ?>
+                                    <a href="<?php echo e(route('admin.user-management.index')); ?>"
+                                        class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                        <i class="fas fa-users mr-2"></i>User Management
+                                    </a>
+                                <?php endif; ?>
+                                <?php if(Auth::check() && (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))): ?>
+                                    <a href="<?php echo e(route('admin.superadmin.users')); ?>"
+                                        class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                        <i class="fas fa-users-cog mr-2"></i>User Management (System)
+                                    </a>
+                                <?php endif; ?>
                                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewAny', App\Models\Permission::class)): ?>
                                     <a href="<?php echo e(route('admin.permissions.index')); ?>"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">

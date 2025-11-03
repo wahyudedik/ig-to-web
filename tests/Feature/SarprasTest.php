@@ -30,7 +30,7 @@ class SarprasTest extends TestCase
         ]);
 
         // Assign sarpras role using Spatie
-        $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'sarpras']);
+        $role = $this->getOrCreateRole('sarpras');
         $this->user->assignRole($role);
 
         // Create test kategori

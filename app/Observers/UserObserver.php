@@ -14,9 +14,14 @@ class UserObserver
     public function saved(User $user): void
     {
         // Only sync if roles relationship is loaded (avoid N+1)
-        // AND if user_type was not just updated (to prevent infinite loop)
-        if ($user->relationLoaded('roles') && !$user->wasRecentlyCreated) {
-            $this->syncUserType($user);
+        // Skip if user was just created (created() method will handle it)
+        // But allow sync if roles are loaded and user_type differs (e.g., after role assignment)
+        if ($user->relationLoaded('roles')) {
+            // Only skip if user was just created AND has no roles yet (to avoid premature sync)
+            // If roles are loaded and user exists, allow sync
+            if (!$user->wasRecentlyCreated || $user->roles->isNotEmpty()) {
+                $this->syncUserType($user);
+            }
         }
     }
 
@@ -49,14 +54,11 @@ class UserObserver
 
         if ($primaryRole) {
             $roleName = $primaryRole->name;
-            // Only update if different AND role name is in valid enum values
-            $validUserTypes = ['superadmin', 'admin', 'guru', 'siswa', 'sarpras'];
-            if ($user->user_type !== $roleName && in_array($roleName, $validUserTypes)) {
+            // Now that user_type is VARCHAR (not ENUM), we can sync ANY role name
+            // This supports both core roles and custom roles (e.g., 'osis', 'bendahara', etc.)
+            if ($user->user_type !== $roleName) {
                 // Use updateQuietly to prevent infinite loop (no events fired)
                 $user->updateQuietly(['user_type' => $roleName]);
-            } elseif ($user->user_type !== $roleName && !in_array($roleName, $validUserTypes)) {
-                // Custom role not in enum - keep existing user_type or set to first valid role
-                // Don't update user_type for custom roles
             }
         } elseif (!$primaryRole && !$user->user_type) {
             // If user has no roles and no user_type, set default

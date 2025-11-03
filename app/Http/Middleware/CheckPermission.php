@@ -21,14 +21,15 @@ class CheckPermission
             return redirect()->route('login');
         }
 
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Superadmin bypass all permissions
-        if ($user->user_type === 'superadmin') {
+        if ($user->user_type === 'superadmin' || $user->hasRole('superadmin')) {
             return $next($request);
         }
 
-        // Check if user has permission using Spatie
+        // Check if user has permission using Spatie (also supports custom permissions)
         if (!$user->hasPermissionTo($permission)) {
             abort(403, 'Insufficient permissions.');
         }

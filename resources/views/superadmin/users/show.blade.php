@@ -6,14 +6,14 @@
                 <p class="text-slate-600 mt-1">{{ $user->name }}</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('superadmin.users.edit', $user) }}" class="btn btn-primary">
+                <a href="{{ route('admin.superadmin.users.edit', $user) }}" class="btn btn-primary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Edit User
                 </a>
-                <a href="{{ route('superadmin.users') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.superadmin.users') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -92,7 +92,7 @@
                     <div class="card-header">
                         <div class="flex items-center justify-between">
                             <h3 class="text-lg font-semibold text-slate-900">Module Access</h3>
-                            <a href="{{ route('superadmin.users.module-access', $user) }}"
+                            <a href="{{ route('admin.superadmin.users.module-access', $user) }}"
                                 class="btn btn-primary btn-sm">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -155,7 +155,7 @@
                         <h3 class="text-lg font-semibold text-slate-900">Quick Actions</h3>
                     </div>
                     <div class="card-body space-y-3">
-                        <a href="{{ route('superadmin.users.edit', $user) }}"
+                        <a href="{{ route('admin.superadmin.users.edit', $user) }}"
                             class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                             <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -164,7 +164,7 @@
                             </svg>
                             <span class="font-medium text-slate-900">Edit User</span>
                         </a>
-                        <a href="{{ route('superadmin.users.module-access', $user) }}"
+                        <a href="{{ route('admin.superadmin.users.module-access', $user) }}"
                             class="flex items-center p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
                             <svg class="w-5 h-5 text-purple-600 mr-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -174,7 +174,7 @@
                             <span class="font-medium text-slate-900">Manage Access</span>
                         </a>
                         @if ($user->user_type !== 'superadmin')
-                            <form method="POST" action="{{ route('superadmin.users.destroy', $user) }}"
+                            <form method="POST" action="{{ route('admin.superadmin.users.destroy', $user) }}"
                                 data-confirm="Are you sure you want to delete this user?">
                                 @csrf
                                 @method('DELETE')

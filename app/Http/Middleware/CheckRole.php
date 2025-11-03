@@ -21,17 +21,34 @@ class CheckRole
             return redirect()->route('login');
         }
 
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Superadmin bypass all role checks
-        if ($user->user_type === 'superadmin') {
+        if ($user->user_type === 'superadmin' || $user->hasRole('superadmin')) {
             return $next($request);
         }
 
         // Support multiple roles separated by |
         $allowedRoles = explode('|', $role);
 
-        if (!in_array($user->user_type, $allowedRoles)) {
+        // Check both user_type (for backward compatibility) and Spatie roles (for custom roles)
+        $hasAccess = false;
+
+        // First check user_type (backward compatibility)
+        if (in_array($user->user_type, $allowedRoles)) {
+            $hasAccess = true;
+        }
+
+        // Also check Spatie roles (supports custom roles like 'osis', 'bendahara', etc.)
+        foreach ($allowedRoles as $allowedRole) {
+            if ($user->hasRole(trim($allowedRole))) {
+                $hasAccess = true;
+                break;
+            }
+        }
+
+        if (!$hasAccess) {
             abort(403, 'Unauthorized access.');
         }
 

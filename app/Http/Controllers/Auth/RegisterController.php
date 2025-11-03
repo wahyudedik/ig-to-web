@@ -29,11 +29,15 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::defaults()],
-            'user_type' => 'required|in:guru,siswa,sarpras',
+            // user_type is now VARCHAR (not ENUM) - supports custom roles
+            // But for public registration, we still restrict to safe roles
+            'user_type' => 'required|in:guru,siswa,sarpras', // Keep restriction for public registration for security
             'terms' => 'required|accepted',
         ]);
 
         // Create user without email verification
+        // Note: Public registration still uses enum restriction for security
+        // Custom roles can only be assigned by admin via /admin/user-management
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,

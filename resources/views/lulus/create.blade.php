@@ -16,31 +16,62 @@
                         <!-- Basic Information -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
+                                <label for="siswa_id" class="block text-sm font-medium text-gray-700">Pilih Siswa
+                                    *</label>
+                                <select name="siswa_id" id="siswa_id" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Pilih Siswa dari Daftar</option>
+                                    @foreach ($siswas ?? [] as $siswa)
+                                        <option value="{{ $siswa->id }}" data-nama="{{ $siswa->nama_lengkap }}"
+                                            data-nis="{{ $siswa->nis }}" data-nisn="{{ $siswa->nisn }}"
+                                            data-kelas="{{ $siswa->kelas }}" data-jurusan="{{ $siswa->jurusan }}"
+                                            data-email="{{ $siswa->email }}"
+                                            data-jenis-kelamin="{{ $siswa->jenis_kelamin }}"
+                                            {{ old('siswa_id') == $siswa->id ? 'selected' : '' }}>
+                                            {{ $siswa->nama_lengkap }} - NIS: {{ $siswa->nis }} - NISN:
+                                            {{ $siswa->nisn }} - {{ $siswa->kelas }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('siswa_id')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                                <p class="mt-1 text-sm text-gray-500">Pilih siswa dari daftar untuk menghindari
+                                    kesalahan penulisan</p>
+                            </div>
+
+                            <div>
                                 <label for="nama" class="block text-sm font-medium text-gray-700">Nama Lengkap
                                     *</label>
-                                <input type="text" name="nama" id="nama" value="{{ old('nama') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <input type="text" name="nama" id="nama" value="{{ old('nama') }}"
+                                    required readonly
+                                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('nama')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
+                                <p class="mt-1 text-sm text-gray-500">Terisi otomatis setelah memilih siswa</p>
                             </div>
 
                             <div>
                                 <label for="nisn" class="block text-sm font-medium text-gray-700">NISN *</label>
-                                <input type="text" name="nisn" id="nisn" value="{{ old('nisn') }}" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <input type="text" name="nisn" id="nisn" value="{{ old('nisn') }}"
+                                    required readonly
+                                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('nisn')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
+                                <p class="mt-1 text-sm text-gray-500">Terisi otomatis setelah memilih siswa</p>
                             </div>
 
                             <div>
                                 <label for="nis" class="block text-sm font-medium text-gray-700">NIS</label>
                                 <input type="text" name="nis" id="nis" value="{{ old('nis') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    readonly
+                                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('nis')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
+                                <p class="mt-1 text-sm text-gray-500">Terisi otomatis setelah memilih siswa</p>
                             </div>
 
                             <div>
@@ -250,4 +281,40 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const siswaSelect = document.getElementById('siswa_id');
+            const namaInput = document.getElementById('nama');
+            const nisnInput = document.getElementById('nisn');
+            const nisInput = document.getElementById('nis');
+            const jurusanSelect = document.getElementById('jurusan');
+
+            if (siswaSelect && namaInput && nisnInput && nisInput) {
+                siswaSelect.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption && selectedOption.value) {
+                        namaInput.value = selectedOption.getAttribute('data-nama') || '';
+                        nisnInput.value = selectedOption.getAttribute('data-nisn') || '';
+                        nisInput.value = selectedOption.getAttribute('data-nis') || '';
+
+                        // Set jurusan if available
+                        const jurusanValue = selectedOption.getAttribute('data-jurusan');
+                        if (jurusanValue && jurusanSelect) {
+                            jurusanSelect.value = jurusanValue;
+                        }
+                    } else {
+                        namaInput.value = '';
+                        nisnInput.value = '';
+                        nisInput.value = '';
+                    }
+                });
+
+                // Trigger on page load if value is already selected
+                if (siswaSelect.value) {
+                    siswaSelect.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    </script>
 </x-app-layout>

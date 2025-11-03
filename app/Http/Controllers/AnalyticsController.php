@@ -435,12 +435,24 @@ class AnalyticsController extends Controller
      */
     private function getAuditActivityTrend($days): array
     {
-        return $days->map(function ($day) {
-            return [
-                'date' => $day->format('M d'),
-                'count' => AuditLog::whereDate('created_at', $day)->count(),
-            ];
-        })->toArray();
+        // Return empty array if days collection is empty
+        if ($days->isEmpty()) {
+            return [];
+        }
+
+        // Cache for 15 minutes to improve performance
+        $firstDay = $days->first();
+        $lastDay = $days->last();
+        $cacheKey = 'audit_activity_trend_' . ($firstDay ? $firstDay->format('Y-m-d') : '') . '_' . ($lastDay ? $lastDay->format('Y-m-d') : '');
+
+        return cache()->remember($cacheKey, 900, function () use ($days) {
+            return $days->map(function ($day) {
+                return [
+                    'date' => $day->format('M d'),
+                    'count' => AuditLog::whereDate('created_at', $day)->count(),
+                ];
+            })->toArray();
+        });
     }
 
     /**

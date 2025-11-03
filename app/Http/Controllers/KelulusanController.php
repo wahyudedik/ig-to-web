@@ -56,8 +56,15 @@ class KelulusanController extends Controller
 
         $kelulusans = $query->paginate(15)->withQueryString(); // Preserve query string saat pagination
         $statuses = ['lulus', 'tidak_lulus', 'mengulang'];
-        $tahunAjaran = Kelulusan::distinct()->pluck('tahun_ajaran')->sort()->values();
-        $jurusan = Kelulusan::distinct()->pluck('jurusan')->filter();
+
+        // Cache distinct values for better performance (cache for 10 minutes)
+        $tahunAjaran = cache()->remember('kelulusan_tahun_ajaran', 600, function () {
+            return Kelulusan::distinct()->pluck('tahun_ajaran')->sort()->values();
+        });
+
+        $jurusan = cache()->remember('kelulusan_jurusan', 600, function () {
+            return Kelulusan::distinct()->pluck('jurusan')->filter();
+        });
 
         return view('lulus.index', compact('kelulusans', 'statuses', 'tahunAjaran', 'jurusan'));
     }
@@ -70,7 +77,14 @@ class KelulusanController extends Controller
         $majors = $this->getAvailableMajors();
         $tahunAjaran = range(2020, date('Y'));
 
-        return view('lulus.create', compact('majors', 'tahunAjaran'));
+        // Get active students for dropdown (cached for 5 minutes)
+        $siswas = cache()->remember('active_siswas_for_kelulusan', 300, function () {
+            return \App\Models\Siswa::where('status', 'aktif')
+                ->orderBy('nama_lengkap')
+                ->get(['id', 'nama_lengkap', 'nis', 'nisn', 'jurusan']);
+        });
+
+        return view('lulus.create', compact('majors', 'tahunAjaran', 'siswas'));
     }
 
     /**
@@ -79,6 +93,7 @@ class KelulusanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'siswa_id' => 'nullable|exists:siswas,id',
             'nama' => 'required|string|max:255',
             'nisn' => 'required|string|unique:kelulusans,nisn',
             'nis' => 'nullable|string|unique:kelulusans,nis',
@@ -100,6 +115,17 @@ class KelulusanController extends Controller
 
         $data = $request->all();
 
+        // If siswa_id is provided, get data from siswa
+        if ($request->filled('siswa_id')) {
+            $siswa = \App\Models\Siswa::findOrFail($request->siswa_id);
+            $data['nama'] = $siswa->nama_lengkap;
+            $data['nisn'] = $siswa->nisn;
+            $data['nis'] = $siswa->nis;
+            if (!$request->filled('jurusan')) {
+                $data['jurusan'] = $siswa->jurusan;
+            }
+        }
+
         // Handle photo upload
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('lulus/photos', 'public');
@@ -111,6 +137,11 @@ class KelulusanController extends Controller
         }
 
         Kelulusan::create($data);
+
+        // Clear cache for kelulusan dropdowns
+        cache()->forget('kelulusan_tahun_ajaran');
+        cache()->forget('kelulusan_jurusan');
+        cache()->forget('active_siswas_for_kelulusan');
 
         return redirect()->route('admin.lulus.index')
             ->with('success', 'Data kelulusan berhasil ditambahkan.');
@@ -173,6 +204,10 @@ class KelulusanController extends Controller
 
         $kelulusan->update($data);
 
+        // Clear cache for kelulusan dropdowns
+        cache()->forget('kelulusan_tahun_ajaran');
+        cache()->forget('kelulusan_jurusan');
+
         return redirect()->route('admin.lulus.index')
             ->with('success', 'Data kelulusan berhasil diperbarui.');
     }
@@ -188,6 +223,10 @@ class KelulusanController extends Controller
         }
 
         $kelulusan->delete();
+
+        // Clear cache for kelulusan dropdowns
+        cache()->forget('kelulusan_tahun_ajaran');
+        cache()->forget('kelulusan_jurusan');
 
         return redirect()->route('admin.lulus.index')
             ->with('success', 'Data kelulusan berhasil dihapus.');

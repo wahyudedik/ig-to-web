@@ -14,6 +14,10 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
+        // Superadmin dan admin bisa view all users
+        if ($user->hasRole('superadmin') || $user->hasRole('admin')) {
+            return true;
+        }
         return $user->can('users.view');
     }
 
@@ -30,6 +34,10 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
+        // Superadmin dan admin bisa create users
+        if ($user->hasRole('superadmin') || $user->hasRole('admin')) {
+            return true;
+        }
         return $user->can('users.create');
     }
 

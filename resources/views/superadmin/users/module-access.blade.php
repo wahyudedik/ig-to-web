@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">{{ $user->name }}</p>
             </div>
             <div class="flex items-center space-x-3">
-                <a href="{{ route('superadmin.users.show', $user) }}" class="btn btn-secondary">
+                <a href="{{ route('admin.superadmin.users.show', $user) }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -25,7 +25,7 @@
                     perform.</p>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ route('superadmin.users.module-access.update', $user) }}"
+                <form method="POST" action="{{ route('admin.superadmin.users.module-access.update', $user) }}"
                     class="space-y-6">
                     @csrf
                     @method('PUT')
@@ -124,7 +124,8 @@
 
                     <!-- Submit Button -->
                     <div class="flex items-center justify-end space-x-4 pt-6 border-t border-slate-200">
-                        <a href="{{ route('superadmin.users.show', $user) }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ route('admin.superadmin.users.show', $user) }}"
+                            class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

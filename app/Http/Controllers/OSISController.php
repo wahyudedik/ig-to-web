@@ -26,13 +26,17 @@ class OSISController extends Controller
      */
     public function index()
     {
-        $stats = [
-            'total_calon' => Calon::active()->count(),
-            'total_pemilih' => Pemilih::active()->count(),
-            'total_votes' => Voting::valid()->count(),
-            'voting_percentage' => $this->getVotingPercentage(),
-        ];
+        // Cache stats for 2 minutes (voting data changes frequently)
+        $stats = cache()->remember('osis_dashboard_stats', 120, function () {
+            return [
+                'total_calon' => Calon::active()->count(),
+                'total_pemilih' => Pemilih::active()->count(),
+                'total_votes' => Voting::valid()->count(),
+                'voting_percentage' => $this->getVotingPercentage(),
+            ];
+        });
 
+        // Don't cache calons and votes - needs to be fresh
         $calons = Calon::active()->ordered()->withCount('votings')->get();
         $recentVotes = Voting::with(['calon', 'pemilih'])
             ->valid()
@@ -86,7 +90,24 @@ class OSISController extends Controller
      */
     public function createCalon()
     {
-        return view('osis.calon.create');
+        // Get active students for dropdown (cached for 5 minutes)
+        $siswas = cache()->remember('active_siswas_dropdown', 300, function () {
+            return \App\Models\Siswa::where('status', 'aktif')
+                ->orderBy('nama_lengkap')
+                ->get(['id', 'nama_lengkap', 'nis', 'kelas', 'email', 'jenis_kelamin']);
+        });
+
+        // Get unique classes for dropdown (cached for 10 minutes)
+        $kelas = cache()->remember('active_siswa_kelas', 600, function () {
+            return \App\Models\Siswa::where('status', 'aktif')
+                ->whereNotNull('kelas')
+                ->distinct()
+                ->pluck('kelas')
+                ->sort()
+                ->values();
+        });
+
+        return view('osis.calon.create', compact('siswas', 'kelas'));
     }
 
     /**
@@ -117,6 +138,11 @@ class OSISController extends Controller
 
         Calon::create($data);
 
+        // Clear cache for OSIS stats and dropdowns
+        cache()->forget('osis_dashboard_stats');
+        cache()->forget('active_siswas_dropdown');
+        cache()->forget('active_siswa_kelas');
+
         return redirect()->route('admin.osis.calon.index')
             ->with('success', 'Calon berhasil ditambahkan.');
     }
@@ -135,7 +161,24 @@ class OSISController extends Controller
      */
     public function editCalon(Calon $calon)
     {
-        return view('osis.calon.edit', compact('calon'));
+        // Get active students for dropdown (cached for 5 minutes)
+        $siswas = cache()->remember('active_siswas_dropdown', 300, function () {
+            return \App\Models\Siswa::where('status', 'aktif')
+                ->orderBy('nama_lengkap')
+                ->get(['id', 'nama_lengkap', 'nis', 'kelas', 'email', 'jenis_kelamin']);
+        });
+
+        // Get unique classes for dropdown (cached for 10 minutes)
+        $kelas = cache()->remember('active_siswa_kelas', 600, function () {
+            return \App\Models\Siswa::where('status', 'aktif')
+                ->whereNotNull('kelas')
+                ->distinct()
+                ->pluck('kelas')
+                ->sort()
+                ->values();
+        });
+
+        return view('osis.calon.edit', compact('calon', 'siswas', 'kelas'));
     }
 
     /**
@@ -172,6 +215,9 @@ class OSISController extends Controller
 
         $calon->update($data);
 
+        // Clear cache for OSIS stats
+        cache()->forget('osis_dashboard_stats');
+
         return redirect()->route('admin.osis.calon.index')
             ->with('success', 'Calon berhasil diperbarui.');
     }
@@ -190,6 +236,9 @@ class OSISController extends Controller
         }
 
         $calon->delete();
+
+        // Clear cache for OSIS stats
+        cache()->forget('osis_dashboard_stats');
 
         return redirect()->route('admin.osis.calon.index')
             ->with('success', 'Calon berhasil dihapus.');

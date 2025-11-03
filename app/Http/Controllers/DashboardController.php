@@ -25,20 +25,23 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Get comprehensive statistics for all users
-        $stats = [
-            'total_users' => User::count(),
-            'total_roles' => Role::count(),
-            'total_permissions' => Permission::count(),
-            'total_siswa' => 0,
-            'total_guru' => 0,
-            'total_barang' => 0,
-            'total_pages' => 0,
-            'total_instagram_settings' => 0,
-            'recent_activities' => collect(), // Default empty collection
-        ];
+        // Get comprehensive statistics for all users (with caching for performance)
+        $stats = cache()->remember('dashboard_stats_' . $user->id, 300, function () use ($user) {
+            // Cache for 5 minutes to reduce database load
+            return [
+                'total_users' => User::count(),
+                'total_roles' => Role::count(),
+                'total_permissions' => Permission::count(),
+                'total_siswa' => 0,
+                'total_guru' => 0,
+                'total_barang' => 0,
+                'total_pages' => 0,
+                'total_instagram_settings' => 0,
+                'recent_activities' => collect(),
+            ];
+        });
 
-        // Try to get recent activities with error handling
+        // Get recent activities (don't cache - needs to be fresh)
         try {
             $stats['recent_activities'] = AuditLog::with('user')
                 ->latest()
@@ -48,33 +51,33 @@ class DashboardController extends Controller
             $stats['recent_activities'] = collect();
         }
 
-        // Get statistics for all users with error handling
+        // Get statistics for all users with error handling (cached counts)
         try {
-            $stats['total_siswa'] = Siswa::count();
+            $stats['total_siswa'] = cache()->remember('count_siswa', 300, fn() => Siswa::count());
         } catch (\Exception $e) {
             $stats['total_siswa'] = 0;
         }
 
         try {
-            $stats['total_guru'] = Guru::count();
+            $stats['total_guru'] = cache()->remember('count_guru', 300, fn() => Guru::count());
         } catch (\Exception $e) {
             $stats['total_guru'] = 0;
         }
 
         try {
-            $stats['total_barang'] = Barang::count();
+            $stats['total_barang'] = cache()->remember('count_barang', 300, fn() => Barang::count());
         } catch (\Exception $e) {
             $stats['total_barang'] = 0;
         }
 
         try {
-            $stats['total_pages'] = Page::count();
+            $stats['total_pages'] = cache()->remember('count_pages', 300, fn() => Page::count());
         } catch (\Exception $e) {
             $stats['total_pages'] = 0;
         }
 
         try {
-            $stats['total_instagram_settings'] = InstagramSetting::count();
+            $stats['total_instagram_settings'] = cache()->remember('count_instagram_settings', 300, fn() => InstagramSetting::count());
         } catch (\Exception $e) {
             $stats['total_instagram_settings'] = 0;
         }
@@ -99,15 +102,17 @@ class DashboardController extends Controller
      */
     private function calculateModuleUsage()
     {
-        // Get counts for each module
-        $counts = [
-            'users' => User::count(),
-            'guru' => Guru::count(),
-            'siswa' => Siswa::count(),
-            'sarpras' => Barang::count(),
-            'osis' => Calon::count() + Pemilih::count(),
-            'pages' => Page::count(),
-        ];
+        // Get counts for each module (with caching for performance)
+        $counts = cache()->remember('module_usage_counts', 300, function () {
+            return [
+                'users' => User::count(),
+                'guru' => Guru::count(),
+                'siswa' => Siswa::count(),
+                'sarpras' => Barang::count(),
+                'osis' => Calon::count() + Pemilih::count(),
+                'pages' => Page::count(),
+            ];
+        });
 
         // Get activity counts for each module from audit logs (last 30 days)
         $activityCounts = [
@@ -119,7 +124,10 @@ class DashboardController extends Controller
         ];
 
         try {
-            $recentActivities = AuditLog::where('created_at', '>=', now()->subDays(30))->get();
+            // Cache recent activities for better performance
+            $recentActivities = cache()->remember('recent_activities_30days', 1800, function () {
+                return AuditLog::where('created_at', '>=', now()->subDays(30))->get();
+            });
 
             foreach ($recentActivities as $activity) {
                 $action = strtolower($activity->action ?? '');

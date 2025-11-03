@@ -63,11 +63,37 @@
 
                         <div>
                             <label for="nama_ketua" class="form-label">Nama Ketua *</label>
-                            <input type="text" name="nama_ketua" id="nama_ketua" value="{{ old('nama_ketua') }}"
-                                required
-                                class="form-input @error('nama_ketua') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan nama ketua">
+                            <select name="nama_ketua" id="nama_ketua" required
+                                class="form-input @error('nama_ketua') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                                <option value="">Pilih Nama Siswa</option>
+                                @foreach ($siswas ?? [] as $siswa)
+                                    <option value="{{ $siswa->nama_lengkap }}" data-nis="{{ $siswa->nis }}"
+                                        data-kelas="{{ $siswa->kelas }}" data-email="{{ $siswa->email }}"
+                                        data-jenis-kelamin="{{ $siswa->jenis_kelamin }}"
+                                        {{ old('nama_ketua') == $siswa->nama_lengkap ? 'selected' : '' }}>
+                                        {{ $siswa->nama_lengkap }} - {{ $siswa->nis }} - {{ $siswa->kelas }}
+                                    </option>
+                                @endforeach
+                            </select>
                             @error('nama_ketua')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                            <p class="text-sm text-slate-600 mt-1">Pilih dari daftar siswa aktif</p>
+                        </div>
+
+                        <div>
+                            <label for="kelas_ketua" class="form-label">Kelas Ketua *</label>
+                            <select name="kelas_ketua" id="kelas_ketua" required
+                                class="form-input @error('kelas_ketua') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                                <option value="">Pilih Kelas</option>
+                                @foreach ($kelas ?? [] as $k)
+                                    <option value="{{ $k }}"
+                                        {{ old('kelas_ketua') == $k ? 'selected' : '' }}>
+                                        {{ $k }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('kelas_ketua')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -88,11 +114,37 @@
 
                         <div>
                             <label for="nama_wakil" class="form-label">Nama Wakil *</label>
-                            <input type="text" name="nama_wakil" id="nama_wakil" value="{{ old('nama_wakil') }}"
-                                required
-                                class="form-input @error('nama_wakil') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan nama wakil">
+                            <select name="nama_wakil" id="nama_wakil" required
+                                class="form-input @error('nama_wakil') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                                <option value="">Pilih Nama Siswa</option>
+                                @foreach ($siswas ?? [] as $siswa)
+                                    <option value="{{ $siswa->nama_lengkap }}" data-nis="{{ $siswa->nis }}"
+                                        data-kelas="{{ $siswa->kelas }}" data-email="{{ $siswa->email }}"
+                                        data-jenis-kelamin="{{ $siswa->jenis_kelamin }}"
+                                        {{ old('nama_wakil') == $siswa->nama_lengkap ? 'selected' : '' }}>
+                                        {{ $siswa->nama_lengkap }} - {{ $siswa->nis }} - {{ $siswa->kelas }}
+                                    </option>
+                                @endforeach
+                            </select>
                             @error('nama_wakil')
+                                <p class="form-error">{{ $message }}</p>
+                            @enderror
+                            <p class="text-sm text-slate-600 mt-1">Pilih dari daftar siswa aktif</p>
+                        </div>
+
+                        <div>
+                            <label for="kelas_wakil" class="form-label">Kelas Wakil *</label>
+                            <select name="kelas_wakil" id="kelas_wakil" required
+                                class="form-input @error('kelas_wakil') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                                <option value="">Pilih Kelas</option>
+                                @foreach ($kelas ?? [] as $k)
+                                    <option value="{{ $k }}"
+                                        {{ old('kelas_wakil') == $k ? 'selected' : '' }}>
+                                        {{ $k }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('kelas_wakil')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -187,4 +239,40 @@
             });
         </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-fill kelas when nama_ketua is selected
+            const namaKetuaSelect = document.getElementById('nama_ketua');
+            const kelasKetuaSelect = document.getElementById('kelas_ketua');
+
+            if (namaKetuaSelect && kelasKetuaSelect) {
+                namaKetuaSelect.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption && selectedOption.value) {
+                        const kelas = selectedOption.getAttribute('data-kelas');
+                        if (kelas) {
+                            kelasKetuaSelect.value = kelas;
+                        }
+                    }
+                });
+            }
+
+            // Auto-fill kelas when nama_wakil is selected
+            const namaWakilSelect = document.getElementById('nama_wakil');
+            const kelasWakilSelect = document.getElementById('kelas_wakil');
+
+            if (namaWakilSelect && kelasWakilSelect) {
+                namaWakilSelect.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption && selectedOption.value) {
+                        const kelas = selectedOption.getAttribute('data-kelas');
+                        if (kelas) {
+                            kelasWakilSelect.value = kelas;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </x-app-layout>

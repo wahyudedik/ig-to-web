@@ -49,7 +49,7 @@ class SystemHealthController extends Controller
             return [
                 'status' => 'healthy',
                 'response_time_ms' => round($responseTime, 2),
-                'version' => DB::select('SELECT VERSION() as version')[0]->version ?? 'Unknown'
+                'version' => (DB::select('SELECT VERSION() as version')[0] ?? null)?->version ?? 'Unknown'
             ];
         } catch (\Exception $e) {
             return [
