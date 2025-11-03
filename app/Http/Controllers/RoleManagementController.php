@@ -7,17 +7,25 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use App\Helpers\RoleHelper;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class RoleManagementController extends Controller
 {
     public function index()
     {
+        // Authorization check - double layer: route middleware + Gate
+        Gate::authorize('manageRolesAndPermissions');
+
         $roles = Role::with('permissions')->withCount('users')->get();
         return view('role-management.index', compact('roles'));
     }
 
     public function create()
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         // Group permissions by module (extract from permission name: module.action)
         $permissions = Permission::all()->groupBy(function ($permission) {
             return explode('.', $permission->name)[0] ?? 'other';
@@ -27,6 +35,9 @@ class RoleManagementController extends Controller
 
     public function store(Request $request)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         try {
             // Normalize role name: lowercase, no spaces, only alphanumeric and hyphens
             $roleName = strtolower(str_replace(' ', '', $request->name));
@@ -77,6 +88,9 @@ class RoleManagementController extends Controller
 
     public function edit(Role $role)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         // Group permissions by module (extract from permission name: module.action)
         $permissions = Permission::all()->groupBy(function ($permission) {
             return explode('.', $permission->name)[0] ?? 'other';
@@ -88,6 +102,9 @@ class RoleManagementController extends Controller
 
     public function update(Request $request, Role $role)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         try {
             // Check if it's a core role
             $isCoreRole = RoleHelper::isCoreRole($role->name);
@@ -149,6 +166,9 @@ class RoleManagementController extends Controller
 
     public function destroy(Role $role)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         // Prevent deletion of core roles
         if (RoleHelper::isCoreRole($role->name)) {
             return back()->with('error', 'Cannot delete core system role');
@@ -162,6 +182,9 @@ class RoleManagementController extends Controller
 
     public function assignUsers(Role $role)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         // Exclude superadmin users when assigning to non-superadmin roles
         // Superadmin already has all permissions, doesn't need role assignment
         $usersQuery = User::with('roles');
@@ -185,6 +208,9 @@ class RoleManagementController extends Controller
 
     public function syncUsers(Request $request, Role $role)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         try {
             $request->validate([
                 'user_ids' => 'array',

@@ -530,17 +530,19 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin'
         Route::get('/roles', [App\Http\Controllers\UserManagementController::class, 'getUserRoles'])->name('roles');
     });
 
-    // Role & Permission Management (Superadmin only)
-    Route::prefix('role-permissions')->name('role-permissions.')->group(function () {
-        Route::get('/', [App\Http\Controllers\RolePermissionController::class, 'index'])->name('index');
-        Route::post('/roles', [App\Http\Controllers\RolePermissionController::class, 'createRole'])->name('store');
-        Route::put('/roles/{role}', [App\Http\Controllers\RolePermissionController::class, 'updateRole'])->name('update');
-        Route::delete('/roles/{role}', [App\Http\Controllers\RolePermissionController::class, 'deleteRole'])->name('destroy');
-        Route::post('/assign-role', [App\Http\Controllers\RolePermissionController::class, 'assignRoleToUser'])->name('assign-role');
-        Route::post('/remove-role', [App\Http\Controllers\RolePermissionController::class, 'removeRoleFromUser'])->name('remove-role');
-        Route::get('/roles/{role}/permissions', [App\Http\Controllers\RolePermissionController::class, 'getRolePermissions'])->name('role-permissions');
-        Route::get('/users', [App\Http\Controllers\RolePermissionController::class, 'getUsersWithRoles'])->name('users');
-    });
+    // Role & Permission Management (Superadmin only - moved outside admin|superadmin group)
+});
+
+// Role & Permission Management (Superadmin ONLY - separate group for strict security)
+Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('admin/role-permissions')->name('admin.role-permissions.')->group(function () {
+    Route::get('/', [App\Http\Controllers\RolePermissionController::class, 'index'])->name('index');
+    Route::post('/roles', [App\Http\Controllers\RolePermissionController::class, 'createRole'])->name('store');
+    Route::put('/roles/{role}', [App\Http\Controllers\RolePermissionController::class, 'updateRole'])->name('update');
+    Route::delete('/roles/{role}', [App\Http\Controllers\RolePermissionController::class, 'deleteRole'])->name('destroy');
+    Route::post('/assign-role', [App\Http\Controllers\RolePermissionController::class, 'assignRoleToUser'])->name('assign-role');
+    Route::post('/remove-role', [App\Http\Controllers\RolePermissionController::class, 'removeRoleFromUser'])->name('remove-role');
+    Route::get('/roles/{role}/permissions', [App\Http\Controllers\RolePermissionController::class, 'getRolePermissions'])->name('role-permissions');
+    Route::get('/users', [App\Http\Controllers\RolePermissionController::class, 'getUsersWithRoles'])->name('users');
 });
 
 // Testimonials (Public - No Login Required)

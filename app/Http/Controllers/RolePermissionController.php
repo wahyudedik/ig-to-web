@@ -7,11 +7,16 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use App\Helpers\RoleHelper;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class RolePermissionController extends Controller
 {
     public function index()
     {
+        // Authorization check - double layer: route middleware + Gate
+        Gate::authorize('manageRolesAndPermissions');
+
         $roles = Role::with('permissions')->withCount('users')->get();
         $permissions = Permission::all()->groupBy(function ($permission) {
             return explode('.', $permission->name)[0];
@@ -40,6 +45,9 @@ class RolePermissionController extends Controller
 
     public function createRole(Request $request)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         try {
             // Normalize role name: lowercase, no spaces, only alphanumeric and hyphens
             $roleName = strtolower(str_replace(' ', '', $request->name));
@@ -85,6 +93,9 @@ class RolePermissionController extends Controller
 
     public function updateRole(Request $request, Role $role)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         try {
             // Check if it's a core role
             $isCoreRole = RoleHelper::isCoreRole($role->name);
@@ -148,6 +159,9 @@ class RolePermissionController extends Controller
 
     public function deleteRole(Role $role)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         try {
             // Prevent deletion of core roles
             if (RoleHelper::isCoreRole($role->name)) {
@@ -195,6 +209,9 @@ class RolePermissionController extends Controller
 
     public function assignRoleToUser(Request $request)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'role_id' => 'required|exists:roles,id'
@@ -219,6 +236,9 @@ class RolePermissionController extends Controller
 
     public function removeRoleFromUser(Request $request)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'role_id' => 'required|exists:roles,id'
@@ -244,6 +264,9 @@ class RolePermissionController extends Controller
 
     public function getRolePermissions(Role $role)
     {
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
         try {
             $permissions = $role->permissions->pluck('name')->toArray();
 
@@ -262,7 +285,23 @@ class RolePermissionController extends Controller
 
     public function getUsersWithRoles()
     {
-        $users = User::with('roles')->get();
-        return response()->json($users);
+        // Authorization check
+        Gate::authorize('manageRolesAndPermissions');
+
+        // SECURITY: Limit data exposure - only return essential fields
+        $users = User::with('roles')
+            ->select('id', 'name', 'email', 'user_type', 'created_at')
+            ->paginate(50); // Add pagination instead of returning all
+
+        return response()->json([
+            'success' => true,
+            'data' => $users->items(),
+            'pagination' => [
+                'current_page' => $users->currentPage(),
+                'total' => $users->total(),
+                'per_page' => $users->perPage(),
+                'last_page' => $users->lastPage(),
+            ]
+        ]);
     }
 }
