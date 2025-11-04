@@ -26,7 +26,7 @@ class RoleHelper
     public static function isSuperadmin($user): bool
     {
         if ($user instanceof \App\Models\User) {
-            return $user->hasRole('superadmin') || $user->user_type === 'superadmin';
+            return $user->hasRole('superadmin');
         }
 
         // If it's just a string/ID, check differently
@@ -34,7 +34,7 @@ class RoleHelper
             $userModel = \App\Models\User::where('email', $user)
                 ->orWhere('id', $user)
                 ->first();
-            return $userModel ? ($userModel->hasRole('superadmin') || $userModel->user_type === 'superadmin') : false;
+            return $userModel ? $userModel->hasRole('superadmin') : false;
         }
 
         return false;

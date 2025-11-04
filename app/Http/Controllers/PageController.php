@@ -206,7 +206,7 @@ class PageController extends Controller
     {
         // Check if page is published or user has permission
         $user = Auth::user();
-        if (!$page->isPublished() && (!$user || $user->user_type !== 'superadmin')) {
+        if (!$page->isPublished() && (!$user || !$user->hasRole('superadmin'))) {
             abort(403, 'Page not found or not published.');
         }
 

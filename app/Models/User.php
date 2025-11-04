@@ -26,7 +26,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'user_type',
         'email_verified_at',
         'email_verification_token',
         'is_verified_by_admin',
@@ -92,7 +91,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasPermission(string $permission): bool
     {
         // Superadmin bypass all permissions
-        if ($this->user_type === 'superadmin') {
+        if ($this->hasRole('superadmin')) {
             return true;
         }
 
@@ -105,7 +104,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasModuleAccess(string $module): bool
     {
         // Superadmin bypass all module access
-        if ($this->user_type === 'superadmin') {
+        if ($this->hasRole('superadmin')) {
             return true;
         }
 
@@ -121,7 +120,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function canPerform(string $action, string $module): bool
     {
         // Superadmin bypass all actions
-        if ($this->user_type === 'superadmin') {
+        if ($this->hasRole('superadmin')) {
             return true;
         }
 
@@ -144,7 +143,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isSuperadmin(): bool
     {
-        return $this->user_type === 'superadmin';
+        return $this->hasRole('superadmin');
     }
 
     /**
@@ -152,7 +151,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isAdmin(): bool
     {
-        return $this->user_type === 'admin';
+        return $this->hasRole('admin');
     }
 
     /**
@@ -160,7 +159,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isGuru(): bool
     {
-        return $this->user_type === 'guru';
+        return $this->hasRole('guru');
     }
 
     /**
@@ -168,7 +167,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isSiswa(): bool
     {
-        return $this->user_type === 'siswa';
+        return $this->hasRole('siswa');
     }
 
     /**
@@ -176,7 +175,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isSarpras(): bool
     {
-        return $this->user_type === 'sarpras';
+        return $this->hasRole('sarpras');
     }
 
     /**

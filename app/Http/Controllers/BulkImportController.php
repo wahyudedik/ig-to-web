@@ -201,7 +201,7 @@ class BulkImportController extends Controller
             [
                 'name' => 'John Doe',
                 'email' => 'john@example.com',
-                'user_type' => 'siswa',
+                'role' => 'siswa',
                 'password' => 'password123',
             ]
         ];
@@ -209,7 +209,7 @@ class BulkImportController extends Controller
         return $this->exportTemplate($sampleData, 'template-import-users.xlsx', [
             'name',
             'email',
-            'user_type',
+            'role',
             'password'
         ]);
     }

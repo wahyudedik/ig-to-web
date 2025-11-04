@@ -79,7 +79,9 @@ class GuruController extends Controller
 
         // Get users that are not already assigned to any teacher
         $usedUserIds = Guru::whereNotNull('user_id')->pluck('user_id')->toArray();
-        $users = User::where('user_type', 'guru')
+        $users = User::whereHas('roles', function ($q) {
+                $q->where('name', 'guru');
+            })
             ->whereNotIn('id', $usedUserIds)
             ->get();
 
@@ -156,7 +158,9 @@ class GuruController extends Controller
             ->where('id', '!=', $guru->id)
             ->pluck('user_id')
             ->toArray();
-        $users = User::where('user_type', 'guru')
+        $users = User::whereHas('roles', function ($q) {
+                $q->where('name', 'guru');
+            })
             ->where(function ($query) use ($usedUserIds, $guru) {
                 $query->whereNotIn('id', $usedUserIds)
                     ->orWhere('id', $guru->user_id);

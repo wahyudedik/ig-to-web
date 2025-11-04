@@ -224,13 +224,6 @@ class RolePermissionController extends Controller
         // assignRole() would ADD role (allowing multiple), syncRoles() REPLACES all roles
         $user->syncRoles([$role]);
 
-        // Sync user_type with primary role
-        $user->load('roles');
-        $primaryRole = $user->roles->first();
-        if ($primaryRole && $user->user_type !== $primaryRole->name) {
-            $user->updateQuietly(['user_type' => $primaryRole->name]);
-        }
-
         return redirect()->back()->with('success', 'Role assigned to user successfully.');
     }
 
@@ -248,16 +241,6 @@ class RolePermissionController extends Controller
         $role = Role::findOrFail($request->role_id);
 
         $user->removeRole($role);
-
-        // Sync user_type with primary role (after removal)
-        $user->load('roles');
-        $primaryRole = $user->roles->first();
-        if ($primaryRole && $user->user_type !== $primaryRole->name) {
-            $user->updateQuietly(['user_type' => $primaryRole->name]);
-        } elseif (!$primaryRole) {
-            // If user has no roles, set default
-            $user->updateQuietly(['user_type' => 'siswa']); // Default fallback
-        }
 
         return redirect()->back()->with('success', 'Role removed from user successfully.');
     }
@@ -290,7 +273,7 @@ class RolePermissionController extends Controller
 
         // SECURITY: Limit data exposure - only return essential fields
         $users = User::with('roles')
-            ->select('id', 'name', 'email', 'user_type', 'created_at')
+            ->select('id', 'name', 'email', 'created_at')
             ->paginate(50); // Add pagination instead of returning all
 
         return response()->json([

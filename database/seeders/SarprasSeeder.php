@@ -216,7 +216,9 @@ class SarprasSeeder extends Seeder
         }
 
         // Get superadmin user for maintenance user_id
-        $superadmin = \App\Models\User::where('user_type', 'superadmin')->first();
+        $superadmin = \App\Models\User::whereHas('roles', function ($q) {
+            $q->where('name', 'superadmin');
+        })->first();
 
         if (!$superadmin) {
             $this->command->warn('Superadmin user not found. Please run UserSeeder first.');

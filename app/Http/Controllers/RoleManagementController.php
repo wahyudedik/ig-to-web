@@ -194,9 +194,6 @@ class RoleManagementController extends Controller
         if (strtolower($role->name) !== 'superadmin') {
             $usersQuery->whereDoesntHave('roles', function ($query) {
                 $query->where('name', 'superadmin');
-            })->where(function ($q) {
-                $q->where('user_type', '!=', 'superadmin')
-                    ->orWhereNull('user_type'); // Include users with no user_type set
             });
         }
 
@@ -243,28 +240,7 @@ class RoleManagementController extends Controller
             // Refresh role to get updated users
             $role->refresh();
 
-            // Sync user_type for all affected users
-            User::whereIn('id', $affectedUserIds)
-                ->with('roles')
-                ->get()
-                ->each(function ($user) use ($role) {
-                    // User should now have only one role (the one we just assigned)
-                    $userRoles = $user->roles;
-
-                    if ($userRoles->count() > 1) {
-                        // Safety check: If user somehow has multiple roles, keep only the assigned one
-                        $user->syncRoles([$role]);
-                        $user->load('roles');
-                    }
-
-                    $primaryRole = $user->roles->first();
-                    if ($primaryRole && $user->user_type !== $primaryRole->name) {
-                        $user->updateQuietly(['user_type' => $primaryRole->name]);
-                    } elseif (!$primaryRole && $user->user_type) {
-                        // If user has no roles but has user_type, set default
-                        $user->updateQuietly(['user_type' => 'siswa']); // Default fallback
-                    }
-                });
+            // Roles are managed by Spatie Permission - no need to sync user_type
 
             // Return JSON for AJAX requests
             if ($request->expectsJson() || $request->ajax()) {

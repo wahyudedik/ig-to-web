@@ -44,12 +44,7 @@ class AssignRolesSeeder extends Seeder
             if ($user && $role) {
                 $user->assignRole($role);
 
-                // Sync user_type with role (ensure consistency)
-                $user->load('roles');
-                $primaryRole = $user->roles->first();
-                if ($primaryRole && $user->user_type !== $primaryRole->name) {
-                    $user->updateQuietly(['user_type' => $primaryRole->name]);
-                }
+                // Roles are managed by Spatie Permission - no need to sync user_type
 
                 echo "Assigned role '{$roleName}' to user '{$user->name}'\n";
             } elseif (!$user) {

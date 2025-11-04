@@ -29,23 +29,29 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::defaults()],
-            // user_type is now VARCHAR (not ENUM) - supports custom roles
-            // But for public registration, we still restrict to safe roles
-            'user_type' => 'required|in:guru,siswa,sarpras', // Keep restriction for public registration for security
+            'role' => 'required|in:guru,siswa,sarpras', // Restrict to safe roles for public registration
             'terms' => 'required|accepted',
         ]);
 
+        // Get role for assignment
+        $role = \Spatie\Permission\Models\Role::where('name', $request->role)->first();
+        if (!$role) {
+            return back()->withErrors(['role' => 'Role tidak valid.'])->withInput();
+        }
+
         // Create user without email verification
-        // Note: Public registration still uses enum restriction for security
+        // Note: Public registration restricts to safe roles (guru, siswa, sarpras)
         // Custom roles can only be assigned by admin via /admin/user-management
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'user_type' => $request->user_type,
             'email_verified_at' => null, // Not verified yet
             'is_verified_by_admin' => false, // Not verified by admin
         ]);
+
+        // Assign role using Spatie Permission
+        $user->syncRoles([$role]);
 
         // Generate email verification token
         $user->generateEmailVerificationToken();

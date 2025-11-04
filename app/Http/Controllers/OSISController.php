@@ -391,7 +391,7 @@ class OSISController extends Controller
     {
         // Check if user is a student
         $user = Auth::user();
-        if ($user->user_type !== 'siswa') {
+        if (!$user->hasRole('siswa')) {
             return redirect()->route('admin.osis.index')
                 ->with('error', 'Hanya siswa yang dapat memilih. Silakan login sebagai siswa untuk melakukan voting.');
         }
@@ -467,7 +467,7 @@ class OSISController extends Controller
         $calon = Calon::findOrFail($request->calon_id);
 
         // Validate gender for students (guru can vote for any candidate, siswa can only vote for same gender)
-        if ($user->user_type === 'siswa' && $calon->jenis_kelamin && $siswa->jenis_kelamin !== $calon->jenis_kelamin) {
+        if ($user->hasRole('siswa') && $calon->jenis_kelamin && $siswa->jenis_kelamin !== $calon->jenis_kelamin) {
             return redirect()->route('admin.osis.voting')
                 ->with('error', 'Anda hanya dapat memilih calon yang sesuai dengan jenis kelamin Anda.');
         }
@@ -518,7 +518,7 @@ class OSISController extends Controller
     {
         // Check if user is a teacher or admin
         $user = Auth::user();
-        if (!in_array($user->user_type, ['guru', 'admin', 'superadmin'])) {
+        if (!$user->hasAnyRole(['guru', 'admin', 'superadmin'])) {
             return redirect()->route('admin.dashboard')
                 ->with('error', 'Hanya guru dan admin yang dapat mengakses halaman ini.');
         }
@@ -806,7 +806,7 @@ class OSISController extends Controller
                     if (!$existingPemilih) {
                         Pemilih::create([
                             'user_id' => $siswa->user->id,
-                            'user_type' => 'siswa',
+                            'user_type' => 'siswa', // Keep user_type in pemilihs table for tracking
                             'nama' => $siswa->nama_lengkap,
                             'nis' => $siswa->nis,
                             'nisn' => $siswa->nisn,
@@ -845,7 +845,7 @@ class OSISController extends Controller
                     if (!$existingPemilih) {
                         Pemilih::create([
                             'user_id' => $guru->user->id,
-                            'user_type' => 'guru',
+                            'user_type' => 'guru', // Keep user_type in pemilihs table for tracking
                             'nama' => $guru->nama_lengkap,
                             'nis' => $guru->nip, // Guru menggunakan NIP sebagai identifier
                             'nisn' => null,
@@ -901,7 +901,7 @@ class OSISController extends Controller
             [
                 'nama' => 'Ahmad Rizki',
                 'email' => 'ahmad.rizki@email.com',
-                'user_type' => 'siswa',
+                'user_type' => 'siswa', // Keep user_type in pemilihs table for tracking
                 'jenis_kelamin' => 'L',
                 'kelas_jabatan' => 'XII IPA 1',
                 'status' => 'active',
@@ -909,7 +909,7 @@ class OSISController extends Controller
             [
                 'nama' => 'Siti Nurhaliza',
                 'email' => 'siti.nurhaliza@email.com',
-                'user_type' => 'siswa',
+                'user_type' => 'siswa', // Keep user_type in pemilihs table for tracking
                 'jenis_kelamin' => 'P',
                 'kelas_jabatan' => 'XI IPS 2',
                 'status' => 'active',
@@ -917,7 +917,7 @@ class OSISController extends Controller
             [
                 'nama' => 'Dr. Budi Santoso, S.Pd',
                 'email' => 'budi.santoso@email.com',
-                'user_type' => 'guru',
+                'user_type' => 'guru', // Keep user_type in pemilihs table for tracking
                 'jenis_kelamin' => 'L',
                 'kelas_jabatan' => 'Wali Kelas XII',
                 'status' => 'active',

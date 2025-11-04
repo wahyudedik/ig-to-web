@@ -53,16 +53,18 @@ class SuperadminController extends Controller
     {
         $query = User::query()->with('roles', 'moduleAccess');
 
-        // Filter by user_type if provided (handle array input from parameter pollution)
-        if ($request->filled('user_type')) {
-            $userType = $request->user_type;
-            // Handle if user_type is array (parameter pollution)
-            if (is_array($userType)) {
-                $userType = !empty($userType) ? $userType[0] : null;
+        // Filter by role if provided (handle array input from parameter pollution)
+        if ($request->filled('role')) {
+            $roleName = $request->role;
+            // Handle if role is array (parameter pollution)
+            if (is_array($roleName)) {
+                $roleName = !empty($roleName) ? $roleName[0] : null;
             }
 
-            if ($userType) {
-                $query->where('user_type', $userType);
+            if ($roleName) {
+                $query->whereHas('roles', function ($q) use ($roleName) {
+                    $q->where('name', $roleName);
+                });
             }
         }
 
@@ -84,7 +86,7 @@ class SuperadminController extends Controller
             }
         }
 
-        $users = $query->select('id', 'name', 'email', 'user_type', 'email_verified_at', 'is_verified_by_admin', 'created_at', 'updated_at')
+        $users = $query->select('id', 'name', 'email', 'email_verified_at', 'is_verified_by_admin', 'created_at', 'updated_at')
             ->orderBy('created_at', 'desc')
             ->paginate(15)
             ->withQueryString();
@@ -122,9 +124,6 @@ class SuperadminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => $isAjax ? 'required|string|min:8' : 'required|string|min:8|confirmed',
-            // user_type is now VARCHAR (not ENUM) - supports custom roles
-            // It will be auto-synced from roles, but we accept it for backward compatibility
-            'user_type' => 'nullable|string|max:50',
             'roles' => 'array',
             'roles.*' => 'exists:roles,id',
         ];
@@ -133,12 +132,14 @@ class SuperadminController extends Controller
 
         // Use transaction for user creation with roles and audit log
         $user = DB::transaction(function () use ($request) {
-            // Get primary role first to determine user_type (supports custom roles)
-            $primaryRole = null;
+            // Get roles for validation
             if ($request->has('roles') && !empty($request->roles)) {
-                $primaryRole = Role::find($request->roles[0]); // First role is primary
-                if (!$primaryRole) {
-                    throw new \InvalidArgumentException('Selected role not found.');
+                $roleIds = $request->roles;
+                $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
+                
+                // Validate that all roles exist
+                if (count($roleIds) !== count($roleNames)) {
+                    throw new \InvalidArgumentException('One or more selected roles not found.');
                 }
             }
 
@@ -146,13 +147,11 @@ class SuperadminController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                // user_type will be synced from role (supports custom roles like 'osis', 'bendahara', etc.)
-                'user_type' => $primaryRole ? $primaryRole->name : ($request->user_type ?? 'siswa'),
                 'email_verified_at' => now(), // Auto verify when created by superadmin
                 'is_verified_by_admin' => true, // Mark as verified by admin
             ]);
 
-            if ($request->has('roles')) {
+            if ($request->has('roles') && !empty($request->roles)) {
                 $roleIds = $request->roles;
                 $roleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
 
@@ -165,13 +164,6 @@ class SuperadminController extends Controller
                 // If only one role provided, user will have only that one role
                 // If multiple roles provided, user will have all of them (but typically only one)
                 $user->syncRoles($roleNames);
-            }
-
-            // Sync user_type with primary role (observer will handle this, but we ensure it's correct)
-            $user->load('roles');
-            $primaryRole = $user->roles->first();
-            if ($primaryRole && $user->user_type !== $primaryRole->name) {
-                $user->updateQuietly(['user_type' => $primaryRole->name]);
             }
 
             // Log the action
@@ -203,7 +195,7 @@ class SuperadminController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'user_type' => $user->user_type,
+                    'roles' => $user->roles->pluck('name')->toArray(),
                 ]
             ]);
         }
@@ -231,9 +223,6 @@ class SuperadminController extends Controller
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
-            // user_type is now VARCHAR (not ENUM) - supports custom roles
-            // It will be auto-synced from roles, but we accept it for backward compatibility
-            'user_type' => 'nullable|string|max:50',
             'roles' => 'array',
             'roles.*' => 'exists:roles,id',
         ]);
@@ -242,16 +231,11 @@ class SuperadminController extends Controller
 
         // Use transaction for user update with roles and audit log
         DB::transaction(function () use ($request, $user, $oldValues) {
-            // Build update array - only include user_type if it's provided and not null
+            // Build update array
             $updateData = [
                 'name' => $request->name,
                 'email' => $request->email,
             ];
-
-            // Only update user_type if it's provided in request (not null)
-            if ($request->filled('user_type')) {
-                $updateData['user_type'] = $request->user_type;
-            }
 
             $user->update($updateData);
 
@@ -280,20 +264,7 @@ class SuperadminController extends Controller
             }
             // If roles key doesn't exist in request, don't update roles (keep existing roles)
 
-            // Sync user_type with primary role (always sync after role changes)
-            $user->load('roles');
-            $primaryRole = $user->roles->first();
-            if ($primaryRole) {
-                // Always sync user_type with primary role
-                if ($user->user_type !== $primaryRole->name) {
-                    $user->updateQuietly(['user_type' => $primaryRole->name]);
-                }
-            } elseif (!$primaryRole) {
-                // If user has no roles, set default (but only if user_type is null)
-                if (!$user->user_type || $user->user_type === '') {
-                    $user->updateQuietly(['user_type' => 'siswa']); // Default fallback
-                }
-            }
+            // Roles are managed by Spatie Permission - no need to sync user_type
 
             // Log the action
             AuditLog::createLog(
@@ -323,7 +294,7 @@ class SuperadminController extends Controller
     public function destroyUser(User $user)
     {
         // Prevent deleting superadmin
-        if ($user->user_type === 'superadmin') {
+        if ($user->hasRole('superadmin')) {
             return redirect()->back()
                 ->with('error', 'Cannot delete superadmin user.');
         }
@@ -430,7 +401,7 @@ class SuperadminController extends Controller
             [
                 'name' => 'Admin Sekolah',
                 'email' => 'admin@sekolah.com',
-                'user_type' => 'admin',
+                'role' => 'admin',
                 'password' => 'password123',
                 'email_verified_at' => '2024-01-01 00:00:00',
                 'is_verified_by_admin' => 'yes'
@@ -438,7 +409,7 @@ class SuperadminController extends Controller
             [
                 'name' => 'Guru Matematika',
                 'email' => 'guru@sekolah.com',
-                'user_type' => 'guru',
+                'role' => 'guru',
                 'password' => 'password123',
                 'email_verified_at' => '2024-01-01 00:00:00',
                 'is_verified_by_admin' => 'yes'
@@ -446,7 +417,7 @@ class SuperadminController extends Controller
             [
                 'name' => 'Siswa Contoh',
                 'email' => 'siswa@sekolah.com',
-                'user_type' => 'siswa',
+                'role' => 'siswa',
                 'password' => 'password123',
                 'email_verified_at' => '',
                 'is_verified_by_admin' => 'no'
@@ -472,7 +443,7 @@ class SuperadminController extends Controller
                 return [
                     'name',
                     'email',
-                    'user_type',
+                    'role',
                     'password',
                     'email_verified_at',
                     'is_verified_by_admin'
@@ -582,8 +553,10 @@ class SuperadminController extends Controller
         $query = User::query();
 
         // Apply filters
-        if ($request->has('user_type') && $request->user_type !== '') {
-            $query->where('user_type', $request->user_type);
+        if ($request->has('role') && $request->role !== '') {
+            $query->whereHas('roles', function ($q) use ($request) {
+                $q->where('name', $request->role);
+            });
         }
 
         if ($request->has('is_verified_by_admin') && $request->is_verified_by_admin !== '') {

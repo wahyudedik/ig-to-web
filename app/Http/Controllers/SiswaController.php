@@ -74,7 +74,9 @@ class SiswaController extends Controller
 
         // Get users that are not already assigned to any student
         $usedUserIds = Siswa::whereNotNull('user_id')->pluck('user_id')->toArray();
-        $users = User::where('user_type', 'siswa')
+        $users = User::whereHas('roles', function ($q) {
+                $q->where('name', 'siswa');
+            })
             ->whereNotIn('id', $usedUserIds)
             ->get();
 
@@ -152,7 +154,9 @@ class SiswaController extends Controller
             ->where('id', '!=', $siswa->id)
             ->pluck('user_id')
             ->toArray();
-        $users = User::where('user_type', 'siswa')
+        $users = User::whereHas('roles', function ($q) {
+                $q->where('name', 'siswa');
+            })
             ->where(function ($query) use ($usedUserIds, $siswa) {
                 $query->whereNotIn('id', $usedUserIds)
                     ->orWhere('id', $siswa->user_id);

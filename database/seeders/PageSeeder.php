@@ -55,7 +55,9 @@ class PageSeeder extends Seeder
         }
 
         // Get superadmin user
-        $superadmin = User::where('user_type', 'superadmin')->first();
+        $superadmin = User::whereHas('roles', function ($q) {
+            $q->where('name', 'superadmin');
+        })->first();
 
         if (!$superadmin) {
             $this->command->warn('Superadmin user not found. Please run UserSeeder first.');

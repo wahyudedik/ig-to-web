@@ -20,7 +20,6 @@ class UserSeeder extends Seeder
             'name' => 'Super Administrator',
             'email' => 'superadmin@sekolah.com',
             'password' => Hash::make('password'),
-            'user_type' => 'superadmin',
             'email_verified_at' => now(),
             'is_verified_by_admin' => true,
         ]);
@@ -28,12 +27,5 @@ class UserSeeder extends Seeder
         // Assign superadmin role (use syncRoles to ensure only one role)
         $superadminRole = Role::firstOrCreate(['name' => 'superadmin']);
         $superadmin->syncRoles([$superadminRole]);
-
-        // Ensure user_type is synced with role (syncRoles doesn't trigger saved event)
-        $superadmin->load('roles');
-        $primaryRole = $superadmin->roles->first();
-        if ($primaryRole && $superadmin->user_type !== $primaryRole->name) {
-            $superadmin->updateQuietly(['user_type' => $primaryRole->name]);
-        }
     }
 }

@@ -39,12 +39,11 @@ class UserManagementController extends Controller
             // Get role
             $role = Role::findOrFail($request->role_id);
 
-            // Create user (user_type will be synced by observer after role assignment)
+            // Create user
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($tempPassword),
-                'user_type' => $role->name, // Temporary, will be synced by observer
                 'email_verified_at' => now(), // ✅ Auto-verify invited users
                 'is_verified_by_admin' => true,
             ]);
@@ -52,13 +51,6 @@ class UserManagementController extends Controller
             // IMPORTANT: Use syncRoles([$role]) to ensure user has ONLY ONE role
             // assignRole() would ADD role (allowing multiple), syncRoles() REPLACES all roles
             $user->syncRoles([$role]);
-
-            // Ensure user_type is synced
-            $user->load('roles');
-            $primaryRole = $user->roles->first();
-            if ($primaryRole && $user->user_type !== $primaryRole->name) {
-                $user->updateQuietly(['user_type' => $primaryRole->name]);
-            }
 
             // Send invitation email if requested
             if ($request->has('send_invitation') && $request->send_invitation) {
@@ -99,12 +91,11 @@ class UserManagementController extends Controller
             // Get role
             $role = Role::findOrFail($request->role_id);
 
-            // Create user (user_type will be synced by observer after role assignment)
+            // Create user
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'user_type' => $role->name, // Temporary, will be synced by observer
                 'email_verified_at' => now(), // ✅ Auto-verify admin-created users
                 'is_verified_by_admin' => true,
             ]);
@@ -112,13 +103,6 @@ class UserManagementController extends Controller
             // IMPORTANT: Use syncRoles([$role]) to ensure user has ONLY ONE role
             // assignRole() would ADD role (allowing multiple), syncRoles() REPLACES all roles
             $user->syncRoles([$role]);
-
-            // Ensure user_type is synced
-            $user->load('roles');
-            $primaryRole = $user->roles->first();
-            if ($primaryRole && $user->user_type !== $primaryRole->name) {
-                $user->updateQuietly(['user_type' => $primaryRole->name]);
-            }
 
             return response()->json([
                 'success' => true,
@@ -186,13 +170,6 @@ class UserManagementController extends Controller
         // Update role using Spatie Permission
         $role = Role::findOrFail($request->role_id);
         $user->syncRoles([$role]);
-
-        // Sync user_type with primary role (auto-handled by UserObserver, but ensure it's updated)
-        $user->load('roles');
-        $primaryRole = $user->roles->first();
-        if ($primaryRole && $user->user_type !== $primaryRole->name) {
-            $user->updateQuietly(['user_type' => $primaryRole->name]);
-        }
 
         return redirect()->route('admin.user-management.index')
             ->with('success', 'User updated successfully.');

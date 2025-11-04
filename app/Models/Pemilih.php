@@ -55,7 +55,9 @@ class Pemilih extends Model
     public function siswa()
     {
         return $this->hasOneThrough(Siswa::class, User::class, 'id', 'user_id')
-            ->where('users.user_type', 'siswa');
+            ->whereHas('roles', function ($q) {
+                $q->where('name', 'siswa');
+            });
     }
 
     /**
@@ -64,7 +66,9 @@ class Pemilih extends Model
     public function guru()
     {
         return $this->hasOneThrough(Guru::class, User::class, 'id', 'user_id')
-            ->where('users.user_type', 'guru');
+            ->whereHas('roles', function ($q) {
+                $q->where('name', 'guru');
+            });
     }
 
     /**
