@@ -17,9 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            // Use string instead of enum for SQLite compatibility and custom role support
-            // Migration 2025_11_03_072855 will handle the conversion if needed
-            $table->string('user_type', 50)->default('siswa');
+            // user_type removed - now using Spatie Permission roles only
             $table->rememberToken();
             $table->timestamps();
         });

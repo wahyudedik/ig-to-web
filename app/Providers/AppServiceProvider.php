@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Register User Observer for syncing user_type with Spatie roles
+        // Register User Observer (currently empty, but kept for future use)
         User::observe(UserObserver::class);
     }
 }

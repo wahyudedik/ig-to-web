@@ -145,16 +145,21 @@
                             <div
                                 class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div class="py-2">
-                                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['users.view', 'users.create', 'users.edit', 'users.delete'])): ?>
+                                    <?php if(Auth::check() && (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))): ?>
+                                        <a href="<?php echo e(route('admin.superadmin.users')); ?>"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-users-cog mr-2"></i>User Management
+                                        </a>
+                                    <?php elseif(auth()->user() && (auth()->user()->can('users.view') || auth()->user()->can('users.create') || auth()->user()->can('users.edit') || auth()->user()->can('users.delete'))): ?>
                                         <a href="<?php echo e(route('admin.user-management.index')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-users mr-2"></i>User Management
                                         </a>
                                     <?php endif; ?>
-                                    <?php if(Auth::check() && (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))): ?>
-                                        <a href="<?php echo e(route('admin.superadmin.users')); ?>"
+                                    <?php if(auth()->user()->hasRole('superadmin')): ?>
+                                        <a href="<?php echo e(route('admin.roles.index')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-users-cog mr-2"></i>User Management (System)
+                                            <i class="fas fa-user-shield mr-2"></i>Role Management
                                         </a>
                                     <?php endif; ?>
                                     <a href="<?php echo e(route('admin.role-permissions.index')); ?>"
@@ -164,14 +169,10 @@
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewAny', App\Models\Permission::class)): ?>
                                         <a href="<?php echo e(route('admin.permissions.index')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-shield-alt mr-2"></i>Permission Management
+                                            <i class="fas fa-key mr-2"></i>Permission Management
                                         </a>
                                     <?php endif; ?>
                                     <?php if(auth()->user()->hasRole('superadmin')): ?>
-                                        <a href="<?php echo e(route('admin.roles.index')); ?>"
-                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-user-shield mr-2"></i>Role Management
-                                        </a>
                                         <a href="<?php echo e(route('admin.audit-logs.index')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-history mr-2"></i>Audit Logs
@@ -601,22 +602,15 @@
                             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">System
                                 Management</div>
                             <div class="space-y-1 ml-2">
-                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['users.view', 'users.create', 'users.edit', 'users.delete'])): ?>
-                                    <a href="<?php echo e(route('admin.user-management.index')); ?>"
-                                        class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                                        <i class="fas fa-users mr-2"></i>User Management
-                                    </a>
-                                <?php endif; ?>
                                 <?php if(Auth::check() && (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('admin'))): ?>
                                     <a href="<?php echo e(route('admin.superadmin.users')); ?>"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                                        <i class="fas fa-users-cog mr-2"></i>User Management (System)
+                                        <i class="fas fa-users-cog mr-2"></i>User Management
                                     </a>
-                                <?php endif; ?>
-                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewAny', App\Models\Permission::class)): ?>
-                                    <a href="<?php echo e(route('admin.permissions.index')); ?>"
+                                <?php elseif(auth()->user() && (auth()->user()->can('users.view') || auth()->user()->can('users.create') || auth()->user()->can('users.edit') || auth()->user()->can('users.delete'))): ?>
+                                    <a href="<?php echo e(route('admin.user-management.index')); ?>"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
-                                        <i class="fas fa-shield-alt mr-2"></i>Permission Management
+                                        <i class="fas fa-users mr-2"></i>User Management
                                     </a>
                                 <?php endif; ?>
                                 <?php if(auth()->user()->hasRole('superadmin')): ?>
@@ -624,6 +618,18 @@
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-user-shield mr-2"></i>Role Management
                                     </a>
+                                <?php endif; ?>
+                                <a href="<?php echo e(route('admin.role-permissions.index')); ?>"
+                                    class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                    <i class="fas fa-shield-alt mr-2"></i>Role & Permissions
+                                </a>
+                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewAny', App\Models\Permission::class)): ?>
+                                    <a href="<?php echo e(route('admin.permissions.index')); ?>"
+                                        class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
+                                        <i class="fas fa-key mr-2"></i>Permission Management
+                                    </a>
+                                <?php endif; ?>
+                                <?php if(auth()->user()->hasRole('superadmin')): ?>
                                     <a href="<?php echo e(route('admin.audit-logs.index')); ?>"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-history mr-2"></i>Audit Logs

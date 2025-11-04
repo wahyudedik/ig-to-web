@@ -150,7 +150,7 @@
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-users-cog mr-2"></i>User Management
                                         </a>
-                                    @elseif(auth()->user()->canany(['users.view', 'users.create', 'users.edit', 'users.delete']))
+                                    @elseif(auth()->user() && (auth()->user()->can('users.view') || auth()->user()->can('users.create') || auth()->user()->can('users.edit') || auth()->user()->can('users.delete')))
                                         <a href="{{ route('admin.user-management.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-users mr-2"></i>User Management
@@ -603,7 +603,7 @@
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-users-cog mr-2"></i>User Management
                                     </a>
-                                @elseif(auth()->user()->canany(['users.view', 'users.create', 'users.edit', 'users.delete']))
+                                @elseif(auth()->user() && (auth()->user()->can('users.view') || auth()->user()->can('users.create') || auth()->user()->can('users.edit') || auth()->user()->can('users.delete')))
                                     <a href="{{ route('admin.user-management.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-users mr-2"></i>User Management

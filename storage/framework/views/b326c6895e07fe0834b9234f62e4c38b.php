@@ -53,7 +53,6 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Type</th>
                                 <th>Roles</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -76,9 +75,6 @@
                                         </div>
                                     </td>
                                     <td class="text-slate-900"><?php echo e($user->email); ?></td>
-                                    <td>
-                                        <span class="badge badge-info"><?php echo e(ucfirst($user->user_type)); ?></span>
-                                    </td>
                                     <td>
                                         <?php if($user->roles->count() > 0): ?>
                                             <div class="flex flex-wrap gap-1">
@@ -128,7 +124,7 @@
                                                         d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                                                 </svg>
                                             </a>
-                                            <?php if($user->user_type !== 'superadmin'): ?>
+                                            <?php if(!$user->hasRole('superadmin')): ?>
                                                 <form method="POST"
                                                     action="<?php echo e(route('admin.superadmin.users.destroy', $user)); ?>"
                                                     class="inline"

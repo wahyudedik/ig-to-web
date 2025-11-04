@@ -212,10 +212,17 @@
                                         <p class="text-sm text-gray-600">{{ $guru->user->email }}</p>
                                     </div>
                                     <div class="ml-auto">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            {{ $guru->user->user_type }}
-                                        </span>
+                                        @if($guru->user && $guru->user->roles->count() > 0)
+                                            @foreach($guru->user->roles as $role)
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-1">
+                                                    {{ $role->name }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                No role
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

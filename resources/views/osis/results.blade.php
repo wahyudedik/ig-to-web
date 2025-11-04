@@ -6,7 +6,7 @@
                 <p class="text-slate-600 mt-1">Statistik dan hasil pemilihan ketua dan wakil ketua OSIS</p>
             </div>
             <div class="flex items-center space-x-2">
-                @if (Auth::user()->user_type === 'siswa')
+                @if (Auth::user()->hasRole('siswa'))
                     <a href="{{ route('admin.osis.voting') }}" class="btn btn-primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

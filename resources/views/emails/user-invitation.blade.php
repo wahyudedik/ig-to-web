@@ -150,7 +150,7 @@
             <p>Hello <strong>{{ $user->name }}</strong>,</p>
 
             <p>You have been invited to join <strong>Portal Sekolah</strong> as a <span
-                    class="role-badge">{{ ucfirst($user->user_type) }}</span>.</p>
+                    class="role-badge">{{ $user->roles->first() ? ucfirst($user->roles->first()->name) : 'User' }}</span>.</p>
 
             <p>Your account has been created and you can now access the portal using the credentials below:</p>
 
@@ -165,7 +165,7 @@
                 </div>
                 <div class="credential-item">
                     <span class="credential-label">Role:</span>
-                    <span class="credential-value">{{ ucfirst($user->user_type) }}</span>
+                    <span class="credential-value">{{ $user->roles->first() ? ucfirst($user->roles->first()->name) : 'No Role' }}</span>
                 </div>
             </div>
 

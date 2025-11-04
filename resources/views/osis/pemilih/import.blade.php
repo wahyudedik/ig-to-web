@@ -117,7 +117,7 @@
                         <ul class="list-disc list-inside space-y-1 ml-4">
                             <li><strong>nama</strong> - Nama lengkap pemilih (wajib)</li>
                             <li><strong>email</strong> - Email pemilih (wajib)</li>
-                            <li><strong>user_type</strong> - guru atau siswa (opsional, default: siswa)</li>
+                            <li><strong>user_type</strong> - guru atau siswa (opsional, default: siswa) - digunakan untuk tracking di tabel pemilihs</li>
                             <li><strong>jenis_kelamin</strong> - L atau P (opsional)</li>
                             <li><strong>kelas_jabatan</strong> - Kelas untuk siswa atau jabatan untuk guru (opsional)
                             </li>

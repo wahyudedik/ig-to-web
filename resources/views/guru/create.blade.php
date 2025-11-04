@@ -499,11 +499,6 @@
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <input type="password" id="newUserPassword" placeholder="Password"
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <select id="newUserType"
-                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="guru">Guru</option>
-                                <option value="admin">Admin</option>
-                            </select>
                             <button onclick="addUser()"
                                 class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
                                 Tambah User
@@ -633,8 +628,6 @@
             const name = document.getElementById('newUserName').value;
             const email = document.getElementById('newUserEmail').value;
             const password = document.getElementById('newUserPassword').value;
-            const userType = document.getElementById('newUserType').value;
-
             // Validation
             if (!name.trim()) {
                 showError('Nama lengkap harus diisi');
@@ -669,7 +662,7 @@
                         name: name,
                         email: email,
                         password: password,
-                        user_type: userType
+                        roles: ['guru'] // Use role instead of user_type
                     })
                 })
                 .then(response => {

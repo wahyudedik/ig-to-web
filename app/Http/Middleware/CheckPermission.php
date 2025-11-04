@@ -25,7 +25,7 @@ class CheckPermission
         $user = Auth::user();
 
         // Superadmin bypass all permissions
-        if ($user->user_type === 'superadmin' || $user->hasRole('superadmin')) {
+        if ($user->hasRole('superadmin')) {
             return $next($request);
         }
 

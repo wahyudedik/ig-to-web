@@ -43,12 +43,6 @@
                                 <p class="mt-1 text-slate-900">{{ $user->email }}</p>
                             </div>
                             <div>
-                                <label class="text-sm font-medium text-slate-500">User Type</label>
-                                <p class="mt-1">
-                                    <span class="badge badge-info">{{ ucfirst($user->user_type) }}</span>
-                                </p>
-                            </div>
-                            <div>
                                 <label class="text-sm font-medium text-slate-500">Email Status</label>
                                 <p class="mt-1">
                                     <span
@@ -173,7 +167,7 @@
                             </svg>
                             <span class="font-medium text-slate-900">Manage Access</span>
                         </a>
-                        @if ($user->user_type !== 'superadmin')
+                        @if (!$user->hasRole('superadmin'))
                             <form method="POST" action="{{ route('admin.superadmin.users.destroy', $user) }}"
                                 data-confirm="Are you sure you want to delete this user?">
                                 @csrf

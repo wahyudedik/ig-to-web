@@ -24,7 +24,8 @@ class UserExport implements FromCollection, WithHeadings, WithMapping, WithStyle
      */
     public function collection()
     {
-        return $this->users;
+        // Eager load roles to avoid N+1 queries
+        return $this->users->load('roles');
     }
 
     /**
@@ -35,7 +36,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping, WithStyle
         return [
             'Nama',
             'Email',
-            'User Type',
+            'Role',
             'Email Verified At',
             'Is Verified By Admin',
             'Created At',
@@ -52,7 +53,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping, WithStyle
         return [
             $user->name,
             $user->email,
-            $user->user_type,
+            $user->roles->pluck('name')->implode(', ') ?: 'No Role',
             $user->email_verified_at?->format('Y-m-d H:i:s'),
             $user->is_verified_by_admin ? 'Yes' : 'No',
             $user->created_at?->format('Y-m-d H:i:s'),

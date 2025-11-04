@@ -1,16 +1,26 @@
-<x-app-layout>
-    <x-slot name="header">
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Assign Users to Role: ') . $role->name }}
+            <?php echo e(__('Assign Users to Role: ') . $role->name); ?>
+
         </h2>
-    </x-slot>
+     <?php $__env->endSlot(); ?>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-6">
-                        <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">
+                        <a href="<?php echo e(route('admin.roles.index')); ?>" class="btn btn-secondary">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -19,9 +29,9 @@
                         </a>
                     </div>
 
-                    <form action="{{ route('admin.roles.sync-users', $role) }}" method="POST" id="assignUsersForm">
-                        @csrf
-                        @method('POST')
+                    <form action="<?php echo e(route('admin.roles.sync-users', $role)); ?>" method="POST" id="assignUsersForm">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('POST'); ?>
 
                         <div class="mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Role Information</h3>
@@ -29,22 +39,23 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Role Name</label>
-                                        <p class="text-sm text-gray-900">{{ $role->name }}</p>
+                                        <p class="text-sm text-gray-900"><?php echo e($role->name); ?></p>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Display Name</label>
                                         <p class="text-sm text-gray-900">
-                                            @if ($role->display_name)
-                                                {{ $role->display_name }}
-                                            @else
+                                            <?php if($role->display_name): ?>
+                                                <?php echo e($role->display_name); ?>
+
+                                            <?php else: ?>
                                                 <span class="text-yellow-600 italic">Not set - will use:
-                                                    {{ ucfirst($role->name) }}</span>
-                                            @endif
+                                                    <?php echo e(ucfirst($role->name)); ?></span>
+                                            <?php endif; ?>
                                         </p>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Current Users</label>
-                                        <p class="text-sm text-gray-900">{{ $role->users->count() }} users</p>
+                                        <p class="text-sm text-gray-900"><?php echo e($role->users->count()); ?> users</p>
                                     </div>
                                 </div>
                             </div>
@@ -54,58 +65,61 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Select Users</h3>
                             <div class="max-h-96 overflow-y-auto border border-gray-300 rounded-md p-4">
                                 <div class="space-y-2">
-                                    @forelse ($users as $user)
+                                    <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                         <label class="flex items-center p-2 hover:bg-gray-50 rounded">
-                                            <input type="checkbox" name="user_ids[]" value="{{ $user->id }}"
-                                                {{ in_array($user->id, $roleUsers) ? 'checked' : '' }}
+                                            <input type="checkbox" name="user_ids[]" value="<?php echo e($user->id); ?>"
+                                                <?php echo e(in_array($user->id, $roleUsers) ? 'checked' : ''); ?>
+
                                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                             <div class="ml-3 flex-1">
                                                 <div class="flex items-center justify-between">
                                                     <div>
-                                                        <p class="text-sm font-medium text-gray-900">{{ $user->name }}
+                                                        <p class="text-sm font-medium text-gray-900"><?php echo e($user->name); ?>
+
                                                         </p>
-                                                        <p class="text-sm text-gray-500">{{ $user->email }}</p>
+                                                        <p class="text-sm text-gray-500"><?php echo e($user->email); ?></p>
                                                     </div>
                                                     <div class="text-right">
-                                                        @php
+                                                        <?php
                                                             $userRoles = $user->roles;
                                                             $primaryRole = $userRoles->first();
                                                             $roleName = $primaryRole ? $primaryRole->name : 'user';
                                                             $badgeColor = get_role_badge_color($roleName);
-                                                        @endphp
+                                                        ?>
                                                         <div class="flex flex-col items-end">
-                                                            @if ($userRoles->count() > 1)
+                                                            <?php if($userRoles->count() > 1): ?>
                                                                 <span
                                                                     class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800 mb-1">
                                                                     <i class="fas fa-exclamation-triangle mr-1"></i>
-                                                                    Multiple Roles ({{ $userRoles->count() }})
+                                                                    Multiple Roles (<?php echo e($userRoles->count()); ?>)
                                                                 </span>
-                                                            @endif
+                                                            <?php endif; ?>
                                                             <span
-                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeColor }}">
-                                                                {{ get_role_display_name($primaryRole ?? $roleName) }}
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo e($badgeColor); ?>">
+                                                                <?php echo e(get_role_display_name($primaryRole ?? $roleName)); ?>
+
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </label>
-                                    @empty
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                         <div class="text-center py-8 text-gray-500">
                                             <i class="fas fa-users text-4xl mb-2"></i>
                                             <p>No users available to assign to this role.</p>
-                                            @if (!is_core_role($role->name) || strtolower($role->name) !== 'superadmin')
+                                            <?php if(!is_core_role($role->name) || strtolower($role->name) !== 'superadmin'): ?>
                                                 <p class="text-sm mt-1">Superadmin users are automatically excluded as
                                                     they already have all permissions.</p>
-                                            @endif
+                                            <?php endif; ?>
                                         </div>
-                                    @endforelse
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
 
                         <div class="flex justify-end space-x-3">
-                            <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">Cancel</a>
+                            <a href="<?php echo e(route('admin.roles.index')); ?>" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -180,7 +194,7 @@
 
                     if (result.data.success) {
                         showSuccess('Berhasil!', 'User assignments berhasil diupdate').then(() => {
-                            window.location.href = '{{ route('admin.roles.index') }}';
+                            window.location.href = '<?php echo e(route('admin.roles.index')); ?>';
                         });
                     } else {
                         showError('Error updating user assignments: ' + (result.data.message ||
@@ -198,4 +212,14 @@
                 });
         });
     </script>
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH E:\PROJEK  LARAVEL\ig-to-web\resources\views/role-management/assign-users.blade.php ENDPATH**/ ?>

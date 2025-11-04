@@ -118,7 +118,7 @@
                                         class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
                                         Lihat Detail
                                     </a>
-                                    @if (Auth::user()->user_type === 'superadmin')
+                                    @if (Auth::user()->hasRole('superadmin'))
                                         <a href="{{ route('admin.osis.calon.edit', $calon) }}"
                                             class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
                                             Edit
@@ -160,7 +160,7 @@
                 </svg>
                 <h3 class="text-lg font-medium text-slate-900 mb-2">Belum Ada Calon OSIS</h3>
                 <p class="text-slate-600 mb-6">Belum ada calon yang terdaftar untuk pemilihan OSIS saat ini.</p>
-                @if (Auth::user()->user_type === 'superadmin')
+                @if (Auth::user()->hasRole('superadmin'))
                     <a href="{{ route('admin.osis.calon.create') }}" class="btn btn-primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

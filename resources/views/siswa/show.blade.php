@@ -220,8 +220,16 @@
                                         <p class="font-medium">{{ $siswa->user->email }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-600">Tipe User</p>
-                                        <p class="font-medium">{{ ucfirst($siswa->user->user_type) }}</p>
+                                        <p class="text-sm text-gray-600">Roles</p>
+                                        <p class="font-medium">
+                                            @if($siswa->user && $siswa->user->roles->count() > 0)
+                                                @foreach($siswa->user->roles as $role)
+                                                    <span class="badge badge-success">{{ $role->name }}</span>
+                                                @endforeach
+                                            @else
+                                                <span class="text-gray-500">No roles</span>
+                                            @endif
+                                        </p>
                                     </div>
                                     <div>
                                         <p class="text-sm text-gray-600">Status User</p>

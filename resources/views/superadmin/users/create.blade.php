@@ -64,23 +64,6 @@
                             class="form-input" placeholder="Confirm password">
                     </div>
 
-                    <!-- User Type -->
-                    <div>
-                        <label for="user_type" class="form-label">User Type</label>
-                        <select id="user_type" name="user_type" required
-                            class="form-input @error('user_type') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                            <option value="">Select user type</option>
-                            <option value="admin" {{ old('user_type') === 'admin' ? 'selected' : '' }}>Admin</option>
-                            <option value="guru" {{ old('user_type') === 'guru' ? 'selected' : '' }}>Guru</option>
-                            <option value="siswa" {{ old('user_type') === 'siswa' ? 'selected' : '' }}>Siswa</option>
-                            <option value="sarpras" {{ old('user_type') === 'sarpras' ? 'selected' : '' }}>Sarpras
-                            </option>
-                        </select>
-                        @error('user_type')
-                            <p class="form-error">{{ $message }}</p>
-                        @enderror
-                    </div>
-
                     <!-- Roles -->
                     <div>
                         <label class="form-label">Assign Roles</label>

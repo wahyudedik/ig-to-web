@@ -37,15 +37,26 @@ class UserImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErro
 
         $this->rowCount++;
 
-        return new User([
+        $user = new User([
             'name' => trim($row['name']),
             'email' => trim($row['email']),
             'password' => Hash::make($row['password'] ?? 'password123'), // Default password
-            'user_type' => trim($row['user_type']),
             'email_verified_at' => !empty($row['email_verified_at']) ? \Carbon\Carbon::parse($row['email_verified_at']) : null,
             'is_verified_by_admin' => isset($row['is_verified_by_admin']) ?
                 (strtolower($row['is_verified_by_admin']) === 'yes' || $row['is_verified_by_admin'] === '1') : false,
         ]);
+        
+        // Assign role if provided (use 'role' instead of 'user_type')
+        $roleName = trim($row['role'] ?? $row['user_type'] ?? 'siswa'); // Support both 'role' and 'user_type' for backward compatibility
+        if ($roleName) {
+            $role = \Spatie\Permission\Models\Role::where('name', $roleName)->first();
+            if ($role) {
+                $user->save(); // Save first before assigning role
+                $user->syncRoles([$role]);
+            }
+        }
+        
+        return $user;
     }
 
     /**
@@ -56,7 +67,8 @@ class UserImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErro
         return [
             '*.name' => 'required|string|max:255',
             '*.email' => 'required|email|max:255',
-            '*.user_type' => 'required|in:superadmin,admin,guru,siswa,sarpras',
+            '*.role' => 'nullable|string|exists:roles,name', // Use 'role' instead of 'user_type'
+            '*.user_type' => 'nullable|string', // Keep for backward compatibility but will be mapped to role
             '*.password' => 'nullable|string|min:6',
             '*.email_verified_at' => 'nullable|date',
             '*.is_verified_by_admin' => 'nullable|in:yes,no,1,0',

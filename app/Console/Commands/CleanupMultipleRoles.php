@@ -68,12 +68,7 @@ class CleanupMultipleRoles extends Command
                 $primaryRole = $user->roles->first();
                 $user->syncRoles([$primaryRole]);
 
-                // Sync user_type
-                $user->load('roles');
-                if ($primaryRole && $user->user_type !== $primaryRole->name) {
-                    $user->updateQuietly(['user_type' => $primaryRole->name]);
-                }
-
+                // Roles are managed by Spatie Permission - no need to sync user_type
                 $this->line("  ✅ Fixed: Now has only role '{$primaryRole->name}'");
             }
             $this->newLine();

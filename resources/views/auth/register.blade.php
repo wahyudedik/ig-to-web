@@ -48,19 +48,17 @@
                             @enderror
                         </div>
 
-                        <!-- User Type -->
+                        <!-- Role -->
                         <div>
-                            <label for="user_type" class="form-label">Tipe Pengguna</label>
-                            <select id="user_type" name="user_type" required
-                                class="form-input @error('user_type') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
+                            <label for="role" class="form-label">Tipe Pengguna</label>
+                            <select id="role" name="role" required
+                                class="form-input @error('role') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
                                 <option value="">Pilih Tipe Pengguna</option>
-                                <option value="guru" {{ old('user_type') == 'guru' ? 'selected' : '' }}>Guru</option>
-                                <option value="siswa" {{ old('user_type') == 'siswa' ? 'selected' : '' }}>Siswa
-                                </option>
-                                <option value="sarpras" {{ old('user_type') == 'sarpras' ? 'selected' : '' }}>Sarpras
-                                </option>
+                                <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru</option>
+                                <option value="siswa" {{ old('role') == 'siswa' ? 'selected' : '' }}>Siswa</option>
+                                <option value="sarpras" {{ old('role') == 'sarpras' ? 'selected' : '' }}>Sarpras</option>
                             </select>
-                            @error('user_type')
+                            @error('role')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>

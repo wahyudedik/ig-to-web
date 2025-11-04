@@ -661,7 +661,7 @@
                                     </div>
                                     <div class="flex gap-1">
                                         <button
-                                            onclick="editUser({{ $user->id }}, {{ json_encode($user->name) }}, {{ json_encode($user->email) }}, {{ json_encode($user->user_type) }})"
+                                            onclick="editUser({{ $user->id }}, {{ json_encode($user->name) }}, {{ json_encode($user->email) }})"
                                             class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">
                                             Edit
                                         </button>
@@ -890,8 +890,6 @@
             const name = document.getElementById('newUserName').value;
             const email = document.getElementById('newUserEmail').value;
             const password = document.getElementById('newUserPassword').value;
-            const userType = 'siswa'; // Hardcoded untuk form siswa
-
             // Validation
             if (!name.trim()) {
                 showError('Nama lengkap harus diisi');
@@ -915,6 +913,7 @@
             button.textContent = 'Loading...';
             button.disabled = true;
 
+            // Get siswa role ID
             fetch('{{ route('admin.superadmin.users.store') }}', {
                     method: 'POST',
                     headers: {
@@ -926,7 +925,7 @@
                         name: name,
                         email: email,
                         password: password,
-                        user_type: userType
+                        roles: ['siswa'] // Use role instead of user_type
                     })
                 })
                 .then(response => {
@@ -956,7 +955,7 @@
                                 <span class="text-xs text-gray-500 ml-2">(${data.data.email})</span>
                             </div>
                             <div class="flex gap-1">
-                                <button onclick="editUser(${data.data.id}, ${JSON.stringify(data.data.name)}, ${JSON.stringify(data.data.email)}, ${JSON.stringify(data.data.user_type)})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
+                                <button onclick="editUser(${data.data.id}, ${JSON.stringify(data.data.name)}, ${JSON.stringify(data.data.email)})" class="px-2 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</button>
                                 <button onclick="deleteUser(${data.data.id})" class="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600">Hapus</button>
                             </div>
                         `;
@@ -1117,7 +1116,7 @@
             }
         }
 
-        async function editUser(id, name, email, userType) {
+        async function editUser(id, name, email) {
             const {
                 value: formValues
             } = await Swal.fire({
