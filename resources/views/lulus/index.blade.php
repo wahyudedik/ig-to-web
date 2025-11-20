@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('E-Lulus - Data Kelulusan') }}
+            {{ __('common.e_graduation_data') }}
         </h2>
     </x-slot>
 
@@ -12,21 +12,21 @@
                 <div class="flex-1">
                     <a href="{{ route('admin.lulus.create') }}"
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Tambah Data Kelulusan
+                        {{ __('common.add_graduation_data') }}
                     </a>
                     <a href="{{ route('admin.lulus.import') }}"
                         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2">
-                        Import Data
+                        {{ __('common.import_data') }}
                     </a>
                     <a href="{{ route('admin.lulus.export', request()->query()) }}"
                         class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded ml-2">
-                        Export Data
+                        {{ __('common.export_data') }}
                     </a>
                 </div>
                 <div class="flex-1">
                     <a href="{{ route('admin.lulus.check') }}"
                         class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                        Cek Status Kelulusan
+                        {{ __('common.check_graduation_status') }}
                     </a>
                 </div>
             </div>
@@ -37,17 +37,17 @@
                     <form method="GET" action="{{ route('admin.lulus.index') }}" id="filterForm"
                         class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                            <label for="search" class="block text-sm font-medium text-gray-700">Cari</label>
+                            <label for="search" class="block text-sm font-medium text-gray-700">{{ __('common.search_label') }}</label>
                             <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                placeholder="Nama, NISN, atau NIS"
+                                placeholder="{{ __('common.search_name_nisn_nis') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
                         <div>
-                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <label for="status" class="block text-sm font-medium text-gray-700">{{ __('common.status') }}</label>
                             <select name="status" id="status"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 onchange="document.getElementById('filterForm').submit();">
-                                <option value="">Semua Status</option>
+                                <option value="">{{ __('common.all_status') }}</option>
                                 @foreach ($statuses as $status)
                                     <option value="{{ $status }}"
                                         {{ request('status') == $status ? 'selected' : '' }}>
@@ -57,12 +57,11 @@
                             </select>
                         </div>
                         <div>
-                            <label for="tahun_ajaran" class="block text-sm font-medium text-gray-700">Tahun
-                                Ajaran</label>
+                            <label for="tahun_ajaran" class="block text-sm font-medium text-gray-700">{{ __('common.academic_year') }}</label>
                             <select name="tahun_ajaran" id="tahun_ajaran"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 onchange="document.getElementById('filterForm').submit();">
-                                <option value="">Semua Tahun</option>
+                                <option value="">{{ __('common.all_academic_years') }}</option>
                                 @foreach ($tahunAjaran as $tahun)
                                     <option value="{{ $tahun }}"
                                         {{ request('tahun_ajaran') == $tahun ? 'selected' : '' }}>
@@ -72,11 +71,11 @@
                             </select>
                         </div>
                         <div>
-                            <label for="jurusan" class="block text-sm font-medium text-gray-700">Jurusan</label>
+                            <label for="jurusan" class="block text-sm font-medium text-gray-700">{{ __('common.major') }}</label>
                             <select name="jurusan" id="jurusan"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 onchange="document.getElementById('filterForm').submit();">
-                                <option value="">Semua Jurusan</option>
+                                <option value="">{{ __('common.all_majors') }}</option>
                                 @foreach ($jurusan as $j)
                                     <option value="{{ $j }}"
                                         {{ request('jurusan') == $j ? 'selected' : '' }}>
@@ -88,11 +87,11 @@
                         <div class="md:col-span-4">
                             <button type="submit"
                                 class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                                Filter
+                                {{ __('common.filter') }}
                             </button>
                             <a href="{{ route('admin.lulus.index') }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-2">
-                                Reset
+                                {{ __('common.reset') }}
                             </a>
                         </div>
                     </form>
@@ -109,28 +108,28 @@
                                     <tr>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Foto</th>
+                                            {{ __('common.photo') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Nama</th>
+                                            {{ __('common.name') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             NISN</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Jurusan</th>
+                                            {{ __('common.major') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tahun Ajaran</th>
+                                            {{ __('common.academic_year') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status</th>
+                                            {{ __('common.status') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Aktivitas</th>
+                                            {{ __('common.activity') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Aksi</th>
+                                            {{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -181,17 +180,17 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div class="flex space-x-2">
                                                     <a href="{{ route('admin.lulus.show', $kelulusan) }}"
-                                                        class="text-indigo-600 hover:text-indigo-900">Lihat</a>
+                                                        class="text-indigo-600 hover:text-indigo-900">{{ __('common.view') }}</a>
                                                     <a href="{{ route('admin.lulus.edit', $kelulusan) }}"
-                                                        class="text-yellow-600 hover:text-yellow-900">Edit</a>
+                                                        class="text-yellow-600 hover:text-yellow-900">{{ __('common.edit') }}</a>
                                                     <form method="POST"
                                                         action="{{ route('admin.lulus.destroy', $kelulusan) }}"
                                                         class="inline"
-                                                        data-confirm="Apakah Anda yakin ingin menghapus data ini?">
+                                                        data-confirm="{{ __('common.delete_data_confirmation') }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
-                                                            class="text-red-600 hover:text-red-900">Hapus</button>
+                                                            class="text-red-600 hover:text-red-900">{{ __('common.delete') }}</button>
                                                     </form>
                                                 </div>
                                             </td>
@@ -207,10 +206,10 @@
                         </div>
                     @else
                         <div class="text-center py-12">
-                            <div class="text-gray-500 text-lg">Tidak ada data kelulusan ditemukan.</div>
+                            <div class="text-gray-500 text-lg">{{ __('common.no_graduation_data_found') }}</div>
                             <a href="{{ route('admin.lulus.create') }}"
                                 class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Tambah Data Pertama
+                                {{ __('common.add_first_data') }}
                             </a>
                         </div>
                     @endif

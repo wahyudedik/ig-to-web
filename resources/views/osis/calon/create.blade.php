@@ -2,15 +2,15 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Tambah Calon OSIS</h1>
-                <p class="text-slate-600 mt-1">Tambah data calon ketua dan wakil OSIS</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.tambah_calon') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_calon_description') }}</p>
             </div>
             <a href="{{ route('admin.osis.calon.index') }}" class="btn btn-secondary">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Kembali
+                {{ __('common.back') }}
             </a>
         </div>
     </x-slot>
@@ -23,16 +23,15 @@
 
                 <!-- Jenis Pencalonan -->
                 <div>
-                    <label for="jenis_pencalonan" class="form-label">Jenis Pencalonan *</label>
+                    <label for="jenis_pencalonan" class="form-label">{{ __('common.jenis_pencalonan') }} *</label>
                     <select name="jenis_pencalonan" id="jenis_pencalonan" required
                         class="form-input @error('jenis_pencalonan') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                        <option value="">Pilih Jenis Pencalonan</option>
-                        <option value="ketua" {{ old('jenis_pencalonan') === 'ketua' ? 'selected' : '' }}>Ketua OSIS
+                        <option value="">{{ __('common.select_status') }}</option>
+                        <option value="ketua" {{ old('jenis_pencalonan') === 'ketua' ? 'selected' : '' }}>{{ __('common.ketua_osis') }}
                         </option>
-                        <option value="wakil" {{ old('jenis_pencalonan') === 'wakil' ? 'selected' : '' }}>Wakil Ketua
-                            OSIS</option>
-                        <option value="pasangan" {{ old('jenis_pencalonan') === 'pasangan' ? 'selected' : '' }}>Pasangan
-                            Ketua & Wakil</option>
+                        <option value="wakil" {{ old('jenis_pencalonan') === 'wakil' ? 'selected' : '' }}>{{ __('common.wakil_ketua_osis') }}
+                        </option>
+                        <option value="pasangan" {{ old('jenis_pencalonan') === 'pasangan' ? 'selected' : '' }}>{{ __('common.pasangan_ketua_wakil') }}</option>
                     </select>
                     @error('jenis_pencalonan')
                         <p class="form-error">{{ $message }}</p>
@@ -44,9 +43,9 @@
                     <label for="jenis_kelamin" class="form-label">Jenis Kelamin *</label>
                     <select name="jenis_kelamin" id="jenis_kelamin" required
                         class="form-input @error('jenis_kelamin') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                        <option value="">Pilih Jenis Kelamin</option>
-                        <option value="L" {{ old('jenis_kelamin') === 'L' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="P" {{ old('jenis_kelamin') === 'P' ? 'selected' : '' }}>Perempuan</option>
+                        <option value="">{{ __('common.select_status') }}</option>
+                        <option value="L" {{ old('jenis_kelamin') === 'L' ? 'selected' : '' }}>{{ __('common.laki_laki') }}</option>
+                        <option value="P" {{ old('jenis_kelamin') === 'P' ? 'selected' : '' }}>{{ __('common.perempuan') }}</option>
                     </select>
                     @error('jenis_kelamin')
                         <p class="form-error">{{ $message }}</p>
@@ -58,14 +57,14 @@
                 <!-- Ketua OSIS -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2">Data Ketua OSIS
+                        <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2">{{ __('common.data_ketua_osis') }}
                         </h3>
 
                         <div>
-                            <label for="nama_ketua" class="form-label">Nama Ketua *</label>
+                            <label for="nama_ketua" class="form-label">{{ __('common.name') }} {{ __('common.ketua') }} *</label>
                             <select name="nama_ketua" id="nama_ketua" required
                                 class="form-input @error('nama_ketua') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                                <option value="">Pilih Nama Siswa</option>
+                                <option value="">{{ __('common.select_student_name') }}</option>
                                 @foreach ($siswas ?? [] as $siswa)
                                     <option value="{{ $siswa->nama_lengkap }}" data-nis="{{ $siswa->nis }}"
                                         data-kelas="{{ $siswa->kelas }}" data-email="{{ $siswa->email }}"
@@ -78,14 +77,14 @@
                             @error('nama_ketua')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
-                            <p class="text-sm text-slate-600 mt-1">Pilih dari daftar siswa aktif</p>
+                            <p class="text-sm text-slate-600 mt-1">{{ __('common.select_from_active_students') }}</p>
                         </div>
 
                         <div>
-                            <label for="kelas_ketua" class="form-label">Kelas Ketua *</label>
+                            <label for="kelas_ketua" class="form-label">{{ __('common.select_class') }} {{ __('common.ketua') }} *</label>
                             <select name="kelas_ketua" id="kelas_ketua" required
                                 class="form-input @error('kelas_ketua') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                                <option value="">Pilih Kelas</option>
+                                <option value="">{{ __('common.select_class') }}</option>
                                 @foreach ($kelas ?? [] as $k)
                                     <option value="{{ $k }}"
                                         {{ old('kelas_ketua') == $k ? 'selected' : '' }}>
@@ -109,14 +108,14 @@
                     </div>
 
                     <div class="space-y-4">
-                        <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2">Data Wakil Ketua
-                            OSIS</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2">{{ __('common.data_wakil_osis') }}
+                        </h3>
 
                         <div>
-                            <label for="nama_wakil" class="form-label">Nama Wakil *</label>
+                            <label for="nama_wakil" class="form-label">{{ __('common.name') }} {{ __('common.wakil') }} *</label>
                             <select name="nama_wakil" id="nama_wakil" required
                                 class="form-input @error('nama_wakil') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                                <option value="">Pilih Nama Siswa</option>
+                                <option value="">{{ __('common.select_student_name') }}</option>
                                 @foreach ($siswas ?? [] as $siswa)
                                     <option value="{{ $siswa->nama_lengkap }}" data-nis="{{ $siswa->nis }}"
                                         data-kelas="{{ $siswa->kelas }}" data-email="{{ $siswa->email }}"
@@ -129,14 +128,14 @@
                             @error('nama_wakil')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
-                            <p class="text-sm text-slate-600 mt-1">Pilih dari daftar siswa aktif</p>
+                            <p class="text-sm text-slate-600 mt-1">{{ __('common.select_from_active_students') }}</p>
                         </div>
 
                         <div>
-                            <label for="kelas_wakil" class="form-label">Kelas Wakil *</label>
+                            <label for="kelas_wakil" class="form-label">{{ __('common.select_class') }} {{ __('common.wakil') }} *</label>
                             <select name="kelas_wakil" id="kelas_wakil" required
                                 class="form-input @error('kelas_wakil') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                                <option value="">Pilih Kelas</option>
+                                <option value="">{{ __('common.select_class') }}</option>
                                 @foreach ($kelas ?? [] as $k)
                                     <option value="{{ $k }}"
                                         {{ old('kelas_wakil') == $k ? 'selected' : '' }}>

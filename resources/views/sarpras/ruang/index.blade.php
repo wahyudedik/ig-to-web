@@ -178,7 +178,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <p class="text-sm text-slate-900">{{ $r->full_location }}</p>
+                                    <p class="text-sm text-slate-900">{{ $r->lokasi ?? '-' }}</p>
                                 </td>
                                 <td>
                                     <p class="text-sm text-slate-900">{{ $r->formatted_luas }}</p>

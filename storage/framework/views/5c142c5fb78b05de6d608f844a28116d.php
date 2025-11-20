@@ -19,7 +19,8 @@
                 <?php if(auth()->guard()->check()): ?>
                     <a href="<?php echo e(route('admin.dashboard')); ?>"
                         class="text-sm font-medium <?php echo e(request()->routeIs('admin.dashboard') ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900'); ?> transition-colors">
-                        Dashboard
+                        <?php echo e(__('common.dashboard')); ?>
+
                     </a>
 
                     <!-- Academic Management -->
@@ -123,7 +124,8 @@
                                     <?php if(Auth::check() && Auth::user()->hasRole('superadmin')): ?>
                                         <a href="<?php echo e(route('admin.superadmin.instagram-settings')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fab fa-instagram mr-2"></i>Instagram Settings
+                                            <i class="fab fa-instagram mr-2"></i><?php echo e(__('common.instagram_settings')); ?>
+
                                         </a>
                                     <?php endif; ?>
                                 </div>
@@ -181,37 +183,43 @@
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewAnalytics', App\Models\User::class)): ?>
                                         <a href="<?php echo e(route('admin.analytics')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-chart-line mr-2"></i>Analytics Dashboard
+                                            <i class="fas fa-chart-line mr-2"></i><?php echo e(__('common.analytics_dashboard')); ?>
+
                                         </a>
                                     <?php endif; ?>
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewSystemHealth', App\Models\User::class)): ?>
                                         <a href="<?php echo e(route('admin.system.health')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-heartbeat mr-2"></i>System Health
+                                            <i class="fas fa-heartbeat mr-2"></i><?php echo e(__('common.system_health')); ?>
+
                                         </a>
                                     <?php endif; ?>
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('viewNotifications', App\Models\User::class)): ?>
                                         <a href="<?php echo e(route('admin.notifications')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-bell mr-2"></i>Notification Center
+                                            <i class="fas fa-bell mr-2"></i><?php echo e(__('common.notification_center')); ?>
+
                                         </a>
                                     <?php endif; ?>
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['testimonials.view', 'testimonials.create', 'testimonials.edit',
                                         'testimonials.delete'])): ?>
                                         <a href="<?php echo e(route('admin.testimonials.index')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-comments mr-2"></i>Manage Testimonials
+                                            <i class="fas fa-comments mr-2"></i><?php echo e(__('common.manage_testimonials')); ?>
+
                                         </a>
                                     <?php endif; ?>
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('testimonial-links.view')): ?>
                                         <a href="<?php echo e(route('admin.testimonial-links.index')); ?>"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-link mr-2"></i>Testimonial Links
+                                            <i class="fas fa-link mr-2"></i><?php echo e(__('common.testimonial_links')); ?>
+
                                         </a>
                                     <?php endif; ?>
                                     <a href="<?php echo e(route('admin.settings.index')); ?>"
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                        <i class="fas fa-cog mr-2"></i>System Settings
+                                        <i class="fas fa-cog mr-2"></i><?php echo e(__('common.system_settings')); ?>
+
                                     </a>
                                 </div>
                             </div>
@@ -314,7 +322,7 @@
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                     <div class="px-4 py-8 text-center">
                                         <i class="fas fa-bell-slash text-3xl text-slate-300 mb-2"></i>
-                                        <p class="text-sm text-slate-600">No new notifications</p>
+                                        <p class="text-sm text-slate-600"><?php echo e(__('common.no_new_notifications')); ?></p>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -368,7 +376,8 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
-                                        Profile Settings
+                                        <?php echo e(__('common.profile')); ?> <?php echo e(__('common.settings')); ?>
+
                                     </a>
                                     <a href="<?php echo e(route('landing')); ?>" target="_blank"
                                         class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -377,14 +386,16 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                         </svg>
-                                        View Website
+                                        <?php echo e(__('common.view_website')); ?>
+
                                     </a>
                                 </div>
 
                                 <!-- Language Switcher -->
                                 <div class="py-2 border-t border-slate-100">
                                     <div class="px-4 py-2">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Language
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide"><?php echo e(__('common.language')); ?>
+
                                         </p>
                                     </div>
                                     <?php
@@ -410,11 +421,41 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
 
+                                <!-- Timezone Switcher -->
+                                <div class="py-2 border-t border-slate-100">
+                                    <div class="px-4 py-2">
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide"><?php echo e(__('common.timezone')); ?>
+
+                                        </p>
+                                    </div>
+                                    <?php
+                                        $currentTimezone = session('timezone', Auth::check() && Auth::user() ? (Auth::user()->timezone ?? config('i18n.default_timezone', 'Asia/Jakarta')) : config('i18n.default_timezone', 'Asia/Jakarta'));
+                                        $availableTimezones = config('i18n.timezones', []);
+                                    ?>
+                                    <form method="POST" action="<?php echo e(route('timezone.switch')); ?>" id="timezone-form">
+                                        <?php echo csrf_field(); ?>
+                                        <select name="timezone" onchange="document.getElementById('timezone-form').submit();"
+                                            class="w-full px-4 py-2 text-sm text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <?php $__currentLoopData = $availableTimezones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $region => $timezones): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <optgroup label="<?php echo e($region); ?>">
+                                                    <?php $__currentLoopData = $timezones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tz => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($tz); ?>" <?php echo e($tz === $currentTimezone ? 'selected' : ''); ?>>
+                                                            <?php echo e($label); ?>
+
+                                                        </option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </optgroup>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                    </form>
+                                </div>
+
                                 <!-- Quick Settings -->
                                 <div class="py-2 border-t border-slate-100">
                                     <div class="px-4 py-2">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Quick
-                                            Access</p>
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide"><?php echo e(__('common.quick_access')); ?>
+
+                                        </p>
                                     </div>
                                     <?php if(Auth::check() && Auth::user()->hasRole('superadmin')): ?>
                                         <a href="<?php echo e(route('admin.superadmin.instagram-settings')); ?>"
@@ -452,7 +493,8 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                             </svg>
-                                            Log Out
+                                            <?php echo e(__('common.logout')); ?>
+
                                         </button>
                                     </form>
                                 </div>

@@ -49,6 +49,13 @@ Sistem manajemen sekolah berbasis web yang terintegrasi dengan Instagram untuk m
 - **Kategori & Ruang**: Organisasi sarana prasarana yang terstruktur
 - **Maintenance Tracking**: Sistem perawatan dan maintenance
 - **Barcode System**: Generate dan scan barcode untuk tracking barang
+- **Sarana Management**: Sistem inventaris sarana dengan kode inventaris otomatis
+  - **Kode Inventaris Otomatis**: Format `INV/NO.KodeBarang.KodeRuang.JumlahBarang.KodeSumberDana`
+  - **Multi-Barang per Ruang**: Satu ruang dapat memiliki multiple barang
+  - **Harga & Total**: Tracking harga satuan dan total per barang
+  - **Invoice Printing**: Cetak invoice inventaris dalam format PDF
+  - **Filter & Search**: Filter berdasarkan kategori dan sumber dana
+  - **Dynamic Item Assignment**: Update ruang_id barang secara otomatis
 - **Laporan**: Export data sarpras dalam berbagai format
 
 ### 📱 Instagram Integration

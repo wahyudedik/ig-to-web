@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Daftar Pemilih OSIS</h1>
-                <p class="text-slate-600 mt-1">Kelola data pemilih yang berhak memilih dalam pemilihan OSIS</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.daftar_pemilih_osis') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_pemilih_description') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 <a href="{{ route('admin.osis.pemilih.create') }}" class="btn btn-primary">
@@ -11,17 +11,17 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Tambah Pemilih
+                    {{ __('common.tambah_pemilih') }}
                 </a>
                 <form action="{{ route('admin.osis.pemilih.generate-from-users') }}" method="POST" class="inline"
-                    data-confirm="Apakah Anda yakin ingin membuat pemilih dari data guru dan siswa yang sudah ada?">
+                    data-confirm="{{ __('common.are_you_sure') }}">
                     @csrf
                     <button type="submit" class="btn btn-success">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Generate Pemilih
+                        {{ __('common.generate_pemilih') }}
                     </button>
                 </form>
 
@@ -33,7 +33,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                         </svg>
-                        Import/Export
+                        {{ __('common.import_export') }}
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
@@ -46,7 +46,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
-                            Import Data
+                            {{ __('common.import_data') }}
                         </a>
                         <a href="{{ route('admin.osis.pemilih.export', request()->query()) }}"
                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-b-lg">
@@ -54,7 +54,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            Export Data
+                            {{ __('common.export_data') }}
                         </a>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali ke OSIS
+                    {{ __('common.back_to_osis') }}
                 </a>
             </div>
         </div>
@@ -84,7 +84,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Pemilih</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_voters') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $pemilihs->total() }}</p>
                     </div>
                 </div>

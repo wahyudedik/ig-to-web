@@ -2,11 +2,11 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Tambah Data Guru') }}
+                {{ __('common.tambah_data_guru') }}
             </h2>
             <a href="{{ route('admin.guru.index') }}"
                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                Kembali
+                {{ __('common.back') }}
             </a>
         </div>
     </x-slot>
@@ -21,7 +21,7 @@
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <!-- Personal Information -->
                             <div class="space-y-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Personal</h3>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('common.personal_info') }}</h3>
 
                                 <!-- NIP -->
                                 <div>

@@ -4,10 +4,10 @@
     <!-- breadcrumb -->
     <div class="site-breadcrumb" style="background: url({{ asset('assets/img/breadcrumb/01.jpg') }})">
         <div class="container">
-            <h2 class="breadcrumb-title">Event MAUDU</h2>
+            <h2 class="breadcrumb-title">{{ __('common.event_maudu') }}</h2>
             <ul class="breadcrumb-menu">
-                <li><a href="/">Home</a></li>
-                <li class="active">Kegiatan</li>
+                <li><a href="/">{{ __('common.home') }}</a></li>
+                <li class="active">{{ __('common.kegiatan') }}</li>
             </ul>
         </div>
     </div>
@@ -175,8 +175,8 @@
             <div class="row">
                 <div class="col-12">
                     <div class="site-heading text-center mb-5">
-                        <h2 class="site-title">Galeri Kegiatan Terbaru</h2>
-                        <p class="site-subtitle">Update kegiatan sekolah dari Instagram</p>
+                        <h2 class="site-title">{{ __('common.gallery_latest_activities') }}</h2>
+                        <p class="site-subtitle">{{ __('common.update_kegiatan_instagram') }}</p>
                     </div>
                 </div>
             </div>
@@ -186,7 +186,7 @@
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <p class="mt-3">Memuat data Instagram...</p>
+                <p class="mt-3">{{ __('common.loading_instagram_data') }}</p>
             </div>
 
             <!-- Posts Grid -->
@@ -224,7 +224,7 @@
                                 <div class="mt-2">
                                     <a href="{{ $post['permalink'] }}" target="_blank"
                                         class="btn btn-outline-primary btn-sm">
-                                        <i class="fab fa-instagram me-1"></i> Lihat di Instagram
+                                        <i class="fab fa-instagram me-1"></i> {{ __('common.lihat_di_instagram') }}
                                     </a>
                                 </div>
                             </div>
@@ -234,9 +234,8 @@
                     <div class="col-12">
                         <div class="text-center py-5">
                             <i class="fab fa-instagram fa-4x text-muted mb-3"></i>
-                            <h4 class="text-muted">Belum ada kegiatan</h4>
-                            <p class="text-muted">Kegiatan sekolah akan muncul di sini setelah terhubung dengan
-                                Instagram</p>
+                            <h4 class="text-muted">{{ __('common.belum_ada_kegiatan') }}</h4>
+                            <p class="text-muted">{{ __('common.kegiatan_akan_muncul') }}</p>
                         </div>
                     </div>
                 @endforelse
@@ -259,7 +258,7 @@
                     refreshBtn.addEventListener('click', function() {
                         // Show loading state
                         refreshBtn.disabled = true;
-                        refreshText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memperbarui...';
+                        refreshText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>{{ __('common.refreshing') }}';
 
                         if (loadingState) {
                             loadingState.style.display = 'block';
@@ -287,7 +286,7 @@
                             })
                             .then(result => {
                                 if (!result.ok) {
-                                    showError('Gagal', 'Gagal memperbarui data: Status ' + result.status);
+                                    showError('{{ __('common.error') }}', '{{ __('common.data_update_failed') }}: Status ' + result.status);
                                     return;
                                 }
 
@@ -304,25 +303,25 @@
                                     }
 
                                     // Show success message
-                                    showSuccess('Berhasil', 'Data berhasil diperbarui!');
+                                    showSuccess('{{ __('common.success') }}', '{{ __('common.data_update_success') }}');
 
                                     // Reload page to show new data
                                     setTimeout(() => {
                                         window.location.reload();
                                     }, 1000);
                                 } else {
-                                    showError('Gagal', 'Gagal memperbarui data: ' + (result.data.message ||
+                                    showError('{{ __('common.error') }}', '{{ __('common.data_update_failed') }}: ' + (result.data.message ||
                                         'Unknown error'));
                                 }
                             })
                             .catch(error => {
                                 console.error('Error:', error);
-                                showError('Gagal', 'Gagal memperbarui data: ' + error.message);
+                                showError('{{ __('common.error') }}', '{{ __('common.data_update_failed') }}: ' + error.message);
                             })
                             .finally(() => {
                                 // Reset button state
                                 refreshBtn.disabled = false;
-                                refreshText.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Perbarui Data';
+                                refreshText.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>{{ __('common.perbarui_data') }}';
 
                                 if (loadingState) {
                                     loadingState.style.display = 'none';

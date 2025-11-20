@@ -12,6 +12,7 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\OSISController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\SarprasController;
+use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\DataManagementController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\LocaleController;
@@ -370,6 +371,17 @@ Route::middleware(['auth', 'verified', 'role:sarpras|admin|superadmin'])->prefix
     Route::get('/maintenance/{maintenance}/edit', [SarprasController::class, 'editMaintenance'])->name('maintenance.edit');
     Route::put('/maintenance/{maintenance}', [SarprasController::class, 'updateMaintenance'])->name('maintenance.update');
     Route::delete('/maintenance/{maintenance}', [SarprasController::class, 'destroyMaintenance'])->name('maintenance.destroy');
+
+    // Sarana Management
+    Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index');
+    Route::get('/sarana/create', [SaranaController::class, 'create'])->name('sarana.create');
+    Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');
+    Route::get('/sarana/get-barang-by-ruang', [SaranaController::class, 'getBarangByRuang'])->name('sarana.getBarangByRuang');
+    Route::get('/sarana/{sarana}', [SaranaController::class, 'show'])->name('sarana.show');
+    Route::get('/sarana/{sarana}/edit', [SaranaController::class, 'edit'])->name('sarana.edit');
+    Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update');
+    Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy');
+    Route::get('/sarana/{sarana}/print-invoice', [SaranaController::class, 'printInvoice'])->name('sarana.printInvoice');
 });
 
 // Testimonials Management (Access: admin, superadmin)

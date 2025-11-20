@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">User Management</h1>
-                <p class="text-slate-600 mt-1">Manage users and assign custom roles</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.user_management') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_users_custom_roles') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 <button onclick="showInviteUserModal()" class="btn btn-primary">
@@ -11,21 +11,21 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Invite User
+                    {{ __('common.invite_user') }}
                 </button>
                 <button onclick="showCreateUserModal()" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-                    Create User
+                    {{ __('common.create_user') }}
                 </button>
                 <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Back to Dashboard
+                    {{ __('common.back_to_dashboard') }}
                 </a>
             </div>
         </div>
@@ -35,12 +35,12 @@
         <!-- Users Table -->
         <div class="bg-white rounded-xl border border-slate-200">
             <div class="px-6 py-4 border-b border-slate-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-slate-900">All Users</h3>
-                    <div class="flex items-center space-x-2">
-                        <div class="relative">
-                            <input type="text" id="user-search" placeholder="Search users..."
-                                class="form-input pl-10">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-slate-900">{{ __('common.all_users') }}</h3>
+                        <div class="flex items-center space-x-2">
+                            <div class="relative">
+                                <input type="text" id="user-search" placeholder="{{ __('common.search_users') }}"
+                                    class="form-input pl-10">
                             <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -56,22 +56,22 @@
                     <thead class="bg-slate-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                User
+                                {{ __('common.user') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                Email
+                                {{ __('common.email_label') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                Role
+                                {{ __('common.role') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                Status
+                                {{ __('common.status') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                Created
+                                {{ __('common.created') }}
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                Actions
+                                {{ __('common.actions') }}
                             </th>
                         </tr>
                     </thead>
@@ -92,7 +92,7 @@
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-slate-900">{{ $user->name }}</div>
                                             @if ($user->hasRole('superadmin'))
-                                                <div class="text-xs text-red-600 font-medium">Super Administrator</div>
+                                                <div class="text-xs text-red-600 font-medium">{{ __('common.super_administrator') }}</div>
                                             @endif
                                         </div>
                                     </div>
@@ -109,7 +109,7 @@
                                     @empty
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                            No Role
+                                            {{ __('common.no_role') }}
                                         </span>
                                     @endforelse
                                 </td>
@@ -117,12 +117,12 @@
                                     @if ($user->is_verified_by_admin)
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Active
+                                            {{ __('common.active') }}
                                         </span>
                                     @else
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                            Pending
+                                            {{ __('common.pending') }}
                                         </span>
                                     @endif
                                 </td>
@@ -160,7 +160,7 @@
                                                 </svg>
                                             </button>
                                         @else
-                                            <span class="text-xs text-slate-400">Protected</span>
+                                            <span class="text-xs text-slate-400">{{ __('common.protected') }}</span>
                                         @endif
                                     </div>
                                 </td>
@@ -182,22 +182,22 @@
         class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Invite New User</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('common.invite_new_user') }}</h3>
                 <form id="inviteUserForm">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.full_name') }}</label>
                         <input type="text" id="inviteName" name="name" class="form-input"
-                            placeholder="Enter full name" required>
+                            placeholder="{{ __('common.enter_full_name') }}" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.email_label') }}</label>
                         <input type="email" id="inviteEmail" name="email" class="form-input"
-                            placeholder="Enter email address" required>
+                            placeholder="{{ __('common.enter_email') }}" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.role') }}</label>
                         <select id="inviteRole" name="role_id" class="form-select" required>
-                            <option value="">Select a role</option>
+                            <option value="">{{ __('common.select_role') }}</option>
                             @foreach ($roles as $role)
                                 <option value="{{ $role->id }}">{{ get_role_display_name($role) }}</option>
                             @endforeach
@@ -207,13 +207,13 @@
                         <label class="flex items-center">
                             <input type="checkbox" id="sendInvitation" name="send_invitation"
                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
-                            <span class="ml-2 text-sm text-gray-700">Send invitation email</span>
+                            <span class="ml-2 text-sm text-gray-700">{{ __('common.send_invitation_email') }}</span>
                         </label>
                     </div>
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeInviteUserModal()"
-                            class="btn btn-secondary">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Invite User</button>
+                            class="btn btn-secondary">{{ __('common.cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ __('common.invite_user') }}</button>
                     </div>
                 </form>
             </div>
@@ -225,27 +225,27 @@
         class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Create New User</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('common.create_new_user') }}</h3>
                 <form id="createUserForm">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.full_name') }}</label>
                         <input type="text" id="createName" name="name" class="form-input"
-                            placeholder="Enter full name" required>
+                            placeholder="{{ __('common.enter_full_name') }}" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.email_label') }}</label>
                         <input type="email" id="createEmail" name="email" class="form-input"
-                            placeholder="Enter email address" required>
+                            placeholder="{{ __('common.enter_email') }}" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.password') }}</label>
                         <input type="password" id="createPassword" name="password" class="form-input"
-                            placeholder="Enter password" required>
+                            placeholder="{{ __('common.enter_password') }}" required>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.role') }}</label>
                         <select id="createRole" name="role_id" class="form-select" required>
-                            <option value="">Select a role</option>
+                            <option value="">{{ __('common.select_role') }}</option>
                             @foreach ($roles as $role)
                                 <option value="{{ $role->id }}">{{ get_role_display_name($role) }}</option>
                             @endforeach
@@ -253,8 +253,8 @@
                     </div>
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeCreateUserModal()"
-                            class="btn btn-secondary">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create User</button>
+                            class="btn btn-secondary">{{ __('common.cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ __('common.create_user') }}</button>
                     </div>
                 </form>
             </div>
@@ -336,33 +336,32 @@
                     if (!result.ok) {
                         if (result.status === 422) {
                             const errors = result.data.errors || {};
-                            let errorMsg = 'Validation errors:<br>';
+                            let errorMsg = '{{ __('common.validation_errors') }}<br>';
                             for (const [field, fieldErrors] of Object.entries(errors)) {
                                 errorMsg +=
                                     `<strong>${field}:</strong> ${Array.isArray(fieldErrors) ? fieldErrors.join(', ') : fieldErrors}<br>`;
                             }
-                            showError('Error Validasi!', errorMsg);
+                            showError('{{ __('common.validation_errors') }}', errorMsg);
                         } else if (result.status === 401 || result.status === 403) {
-                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                            showError('{{ __('common.unauthorized') }}', '{{ __('common.unauthorized_action') }}');
                         } else {
-                            showError('Error!', result.data.message || 'Gagal mengundang user');
+                            showError('{{ __('common.error') }}', result.data.message || '{{ __('common.failed_invite_user') }}');
                         }
                         return;
                     }
 
                     if (result.data.success) {
-                        showSuccess('Berhasil!', 'User berhasil diundang. Password sementara: ' + result.data
-                            .temp_password).then(() => {
+                        showSuccess('{{ __('common.success') }}', '{{ __('common.user_invited_success', ['password' => '']) }}' + result.data.temp_password).then(() => {
                             location.reload();
                         });
                     } else {
-                        showError('Error!', 'Gagal mengundang user: ' + (result.data.message ||
+                        showError('{{ __('common.error') }}', '{{ __('common.failed_invite_user') }}: ' + (result.data.message ||
                             'Unknown error'));
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showError('Error!', 'Gagal mengundang user: ' + error.message);
+                    showError('{{ __('common.error') }}', '{{ __('common.failed_invite_user') }}: ' + error.message);
                 });
         });
 
@@ -405,31 +404,31 @@
                     if (!result.ok) {
                         if (result.status === 422) {
                             const errors = result.data.errors || {};
-                            let errorMsg = 'Validation errors:<br>';
+                            let errorMsg = '{{ __('common.validation_errors') }}<br>';
                             for (const [field, fieldErrors] of Object.entries(errors)) {
                                 errorMsg +=
                                     `<strong>${field}:</strong> ${Array.isArray(fieldErrors) ? fieldErrors.join(', ') : fieldErrors}<br>`;
                             }
-                            showError('Error Validasi!', errorMsg);
+                            showError('{{ __('common.validation_errors') }}', errorMsg);
                         } else if (result.status === 401 || result.status === 403) {
-                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                            showError('{{ __('common.unauthorized') }}', '{{ __('common.unauthorized_action') }}');
                         } else {
-                            showError('Error!', result.data.message || 'Gagal membuat user');
+                            showError('{{ __('common.error') }}', result.data.message || '{{ __('common.failed_create_user') }}');
                         }
                         return;
                     }
 
                     if (result.data.success) {
-                        showSuccess('Berhasil!', 'User berhasil dibuat').then(() => {
+                        showSuccess('{{ __('common.success') }}', '{{ __('common.user_created_success') }}').then(() => {
                             location.reload();
                         });
                     } else {
-                        showError('Error!', 'Gagal membuat user: ' + (result.data.message || 'Unknown error'));
+                        showError('{{ __('common.error') }}', '{{ __('common.failed_create_user') }}: ' + (result.data.message || 'Unknown error'));
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showError('Error!', 'Gagal membuat user: ' + error.message);
+                    showError('{{ __('common.error') }}', '{{ __('common.failed_create_user') }}: ' + error.message);
                 });
         });
 
@@ -442,13 +441,13 @@
         // Toggle user status
         function toggleUserStatus(userId) {
             showConfirm(
-                'Toggle Status User?',
-                'Apakah Anda yakin ingin mengubah status user ini?',
-                'Ya, Ubah',
-                'Batal'
+                '{{ __('common.toggle_user_status') }}',
+                '{{ __('common.toggle_status_confirmation') }}',
+                '{{ __('common.yes_change') }}',
+                '{{ __('common.cancel') }}'
             ).then((result) => {
                 if (result.isConfirmed) {
-                    showLoading('Mengubah status...', 'Mohon tunggu sebentar');
+                    showLoading('{{ __('common.changing_status') }}', '{{ __('common.please_wait') }}');
                     fetch(`/admin/user-management/users/${userId}/toggle-status`, {
                             method: 'POST',
                             headers: {
@@ -474,27 +473,27 @@
                             closeLoading();
                             if (!result.ok) {
                                 if (result.status === 401 || result.status === 403) {
-                                    showError('Unauthorized!',
-                                        'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                                    showError('{{ __('common.unauthorized') }}',
+                                        '{{ __('common.unauthorized_action') }}');
                                 } else {
-                                    showError('Error!', result.data.message || 'Gagal mengubah status user');
+                                    showError('{{ __('common.error') }}', result.data.message || '{{ __('common.failed_change_status') }}');
                                 }
                                 return;
                             }
 
                             if (result.data.success) {
-                                showSuccess('Berhasil!', 'Status user berhasil diubah').then(() => {
+                                showSuccess('{{ __('common.success') }}', '{{ __('common.status_changed_success') }}').then(() => {
                                     location.reload();
                                 });
                             } else {
-                                showError('Error!', 'Gagal mengubah status: ' + (result.data.message ||
+                                showError('{{ __('common.error') }}', '{{ __('common.failed_change_status') }}: ' + (result.data.message ||
                                     'Unknown error'));
                             }
                         })
                         .catch(error => {
                             closeLoading();
                             console.error('Error:', error);
-                            showError('Error!', 'Gagal mengubah status user: ' + error.message);
+                            showError('{{ __('common.error') }}', '{{ __('common.failed_change_status') }}: ' + error.message);
                         });
                 }
             });
@@ -503,13 +502,13 @@
         // Delete user
         function deleteUser(userId) {
             showConfirm(
-                'Hapus User?',
-                'Apakah Anda yakin ingin menghapus user ini? Tindakan ini tidak dapat dibatalkan.',
-                'Ya, Hapus',
-                'Batal'
+                '{{ __('common.delete_user') }}',
+                '{{ __('common.delete_user_confirmation') }}',
+                '{{ __('common.yes_delete') }}',
+                '{{ __('common.cancel') }}'
             ).then((result) => {
                 if (result.isConfirmed) {
-                    showLoading('Menghapus...', 'Mohon tunggu sebentar');
+                    showLoading('{{ __('common.deleting') }}', '{{ __('common.please_wait') }}');
                     fetch(`/admin/user-management/users/${userId}`, {
                             method: 'DELETE',
                             headers: {
@@ -535,27 +534,27 @@
                             closeLoading();
                             if (!result.ok) {
                                 if (result.status === 401 || result.status === 403) {
-                                    showError('Unauthorized!',
-                                        'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                                    showError('{{ __('common.unauthorized') }}',
+                                        '{{ __('common.unauthorized_action') }}');
                                 } else {
-                                    showError('Error!', result.data.message || 'Gagal menghapus user');
+                                    showError('{{ __('common.error') }}', result.data.message || '{{ __('common.failed_delete_user') }}');
                                 }
                                 return;
                             }
 
                             if (result.data.success) {
-                                showSuccess('Berhasil!', 'User berhasil dihapus').then(() => {
+                                showSuccess('{{ __('common.success') }}', '{{ __('common.user_deleted_success') }}').then(() => {
                                     location.reload();
                                 });
                             } else {
-                                showError('Error!', 'Gagal menghapus user: ' + (result.data.message ||
+                                showError('{{ __('common.error') }}', '{{ __('common.failed_delete_user') }}: ' + (result.data.message ||
                                     'Unknown error'));
                             }
                         })
                         .catch(error => {
                             closeLoading();
                             console.error('Error:', error);
-                            showError('Error!', 'Gagal menghapus user: ' + error.message);
+                            showError('{{ __('common.error') }}', '{{ __('common.failed_delete_user') }}: ' + error.message);
                         });
                 }
             });

@@ -12,8 +12,8 @@
                                 d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
                         </svg>
                     </div>
-                    <h2 class="mt-6 text-4xl font-bold text-gray-900">Daftar Akun Baru</h2>
-                    <p class="mt-2 text-lg text-gray-700">Bergabung dengan {{ config('app.name') }}</p>
+                    <h2 class="mt-6 text-4xl font-bold text-gray-900">{{ __('common.register_new_account') }}</h2>
+                    <p class="mt-2 text-lg text-gray-700">{{ __('common.join_with') }} {{ config('app.name') }}</p>
                 </div>
 
                 <!-- Session Status -->
@@ -26,11 +26,11 @@
 
                         <!-- Name -->
                         <div>
-                            <label for="name" class="form-label">Nama Lengkap</label>
+                            <label for="name" class="form-label">{{ __('common.full_name') }}</label>
                             <input id="name" type="text" name="name" value="{{ old('name') }}" required
                                 autofocus autocomplete="name"
                                 class="form-input @error('name') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan nama lengkap">
+                                placeholder="{{ __('common.enter_full_name') }}">
                             @error('name')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
@@ -38,11 +38,11 @@
 
                         <!-- Email Address -->
                         <div>
-                            <label for="email" class="form-label">Email Address</label>
+                            <label for="email" class="form-label">{{ __('common.email_label') }}</label>
                             <input id="email" type="email" name="email" value="{{ old('email') }}" required
                                 autocomplete="username"
                                 class="form-input @error('email') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan email">
+                                placeholder="{{ __('common.enter_email') }}">
                             @error('email')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
@@ -50,13 +50,13 @@
 
                         <!-- Role -->
                         <div>
-                            <label for="role" class="form-label">Tipe Pengguna</label>
+                            <label for="role" class="form-label">{{ __('common.user_type') }}</label>
                             <select id="role" name="role" required
                                 class="form-input @error('role') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
-                                <option value="">Pilih Tipe Pengguna</option>
-                                <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru</option>
-                                <option value="siswa" {{ old('role') == 'siswa' ? 'selected' : '' }}>Siswa</option>
-                                <option value="sarpras" {{ old('role') == 'sarpras' ? 'selected' : '' }}>Sarpras</option>
+                                <option value="">{{ __('common.select_user_type') }}</option>
+                                <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>{{ __('common.teacher') }}</option>
+                                <option value="siswa" {{ old('role') == 'siswa' ? 'selected' : '' }}>{{ __('common.student') }}</option>
+                                <option value="sarpras" {{ old('role') == 'sarpras' ? 'selected' : '' }}>{{ __('common.sarpras') }}</option>
                             </select>
                             @error('role')
                                 <p class="form-error">{{ $message }}</p>
@@ -65,10 +65,10 @@
 
                         <!-- Password -->
                         <div>
-                            <label for="password" class="form-label">Password</label>
+                            <label for="password" class="form-label">{{ __('common.password') }}</label>
                             <input id="password" type="password" name="password" required autocomplete="new-password"
                                 class="form-input @error('password') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan password">
+                                placeholder="{{ __('common.enter_password') }}">
                             @error('password')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
@@ -76,9 +76,9 @@
 
                         <!-- Confirm Password -->
                         <div>
-                            <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+                            <label for="password_confirmation" class="form-label">{{ __('common.confirm_password') }}</label>
                             <input id="password_confirmation" type="password" name="password_confirmation" required
-                                autocomplete="new-password" class="form-input" placeholder="Konfirmasi password">
+                                autocomplete="new-password" class="form-input" placeholder="{{ __('common.confirm_password') }}">
                         </div>
 
                         <!-- Terms -->
@@ -86,9 +86,8 @@
                             <input id="terms" type="checkbox" name="terms" value="1" required
                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <label for="terms" class="ml-2 text-sm text-gray-700">
-                                Saya menyetujui <a href="#" class="text-blue-600 hover:text-blue-700">Syarat dan
-                                    Ketentuan</a>
-                                serta <a href="#" class="text-blue-600 hover:text-blue-700">Kebijakan Privasi</a>
+                                {{ __('common.agree_terms') }} <a href="#" class="text-blue-600 hover:text-blue-700">{{ __('common.terms_and_conditions') }}</a>
+                                {{ __('common.and') }} <a href="#" class="text-blue-600 hover:text-blue-700">{{ __('common.privacy_policy') }}</a>
                             </label>
                         </div>
                         @error('terms')
@@ -102,7 +101,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                                 </svg>
-                                Daftar Sekarang
+                                {{ __('common.register_now') }}
                             </button>
                         </div>
                     </form>
@@ -111,9 +110,9 @@
                 <!-- Footer -->
                 <div class="mt-8 text-center lg:text-left">
                     <p class="text-base text-gray-700">
-                        Sudah punya akun?
+                        {{ __('common.already_have_account') }}
                         <a href="{{ route('login') }}" class="font-medium text-blue-600 hover:text-blue-700">
-                            Login di sini
+                            {{ __('common.login_here') }}
                         </a>
                     </p>
                 </div>
@@ -148,9 +147,9 @@
                     </div>
 
                     <!-- Welcome Text -->
-                    <h1 class="text-4xl lg:text-5xl font-bold mb-6 text-white drop-shadow-lg">Bergabung Sekarang</h1>
+                    <h1 class="text-4xl lg:text-5xl font-bold mb-6 text-white drop-shadow-lg">{{ __('common.join_now') }}</h1>
                     <p class="text-xl lg:text-2xl text-white mb-10 max-w-md lg:max-w-lg drop-shadow-md">
-                        Daftarkan diri Anda dan nikmati semua fitur sistem manajemen sekolah
+                        {{ __('common.register_and_enjoy') }}
                     </p>
 
                     <!-- Features List -->
@@ -161,7 +160,7 @@
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="text-white drop-shadow-sm text-lg">Akses ke semua fitur</span>
+                            <span class="text-white drop-shadow-sm text-lg">{{ __('common.access_all_features') }}</span>
                         </div>
                         <div class="flex items-center">
                             <svg class="w-6 h-6 text-green-300 mr-4" fill="currentColor" viewBox="0 0 20 20">
@@ -169,7 +168,7 @@
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="text-white drop-shadow-sm text-lg">Keamanan data terjamin</span>
+                            <span class="text-white drop-shadow-sm text-lg">{{ __('common.data_security_guaranteed') }}</span>
                         </div>
                         <div class="flex items-center">
                             <svg class="w-6 h-6 text-green-300 mr-4" fill="currentColor" viewBox="0 0 20 20">
@@ -177,7 +176,7 @@
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="text-white drop-shadow-sm text-lg">Interface yang user-friendly</span>
+                            <span class="text-white drop-shadow-sm text-lg">{{ __('common.user_friendly_interface') }}</span>
                         </div>
                         <div class="flex items-center">
                             <svg class="w-6 h-6 text-green-300 mr-4" fill="currentColor" viewBox="0 0 20 20">
@@ -185,7 +184,7 @@
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="text-white drop-shadow-sm text-lg">Support 24/7</span>
+                            <span class="text-white drop-shadow-sm text-lg">{{ __('common.support_24_7') }}</span>
                         </div>
                     </div>
                 </div>

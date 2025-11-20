@@ -2,16 +2,16 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Edit Data Guru') }}
+                {{ __('common.edit_data_guru') }}
             </h2>
             <div class="flex space-x-2">
                 <a href="{{ route('admin.guru.show', $guru) }}"
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                    Lihat Detail
+                    {{ __('common.view_details') }}
                 </a>
                 <a href="{{ route('admin.guru.index') }}"
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                    Kembali
+                    {{ __('common.back') }}
                 </a>
             </div>
         </div>
@@ -209,7 +209,7 @@
                                     <select name="status_kepegawaian" id="status_kepegawaian"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('status_kepegawaian') border-red-500 @else border-gray-300 @enderror"
                                         required>
-                                        <option value="">Pilih Status</option>
+                                        <option value="">{{ __('common.select_status') }}</option>
                                         <option value="PNS"
                                             {{ old('status_kepegawaian', $guru->status_kepegawaian) == 'PNS' ? 'selected' : '' }}>
                                             PNS</option>
@@ -275,7 +275,7 @@
                                     <select name="status_aktif" id="status_aktif"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('status_aktif') border-red-500 @else border-gray-300 @enderror"
                                         required>
-                                        <option value="">Pilih Status</option>
+                                        <option value="">{{ __('common.select_status') }}</option>
                                         <option value="aktif"
                                             {{ old('status_aktif', $guru->status_aktif) == 'aktif' ? 'selected' : '' }}>
                                             Aktif</option>
@@ -356,7 +356,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M12 4v16m8-8H4"></path>
                                             </svg>
-                                            Tambah
+                                            {{ __('common.create') }}
                                         </button>
                                     </div>
                                     <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-2">
@@ -382,7 +382,7 @@
                                     @enderror
                                     <p class="text-xs text-gray-500 mt-1">
                                         <i class="fas fa-info-circle mr-1"></i>
-                                        Pilih mata pelajaran yang diajarkan oleh guru
+                                        {{ __('common.select_subjects_taught') }}
                                     </p>
                                 </div>
 
@@ -420,12 +420,12 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M12 4v16m8-8H4"></path>
                                             </svg>
-                                            Tambah
+                                            {{ __('common.create') }}
                                         </button>
                                     </div>
                                     <select name="user_id" id="user_id"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('user_id') border-red-500 @else border-gray-300 @enderror">
-                                        <option value="">Pilih User Account (Opsional)</option>
+                                        <option value="">{{ __('common.pilih_user_account') }}</option>
                                         @if ($users->count() > 0)
                                             @foreach ($users as $user)
                                                 <option value="{{ $user->id }}"
@@ -452,7 +452,7 @@
                         <div class="mt-8 flex justify-end space-x-4">
                             <a href="{{ route('admin.guru.show', $guru) }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                Batal
+                                {{ __('common.cancel') }}
                             </a>
                             <button type="submit"
                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -474,13 +474,13 @@
                 </div>
                 <div class="p-6">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tambah Mata Pelajaran Baru</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.add_subject') }}</label>
                         <div class="space-y-3">
                             <input type="text" id="newMataPelajaran" placeholder="Nama mata pelajaran"
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <button onclick="addMataPelajaran()"
                                 class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                                Tambah Mata Pelajaran
+                                {{ __('common.add_subject') }}
                             </button>
                         </div>
                     </div>
@@ -510,7 +510,7 @@
                 </div>
                 <div class="p-6">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tambah User Baru</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.add_new_user') }}</label>
                         <div class="space-y-3">
                             <input type="text" id="newUserName" placeholder="Nama lengkap"
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -520,7 +520,7 @@
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <button onclick="addUser()"
                                 class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                                Tambah User
+                                {{ __('common.add_new_user') }}
                             </button>
                         </div>
                     </div>

@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Hasil Pemilihan OSIS</h1>
-                <p class="text-slate-600 mt-1">Statistik dan hasil pemilihan ketua dan wakil ketua OSIS</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.election_results') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.election_results_description') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 @if (Auth::user()->hasRole('siswa'))
@@ -12,16 +12,16 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Voting
+                        {{ __('common.voting') }}
                     </a>
                 @else
                     <a href="{{ route('admin.osis.voting') }}" class="btn btn-secondary"
-                        title="Hanya siswa yang dapat memilih">
+                        title="{{ __('common.only_students_can_vote') }}">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Voting (Siswa)
+                        {{ __('common.voting_student') }}
                     </a>
                 @endif
                 <a href="{{ route('admin.osis.index') }}" class="btn btn-secondary">
@@ -29,7 +29,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali ke OSIS
+                    {{ __('common.back_to_osis') }}
                 </a>
             </div>
         </div>
@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Pemilih</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_voters') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $totalPemilih }}</p>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Sudah Memilih</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.already_voted') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $sudahMemilih }}</p>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Belum Memilih</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.not_voted_yet') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $belumMemilih }}</p>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Partisipasi</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.participation') }}</p>
                         <p class="text-2xl font-bold text-slate-900">
                             {{ $totalPemilih > 0 ? round(($sudahMemilih / $totalPemilih) * 100, 1) : 0 }}%</p>
                     </div>
@@ -113,7 +113,7 @@
 
         <!-- Results -->
         <div class="space-y-6">
-            <h2 class="text-xl font-semibold text-slate-900">Hasil Pemilihan</h2>
+            <h2 class="text-xl font-semibold text-slate-900">{{ __('common.election_results_title') }}</h2>
 
             @if ($calons->count() > 0)
                 <div class="space-y-4">
@@ -133,7 +133,7 @@
                                 </div>
                                 <div class="text-right">
                                     <p class="text-2xl font-bold text-slate-900">{{ $candidate->total_votes }}</p>
-                                    <p class="text-sm text-slate-600">suara ({{ $candidate->vote_percentage }}%)</p>
+                                    <p class="text-sm text-slate-600">{{ __('common.votes') }} ({{ $candidate->vote_percentage }}%)</p>
                                 </div>
                             </div>
 
@@ -164,7 +164,7 @@
                                     </div>
                                     <div>
                                         <h4 class="font-medium text-slate-900">{{ $candidate->nama_ketua }}</h4>
-                                        <p class="text-sm text-slate-600">Ketua OSIS</p>
+                                        <p class="text-sm text-slate-600">{{ __('common.ketua_osis') }}</p>
                                         <p class="text-xs text-slate-500">{{ $candidate->kelas_ketua }}</p>
                                     </div>
                                 </div>
@@ -186,7 +186,7 @@
                                     </div>
                                     <div>
                                         <h4 class="font-medium text-slate-900">{{ $candidate->nama_wakil }}</h4>
-                                        <p class="text-sm text-slate-600">Wakil Ketua OSIS</p>
+                                        <p class="text-sm text-slate-600">{{ __('common.wakil_ketua_osis') }}</p>
                                         <p class="text-xs text-slate-500">{{ $candidate->kelas_wakil }}</p>
                                     </div>
                                 </div>
@@ -201,7 +201,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
-                    <p class="text-slate-500">Belum ada data hasil pemilihan</p>
+                    <p class="text-slate-500">{{ __('common.no_election_results') }}</p>
                 </div>
             @endif
         </div>
@@ -209,7 +209,7 @@
         <!-- Recent Votes -->
         @if ($recentVotes->count() > 0)
             <div class="mt-8">
-                <h2 class="text-xl font-semibold text-slate-900 mb-4">Voting Terbaru</h2>
+                <h2 class="text-xl font-semibold text-slate-900 mb-4">{{ __('common.recent_voting') }}</h2>
                 <div class="bg-white rounded-xl border border-slate-200 p-6">
                     <div class="space-y-3">
                         @foreach ($recentVotes as $vote)

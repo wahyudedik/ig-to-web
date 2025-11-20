@@ -4,8 +4,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-8">
-                        <h1 class="text-3xl font-bold text-gray-900">System Settings</h1>
-                        <p class="text-gray-600 mt-2">Kelola pengaturan sistem dan data aplikasi</p>
+                        <h1 class="text-3xl font-bold text-gray-900">{{ __('common.system_settings') }}</h1>
+                        <p class="text-gray-600 mt-2">{{ __('common.manage_system_settings') }}</p>
                     </div>
 
                     <!-- Statistics Cards -->
@@ -20,7 +20,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-blue-600">Total Kelas</p>
+                                    <p class="text-sm font-medium text-blue-600">{{ __('common.total_kelas') }}</p>
                                     <p class="text-2xl font-bold text-blue-900">{{ $kelasCount }}</p>
                                 </div>
                             </div>
@@ -36,7 +36,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-green-600">Total Jurusan</p>
+                                    <p class="text-sm font-medium text-green-600">{{ __('common.total_jurusan') }}</p>
                                     <p class="text-2xl font-bold text-green-900">{{ $jurusanCount }}</p>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-purple-600">Total Ekstrakurikuler</p>
+                                    <p class="text-sm font-medium text-purple-600">{{ __('common.total_ekstrakurikuler') }}</p>
                                     <p class="text-2xl font-bold text-purple-900">{{ $ekstrakurikulerCount }}</p>
                                 </div>
                             </div>
@@ -68,7 +68,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-orange-600">Total Users</p>
+                                    <p class="text-sm font-medium text-orange-600">{{ __('common.total_users') }}</p>
                                     <p class="text-2xl font-bold text-orange-900">{{ $usersCount }}</p>
                                 </div>
                             </div>
@@ -88,9 +88,8 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <h3 class="text-lg font-medium text-gray-900">Data Management</h3>
-                                    <p class="text-sm text-gray-600">Kelola data kelas, jurusan, ekstrakurikuler, dan
-                                        mata pelajaran</p>
+                                    <h3 class="text-lg font-medium text-gray-900">{{ __('common.data_management') }}</h3>
+                                    <p class="text-sm text-gray-600">{{ __('common.manage_data_description') }}</p>
                                 </div>
                             </div>
                         </a>
@@ -106,8 +105,8 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <h3 class="text-lg font-medium text-gray-900">Landing Page</h3>
-                                    <p class="text-sm text-gray-600">Kelola logo, hero, menu, dan tampilan website</p>
+                                    <h3 class="text-lg font-medium text-gray-900">{{ __('common.landing_page') }}</h3>
+                                    <p class="text-sm text-gray-600">{{ __('common.manage_landing_page_description') }}</p>
                                 </div>
                             </div>
                         </a>
@@ -123,8 +122,8 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <h3 class="text-lg font-medium text-gray-900">SEO Settings</h3>
-                                    <p class="text-sm text-gray-600">Kelola meta tags dan optimasi SEO</p>
+                                    <h3 class="text-lg font-medium text-gray-900">{{ __('common.seo_settings') }}</h3>
+                                    <p class="text-sm text-gray-600">{{ __('common.manage_seo_description') }}</p>
                                 </div>
                             </div>
                         </a>
@@ -140,8 +139,8 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <h3 class="text-lg font-medium text-gray-900">Profile Settings</h3>
-                                    <p class="text-sm text-gray-600">Kelola profil dan pengaturan akun</p>
+                                    <h3 class="text-lg font-medium text-gray-900">{{ __('common.profile_settings') }}</h3>
+                                    <p class="text-sm text-gray-600">{{ __('common.manage_profile_description') }}</p>
                                 </div>
                             </div>
                         </a>

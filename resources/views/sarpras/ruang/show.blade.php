@@ -53,7 +53,7 @@
 
                         <div>
                             <h4 class="text-sm font-medium text-slate-600 mb-2">Lokasi</h4>
-                            <p class="text-lg font-semibold text-slate-900">{{ $ruang->lokasi }}</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ $ruang->lokasi ?? '-' }}</p>
                         </div>
 
                         <div>

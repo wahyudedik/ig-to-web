@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Data Siswa') }}
+                {{ __('common.student_data') }}
             </h2>
             <div class="flex items-center space-x-2">
                 @can('import', App\Models\Siswa::class)
@@ -12,7 +12,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
-                        Import
+                        {{ __('common.import') }}
                     </a>
                 @endcan
                 @can('export', App\Models\Siswa::class)
@@ -23,7 +23,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            Export
+                            {{ __('common.export') }}
                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -54,7 +54,7 @@
                 @can('create', App\Models\Siswa::class)
                     <a href="{{ route('admin.siswa.create') }}"
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Tambah Siswa
+                        {{ __('common.add_student') }}
                     </a>
                 @endcan
             </div>
@@ -71,17 +71,17 @@
                         <form method="GET" action="{{ route('admin.siswa.index') }}" id="filterForm"
                             class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.search') }}</label>
                                 <input type="text" name="search" value="{{ request('search') }}"
-                                    placeholder="Nama, NIS, atau NISN..."
+                                    placeholder="{{ __('common.search_name_nis_nisn') }}"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.status') }}</label>
                                 <select name="status"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     onchange="document.getElementById('filterForm').submit();">
-                                    <option value="">Semua Status</option>
+                                    <option value="">{{ __('common.all_status') }}</option>
                                     @foreach ($statuses as $status)
                                         <option value="{{ $status }}"
                                             {{ request('status') == $status ? 'selected' : '' }}>
@@ -91,11 +91,11 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.class_label') }}</label>
                                 <select name="kelas"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     onchange="document.getElementById('filterForm').submit();">
-                                    <option value="">Semua Kelas</option>
+                                    <option value="">{{ __('common.all_classes') }}</option>
                                     @foreach ($kelas as $k)
                                         <option value="{{ $k }}"
                                             {{ request('kelas') == $k ? 'selected' : '' }}>
@@ -105,11 +105,11 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Masuk</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.year_entry') }}</label>
                                 <select name="tahun_masuk"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     onchange="document.getElementById('filterForm').submit();">
-                                    <option value="">Semua Tahun</option>
+                                    <option value="">{{ __('common.all_years') }}</option>
                                     @foreach ($tahunMasuk as $tahun)
                                         <option value="{{ $tahun }}"
                                             {{ request('tahun_masuk') == $tahun ? 'selected' : '' }}>
@@ -121,11 +121,11 @@
                             <div class="flex items-end space-x-2">
                                 <button type="submit"
                                     class="flex-1 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                    Filter
+                                    {{ __('common.filter') }}
                                 </button>
                                 <a href="{{ route('admin.siswa.index') }}"
                                     class="flex-1 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
-                                    Reset
+                                    {{ __('common.reset') }}
                                 </a>
                             </div>
                         </form>
@@ -140,7 +140,7 @@
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama_lengkap', 'sort_order' => request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
                                             class="hover:text-gray-700">
-                                            Nama
+                                            {{ __('common.name') }}
                                         </a>
                                     </th>
                                     <th
@@ -148,16 +148,16 @@
                                         NIS/NISN</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Kelas</th>
+                                        {{ __('common.class_label') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status</th>
+                                        {{ __('common.status') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Tahun Masuk</th>
+                                        {{ __('common.year_entry') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions</th>
+                                        {{ __('common.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -212,21 +212,21 @@
                                             <div class="flex space-x-2">
                                                 @can('view', $siswa)
                                                     <a href="{{ route('admin.siswa.show', $siswa) }}"
-                                                        class="text-blue-600 hover:text-blue-900">View</a>
+                                                        class="text-blue-600 hover:text-blue-900">{{ __('common.view') }}</a>
                                                 @endcan
                                                 @can('update', $siswa)
                                                     <a href="{{ route('admin.siswa.edit', $siswa) }}"
-                                                        class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                                        class="text-indigo-600 hover:text-indigo-900">{{ __('common.edit') }}</a>
                                                 @endcan
                                                 @can('delete', $siswa)
                                                     <form method="POST"
                                                         action="{{ route('admin.siswa.destroy', $siswa) }}"
                                                         class="inline"
-                                                        data-confirm="Apakah Anda yakin ingin menghapus data siswa {{ $siswa->nama_lengkap }}?">
+                                                        data-confirm="{{ str_replace(':name', $siswa->nama_lengkap, __('common.delete_student_confirmation')) }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
-                                                            class="text-red-600 hover:text-red-900">Delete</button>
+                                                            class="text-red-600 hover:text-red-900">{{ __('common.delete') }}</button>
                                                     </form>
                                                 @endcan
                                             </div>
@@ -235,7 +235,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                            Tidak ada data siswa ditemukan.
+                                            {{ __('common.no_student_data_found') }}
                                         </td>
                                     </tr>
                                 @endforelse

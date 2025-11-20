@@ -6,6 +6,7 @@ use App\Models\KategoriSarpras;
 use App\Models\Barang;
 use App\Models\Ruang;
 use App\Models\Maintenance;
+use App\Models\Sarana;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -278,6 +279,63 @@ class SarprasSeeder extends Seeder
             Maintenance::create($maintenance);
         }
 
+        // Create Sarana (Inventory/Facilities Management)
+        $saranas = [
+            [
+                'ruang_id' => 1, // Laboratorium Komputer 1
+                'sumber_dana' => 'BOS',
+                'kode_sumber_dana' => 'MAUDU/2024',
+                'tanggal' => '2024-01-15',
+                'catatan' => 'Inventarisasi peralatan laboratorium komputer',
+            ],
+            [
+                'ruang_id' => 2, // Laboratorium Fisika
+                'sumber_dana' => 'BOS',
+                'kode_sumber_dana' => 'MAUDU/2024',
+                'tanggal' => '2024-02-20',
+                'catatan' => 'Inventarisasi peralatan laboratorium fisika',
+            ],
+        ];
+
+        foreach ($saranas as $index => $saranaData) {
+            $sarana = Sarana::create($saranaData);
+            
+            // Attach barang to sarana based on ruang_id
+            if ($sarana->ruang_id == 1) {
+                // Laboratorium Komputer 1 - attach Komputer Desktop dan Proyektor
+                $sarana->barang()->attach([
+                    1 => ['jumlah' => 1, 'kondisi' => 'baik'], // Komputer Desktop
+                    2 => ['jumlah' => 1, 'kondisi' => 'baik'], // Proyektor
+                ]);
+                
+                // Update ruang_id for attached barang
+                Barang::whereIn('id', [1, 2])->update(['ruang_id' => 1]);
+            } elseif ($sarana->ruang_id == 2) {
+                // Laboratorium Fisika - attach Mikroskop
+                $sarana->barang()->attach([
+                    5 => ['jumlah' => 1, 'kondisi' => 'baik'], // Mikroskop
+                ]);
+                
+                // Update ruang_id for attached barang
+                Barang::whereIn('id', [5])->update(['ruang_id' => 2]);
+            }
+            
+            // Generate kode inventaris
+            $lastSarana = Sarana::orderBy('id', 'desc')->where('id', '!=', $sarana->id)->first();
+            $no = $lastSarana ? $lastSarana->id + 1 : $sarana->id;
+            
+            $firstBarang = $sarana->barang()->first();
+            $totalJumlah = $sarana->barang()->sum('sarana_barang.jumlah') ?? 1;
+            
+            $sarana->kode_inventaris = $sarana->generateKodeInventaris(
+                $no,
+                $totalJumlah,
+                $firstBarang ? $firstBarang->kode_barang : null
+            );
+            $sarana->save();
+        }
+
         $this->command->info('Sarpras seeder completed successfully!');
+        $this->command->info('Created ' . count($saranas) . ' sarana records.');
     }
 }

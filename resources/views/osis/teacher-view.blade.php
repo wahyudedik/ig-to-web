@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Pemilihan OSIS - Guru View</h1>
-                <p class="text-slate-600 mt-1">Lihat semua calon OSIS (tanpa filter gender)</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.osis_teacher_view_title') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.teacher_view_description') }}</p>
             </div>
             <div class="flex items-center space-x-3">
                 <a href="{{ route('admin.osis.results') }}" class="btn btn-secondary">
@@ -11,14 +11,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
-                    Lihat Hasil
+                    {{ __('common.view_results') }}
                 </a>
                 <a href="{{ route('admin.osis.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali
+                    {{ __('common.back') }}
                 </a>
             </div>
         </div>
@@ -36,10 +36,9 @@
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <div>
-                        <h3 class="text-sm font-medium text-blue-800">Informasi Guru View</h3>
+                        <h3 class="text-sm font-medium text-blue-800">{{ __('common.teacher_info_title') }}</h3>
                         <p class="text-sm text-blue-700 mt-1">
-                            Sebagai guru, Anda dapat melihat semua calon OSIS tanpa filter gender.
-                            Siswa hanya akan melihat calon yang sesuai dengan jenis kelamin mereka.
+                            {{ __('common.teacher_info_description') }}
                         </p>
                     </div>
                 </div>
@@ -75,21 +74,21 @@
                                     <div class="text-center">
                                         <img src="{{ $calon->ketua_photo_url }}" alt="{{ $calon->nama_ketua }}"
                                             class="w-16 h-16 rounded-full object-cover mx-auto mb-2 border-2 border-slate-200">
-                                        <p class="text-xs text-slate-600">Ketua</p>
+                                        <p class="text-xs text-slate-600">{{ __('common.ketua') }}</p>
                                     </div>
                                 @endif
                                 @if ($calon->foto_wakil && $calon->nama_wakil)
                                     <div class="text-center">
                                         <img src="{{ $calon->wakil_photo_url }}" alt="{{ $calon->nama_wakil }}"
                                             class="w-16 h-16 rounded-full object-cover mx-auto mb-2 border-2 border-slate-200">
-                                        <p class="text-xs text-slate-600">Wakil</p>
+                                        <p class="text-xs text-slate-600">{{ __('common.wakil') }}</p>
                                     </div>
                                 @endif
                             </div>
 
                             <!-- Visi Misi Preview -->
                             <div class="mb-4">
-                                <h4 class="text-sm font-medium text-slate-900 mb-2">Visi & Misi</h4>
+                                <h4 class="text-sm font-medium text-slate-900 mb-2">{{ __('common.vision_mission') }}</h4>
                                 <p class="text-sm text-slate-600 line-clamp-3">
                                     {{ Str::limit($calon->visi_misi, 150) }}
                                 </p>
@@ -102,12 +101,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                     </svg>
-                                    {{ $calon->votings_count ?? 0 }} suara
+                                    {{ $calon->votings_count ?? 0 }} {{ __('common.votes') }}
                                 </div>
                                 <span
                                     class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                                     {{ $calon->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $calon->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                    {{ $calon->is_active ? __('common.status_active') : __('common.status_inactive') }}
                                 </span>
                             </div>
 
@@ -116,12 +115,12 @@
                                 <div class="flex space-x-2">
                                     <a href="{{ route('admin.osis.calon.show', $calon) }}"
                                         class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
-                                        Lihat Detail
+                                        {{ __('common.view_details') }}
                                     </a>
                                     @if (Auth::user()->hasRole('superadmin'))
                                         <a href="{{ route('admin.osis.calon.edit', $calon) }}"
                                             class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
-                                            Edit
+                                            {{ __('common.edit') }}
                                         </a>
                                     @endif
                                 </div>
@@ -133,20 +132,20 @@
 
             <!-- Summary -->
             <div class="mt-8 bg-white rounded-xl border border-slate-200 p-6">
-                <h3 class="text-lg font-semibold text-slate-900 mb-4">Ringkasan Calon</h3>
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.candidate_summary') }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="text-center p-4 bg-blue-50 rounded-lg">
                         <div class="text-2xl font-bold text-blue-600">{{ $calons->count() }}</div>
-                        <div class="text-sm text-blue-700">Total Calon</div>
+                        <div class="text-sm text-blue-700">{{ __('common.total_calon') }}</div>
                     </div>
                     <div class="text-center p-4 bg-green-50 rounded-lg">
                         <div class="text-2xl font-bold text-green-600">{{ $calons->where('is_active', true)->count() }}
                         </div>
-                        <div class="text-sm text-green-700">Calon Aktif</div>
+                        <div class="text-sm text-green-700">{{ __('common.active_candidates') }}</div>
                     </div>
                     <div class="text-center p-4 bg-purple-50 rounded-lg">
                         <div class="text-2xl font-bold text-purple-600">{{ $calons->sum('votings_count') }}</div>
-                        <div class="text-sm text-purple-700">Total Suara</div>
+                        <div class="text-sm text-purple-700">{{ __('common.total_suara') }}</div>
                     </div>
                 </div>
             </div>
@@ -158,15 +157,15 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <h3 class="text-lg font-medium text-slate-900 mb-2">Belum Ada Calon OSIS</h3>
-                <p class="text-slate-600 mb-6">Belum ada calon yang terdaftar untuk pemilihan OSIS saat ini.</p>
+                <h3 class="text-lg font-medium text-slate-900 mb-2">{{ __('common.no_candidates') }}</h3>
+                <p class="text-slate-600 mb-6">{{ __('common.no_candidates_message') }}</p>
                 @if (Auth::user()->hasRole('superadmin'))
                     <a href="{{ route('admin.osis.calon.create') }}" class="btn btn-primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 4v16m8-8H4" />
                         </svg>
-                        Tambah Calon Pertama
+                        {{ __('common.add_first_candidate') }}
                     </a>
                 @endif
             </div>

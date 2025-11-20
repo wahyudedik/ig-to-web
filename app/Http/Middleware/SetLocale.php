@@ -19,16 +19,35 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         // Priority: 1. Query parameter, 2. Session, 3. User preference, 4. Browser, 5. Default
+        // Query parameter has highest priority to allow immediate switching via URL
+        // Session is second priority to persist selection across requests
         $locale = $request->query('lang');
 
+        // If query parameter exists, update session immediately
+        if ($locale) {
+            $availableLocales = array_keys(config('i18n.locales', []));
+            if (in_array($locale, $availableLocales)) {
+                Session::put('locale', $locale);
+            } else {
+                $locale = null; // Invalid locale, fall through to session
+            }
+        }
+
+        // If no valid query parameter, check session
         if (!$locale) {
             $locale = Session::get('locale');
         }
 
+        // Only check user preference if no session locale exists
         if (!$locale && Auth::check() && Auth::user()) {
             $locale = Auth::user()->locale ?? null;
+            // If found from user, update session for consistency
+            if ($locale) {
+                Session::put('locale', $locale);
+            }
         }
 
+        // Only check browser if no session or user preference
         if (!$locale) {
             $locale = $request->getPreferredLanguage(['en', 'id', 'ar']);
             if (!in_array($locale, ['en', 'id', 'ar'])) {
@@ -43,6 +62,7 @@ class SetLocale
         }
 
         App::setLocale($locale);
+        // Always update session to persist the selection
         Session::put('locale', $locale);
 
         return $next($request);

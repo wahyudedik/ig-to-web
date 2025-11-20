@@ -2,16 +2,16 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Detail Data Guru') }}
+                {{ __('common.detail_data_guru') }}
             </h2>
             <div class="flex space-x-2">
                 <a href="{{ route('admin.guru.edit', $guru) }}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Edit
+                    {{ __('common.edit') }}
                 </a>
                 <a href="{{ route('admin.guru.index') }}"
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                    Kembali
+                    {{ __('common.back') }}
                 </a>
             </div>
         </div>

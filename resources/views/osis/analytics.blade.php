@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">OSIS Analytics</h1>
-                <p class="text-slate-600 mt-1">Voting statistics and insights</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.osis_analytics') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.voting_statistics_insights') }}</p>
             </div>
             <div class="flex items-center space-x-3">
                 <a href="{{ route('admin.osis.index') }}" class="btn btn-secondary">
@@ -11,7 +11,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Back to Dashboard
+                    {{ __('common.back_to_dashboard') }}
                 </a>
             </div>
         </div>
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Candidates</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_candidates') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $stats['total_calon'] }}</p>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Voters</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_voters') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $stats['total_pemilih'] }}</p>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Votes</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_suara') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $stats['total_votes'] }}</p>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Voting Percentage</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.voting_percentage') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $stats['voting_percentage'] }}%</p>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Candidates Performance -->
             <div class="bg-white rounded-xl border border-slate-200 p-6">
-                <h3 class="text-lg font-semibold text-slate-900 mb-4">Candidates Performance</h3>
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.candidates_performance') }}</h3>
                 <div class="space-y-4">
                     @forelse($calons as $calon)
                         <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
@@ -121,7 +121,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
-                            <p class="text-slate-500">No candidates found</p>
+                            <p class="text-slate-500">{{ __('common.no_candidates_found') }}</p>
                         </div>
                     @endforelse
                 </div>
@@ -129,7 +129,7 @@
 
             <!-- Recent Votes -->
             <div class="bg-white rounded-xl border border-slate-200 p-6">
-                <h3 class="text-lg font-semibold text-slate-900 mb-4">Recent Votes</h3>
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.recent_voting') }}</h3>
                 <div class="space-y-3">
                     @forelse($recentVotes as $vote)
                         <div class="flex items-center space-x-3 p-3 hover:bg-slate-50 rounded-lg transition-colors">
@@ -144,7 +144,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm text-slate-900">
-                                    <span class="font-medium">{{ $vote->pemilih->nama }}</span> voted for
+                                    <span class="font-medium">{{ $vote->pemilih->nama }}</span> {{ __('common.voted_for') }}
                                     <span class="font-medium">{{ $vote->calon->full_candidate_name }}</span>
                                 </p>
                                 <p class="text-xs text-slate-500">{{ $vote->voting_time_formatted }}</p>
@@ -157,7 +157,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002 2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                             </svg>
-                            <p class="text-slate-500">No votes recorded yet</p>
+                            <p class="text-slate-500">{{ __('common.no_votes_recorded') }}</p>
                         </div>
                     @endforelse
                 </div>

@@ -2,11 +2,11 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Tambah Data Siswa') }}
+                {{ __('common.tambah_data_siswa') }}
             </h2>
             <a href="{{ route('admin.siswa.index') }}"
                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                Kembali
+                {{ __('common.back') }}
             </a>
         </div>
     </x-slot>
@@ -21,7 +21,7 @@
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <!-- Personal Information -->
                             <div class="space-y-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Personal</h3>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('common.personal_info') }}</h3>
 
                                 <!-- NIS -->
                                 <div>
@@ -449,7 +449,7 @@
                                 @enderror
                                 <p class="text-xs text-gray-500 mt-1">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    Hanya menampilkan user yang belum digunakan oleh siswa lain
+                                    {{ __('common.user_hint') }}
                                 </p>
                             </div>
                         </div>
@@ -458,11 +458,11 @@
                         <div class="mt-8 flex justify-end space-x-4">
                             <a href="{{ route('admin.siswa.index') }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                Batal
+                                {{ __('common.cancel') }}
                             </a>
                             <button type="submit"
                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Simpan Data Siswa
+                                {{ __('common.save_student_data') }}
                             </button>
                         </div>
                     </form>

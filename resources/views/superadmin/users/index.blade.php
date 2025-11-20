@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">User Management</h1>
-                <p class="text-slate-600 mt-1">Manage system users and permissions</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.user_management') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_users_description') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 <a href="{{ route('admin.superadmin.users.import') }}" class="btn btn-secondary">
@@ -11,21 +11,21 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
-                    Import
+                    {{ __('common.import') }}
                 </a>
                 <a href="{{ route('admin.superadmin.users.export') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Export
+                    {{ __('common.export') }}
                 </a>
                 <a href="{{ route('admin.superadmin.users.create') }}" class="btn btn-primary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Add New User
+                    {{ __('common.add_new_user') }}
                 </a>
             </div>
         </div>
@@ -35,18 +35,18 @@
         <!-- Users Table -->
         <div class="card">
             <div class="card-header">
-                <h3 class="text-lg font-semibold text-slate-900">All Users</h3>
+                <h3 class="text-lg font-semibold text-slate-900">{{ __('common.all_users') }}</h3>
             </div>
             <div class="card-body">
                 <div class="overflow-x-auto">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Roles</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>{{ __('common.name') }}</th>
+                                <th>{{ __('common.email_label') }}</th>
+                                <th>{{ __('common.roles') }}</th>
+                                <th>{{ __('common.status') }}</th>
+                                <th>{{ __('common.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -74,13 +74,13 @@
                                                 @endforeach
                                             </div>
                                         @else
-                                            <span class="text-slate-500">No roles</span>
+                                            <span class="text-slate-500">{{ __('common.no_roles') }}</span>
                                         @endif
                                     </td>
                                     <td>
                                         <span
                                             class="badge {{ $user->email_verified_at ? 'badge-success' : 'badge-warning' }}">
-                                            {{ $user->email_verified_at ? 'Verified' : 'Unverified' }}
+                                            {{ $user->email_verified_at ? __('common.verified') : __('common.unverified') }}
                                         </span>
                                     </td>
                                     <td>
@@ -118,7 +118,7 @@
                                                 <form method="POST"
                                                     action="{{ route('admin.superadmin.users.destroy', $user) }}"
                                                     class="inline"
-                                                    data-confirm="Are you sure you want to delete this user?">
+                                                    data-confirm="{{ __('common.delete_user_confirmation') }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-600 hover:text-red-800">
@@ -142,7 +142,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                                         </svg>
-                                        <p class="text-slate-500">No users found</p>
+                                        <p class="text-slate-500">{{ __('common.no_users_found') }}</p>
                                     </td>
                                 </tr>
                             @endforelse

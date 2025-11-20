@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Data Calon OSIS</h1>
-                <p class="text-slate-600 mt-1">Kelola data calon ketua dan wakil OSIS</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.data_calon_osis') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_calon_description') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 <!-- Import/Export Dropdown -->
@@ -14,7 +14,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                         </svg>
-                        Import/Export
+                        {{ __('common.import_export') }}
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
@@ -27,7 +27,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
-                            Import Data
+                            {{ __('common.import_data') }}
                         </a>
                         <a href="{{ route('admin.osis.calon.export', request()->query()) }}"
                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-b-lg">
@@ -35,7 +35,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            Export Data
+                            {{ __('common.export_data') }}
                         </a>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Tambah Calon
+                    {{ __('common.tambah_calon') }}
                 </a>
             </div>
         </div>
@@ -60,9 +60,9 @@
                     <label class="form-label">Status</label>
                     <select name="status" class="form-input"
                         onchange="document.getElementById('filterForm').submit();">
-                        <option value="">Semua Status</option>
-                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
-                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Tidak Aktif
+                        <option value="">{{ __('common.all_status') }}</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ __('common.active') }}</option>
+                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>{{ __('common.inactive') }}
                         </option>
                     </select>
                 </div>
@@ -70,18 +70,18 @@
                     <label class="form-label">Jenis Pencalonan</label>
                     <select name="jenis_pencalonan" class="form-input"
                         onchange="document.getElementById('filterForm').submit();">
-                        <option value="">Semua Jenis</option>
-                        <option value="ketua" {{ request('jenis_pencalonan') === 'ketua' ? 'selected' : '' }}>Ketua
+                        <option value="">{{ __('common.all_types') }}</option>
+                        <option value="ketua" {{ request('jenis_pencalonan') === 'ketua' ? 'selected' : '' }}>{{ __('common.ketua') }}
                         </option>
-                        <option value="wakil" {{ request('jenis_pencalonan') === 'wakil' ? 'selected' : '' }}>Wakil
+                        <option value="wakil" {{ request('jenis_pencalonan') === 'wakil' ? 'selected' : '' }}>{{ __('common.wakil') }}
                         </option>
                         <option value="pasangan" {{ request('jenis_pencalonan') === 'pasangan' ? 'selected' : '' }}>
-                            Pasangan</option>
+                            {{ __('common.pasangan') }}</option>
                     </select>
                 </div>
                 <div>
                     <label class="form-label">Cari</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama calon..."
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('common.search_placeholder_calon') }}"
                         class="form-input">
                 </div>
                 <div class="flex items-end space-x-2">
@@ -90,9 +90,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        Cari
+                        {{ __('common.search') }}
                     </button>
-                    <a href="{{ route('admin.osis.calon.index') }}" class="btn btn-secondary">Reset</a>
+                    <a href="{{ route('admin.osis.calon.index') }}" class="btn btn-secondary">{{ __('common.reset') }}</a>
                 </div>
             </form>
         </div>
@@ -100,7 +100,7 @@
         <!-- Calon List -->
         <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-200">
-                <h3 class="text-lg font-semibold text-slate-900">Daftar Calon ({{ $calons->total() }})</h3>
+                <h3 class="text-lg font-semibold text-slate-900">{{ __('common.candidate_list') }} ({{ $calons->total() }})</h3>
             </div>
 
             <div class="divide-y divide-slate-200">
@@ -119,9 +119,9 @@
                                     <div class="flex items-center space-x-4 mt-2">
                                         <span
                                             class="badge {{ $calon->is_active ? 'badge-success' : 'badge-warning' }}">
-                                            {{ $calon->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                            {{ $calon->is_active ? __('common.status_active') : __('common.status_inactive') }}
                                         </span>
-                                        <span class="text-sm text-slate-500">{{ $calon->votings_count }} suara</span>
+                                        <span class="text-sm text-slate-500">{{ $calon->votings_count }} {{ __('common.votes') }}</span>
                                     </div>
                                 </div>
                             </div>

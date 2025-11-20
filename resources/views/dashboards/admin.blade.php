@@ -4,20 +4,20 @@
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">
                     @if (Auth::user()->hasRole('superadmin'))
-                        Superadmin Dashboard
+                        {{ __('common.superadmin_dashboard') }}
                     @elseif(Auth::user()->hasRole('admin'))
-                        Admin Dashboard
+                        {{ __('common.admin_dashboard') }}
                     @elseif(Auth::user()->hasRole('guru'))
-                        Guru Dashboard
+                        {{ __('common.guru_dashboard') }}
                     @elseif(Auth::user()->hasRole('siswa'))
-                        Siswa Dashboard
+                        {{ __('common.siswa_dashboard') }}
                     @elseif(Auth::user()->hasRole('sarpras'))
-                        Sarpras Dashboard
+                        {{ __('common.sarpras_dashboard') }}
                     @else
-                        Dashboard
+                        {{ __('common.dashboard') }}
                     @endif
                 </h1>
-                <p class="text-slate-600 mt-1">Welcome back, {{ Auth::user()->name }}!</p>
+                <p class="text-slate-600 mt-1">{{ __('common.welcome_back') }}, {{ Auth::user()->name }}!</p>
             </div>
             <div class="flex items-center space-x-2">
                 @if (Auth::user()->hasRole('superadmin'))
@@ -64,7 +64,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600">Total Siswa</p>
+                                <p class="text-sm font-medium text-slate-600">{{ __('common.total_siswa') }}</p>
                                 <p class="text-2xl font-bold text-slate-900">{{ $statistics['total_siswa'] ?? 0 }}</p>
                                 {{-- <p class="text-xs text-green-600 mt-1">+12% dari bulan lalu</p> --}}
                             </div>
@@ -84,7 +84,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600">Total Guru</p>
+                                <p class="text-sm font-medium text-slate-600">{{ __('common.total_guru') }}</p>
                                 <p class="text-2xl font-bold text-slate-900">{{ $statistics['total_guru'] ?? 0 }}</p>
                                 {{-- <p class="text-xs text-green-600 mt-1">+5% dari bulan lalu</p> --}}
                             </div>
@@ -104,7 +104,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600">Active Users</p>
+                                <p class="text-sm font-medium text-slate-600">{{ __('common.active_users') }}</p>
                                 <p class="text-2xl font-bold text-slate-900">{{ $statistics['total_users'] ?? 0 }}</p>
                                 {{-- <p class="text-xs text-blue-600 mt-1">Online sekarang</p> --}}
                             </div>
@@ -125,9 +125,9 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600">Profile Status</p>
-                                <p class="text-2xl font-bold text-green-600">Complete</p>
-                                <p class="text-xs text-slate-500 mt-1">Profile terisi lengkap</p>
+                                <p class="text-sm font-medium text-slate-600">{{ __('common.profile_status') }}</p>
+                                <p class="text-2xl font-bold text-green-600">{{ __('common.complete') }}</p>
+                                <p class="text-xs text-slate-500 mt-1">{{ __('common.profile_complete') }}</p>
                             </div>
                             <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor"
@@ -143,9 +143,9 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600">Academic Progress</p>
+                                <p class="text-sm font-medium text-slate-600">{{ __('common.academic_progress') }}</p>
                                 <p class="text-2xl font-bold text-blue-600">85%</p>
-                                <p class="text-xs text-slate-500 mt-1">Progress pembelajaran</p>
+                                <p class="text-xs text-slate-500 mt-1">{{ __('common.learning_progress') }}</p>
                             </div>
                             <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor"
@@ -161,9 +161,9 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600">Upcoming Events</p>
+                                <p class="text-sm font-medium text-slate-600">{{ __('common.upcoming_events') }}</p>
                                 <p class="text-2xl font-bold text-purple-600">3</p>
-                                <p class="text-xs text-slate-500 mt-1">Acara mendatang</p>
+                                <p class="text-xs text-slate-500 mt-1">{{ __('common.upcoming_events') }}</p>
                             </div>
                             <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                                 <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor"
@@ -181,7 +181,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600">Total Assets</p>
+                                <p class="text-sm font-medium text-slate-600">{{ __('common.total_assets') }}</p>
                                 <p class="text-2xl font-bold text-slate-900">{{ $statistics['total_barang'] ?? 0 }}</p>
                                 {{-- <p class="text-xs text-orange-600 mt-1">Sarana Prasarana</p> --}}
                             </div>
@@ -204,7 +204,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between mb-4">
                             <div>
-                                <h3 class="text-lg font-semibold text-slate-900">Pertumbuhan User</h3>
+                                <h3 class="text-lg font-semibold text-slate-900">{{ __('common.user_growth') }}</h3>
                                 <p class="text-xs text-slate-500 mt-1">6 bulan terakhir - Total:
                                     {{ $userGrowth['total_siswa'] }} siswa, {{ $userGrowth['total_guru'] }} guru</p>
                             </div>
@@ -248,7 +248,7 @@
 
                     <!-- Module Usage Chart -->
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                        <h3 class="text-lg font-semibold text-slate-900 mb-4">Penggunaan Module</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.module_usage') }}</h3>
                         <p class="text-xs text-slate-500 mb-4">Berdasarkan jumlah data (70%) & aktivitas 30 hari
                             terakhir
                             (30%)</p>
@@ -282,7 +282,7 @@
                     <!-- Quick Actions -->
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.quick_actions') }}</h3>
                             <div class="space-y-3">
                                 @if (Auth::user()->hasRole('superadmin') || Auth::user()->can('users.create'))
                                     <a href="{{ route('admin.superadmin.users.create') }}"
@@ -295,7 +295,7 @@
                                                     d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-slate-900">Tambah User Baru</span>
+                                        <span class="text-sm font-medium text-slate-900">{{ __('common.add_new_user') }}</span>
                                     </a>
                                 @endif
 
@@ -310,7 +310,7 @@
                                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-slate-900">Tambah Guru Baru</span>
+                                        <span class="text-sm font-medium text-slate-900">{{ __('common.add_new_teacher') }}</span>
                                     </a>
                                 @endif
 
@@ -325,7 +325,7 @@
                                                     d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-slate-900">Tambah Siswa Baru</span>
+                                        <span class="text-sm font-medium text-slate-900">{{ __('common.add_new_student') }}</span>
                                     </a>
                                 @endif
 
@@ -340,7 +340,7 @@
                                                     d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-medium text-slate-900">Tambah Asset Baru</span>
+                                        <span class="text-sm font-medium text-slate-900">{{ __('common.add_new_asset') }}</span>
                                     </a>
                                 @endif
 
@@ -366,7 +366,7 @@
                     <div class="lg:col-span-2">
                         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold text-slate-900">Recent Activity</h3>
+                                <h3 class="text-lg font-semibold text-slate-900">{{ __('common.recent_activity') }}</h3>
                                 <span class="text-xs text-slate-500">Last 10 activities</span>
                             </div>
                             <div class="space-y-3">
@@ -499,7 +499,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                         </svg>
-                                        <h3 class="mt-2 text-sm font-medium text-slate-900">No recent activity</h3>
+                                        <h3 class="mt-2 text-sm font-medium text-slate-900">{{ __('common.no_recent_activity') }}</h3>
                                         <p class="mt-1 text-sm text-slate-500">Activity will appear here as users
                                             interact
                                             with the system.</p>
@@ -517,7 +517,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <!-- Student Profile Card -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Profil Siswa</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.student_profile') }}</h3>
                     <div class="space-y-4">
                         <div class="flex items-center space-x-4">
                             <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
@@ -544,7 +544,7 @@
                                 <p class="text-sm font-medium text-slate-900">2023001</p>
                             </div>
                             <div>
-                                <p class="text-sm text-slate-500">Tahun Ajaran</p>
+                                <p class="text-sm text-slate-500">{{ __('common.tahun_ajaran') }}</p>
                                 <p class="text-sm font-medium text-slate-900">2024/2025</p>
                             </div>
                             <div>
@@ -560,7 +560,7 @@
 
                 <!-- Academic Information -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Informasi Akademik</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.academic_info') }}</h3>
                     <div class="space-y-4">
                         <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                             <div class="flex items-center space-x-3">
@@ -590,7 +590,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-medium text-slate-900">Kehadiran</p>
-                                    <p class="text-xs text-slate-500">Bulan ini</p>
+                                    <p class="text-xs text-slate-500">{{ __('common.this_month') }}</p>
                                 </div>
                             </div>
                             <span class="text-lg font-bold text-blue-600">95%</span>
@@ -606,7 +606,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium text-slate-900">Ujian Mendatang</p>
+                                    <p class="text-sm font-medium text-slate-900">{{ __('common.upcoming_exams') }}</p>
                                     <p class="text-xs text-slate-500">UTS Semester 2</p>
                                 </div>
                             </div>
@@ -620,7 +620,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Upcoming Events -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Acara Mendatang</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.upcoming_events') }}</h3>
                     <div class="space-y-3">
                         <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
                             <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -645,7 +645,7 @@
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <p class="text-sm font-medium text-slate-900">Pertemuan Orang Tua</p>
+                                <p class="text-sm font-medium text-slate-900">{{ __('common.parent_meeting') }}</p>
                                 <p class="text-xs text-slate-500">25 Oktober 2024</p>
                             </div>
                         </div>
@@ -659,7 +659,7 @@
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <p class="text-sm font-medium text-slate-900">Pameran Sains</p>
+                                <p class="text-sm font-medium text-slate-900">{{ __('common.science_fair') }}</p>
                                 <p class="text-xs text-slate-500">30 Oktober 2024</p>
                             </div>
                         </div>
@@ -668,7 +668,7 @@
 
                 <!-- Quick Links -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Akses Cepat</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.quick_access') }}</h3>
                     <div class="space-y-3">
                         <a href="#"
                             class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
@@ -679,7 +679,7 @@
                                         d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                 </svg>
                             </div>
-                            <span class="text-sm font-medium text-slate-900">Lihat Nilai</span>
+                            <span class="text-sm font-medium text-slate-900">{{ __('common.view_grades') }}</span>
                         </a>
 
                         <a href="#"
@@ -691,7 +691,7 @@
                                         d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                                 </svg>
                             </div>
-                            <span class="text-sm font-medium text-slate-900">Download Rapor</span>
+                            <span class="text-sm font-medium text-slate-900">{{ __('common.download_report') }}</span>
                         </a>
 
                         <a href="#"
@@ -703,7 +703,7 @@
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
-                            <span class="text-sm font-medium text-slate-900">Jadwal Pelajaran</span>
+                            <span class="text-sm font-medium text-slate-900">{{ __('common.schedule') }}</span>
                         </a>
 
                         <a href="#"
@@ -715,7 +715,7 @@
                                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                                 </svg>
                             </div>
-                            <span class="text-sm font-medium text-slate-900">Daftar Teman Sekelas</span>
+                            <span class="text-sm font-medium text-slate-900">{{ __('common.classmates') }}</span>
                         </a>
                     </div>
                 </div>

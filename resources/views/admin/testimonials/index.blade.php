@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manage Testimonials') }}
+            {{ __('common.manage_testimonials') }}
         </h2>
     </x-slot>
 
@@ -30,7 +30,7 @@
                                 <i class="fas fa-comments text-2xl text-blue-600"></i>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">Total Testimonials</p>
+                                <p class="text-sm font-medium text-gray-500">{{ __('common.total_testimonials') }}</p>
                                 <p class="text-2xl font-semibold text-gray-900">{{ $testimonials->total() }}</p>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                                 <i class="fas fa-check-circle text-2xl text-green-600"></i>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">Approved</p>
+                                <p class="text-sm font-medium text-gray-500">{{ __('common.approved') }}</p>
                                 <p class="text-2xl font-semibold text-gray-900">
                                     {{ $testimonials->where('is_approved', true)->count() }}</p>
                             </div>
@@ -59,7 +59,7 @@
                                 <i class="fas fa-star text-2xl text-yellow-600"></i>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">Featured</p>
+                                <p class="text-sm font-medium text-gray-500">{{ __('common.featured') }}</p>
                                 <p class="text-2xl font-semibold text-gray-900">
                                     {{ $testimonials->where('is_featured', true)->count() }}</p>
                             </div>
@@ -74,7 +74,7 @@
                                 <i class="fas fa-clock text-2xl text-orange-600"></i>
                             </div>
                             <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">Pending</p>
+                                <p class="text-sm font-medium text-gray-500">{{ __('common.pending') }}</p>
                                 <p class="text-2xl font-semibold text-gray-900">
                                     {{ $testimonials->where('is_approved', false)->count() }}</p>
                             </div>
@@ -88,38 +88,38 @@
                 <div class="p-6">
                     <form method="GET" class="flex flex-wrap gap-4">
                         <div>
-                            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.status') }}</label>
                             <select name="status" id="status" class="rounded-md border-gray-300">
-                                <option value="">All</option>
+                                <option value="">{{ __('common.all') }}</option>
                                 <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>
-                                    Approved</option>
-                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending
+                                    {{ __('common.approved') }}</option>
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('common.pending') }}
                                 </option>
                                 <option value="featured" {{ request('status') == 'featured' ? 'selected' : '' }}>
-                                    Featured</option>
+                                    {{ __('common.featured') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label for="position" class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                            <label for="position" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.position') }}</label>
                             <select name="position" id="position" class="rounded-md border-gray-300">
-                                <option value="">All</option>
-                                <option value="Siswa" {{ request('position') == 'Siswa' ? 'selected' : '' }}>Siswa
+                                <option value="">{{ __('common.all') }}</option>
+                                <option value="Siswa" {{ request('position') == 'Siswa' ? 'selected' : '' }}>{{ __('common.student') }}
                                 </option>
-                                <option value="Guru" {{ request('position') == 'Guru' ? 'selected' : '' }}>Guru
+                                <option value="Guru" {{ request('position') == 'Guru' ? 'selected' : '' }}>{{ __('common.teacher') }}
                                 </option>
-                                <option value="Alumni" {{ request('position') == 'Alumni' ? 'selected' : '' }}>Alumni
+                                <option value="Alumni" {{ request('position') == 'Alumni' ? 'selected' : '' }}>{{ __('common.alumni') }}
                                 </option>
                             </select>
                         </div>
                         <div>
-                            <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                            <label for="search" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.search') }}</label>
                             <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                placeholder="Search by name or testimonial..." class="rounded-md border-gray-300">
+                                placeholder="{{ __('common.search') }}" class="rounded-md border-gray-300">
                         </div>
                         <div class="flex items-end">
                             <button type="submit"
                                 class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                                <i class="fas fa-search mr-2"></i>Filter
+                                <i class="fas fa-search mr-2"></i>{{ __('common.filter') }}
                             </button>
                         </div>
                     </form>
@@ -130,10 +130,9 @@
             <div class="bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Testimonials</h3>
+                        <h3 class="text-lg font-medium text-gray-900">{{ __('common.testimonials') }}</h3>
                         <div class="text-sm text-gray-500">
-                            Showing {{ $testimonials->firstItem() }} to {{ $testimonials->lastItem() }} of
-                            {{ $testimonials->total() }} results
+                            {{ str_replace([':first', ':last', ':total'], [$testimonials->firstItem(), $testimonials->lastItem(), $testimonials->total()], __('common.showing_results')) }}
                         </div>
                     </div>
 
@@ -144,22 +143,22 @@
                                     <tr>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Testimonial</th>
+                                            {{ __('common.testimonial') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Author</th>
+                                            {{ __('common.author') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status</th>
+                                            {{ __('common.status') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Rating</th>
+                                            {{ __('common.rating') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Date</th>
+                                            {{ __('common.date') }}</th>
                                         <th
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions</th>
+                                            {{ __('common.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -188,7 +187,7 @@
                                                             {{ $testimonial->name }}</div>
                                                         <div class="text-sm text-gray-500">
                                                             @if ($testimonial->position === 'Alumni')
-                                                                Alumni {{ $testimonial->graduation_year }}
+                                                                {{ __('common.alumni') }} {{ $testimonial->graduation_year }}
                                                             @elseif($testimonial->position === 'Siswa')
                                                                 {{ $testimonial->class }}
                                                             @else
@@ -203,18 +202,18 @@
                                                     @if ($testimonial->is_approved)
                                                         <span
                                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                            <i class="fas fa-check mr-1"></i>Approved
+                                                            <i class="fas fa-check mr-1"></i>{{ __('common.approved') }}
                                                         </span>
                                                     @else
                                                         <span
                                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                            <i class="fas fa-clock mr-1"></i>Pending
+                                                            <i class="fas fa-clock mr-1"></i>{{ __('common.pending') }}
                                                         </span>
                                                     @endif
                                                     @if ($testimonial->is_featured)
                                                         <span
                                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                                            <i class="fas fa-star mr-1"></i>Featured
+                                                            <i class="fas fa-star mr-1"></i>{{ __('common.featured') }}
                                                         </span>
                                                     @endif
                                                 </div>
@@ -236,7 +235,7 @@
                                                 <div class="flex space-x-2">
                                                     <!-- View Button -->
                                                     <button onclick="viewTestimonial({{ $testimonial->id }})"
-                                                        class="text-blue-600 hover:text-blue-900" title="View">
+                                                        class="text-blue-600 hover:text-blue-900" title="{{ __('common.view') }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
 
@@ -249,7 +248,7 @@
                                                                 @csrf
                                                                 <button type="submit"
                                                                     class="text-green-600 hover:text-green-900"
-                                                                    title="Approve">
+                                                                    title="{{ __('common.approved') }}">
                                                                     <i class="fas fa-check"></i>
                                                                 </button>
                                                             </form>
@@ -260,7 +259,7 @@
                                                                 @csrf
                                                                 <button type="submit"
                                                                     class="text-yellow-600 hover:text-yellow-900"
-                                                                    title="Reject">
+                                                                    title="{{ __('common.reject') }}">
                                                                     <i class="fas fa-times"></i>
                                                                 </button>
                                                             </form>
@@ -275,7 +274,7 @@
                                                             @csrf
                                                             <button type="submit"
                                                                 class="{{ $testimonial->is_featured ? 'text-purple-600 hover:text-purple-900' : 'text-gray-400 hover:text-purple-600' }}"
-                                                                title="{{ $testimonial->is_featured ? 'Remove from Featured' : 'Add to Featured' }}">
+                                                                title="{{ $testimonial->is_featured ? __('common.remove_from_featured') : __('common.add_to_featured') }}">
                                                                 <i class="fas fa-star"></i>
                                                             </button>
                                                         </form>
@@ -286,11 +285,11 @@
                                                         <form method="POST"
                                                             action="{{ route('admin.testimonials.destroy', $testimonial) }}"
                                                             class="inline"
-                                                            data-confirm="Are you sure you want to delete this testimonial?">
+                                                            data-confirm="{{ __('common.delete_testimonial_confirmation') }}">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="text-red-600 hover:text-red-900"
-                                                                title="Delete">
+                                                                title="{{ __('common.delete') }}">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
@@ -310,8 +309,8 @@
                     @else
                         <div class="text-center py-12">
                             <i class="fas fa-comments text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">No testimonials found</h3>
-                            <p class="text-gray-500">There are no testimonials matching your criteria.</p>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('common.no_testimonials_found') }}</h3>
+                            <p class="text-gray-500">{{ __('common.no_testimonials_matching') }}</p>
                         </div>
                     @endif
                 </div>
@@ -325,7 +324,7 @@
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium text-gray-900">Testimonial Details</h3>
+                    <h3 class="text-lg font-medium text-gray-900">{{ __('common.testimonial_details') }}</h3>
                     <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times text-xl"></i>
                     </button>
@@ -343,7 +342,7 @@
             document.getElementById('testimonialContent').innerHTML = `
                 <div class="text-center py-8">
                     <i class="fas fa-spinner fa-spin text-2xl text-gray-400 mb-4"></i>
-                    <p class="text-gray-500">Loading testimonial details...</p>
+                    <p class="text-gray-500">{{ __('common.loading_testimonial_details') }}</p>
                 </div>
             `;
             document.getElementById('testimonialModal').classList.remove('hidden');
@@ -372,11 +371,11 @@
                 .then(result => {
                         if (!result.ok) {
                             if (result.status === 404) {
-                                showError('Error!', 'Testimonial tidak ditemukan');
+                                showError('{{ __('common.error') }}!', '{{ __('common.testimonial_not_found') }}');
                             } else if (result.status === 401 || result.status === 403) {
-                                showError('Unauthorized!', 'Anda tidak memiliki izin untuk melihat testimonial ini.');
+                                showError('{{ __('common.unauthorized') }}!', '{{ __('common.unauthorized_action') }}');
                             } else {
-                                showError('Error!', result.data.message || 'Gagal memuat testimonial');
+                                showError('{{ __('common.error') }}!', result.data.message || '{{ __('common.error_occurred') }}');
                             }
                             document.getElementById('testimonialModal').classList.add('hidden');
                             return;
@@ -399,79 +398,61 @@
 
                                 <!-- Rating -->
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm font-medium">Rating:</span>
+                                    <span class="text-sm font-medium">{{ __('common.rating') }}:</span>
                                     <div class="flex items-center">
                                         ${Array.from({length: 5}, (_, i) => 
-                                            ` < i class =
-                                "fas fa-star text-sm ${i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'}" > <
-                                /i>`
-                    ).join('')
-                } <
-                /div> <
-                span class = "text-sm text-gray-500" > $ {
-                    testimonial.rating
-                }
-                /5</span >
-                <
-                /div>
+                                            `<i class="fas fa-star text-sm ${i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'}"></i>`
+                                        ).join('')}
+                                    </div>
+                                    <span class="text-sm text-gray-500">${testimonial.rating}/5</span>
+                                </div>
 
-                <
-                !--Testimonial Content-- >
-                <
-                div >
-                <
-                p class = "text-gray-900 bg-gray-50 rounded p-3" > $ {
-                    testimonial.testimonial
-                } < /p> < /
-                div >
+                                <!-- Testimonial Content -->
+                                <div>
+                                    <p class="text-gray-900 bg-gray-50 rounded p-3">${testimonial.testimonial}</p>
+                                </div>
 
-                <
-                !--Status-- >
-                <
-                div class = "flex items-center space-x-2" >
-                $ {
-                    testimonial.is_approved ?
-                        '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Approved</span>' :
-                        '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Pending</span>'
-                }
-                $ {
-                    testimonial.is_featured ?
-                        '<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">Featured</span>' : ''
-                } <
-                /div> < /
-                div >
-                `;
-                                                    } else {
-                                                        document.getElementById('testimonialContent').innerHTML = ` <
-                div class = "text-center py-8" >
-                <
-                i class = "fas fa-exclamation-triangle text-2xl text-red-400 mb-4" > < /i> <
-                p class = "text-red-500" > Error loading testimonial details < /p> < /
-                div >
-                `;
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error('Error:', error);
-                                                    document.getElementById('testimonialContent').innerHTML = ` <
-                div class = "text-center py-8" >
-                <
-                i class = "fas fa-exclamation-triangle text-2xl text-red-400 mb-4" > < /i> <
-                p class = "text-red-500" > Error loading testimonial details < /p> < /
-                div >
-                `;
-                                                });
-                                        }
+                                <!-- Status -->
+                                <div class="flex items-center space-x-2">
+                                    ${testimonial.is_approved ?
+                                        '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">{{ __('common.approved') }}</span>' :
+                                        '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">{{ __('common.pending') }}</span>'
+                                    }
+                                    ${testimonial.is_featured ?
+                                        '<span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">{{ __('common.featured') }}</span>' : ''
+                                    }
+                                </div>
+                            </div>
+                            `;
+                        } else {
+                            document.getElementById('testimonialContent').innerHTML = `
+                                <div class="text-center py-8">
+                                    <i class="fas fa-exclamation-triangle text-2xl text-red-400 mb-4"></i>
+                                    <p class="text-red-500">{{ __('common.error_occurred') }}</p>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('testimonialContent').innerHTML = `
+                            <div class="text-center py-8">
+                                <i class="fas fa-exclamation-triangle text-2xl text-red-400 mb-4"></i>
+                                <p class="text-red-500">{{ __('common.error_occurred') }}</p>
+                            </div>
+                        `;
+                    });
+        }
 
-                                        function closeModal() {
-                                            document.getElementById('testimonialModal').classList.add('hidden');
-                                        }
+        function closeModal() {
+            document.getElementById('testimonialModal').classList.add('hidden');
+        }
 
-                                        // Close modal when clicking outside
-                                        document.getElementById('testimonialModal').addEventListener('click', function(e) {
-                                            if (e.target === this) {
-                                                closeModal();
-                                            }
-                                        });
+        // Close modal when clicking outside
+        document.getElementById('testimonialModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
     </script>
 </x-app-layout>

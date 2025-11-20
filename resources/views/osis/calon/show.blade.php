@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Detail Calon OSIS</h1>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.detail_calon_osis') }}</h1>
                 <p class="text-slate-600 mt-1">{{ $calon->full_candidate_name }}</p>
             </div>
             <div class="flex items-center space-x-2">
@@ -11,14 +11,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Edit
+                    {{ __('common.edit') }}
                 </a>
                 <a href="{{ route('admin.osis.calon.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali
+                    {{ __('common.back') }}
                 </a>
             </div>
         </div>
@@ -31,9 +31,9 @@
                 <!-- Candidate Info -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6">
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-semibold text-slate-900">Informasi Calon</h3>
+                        <h3 class="text-lg font-semibold text-slate-900">{{ __('common.candidate_information') }}</h3>
                         <span class="badge {{ $calon->is_active ? 'badge-success' : 'badge-warning' }}">
-                            {{ $calon->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                            {{ $calon->is_active ? __('common.status_active') : __('common.status_inactive') }}
                         </span>
                     </div>
 
@@ -54,7 +54,7 @@
                                 @endif
                             </div>
                             <h4 class="text-lg font-semibold text-slate-900">{{ $calon->nama_ketua }}</h4>
-                            <p class="text-sm text-slate-600">Ketua OSIS</p>
+                            <p class="text-sm text-slate-600">{{ __('common.ketua_osis') }}</p>
                         </div>
 
                         <!-- Wakil -->
@@ -73,14 +73,14 @@
                                 @endif
                             </div>
                             <h4 class="text-lg font-semibold text-slate-900">{{ $calon->nama_wakil }}</h4>
-                            <p class="text-sm text-slate-600">Wakil Ketua OSIS</p>
+                            <p class="text-sm text-slate-600">{{ __('common.wakil_ketua_osis') }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Visi Misi -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Visi & Misi</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.vision_mission') }}</h3>
                     <div class="prose max-w-none">
                         {!! nl2br(e($calon->visi_misi)) !!}
                     </div>
@@ -88,19 +88,19 @@
 
                 <!-- Voting Statistics -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Statistik Voting</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.voting_statistics') }}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="text-center p-4 bg-slate-50 rounded-lg">
                             <p class="text-2xl font-bold text-slate-900">{{ $calon->total_votes }}</p>
-                            <p class="text-sm text-slate-600">Total Suara</p>
+                            <p class="text-sm text-slate-600">{{ __('common.total_votes_label') }}</p>
                         </div>
                         <div class="text-center p-4 bg-slate-50 rounded-lg">
                             <p class="text-2xl font-bold text-slate-900">{{ $calon->vote_percentage }}%</p>
-                            <p class="text-sm text-slate-600">Persentase</p>
+                            <p class="text-sm text-slate-600">{{ __('common.percentage') }}</p>
                         </div>
                         <div class="text-center p-4 bg-slate-50 rounded-lg">
                             <p class="text-2xl font-bold text-slate-900">{{ $calon->pencalonan_type_display }}</p>
-                            <p class="text-sm text-slate-600">Jenis Pencalonan</p>
+                            <p class="text-sm text-slate-600">{{ __('common.jenis_pencalonan') }}</p>
                         </div>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
             <div class="space-y-6">
                 <!-- Quick Actions -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.quick_actions') }}</h3>
                     <div class="space-y-3">
                         <a href="{{ route('admin.osis.calon.edit', $calon) }}"
                             class="flex items-center justify-between p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
@@ -122,7 +122,7 @@
                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
                                 </div>
-                                <span class="font-medium text-slate-900">Edit Calon</span>
+                                <span class="font-medium text-slate-900">{{ __('common.edit_calon') }}</span>
                             </div>
                             <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
@@ -141,7 +141,7 @@
                                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                     </svg>
                                 </div>
-                                <span class="font-medium text-slate-900">Lihat Hasil</span>
+                                <span class="font-medium text-slate-900">{{ __('common.view_results') }}</span>
                             </div>
                             <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
@@ -154,7 +154,7 @@
 
                 <!-- Recent Votes -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Voting Terbaru</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.recent_voting') }}</h3>
                     <div class="space-y-3">
                         @forelse($calon->votings()->latest()->limit(5)->get() as $vote)
                             <div class="flex items-center space-x-3 p-2 hover:bg-slate-50 rounded-lg">
@@ -171,7 +171,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="text-slate-500 text-sm">Belum ada voting</p>
+                            <p class="text-slate-500 text-sm">{{ __('common.no_votes_yet') }}</p>
                         @endforelse
                     </div>
                 </div>

@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Tambah Pemilih OSIS</h1>
-                <p class="text-slate-600 mt-1">Tambah data pemilih yang berhak memilih dalam pemilihan OSIS</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.tambah_pemilih') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_pemilih_description') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 <a href="{{ route('admin.osis.pemilih.index') }}" class="btn btn-secondary">
@@ -11,7 +11,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali
+                    {{ __('common.back') }}
                 </a>
             </div>
         </div>
@@ -24,23 +24,23 @@
 
                 <!-- Basic Information -->
                 <div class="border-b border-slate-200 pb-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Informasi Dasar</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.basic_info') }}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="nama" class="form-label">Nama Lengkap</label>
+                            <label for="nama" class="form-label">{{ __('common.full_name') }}</label>
                             <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
                                 class="form-input @error('nama') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan nama lengkap" required>
+                                placeholder="{{ __('common.enter_full_name') }}" required>
                             @error('nama')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="nis" class="form-label">NIS (Nomor Induk Siswa)</label>
+                            <label for="nis" class="form-label">{{ __('common.nis_student_number') }}</label>
                             <input type="text" id="nis" name="nis" value="{{ old('nis') }}"
                                 class="form-input @error('nis') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan NIS" required>
+                                placeholder="{{ __('common.enter_nis') }}" required>
                             @error('nis')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
@@ -50,7 +50,7 @@
                             <label for="kelas" class="form-label">Kelas</label>
                             <input type="text" id="kelas" name="kelas" value="{{ old('kelas') }}"
                                 class="form-input @error('kelas') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan kelas (contoh: X IPA 1)" required>
+                                placeholder="{{ __('common.enter_class') }}" required>
                             @error('kelas')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror
@@ -61,10 +61,10 @@
                             <select id="jenis_kelamin" name="jenis_kelamin"
                                 class="form-select @error('jenis_kelamin') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
                                 required>
-                                <option value="">Pilih Jenis Kelamin</option>
-                                <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki
+                                <option value="">{{ __('common.select_status') }}</option>
+                                <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>{{ __('common.laki_laki') }}
                                 </option>
-                                <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan
+                                <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>{{ __('common.perempuan') }}
                                 </option>
                             </select>
                             @error('jenis_kelamin')
@@ -86,13 +86,13 @@
 
                 <!-- Additional Information -->
                 <div class="border-b border-slate-200 pb-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Informasi Tambahan</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.additional_info') }}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="nomor_hp" class="form-label">Nomor HP</label>
+                            <label for="nomor_hp" class="form-label">{{ __('common.phone_number') }}</label>
                             <input type="text" id="nomor_hp" name="nomor_hp" value="{{ old('nomor_hp') }}"
                                 class="form-input @error('nomor_hp') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror"
-                                placeholder="Masukkan nomor HP (hanya angka)">
+                                placeholder="{{ __('common.enter_phone_number') }}">
                             @error('nomor_hp')
                                 <p class="form-error">{{ $message }}</p>
                             @enderror

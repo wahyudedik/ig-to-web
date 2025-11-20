@@ -2,22 +2,22 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Pages Management</h1>
-                <p class="text-slate-600 mt-1">Manage website pages and menus</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.pages_management') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_website_pages') }}</p>
             </div>
             <div class="flex items-center space-x-3">
                 <a href="{{ route('admin.pages.create') }}" class="btn btn-primary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Create Page
+                    {{ __('common.create_page') }}
                 </a>
                 <a href="{{ route('pages.public.index') }}" class="btn btn-secondary" target="_blank">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
-                    View Public
+                    {{ __('common.view_public') }}
                 </a>
             </div>
         </div>
@@ -31,14 +31,14 @@
                     class="flex flex-wrap gap-4 items-center">
                     <div class="flex-1 min-w-64">
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Search pages..."
+                            placeholder="{{ __('common.search_pages') }}"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
                         <select name="category"
                             class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             onchange="document.getElementById('filterForm').submit();">
-                            <option value="">All Categories</option>
+                            <option value="">{{ __('common.all_categories') }}</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category }}"
                                     {{ request('category') == $category ? 'selected' : '' }}>
@@ -51,7 +51,7 @@
                         <select name="status"
                             class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             onchange="document.getElementById('filterForm').submit();">
-                            <option value="">All Status</option>
+                            <option value="">{{ __('common.all_status') }}</option>
                             @foreach ($statuses as $status)
                                 <option value="{{ $status }}"
                                     {{ request('status') == $status ? 'selected' : '' }}>
@@ -65,14 +65,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        Filter
+                        {{ __('common.filter') }}
                     </button>
                     <a href="{{ route('admin.pages.index') }}" class="btn btn-secondary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                        Clear
+                        {{ __('common.clear') }}
                     </a>
                 </form>
             </div>
@@ -81,7 +81,7 @@
         <!-- Pages Table -->
         <div class="card">
             <div class="card-header">
-                <h3 class="text-lg font-semibold text-slate-900">All Pages</h3>
+                <h3 class="text-lg font-semibold text-slate-900">{{ __('common.all_pages') }}</h3>
             </div>
             <div class="card-body p-0">
                 @if ($pages->count() > 0)
@@ -91,25 +91,25 @@
                                 <tr>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Title</th>
+                                        {{ __('common.title') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Category</th>
+                                        {{ __('common.category') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status</th>
+                                        {{ __('common.status') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Menu</th>
+                                        {{ __('common.menu') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Author</th>
+                                        {{ __('common.author') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Updated</th>
+                                        {{ __('common.updated') }}</th>
                                     <th
                                         class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions</th>
+                                        {{ __('common.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -160,7 +160,7 @@
                                                         {{ ucfirst($page->menu_position) }}
                                                     </span>
                                                     @if ($page->parent_id)
-                                                        <span class="text-xs text-gray-500">Submenu</span>
+                                                        <span class="text-xs text-gray-500">{{ __('common.submenu') }}</span>
                                                     @endif
                                                 </div>
                                             @else
@@ -168,7 +168,7 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $page->user->name ?? 'Unknown' }}
+                                            {{ $page->user->name ?? __('common.unknown') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $page->updated_at->format('M d, Y') }}
@@ -197,7 +197,7 @@
                                                 </a>
                                                 <form action="{{ route('admin.pages.destroy', $page) }}"
                                                     method="POST" class="inline"
-                                                    data-confirm="Are you sure you want to delete this page?">
+                                                    data-confirm="{{ __('common.delete_page_confirmation') }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="text-red-600 hover:text-red-900">
@@ -230,12 +230,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">No pages found</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('common.no_pages_found') }}</h3>
                         <p class="text-gray-500 mb-6">
                             @if (request()->hasAny(['search', 'category', 'status']))
-                                Try adjusting your search criteria.
+                                {{ __('common.try_adjusting_search') }}
                             @else
-                                Get started by creating your first page.
+                                {{ __('common.get_started_create_page') }}
                             @endif
                         </p>
                         <a href="{{ route('admin.pages.create') }}" class="btn btn-primary">
@@ -243,7 +243,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Create Page
+                            {{ __('common.create_page') }}
                         </a>
                     </div>
                 @endif
@@ -257,13 +257,13 @@
                 // Show success message if page was created/updated/deleted
                 @if (session('success'))
                     if (typeof showSuccess !== 'undefined') {
-                        showSuccess('{{ __('Success') }}', '{{ session('success') }}');
+                        showSuccess('{{ __('common.success') }}', '{{ session('success') }}');
                     }
                 @endif
 
                 @if (session('error'))
                     if (typeof showError !== 'undefined') {
-                        showError('{{ __('Error') }}', '{{ session('error') }}');
+                        showError('{{ __('common.error') }}', '{{ session('error') }}');
                     }
                 @endif
             });

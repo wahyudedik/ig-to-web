@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">E-OSIS Dashboard</h1>
-                <p class="text-slate-600 mt-1">Sistem Pemilihan OSIS Digital</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.e_osis_dashboard') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.digital_election_system') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 @can('export', App\Models\Calon::class)
@@ -12,7 +12,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Export Calon
+                        {{ __('common.export_calon') }}
                     </a>
                 @endcan
                 @can('export', App\Models\Calon::class)
@@ -21,13 +21,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Export Pemilih
+                        {{ __('common.export_pemilih') }}
                     </a>
                 @endcan
                 <span
                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     <span class="w-2 h-2 bg-blue-400 rounded-full mr-1.5"></span>
-                    Voting Aktif
+                    {{ __('common.voting_active') }}
                 </span>
             </div>
         </div>
@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Calon</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_calon') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $stats['total_calon'] }}</p>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Pemilih</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_voters') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $stats['total_pemilih'] }}</p>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Suara</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_suara') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $stats['total_votes'] }}</p>
                     </div>
                 </div>

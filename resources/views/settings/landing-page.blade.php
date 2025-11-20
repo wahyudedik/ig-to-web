@@ -4,8 +4,8 @@
         <div class="max-w-6xl mx-auto">
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Landing Page Settings</h1>
-                <p class="text-gray-600 mt-2">Kelola tampilan, logo, hero section, dan menu website</p>
+                <h1 class="text-3xl font-bold text-gray-900">{{ __('common.landing_page_settings') }}</h1>
+                <p class="text-gray-600 mt-2">{{ __('common.manage_landing_page_settings_description') }}</p>
             </div>
 
             @if (session('success'))
@@ -967,7 +967,7 @@
                                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
                                 </path>
                             </svg>
-                            Reset to Default
+                            {{ __('common.reset_to_default') }}
                         </button>
                     </form>
 
@@ -977,7 +977,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
                             </path>
                         </svg>
-                        Save Settings
+                        {{ __('common.save_settings') }}
                     </button>
                 </div>
             </form>

@@ -7,13 +7,12 @@
                     <div class="mb-8">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h1 class="text-3xl font-bold text-gray-900">Data Management</h1>
-                                <p class="text-gray-600 mt-2">Kelola data kelas, jurusan, ekstrakurikuler, dan mata
-                                    pelajaran</p>
+                                <h1 class="text-3xl font-bold text-gray-900">{{ __('common.data_management') }}</h1>
+                                <p class="text-gray-600 mt-2">{{ __('common.manage_data_description') }}</p>
                             </div>
                             <a href="{{ route('admin.settings.index') }}"
                                 class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                                <i class="fas fa-arrow-left mr-2"></i>Kembali
+                                <i class="fas fa-arrow-left mr-2"></i>{{ __('common.back') }}
                             </a>
                         </div>
                     </div>
@@ -30,7 +29,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-blue-600">Total Kelas</p>
+                                    <p class="text-sm font-medium text-blue-600">{{ __('common.total_kelas') }}</p>
                                     <p class="text-2xl font-bold text-blue-900">{{ $kelasCount }}</p>
                                 </div>
                             </div>
@@ -46,7 +45,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-green-600">Total Jurusan</p>
+                                    <p class="text-sm font-medium text-green-600">{{ __('common.total_jurusan') }}</p>
                                     <p class="text-2xl font-bold text-green-900">{{ $jurusanCount }}</p>
                                 </div>
                             </div>
@@ -62,7 +61,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-purple-600">Total Ekstrakurikuler</p>
+                                    <p class="text-sm font-medium text-purple-600">{{ __('common.total_ekstrakurikuler') }}</p>
                                     <p class="text-2xl font-bold text-purple-900">{{ $ekstrakurikulerCount }}</p>
                                 </div>
                             </div>
@@ -115,7 +114,7 @@
                             <h2 class="text-xl font-semibold text-gray-900">Data Kelas</h2>
                             <button onclick="openModal('kelas')"
                                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                                <i class="fas fa-plus mr-2"></i>Tambah Kelas
+                                <i class="fas fa-plus mr-2"></i>{{ __('common.add_kelas') }}
                             </button>
                         </div>
                         <div class="bg-white shadow overflow-hidden sm:rounded-md">
@@ -133,12 +132,12 @@
                                                 <button
                                                     onclick="editItem('kelas', {{ $item->id }}, {{ json_encode($item->nama) }}, {{ json_encode($item->deskripsi ?? '') }})"
                                                     class="text-blue-600 hover:text-blue-900 text-sm font-medium">
-                                                    <i class="fas fa-edit mr-1"></i>Edit
+                                                    <i class="fas fa-edit mr-1"></i>{{ __('common.edit') }}
                                                 </button>
                                                 <button
                                                     onclick="deleteItem('kelas', {{ $item->id }}, {{ json_encode($item->nama) }})"
                                                     class="text-red-600 hover:text-red-900 text-sm font-medium">
-                                                    <i class="fas fa-trash mr-1"></i>Hapus
+                                                    <i class="fas fa-trash mr-1"></i>{{ __('common.delete') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -158,7 +157,7 @@
                             <h2 class="text-xl font-semibold text-gray-900">Data Jurusan</h2>
                             <button onclick="openModal('jurusan')"
                                 class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                                <i class="fas fa-plus mr-2"></i>Tambah Jurusan
+                                <i class="fas fa-plus mr-2"></i>{{ __('common.add_jurusan') }}
                             </button>
                         </div>
                         <div class="bg-white shadow overflow-hidden sm:rounded-md">
@@ -176,12 +175,12 @@
                                                 <button
                                                     onclick="editItem('jurusan', {{ $item->id }}, {{ json_encode($item->nama) }}, {{ json_encode($item->deskripsi ?? '') }})"
                                                     class="text-blue-600 hover:text-blue-900 text-sm font-medium">
-                                                    <i class="fas fa-edit mr-1"></i>Edit
+                                                    <i class="fas fa-edit mr-1"></i>{{ __('common.edit') }}
                                                 </button>
                                                 <button
                                                     onclick="deleteItem('jurusan', {{ $item->id }}, {{ json_encode($item->nama) }})"
                                                     class="text-red-600 hover:text-red-900 text-sm font-medium">
-                                                    <i class="fas fa-trash mr-1"></i>Hapus
+                                                    <i class="fas fa-trash mr-1"></i>{{ __('common.delete') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -201,7 +200,7 @@
                             <h2 class="text-xl font-semibold text-gray-900">Data Ekstrakurikuler</h2>
                             <button onclick="openModal('ekstrakurikuler')"
                                 class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                                <i class="fas fa-plus mr-2"></i>Tambah Ekstrakurikuler
+                                <i class="fas fa-plus mr-2"></i>{{ __('common.add_ekstrakurikuler') }}
                             </button>
                         </div>
                         <div class="bg-white shadow overflow-hidden sm:rounded-md">
@@ -219,12 +218,12 @@
                                                 <button
                                                     onclick="editItem('ekstrakurikuler', {{ $item->id }}, {{ json_encode($item->nama) }}, {{ json_encode($item->deskripsi ?? '') }})"
                                                     class="text-blue-600 hover:text-blue-900 text-sm font-medium">
-                                                    <i class="fas fa-edit mr-1"></i>Edit
+                                                    <i class="fas fa-edit mr-1"></i>{{ __('common.edit') }}
                                                 </button>
                                                 <button
                                                     onclick="deleteItem('ekstrakurikuler', {{ $item->id }}, {{ json_encode($item->nama) }})"
                                                     class="text-red-600 hover:text-red-900 text-sm font-medium">
-                                                    <i class="fas fa-trash mr-1"></i>Hapus
+                                                    <i class="fas fa-trash mr-1"></i>{{ __('common.delete') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -244,7 +243,7 @@
                             <h2 class="text-xl font-semibold text-gray-900">Data Mata Pelajaran</h2>
                             <button onclick="openModal('mata-pelajaran')"
                                 class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                                <i class="fas fa-plus mr-2"></i>Tambah Mata Pelajaran
+                                <i class="fas fa-plus mr-2"></i>{{ __('common.add_mata_pelajaran') }}
                             </button>
                         </div>
                         <div class="bg-white shadow overflow-hidden sm:rounded-md">
@@ -259,12 +258,12 @@
                                                 <button
                                                     onclick="editItem('mata-pelajaran', {{ $item->id }}, {{ json_encode($item->nama) }}, '')"
                                                     class="text-blue-600 hover:text-blue-900 text-sm font-medium">
-                                                    <i class="fas fa-edit mr-1"></i>Edit
+                                                    <i class="fas fa-edit mr-1"></i>{{ __('common.edit') }}
                                                 </button>
                                                 <button
                                                     onclick="deleteItem('mata-pelajaran', {{ $item->id }}, {{ json_encode($item->nama) }})"
                                                     class="text-red-600 hover:text-red-900 text-sm font-medium">
-                                                    <i class="fas fa-trash mr-1"></i>Hapus
+                                                    <i class="fas fa-trash mr-1"></i>{{ __('common.delete') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -294,23 +293,23 @@
                 </div>
                 <form id="modal-form">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.name') }}</label>
                         <input type="text" id="modal-nama" name="nama" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div id="deskripsi-field" class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.description') }}</label>
                         <textarea id="modal-deskripsi" name="deskripsi" rows="3"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
                     <div class="flex justify-end space-x-3">
                         <button type="button" onclick="closeModal()"
                             class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                            Batal
+                            {{ __('common.cancel') }}
                         </button>
                         <button type="submit" id="modal-submit"
                             class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                            Simpan
+                            {{ __('common.save') }}
                         </button>
                     </div>
                 </form>

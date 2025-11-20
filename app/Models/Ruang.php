@@ -213,6 +213,24 @@ class Ruang extends Model
     }
 
     /**
+     * Get location (gedung and lantai).
+     */
+    public function getLokasiAttribute(): ?string
+    {
+        $parts = [];
+        
+        if ($this->gedung) {
+            $parts[] = $this->gedung;
+        }
+        
+        if ($this->lantai) {
+            $parts[] = 'Lantai ' . $this->lantai;
+        }
+        
+        return !empty($parts) ? implode(', ', $parts) : null;
+    }
+
+    /**
      * Get full location.
      */
     public function getFullLocationAttribute(): string

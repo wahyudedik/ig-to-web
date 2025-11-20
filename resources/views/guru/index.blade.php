@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Data Tenaga Pendidik (Guru)') }}
+                {{ __('common.teacher_data') }}
             </h2>
             <div class="flex items-center space-x-2">
                 @can('import', App\Models\Guru::class)
@@ -12,7 +12,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
-                        Import
+                        {{ __('common.import') }}
                     </a>
                 @endcan
                 @can('export', App\Models\Guru::class)
@@ -23,7 +23,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            Export
+                            {{ __('common.export') }}
                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -54,7 +54,7 @@
                 @can('create', App\Models\Guru::class)
                     <a href="{{ route('admin.guru.create') }}"
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Tambah Guru
+                        {{ __('common.add_teacher') }}
                     </a>
                 @endcan
             </div>
@@ -71,17 +71,17 @@
                         <form method="GET" action="{{ route('admin.guru.index') }}" id="filterForm"
                             class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.search') }}</label>
                                 <input type="text" name="search" value="{{ request('search') }}"
-                                    placeholder="Nama atau NIP..."
+                                    placeholder="{{ __('common.search_name_or_nip') }}"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.status') }}</label>
                                 <select name="status"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     onchange="document.getElementById('filterForm').submit();">
-                                    <option value="">Semua Status</option>
+                                    <option value="">{{ __('common.all_status') }}</option>
                                     @foreach ($statuses as $status)
                                         <option value="{{ $status }}"
                                             {{ request('status') == $status ? 'selected' : '' }}>
@@ -91,11 +91,11 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Kepegawaian</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.employment_status') }}</label>
                                 <select name="employment_status"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     onchange="document.getElementById('filterForm').submit();">
-                                    <option value="">Semua Status</option>
+                                    <option value="">{{ __('common.all_status') }}</option>
                                     @foreach ($employmentStatuses as $status)
                                         <option value="{{ $status }}"
                                             {{ request('employment_status') == $status ? 'selected' : '' }}>
@@ -105,11 +105,11 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.subject') }}</label>
                                 <select name="subject"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     onchange="document.getElementById('filterForm').submit();">
-                                    <option value="">Semua Mapel</option>
+                                    <option value="">{{ __('common.all_subjects') }}</option>
                                     @foreach ($subjects as $subject)
                                         <option value="{{ $subject }}"
                                             {{ request('subject') == $subject ? 'selected' : '' }}>
@@ -121,11 +121,11 @@
                             <div class="flex items-end space-x-2">
                                 <button type="submit"
                                     class="flex-1 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                    Filter
+                                    {{ __('common.filter') }}
                                 </button>
                                 <a href="{{ route('admin.guru.index') }}"
                                     class="flex-1 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
-                                    Reset
+                                    {{ __('common.reset') }}
                                 </a>
                             </div>
                         </form>
@@ -140,24 +140,24 @@
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama_lengkap', 'sort_order' => request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
                                             class="hover:text-gray-700">
-                                            Nama
+                                            {{ __('common.name') }}
                                         </a>
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        NIP</th>
+                                        {{ __('common.nip') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status</th>
+                                        {{ __('common.status') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Kepegawaian</th>
+                                        {{ __('common.employment_status') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Mata Pelajaran</th>
+                                        {{ __('common.subject') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions</th>
+                                        {{ __('common.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -217,20 +217,20 @@
                                             <div class="flex space-x-2">
                                                 @can('view', $guru)
                                                     <a href="{{ route('admin.guru.show', $guru) }}"
-                                                        class="text-blue-600 hover:text-blue-900">View</a>
+                                                        class="text-blue-600 hover:text-blue-900">{{ __('common.view') }}</a>
                                                 @endcan
                                                 @can('update', $guru)
                                                     <a href="{{ route('admin.guru.edit', $guru) }}"
-                                                        class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                                        class="text-indigo-600 hover:text-indigo-900">{{ __('common.edit') }}</a>
                                                 @endcan
                                                 @can('delete', $guru)
                                                     <form method="POST"
                                                         action="{{ route('admin.guru.destroy', $guru) }}" class="inline"
-                                                        data-confirm="Apakah Anda yakin ingin menghapus data guru {{ $guru->full_name }}?">
+                                                        data-confirm="{{ str_replace(':name', $guru->full_name, __('common.delete_teacher_confirmation')) }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
-                                                            class="text-red-600 hover:text-red-900">Delete</button>
+                                                            class="text-red-600 hover:text-red-900">{{ __('common.delete') }}</button>
                                                     </form>
                                                 @endcan
                                             </div>
@@ -239,7 +239,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                            Tidak ada data guru ditemukan.
+                                            {{ __('common.no_teacher_data_found') }}
                                         </td>
                                     </tr>
                                 @endforelse

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Data Kelulusan') }}
+            {{ __('common.tambah_data_kelulusan') }}
         </h2>
     </x-slot>
 
@@ -20,7 +20,7 @@
                                     *</label>
                                 <select name="siswa_id" id="siswa_id" required
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="">Pilih Siswa dari Daftar</option>
+                                    <option value="">{{ __('common.select_student_from_list') }}</option>
                                     @foreach ($siswas ?? [] as $siswa)
                                         <option value="{{ $siswa->id }}" data-nama="{{ $siswa->nama_lengkap }}"
                                             data-nis="{{ $siswa->nis }}" data-nisn="{{ $siswa->nisn }}"
@@ -36,8 +36,7 @@
                                 @error('siswa_id')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
-                                <p class="mt-1 text-sm text-gray-500">Pilih siswa dari daftar untuk menghindari
-                                    kesalahan penulisan</p>
+                                <p class="mt-1 text-sm text-gray-500">{{ __('common.select_student_hint') }}</p>
                             </div>
 
                             <div>

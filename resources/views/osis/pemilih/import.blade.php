@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Import Data Pemilih OSIS</h1>
-                <p class="text-slate-600 mt-1">Import data pemilih dari file Excel</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.import_osis_voters') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.import_voters_description') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 <a href="{{ route('admin.osis.pemilih.downloadTemplate') }}" class="btn btn-secondary">
@@ -11,14 +11,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Download Template
+                    {{ __('common.download_template') }}
                 </a>
                 <a href="{{ route('admin.osis.pemilih.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali
+                    {{ __('common.back') }}
                 </a>
             </div>
         </div>
@@ -29,7 +29,7 @@
 
             <!-- Instructions -->
             <div class="mb-8">
-                <h3 class="text-lg font-semibold text-slate-900 mb-4">Panduan Import Data Pemilih OSIS</h3>
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">{{ __('common.import_guide') }}</h3>
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div class="flex items-start">
                         <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="none" stroke="currentColor"
@@ -38,12 +38,12 @@
                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <div class="text-sm text-blue-800">
-                            <h4 class="font-medium mb-2">Langkah-langkah import:</h4>
+                            <h4 class="font-medium mb-2">{{ __('common.langkah_import') }}</h4>
                             <ol class="list-decimal list-inside space-y-1">
-                                <li>Download template Excel terlebih dahulu</li>
-                                <li>Isi data pemilih sesuai format template</li>
-                                <li>Upload file Excel yang sudah diisi</li>
-                                <li>Sistem akan memvalidasi dan mengimpor data</li>
+                                <li>{{ __('common.download_template_first') }}</li>
+                                <li>{{ __('common.fill_data_according_template') }}</li>
+                                <li>{{ __('common.upload_filled_excel') }}</li>
+                                <li>{{ __('common.sistem_akan_validasi') }}</li>
                             </ol>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
 
                 <!-- File Upload -->
                 <div>
-                    <label for="file" class="form-label">Pilih File Excel *</label>
+                    <label for="file" class="form-label">{{ __('common.select_excel_file') }}</label>
                     <div id="dropzone"
                         class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:border-slate-400 transition-colors cursor-pointer relative">
                         <div class="space-y-1 text-center">
@@ -68,10 +68,10 @@
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                             <div class="flex text-sm text-slate-600 justify-center">
-                                <span id="upload-text">Upload file</span>
-                                <p class="pl-1">atau drag and drop</p>
+                                <span id="upload-text">{{ __('common.upload_file') }}</span>
+                                <p class="pl-1">{{ __('common.atau_drag_drop') }}</p>
                             </div>
-                            <p class="text-xs text-slate-500">Excel (.xlsx, .xls) atau CSV hingga 2MB</p>
+                            <p class="text-xs text-slate-500">{{ __('common.excel_format_info') }}</p>
 
                             <!-- File Preview -->
                             <div id="file-preview"
@@ -128,7 +128,7 @@
 
                 <!-- Import Options -->
                 <div class="border-t border-slate-200 pt-6">
-                    <h4 class="text-sm font-medium text-slate-900 mb-3">Opsi Import:</h4>
+                    <h4 class="text-sm font-medium text-slate-900 mb-3">{{ __('common.import_options') }}</h4>
                     <div class="space-y-3">
                         <div class="flex items-center">
                             <input type="checkbox" id="skip_duplicates" name="skip_duplicates" value="1"
@@ -150,14 +150,14 @@
                 <!-- Submit Buttons -->
                 <div class="flex items-center justify-end space-x-4 pt-6 border-t border-slate-200">
                     <a href="{{ route('admin.osis.pemilih.index') }}" class="btn btn-secondary">
-                        Batal
+                        {{ __('common.cancel') }}
                     </a>
                     <button type="submit" class="btn btn-primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
-                        Import Data
+                        {{ __('common.import_data') }}
                     </button>
                 </div>
             </form>
@@ -174,7 +174,7 @@
                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <div class="text-sm text-green-800">
-                                    <p class="font-medium">Import Berhasil!</p>
+                                    <p class="font-medium">{{ __('common.import_success') }}</p>
                                     <p>{{ session('success') }}</p>
                                 </div>
                             </div>
@@ -190,7 +190,7 @@
                                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <div class="text-sm text-red-800">
-                                    <p class="font-medium">Import Gagal!</p>
+                                    <p class="font-medium">{{ __('common.import_failed') }}</p>
                                     <p>{{ session('error') }}</p>
                                 </div>
                             </div>

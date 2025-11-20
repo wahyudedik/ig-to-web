@@ -94,6 +94,27 @@ async function initializePushNotifications(registration) {
         return;
     }
 
+    // Check notification permission state BEFORE attempting subscription
+    if ('Notification' in window) {
+        const permission = Notification.permission;
+        
+        if (permission === 'denied') {
+            // Permission is blocked - user has previously denied and can't be reset programmatically
+            console.log('Push notification permission is denied. User must reset permission in browser settings.');
+            console.log('To reset: Click the lock/info icon in address bar > Site Settings > Notifications > Allow');
+            return; // Exit early, don't try to subscribe
+        }
+
+        if (permission === 'default') {
+            // Permission hasn't been asked yet - will be prompted when subscribing
+            console.log('Push notification permission not yet requested');
+        }
+
+        if (permission === 'granted') {
+            console.log('Push notification permission already granted');
+        }
+    }
+
     try {
         // Get VAPID public key
         const vapidResponse = await fetch('/admin/push/vapid-key', {
@@ -129,6 +150,12 @@ async function initializePushNotifications(registration) {
 
         // If not subscribed, ask for permission
         if (!subscription) {
+            // Double-check permission before attempting subscribe
+            if ('Notification' in window && Notification.permission === 'denied') {
+                console.log('Skipping subscription attempt - permission is denied');
+                return;
+            }
+
             try {
                 // Convert VAPID key to Uint8Array
                 const applicationServerKey = urlBase64ToUint8Array(publicKey);
@@ -144,9 +171,21 @@ async function initializePushNotifications(registration) {
 
                 // Send subscription to server
                 await sendSubscriptionToServer(subscription);
-            } catch (keyError) {
-                console.error('Error with VAPID key conversion or subscription:', keyError);
-                throw keyError;
+            } catch (subscribeError) {
+                // Handle specific error types gracefully
+                if (subscribeError.name === 'NotAllowedError') {
+                    // Permission denied - expected if user blocks notification
+                    console.log('Push notification permission denied by user');
+                    console.log('To enable: Click the lock/info icon in address bar > Site Settings > Notifications > Allow');
+                } else if (subscribeError.name === 'InvalidStateError') {
+                    // Already subscribed or subscription error
+                    console.log('Push subscription state error:', subscribeError.message);
+                } else {
+                    // Other errors (VAPID key, network, etc.)
+                    console.warn('Push subscription error:', subscribeError.name, subscribeError.message);
+                }
+                // Don't throw - gracefully handle error
+                return;
             }
         } else {
             console.log('Already subscribed, updating server...');
@@ -156,10 +195,13 @@ async function initializePushNotifications(registration) {
 
         console.log('Push notification subscription successful');
     } catch (error) {
-        console.error('Push notification subscription failed:', error);
+        // Handle unexpected errors
         if (error.name === 'NotAllowedError') {
             console.log('Push notification permission denied');
+        } else {
+            console.warn('Push notification setup error:', error.name, error.message);
         }
+        // Don't log full error stack for expected permission errors
     }
 }
 
@@ -252,6 +294,81 @@ function arrayBufferToBase64(buffer) {
     }
     return window.btoa(binary);
 }
+
+// Check notification permission status
+window.getNotificationPermissionStatus = function () {
+    if (!('Notification' in window)) {
+        return {
+            supported: false,
+            permission: null,
+            message: 'Push notifications are not supported in this browser'
+        };
+    }
+
+    const permission = Notification.permission;
+    let message = '';
+
+    switch (permission) {
+        case 'granted':
+            message = 'Push notifications are enabled';
+            break;
+        case 'denied':
+            message = 'Push notifications are blocked. To enable: Click the lock/info icon in address bar > Site Settings > Notifications > Allow';
+            break;
+        case 'default':
+            message = 'Push notification permission has not been requested yet';
+            break;
+    }
+
+    return {
+        supported: true,
+        permission: permission,
+        message: message
+    };
+};
+
+// Request notification permission manually (can be called from UI button)
+window.requestNotificationPermission = async function () {
+    if (!('Notification' in window)) {
+        return {
+            success: false,
+            message: 'Push notifications are not supported in this browser'
+        };
+    }
+
+    if (Notification.permission === 'granted') {
+        return {
+            success: true,
+            permission: 'granted',
+            message: 'Push notifications are already enabled'
+        };
+    }
+
+    if (Notification.permission === 'denied') {
+        return {
+            success: false,
+            permission: 'denied',
+            message: 'Push notifications are blocked. Please enable them in browser settings: Click the lock/info icon in address bar > Site Settings > Notifications > Allow'
+        };
+    }
+
+    try {
+        const permission = await Notification.requestPermission();
+        return {
+            success: permission === 'granted',
+            permission: permission,
+            message: permission === 'granted' 
+                ? 'Push notifications enabled successfully' 
+                : 'Push notification permission denied'
+        };
+    } catch (error) {
+        return {
+            success: false,
+            permission: Notification.permission,
+            message: 'Error requesting permission: ' + error.message
+        };
+    }
+};
 
 // Unsubscribe function (can be called from UI)
 window.unsubscribePushNotifications = async function () {

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Role') }}
+            {{ __('common.edit_role_title') }}
         </h2>
     </x-slot>
 
@@ -15,7 +15,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
-                            Back to Roles
+                            {{ __('common.back_to_roles') }}
                         </a>
                     </div>
 
@@ -27,11 +27,10 @@
                             <!-- Role Information -->
                             <div class="space-y-6">
                                 <div>
-                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Role Information</h3>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('common.role_information') }}</h3>
 
                                     <div class="mb-4">
-                                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Role
-                                            Name *</label>
+                                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.role_name_required') }}</label>
                                         <input type="text" name="name" id="name"
                                             value="{{ old('name', $role->name) }}" required
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') border-red-500 @else border-gray-300 @enderror">
@@ -43,8 +42,7 @@
                                     @if ($role->display_name)
                                         <div class="mb-4">
                                             <label for="display_name"
-                                                class="block text-sm font-medium text-gray-700 mb-1">Display
-                                                Name</label>
+                                                class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.display_name') }}</label>
                                             <input type="text" name="display_name" id="display_name"
                                                 value="{{ old('display_name', $role->display_name) }}"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -54,7 +52,7 @@
                                     @if ($role->description)
                                         <div class="mb-4">
                                             <label for="description"
-                                                class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                                class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.description') }}</label>
                                             <textarea name="description" id="description" rows="3"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('description', $role->description) }}</textarea>
                                         </div>
@@ -65,7 +63,7 @@
                             <!-- Permissions -->
                             <div class="space-y-6">
                                 <div>
-                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Permissions</h3>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('common.permissions') }}</h3>
                                     <div class="max-h-96 overflow-y-auto border border-gray-300 rounded-md p-4">
                                         @foreach ($permissions as $module => $modulePermissions)
                                             <div class="mb-4">
@@ -91,13 +89,13 @@
                         </div>
 
                         <div class="flex justify-end space-x-3 mt-8">
-                            <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">Cancel</a>
+                            <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
                             <button type="submit" class="btn btn-primary">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
                                 </svg>
-                                Update Role
+                                {{ __('common.update_role') }}
                             </button>
                         </div>
                     </form>
@@ -116,7 +114,7 @@
 
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Updating...';
+            submitBtn.textContent = '{{ __('common.updating') }}';
             submitBtn.disabled = true;
 
             fetch(this.action, {
@@ -151,16 +149,16 @@
                     if (!result.ok) {
                         if (result.status === 422) {
                             const errors = result.data.errors || {};
-                            let errorMsg = 'Validation errors:<br>';
+                            let errorMsg = '{{ __('common.validation_errors') }}<br>';
                             for (const [field, fieldErrors] of Object.entries(errors)) {
                                 errorMsg +=
                                     `<strong>${field}:</strong> ${Array.isArray(fieldErrors) ? fieldErrors.join(', ') : fieldErrors}<br>`;
                             }
-                            showError('Error Validasi!', errorMsg);
+                            showError('{{ __('common.validation_errors') }}', errorMsg);
                         } else if (result.status === 401 || result.status === 403) {
-                            showError('Unauthorized!', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+                            showError('{{ __('common.unauthorized') }}', '{{ __('common.unauthorized_action') }}');
                         } else {
-                            showError('Error!', result.data.message || 'Gagal mengupdate role');
+                            showError('{{ __('common.error') }}', result.data.message || '{{ __('common.failed_update_role') }}');
                         }
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
@@ -168,11 +166,11 @@
                     }
 
                     if (result.data.success) {
-                        showSuccess('Berhasil!', 'Role berhasil diupdate').then(() => {
+                        showSuccess('{{ __('common.success') }}', '{{ __('common.role_updated_success') }}').then(() => {
                             window.location.href = '{{ route('admin.roles.index') }}';
                         });
                     } else {
-                        showError('Error!', result.data.message || 'Gagal mengupdate role');
+                        showError('{{ __('common.error') }}', result.data.message || '{{ __('common.failed_update_role') }}');
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
                     }
@@ -180,8 +178,8 @@
                 .catch(error => {
                     console.error('Error:', error);
                     closeLoading();
-                    const errorMessage = error.message || 'Terjadi kesalahan saat mengupdate role';
-                    showError('Error!', errorMessage);
+                    const errorMessage = error.message || '{{ str_replace(':action', 'mengupdate', __('common.error_occurred')) }}';
+                    showError('{{ __('common.error') }}', errorMessage);
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 });

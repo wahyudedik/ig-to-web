@@ -21,8 +21,8 @@
                                 d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.555a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.43 0l5.01-2.147a1 1 0 00.71-.739 1 1 0 00-.71-1.26l-5.01-2.147a3 3 0 00-2.43 0L7 8.5V5.5a1 1 0 00-1.5-.5L3.5 6.5a1 1 0 00-.5 1.5v8a1 1 0 001.5.5L7 14.5v-1.5a1 1 0 011.5-.5L9.3 16.573z" />
                         </svg>
                     </div>
-                    <h2 class="mt-6 text-4xl font-bold text-gray-900">Selamat Datang</h2>
-                    <p class="mt-2 text-lg text-gray-700">Masuk ke akun Anda</p>
+                    <h2 class="mt-6 text-4xl font-bold text-gray-900"><?php echo e(__('common.welcome')); ?></h2>
+                    <p class="mt-2 text-lg text-gray-700"><?php echo e(__('common.login_to_your_account')); ?></p>
                 </div>
 
                 <!-- Session Status -->
@@ -54,7 +54,7 @@
 
                         <!-- Email Address -->
                         <div>
-                            <label for="email" class="form-label">Email Address</label>
+                            <label for="email" class="form-label"><?php echo e(__('common.email_label')); ?></label>
                             <input id="email" type="email" name="email" value="<?php echo e(old('email')); ?>" required
                                 autofocus autocomplete="username"
                                 class="form-input <?php $__errorArgs = ['email'];
@@ -65,7 +65,7 @@ $message = $__bag->first($__errorArgs[0]); ?> border-red-300 focus:border-red-50
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                placeholder="Enter your email">
+                                placeholder="<?php echo e(__('common.enter_email')); ?>">
                             <?php $__errorArgs = ['email'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -80,7 +80,7 @@ unset($__errorArgs, $__bag); ?>
 
                         <!-- Password -->
                         <div>
-                            <label for="password" class="form-label">Password</label>
+                            <label for="password" class="form-label"><?php echo e(__('common.password')); ?></label>
                             <input id="password" type="password" name="password" required
                                 autocomplete="current-password"
                                 class="form-input <?php $__errorArgs = ['password'];
@@ -91,7 +91,7 @@ $message = $__bag->first($__errorArgs[0]); ?> border-red-300 focus:border-red-50
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                placeholder="Enter your password">
+                                placeholder="<?php echo e(__('common.enter_password')); ?>">
                             <?php $__errorArgs = ['password'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -109,13 +109,14 @@ unset($__errorArgs, $__bag); ?>
                             <label for="remember_me" class="flex items-center">
                                 <input id="remember_me" type="checkbox" name="remember"
                                     class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                <span class="ml-2 text-sm text-gray-700">Remember me</span>
+                                <span class="ml-2 text-sm text-gray-700"><?php echo e(__('common.remember_me')); ?></span>
                             </label>
 
                             <?php if(Route::has('password.request')): ?>
                                 <a href="<?php echo e(route('password.request')); ?>"
                                     class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                                    Forgot password?
+                                    <?php echo e(__('common.forgot_password')); ?>
+
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -127,7 +128,8 @@ unset($__errorArgs, $__bag); ?>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                                 </svg>
-                                Sign in
+                                <?php echo e(__('common.sign_in')); ?>
+
                             </button>
                         </div>
                     </form>
@@ -165,9 +167,10 @@ unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <!-- Welcome Text -->
-                    <h1 class="text-4xl lg:text-5xl font-bold mb-6 text-white drop-shadow-lg">Portal Sekolah</h1>
+                    <h1 class="text-4xl lg:text-5xl font-bold mb-6 text-white drop-shadow-lg"><?php echo e(__('common.school_portal')); ?></h1>
                     <p class="text-xl lg:text-2xl text-white mb-10 max-w-md lg:max-w-lg drop-shadow-md">
-                        Sistem manajemen sekolah terintegrasi untuk pembelajaran digital yang lebih baik
+                        <?php echo e(__('common.school_management_description')); ?>
+
                     </p>
 
                     <!-- Features List -->
@@ -178,7 +181,7 @@ unset($__errorArgs, $__bag); ?>
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="text-white drop-shadow-sm text-lg">Manajemen Siswa & Guru</span>
+                            <span class="text-white drop-shadow-sm text-lg"><?php echo e(__('common.student_teacher_management')); ?></span>
                         </div>
                         <div class="flex items-center">
                             <svg class="w-6 h-6 text-green-300 mr-4" fill="currentColor" viewBox="0 0 20 20">
@@ -186,7 +189,7 @@ unset($__errorArgs, $__bag); ?>
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="text-white drop-shadow-sm text-lg">E-OSIS Voting System</span>
+                            <span class="text-white drop-shadow-sm text-lg"><?php echo e(__('common.e_osis_voting')); ?></span>
                         </div>
                         <div class="flex items-center">
                             <svg class="w-6 h-6 text-green-300 mr-4" fill="currentColor" viewBox="0 0 20 20">
@@ -194,7 +197,7 @@ unset($__errorArgs, $__bag); ?>
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="text-white drop-shadow-sm text-lg">E-Lulus Graduation</span>
+                            <span class="text-white drop-shadow-sm text-lg"><?php echo e(__('common.e_graduation')); ?></span>
                         </div>
                         <div class="flex items-center">
                             <svg class="w-6 h-6 text-green-300 mr-4" fill="currentColor" viewBox="0 0 20 20">
@@ -202,7 +205,7 @@ unset($__errorArgs, $__bag); ?>
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="text-white drop-shadow-sm text-lg">Instagram Integration</span>
+                            <span class="text-white drop-shadow-sm text-lg"><?php echo e(__('common.instagram_integration')); ?></span>
                         </div>
                     </div>
                 </div>

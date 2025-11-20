@@ -19,7 +19,7 @@
                 @auth
                     <a href="{{ route('admin.dashboard') }}"
                         class="text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900' }} transition-colors">
-                        Dashboard
+                        {{ __('common.dashboard') }}
                     </a>
 
                     <!-- Academic Management -->
@@ -123,7 +123,7 @@
                                     @if (Auth::check() && Auth::user()->hasRole('superadmin'))
                                         <a href="{{ route('admin.superadmin.instagram-settings') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fab fa-instagram mr-2"></i>Instagram Settings
+                                            <i class="fab fa-instagram mr-2"></i>{{ __('common.instagram_settings') }}
                                         </a>
                                     @endif
                                 </div>
@@ -181,37 +181,37 @@
                                     @can('viewAnalytics', App\Models\User::class)
                                         <a href="{{ route('admin.analytics') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-chart-line mr-2"></i>Analytics Dashboard
+                                            <i class="fas fa-chart-line mr-2"></i>{{ __('common.analytics_dashboard') }}
                                         </a>
                                     @endcan
                                     @can('viewSystemHealth', App\Models\User::class)
                                         <a href="{{ route('admin.system.health') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-heartbeat mr-2"></i>System Health
+                                            <i class="fas fa-heartbeat mr-2"></i>{{ __('common.system_health') }}
                                         </a>
                                     @endcan
                                     @can('viewNotifications', App\Models\User::class)
                                         <a href="{{ route('admin.notifications') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-bell mr-2"></i>Notification Center
+                                            <i class="fas fa-bell mr-2"></i>{{ __('common.notification_center') }}
                                         </a>
                                     @endcan
                                     @canany(['testimonials.view', 'testimonials.create', 'testimonials.edit',
                                         'testimonials.delete'])
                                         <a href="{{ route('admin.testimonials.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-comments mr-2"></i>Manage Testimonials
+                                            <i class="fas fa-comments mr-2"></i>{{ __('common.manage_testimonials') }}
                                         </a>
                                     @endcanany
                                     @can('testimonial-links.view')
                                         <a href="{{ route('admin.testimonial-links.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-link mr-2"></i>Testimonial Links
+                                            <i class="fas fa-link mr-2"></i>{{ __('common.testimonial_links') }}
                                         </a>
                                     @endcan
                                     <a href="{{ route('admin.settings.index') }}"
                                         class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                        <i class="fas fa-cog mr-2"></i>System Settings
+                                        <i class="fas fa-cog mr-2"></i>{{ __('common.system_settings') }}
                                     </a>
                                 </div>
                             </div>
@@ -310,7 +310,7 @@
                                 @empty
                                     <div class="px-4 py-8 text-center">
                                         <i class="fas fa-bell-slash text-3xl text-slate-300 mb-2"></i>
-                                        <p class="text-sm text-slate-600">No new notifications</p>
+                                        <p class="text-sm text-slate-600">{{ __('common.no_new_notifications') }}</p>
                                     </div>
                                 @endforelse
                             </div>
@@ -364,7 +364,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
-                                        Profile Settings
+                                        {{ __('common.profile') }} {{ __('common.settings') }}
                                     </a>
                                     <a href="{{ route('landing') }}" target="_blank"
                                         class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -373,14 +373,14 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                         </svg>
-                                        View Website
+                                        {{ __('common.view_website') }}
                                     </a>
                                 </div>
 
                                 <!-- Language Switcher -->
                                 <div class="py-2 border-t border-slate-100">
                                     <div class="px-4 py-2">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Language
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">{{ __('common.language') }}
                                         </p>
                                     </div>
                                     @php
@@ -406,11 +406,38 @@
                                     @endforeach
                                 </div>
 
+                                <!-- Timezone Switcher -->
+                                <div class="py-2 border-t border-slate-100">
+                                    <div class="px-4 py-2">
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">{{ __('common.timezone') }}
+                                        </p>
+                                    </div>
+                                    @php
+                                        $currentTimezone = session('timezone', Auth::check() && Auth::user() ? (Auth::user()->timezone ?? config('i18n.default_timezone', 'Asia/Jakarta')) : config('i18n.default_timezone', 'Asia/Jakarta'));
+                                        $availableTimezones = config('i18n.timezones', []);
+                                    @endphp
+                                    <form method="POST" action="{{ route('timezone.switch') }}" id="timezone-form">
+                                        @csrf
+                                        <select name="timezone" onchange="document.getElementById('timezone-form').submit();"
+                                            class="w-full px-4 py-2 text-sm text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            @foreach ($availableTimezones as $region => $timezones)
+                                                <optgroup label="{{ $region }}">
+                                                    @foreach ($timezones as $tz => $label)
+                                                        <option value="{{ $tz }}" {{ $tz === $currentTimezone ? 'selected' : '' }}>
+                                                            {{ $label }}
+                                                        </option>
+                                                    @endforeach
+                                                </optgroup>
+                                            @endforeach
+                                        </select>
+                                    </form>
+                                </div>
+
                                 <!-- Quick Settings -->
                                 <div class="py-2 border-t border-slate-100">
                                     <div class="px-4 py-2">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Quick
-                                            Access</p>
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">{{ __('common.quick_access') }}
+                                        </p>
                                     </div>
                                     @if (Auth::check() && Auth::user()->hasRole('superadmin'))
                                         <a href="{{ route('admin.superadmin.instagram-settings') }}"
@@ -448,7 +475,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                             </svg>
-                                            Log Out
+                                            {{ __('common.logout') }}
                                         </button>
                                     </form>
                                 </div>
