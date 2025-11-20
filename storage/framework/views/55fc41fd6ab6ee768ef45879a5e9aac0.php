@@ -147,6 +147,83 @@
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
+
+                <!-- Sarana in this room -->
+                <?php if($ruang->sarana && $ruang->sarana->count() > 0): ?>
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900">Sarana di Ruang Ini</h3>
+                            <a href="<?php echo e(route('admin.sarpras.sarana.index', ['ruang_id' => $ruang->id])); ?>"
+                                class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                                Lihat semua
+                            </a>
+                        </div>
+                        <div class="space-y-4">
+                            <?php $__currentLoopData = $ruang->sarana->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sarana): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="font-medium text-slate-900 truncate"><?php echo e($sarana->kode_inventaris); ?></p>
+                                                <div class="flex items-center space-x-2 mt-1">
+                                                    <p class="text-sm text-slate-500">
+                                                        <?php echo e($sarana->barang->count()); ?> barang
+                                                    </p>
+                                                    <span class="text-slate-300">•</span>
+                                                    <p class="text-sm text-slate-500">
+                                                        <?php echo e($sarana->sumber_dana ?? '-'); ?>
+
+                                                    </p>
+                                                    <span class="text-slate-300">•</span>
+                                                    <p class="text-sm text-slate-500">
+                                                        <?php echo e($sarana->tanggal->format('d M Y')); ?>
+
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2 ml-4">
+                                        <a href="<?php echo e(route('admin.sarpras.sarana.show', $sarana)); ?>"
+                                            class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                            title="Detail">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        </a>
+                                        <a href="<?php echo e(route('admin.sarpras.sarana.printInvoice', $sarana)); ?>" target="_blank"
+                                            class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                            title="Print Invoice">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+
+                        <?php if($ruang->sarana->count() > 5): ?>
+                            <div class="mt-4 text-center">
+                                <a href="<?php echo e(route('admin.sarpras.sarana.index', ['ruang_id' => $ruang->id])); ?>"
+                                    class="text-blue-600 hover:text-blue-700 font-medium">
+                                    Lihat semua <?php echo e($ruang->sarana->count()); ?> sarana
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Sidebar -->
@@ -193,6 +270,25 @@
                             </svg>
                         </a>
 
+                        <a href="<?php echo e(route('admin.sarpras.sarana.create', ['ruang_id' => $ruang->id])); ?>"
+                            class="flex items-center justify-between p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors group">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <span class="font-medium text-slate-900">Tambah Sarana</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+
                         <a href="<?php echo e(route('admin.sarpras.ruang.index')); ?>"
                             class="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors group">
                             <div class="flex items-center space-x-3">
@@ -221,6 +317,11 @@
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-600">Total Barang</span>
                             <span class="text-sm font-semibold text-slate-900"><?php echo e($ruang->barang_count ?? 0); ?></span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-slate-600">Total Sarana</span>
+                            <span class="text-sm font-semibold text-slate-900"><?php echo e($ruang->sarana->count() ?? 0); ?></span>
                         </div>
 
                         <div class="flex items-center justify-between">

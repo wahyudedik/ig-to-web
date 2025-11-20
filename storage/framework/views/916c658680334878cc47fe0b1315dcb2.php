@@ -47,7 +47,9 @@ endif;
 unset($__errorArgs, $__bag); ?>">
                         <option value="">Pilih Ruang</option>
                         <?php $__currentLoopData = $ruangs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ruang): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($ruang->id); ?>"><?php echo e($ruang->nama_ruang); ?> (<?php echo e($ruang->kode_ruang); ?>)</option>
+                            <option value="<?php echo e($ruang->id); ?>" <?php echo e((isset($prefilledRuangId) && $prefilledRuangId == $ruang->id) ? 'selected' : ''); ?>>
+                                <?php echo e($ruang->nama_ruang); ?> (<?php echo e($ruang->kode_ruang); ?>)
+                            </option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                     <?php $__errorArgs = ['ruang_id'];
@@ -86,9 +88,8 @@ unset($__errorArgs, $__bag); ?>
                                     <option value="">Pilih Barang</option>
                                     <template x-for="barangOption in getBarangOptions()" :key="barangOption.id">
                                         <option x-bind:value="barangOption.id" 
-                                            x-bind:disabled="barangOption.is_used"
                                             x-bind:data-harga="barangOption.harga_beli || 0"
-                                            x-text="barangOption.nama_barang + ' (' + barangOption.kode_barang + ')' + (barangOption.ruang_id ? '' : ' - Belum ada ruang') + (barangOption.is_used ? ' - Sudah digunakan' : '')"></option>
+                                            x-text="barangOption.nama_barang + ' (' + barangOption.kode_barang + ')' + (barangOption.ruang_id ? '' : ' - Belum ada ruang')"></option>
                                     </template>
                                 </select>
                                 <p x-show="loading" class="text-xs text-slate-500 mt-1">Memuat barang...</p>
@@ -258,13 +259,22 @@ unset($__errorArgs, $__bag); ?>
         <script>
             function saranaForm() {
                 return {
-                    ruangId: '',
-                    barangs: [{
-                        barang_id: '',
-                        jumlah: 1,
-                        kondisi: 'baik',
-                        harga_beli: 0
-                    }],
+                    ruangId: <?php echo json_encode($prefilledRuangId ?? '', 15, 512) ?>,
+                    barangs: <?php if(isset($prefilledBarangId)): ?>
+                        [{
+                            barang_id: '<?php echo e($prefilledBarangId); ?>',
+                            jumlah: 1,
+                            kondisi: 'baik',
+                            harga_beli: 0
+                        }]
+                    <?php else: ?>
+                        [{
+                            barang_id: '',
+                            jumlah: 1,
+                            kondisi: 'baik',
+                            harga_beli: 0
+                        }]
+                    <?php endif; ?>,
                     allBarangs: <?php echo json_encode($barangsJson, 15, 512) ?>,
                     filteredBarangs: [],
                     sumberDana: '',
@@ -273,6 +283,24 @@ unset($__errorArgs, $__bag); ?>
                     loading: false,
 
                     init() {
+                        // Pre-load barang if ruang_id is pre-filled
+                        if (this.ruangId) {
+                            this.loadBarangByRuang(this.ruangId);
+                        }
+                        
+                        // Pre-select barang if barang_id is pre-filled
+                        <?php if(isset($prefilledBarangId)): ?>
+                            this.$nextTick(() => {
+                                const barangId = '<?php echo e($prefilledBarangId); ?>';
+                                const allOptions = this.getBarangOptions();
+                                const selectedBarang = allOptions.find(b => String(b.id) == String(barangId));
+                                if (selectedBarang && this.barangs.length > 0) {
+                                    this.barangs[0].harga_beli = selectedBarang.harga_beli || 0;
+                                    this.barangs[0].kondisi = selectedBarang.kondisi || 'baik';
+                                }
+                            });
+                        <?php endif; ?>
+                        
                         // Watch for ruang_id changes
                         this.$watch('ruangId', (value) => {
                             if (value) {
@@ -306,7 +334,7 @@ unset($__errorArgs, $__bag); ?>
                                 this.barangs = data.barangs.map(barang => ({
                                     barang_id: barang.id,
                                     jumlah: 1,
-                                    kondisi: 'baik',
+                                    kondisi: barang.kondisi || 'baik', // Gunakan kondisi dari master data
                                     harga_beli: barang.harga_beli || 0
                                 }));
                                 this.filteredBarangs = data.barangs;
@@ -348,14 +376,17 @@ unset($__errorArgs, $__bag); ?>
                         const selectedBarangId = this.barangs[index].barang_id;
                         if (!selectedBarangId) {
                             this.barangs[index].harga_beli = 0;
+                            this.barangs[index].kondisi = 'baik';
                             return;
                         }
                         
-                        // Find harga from allBarangs or filteredBarangs
+                        // Find harga and kondisi from allBarangs or filteredBarangs
                         const allOptions = this.getBarangOptions();
                         const selectedBarang = allOptions.find(b => b.id == selectedBarangId);
                         if (selectedBarang) {
                             this.barangs[index].harga_beli = selectedBarang.harga_beli || 0;
+                            // Set kondisi dari master data barang
+                            this.barangs[index].kondisi = selectedBarang.kondisi || 'baik';
                         }
                     },
 

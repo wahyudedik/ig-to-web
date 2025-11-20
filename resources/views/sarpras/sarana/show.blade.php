@@ -163,6 +163,146 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- History / Audit Trail -->
+                @if ($auditLogs && $auditLogs->count() > 0)
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">History Perubahan</h3>
+                        <div class="space-y-4">
+                            @foreach ($auditLogs as $log)
+                                <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                                    <div class="flex-shrink-0">
+                                        @php
+                                            $actionConfig = match ($log->action) {
+                                                'create' => [
+                                                    'color' => 'green',
+                                                    'bg' => 'bg-green-100',
+                                                    'text' => 'text-green-600',
+                                                    'badge' => 'bg-green-100 text-green-800',
+                                                    'icon' => 'M12 6v6m0 0v6m0-6h6m-6 0H6',
+                                                ],
+                                                'update' => [
+                                                    'color' => 'blue',
+                                                    'bg' => 'bg-blue-100',
+                                                    'text' => 'text-blue-600',
+                                                    'badge' => 'bg-blue-100 text-blue-800',
+                                                    'icon' => 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z',
+                                                ],
+                                                'delete' => [
+                                                    'color' => 'red',
+                                                    'bg' => 'bg-red-100',
+                                                    'text' => 'text-red-600',
+                                                    'badge' => 'bg-red-100 text-red-800',
+                                                    'icon' => 'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16',
+                                                ],
+                                                default => [
+                                                    'color' => 'gray',
+                                                    'bg' => 'bg-gray-100',
+                                                    'text' => 'text-gray-600',
+                                                    'badge' => 'bg-gray-100 text-gray-800',
+                                                    'icon' => 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+                                                ],
+                                            };
+                                        @endphp
+                                        <div class="w-10 h-10 {{ $actionConfig['bg'] }} rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 {{ $actionConfig['text'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $actionConfig['icon'] }}" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div>
+                                                <p class="font-medium text-slate-900">
+                                                    {{ ucfirst($log->action) }} 
+                                                    @if ($log->user)
+                                                        oleh <span class="text-blue-600">{{ $log->user->name }}</span>
+                                                    @endif
+                                                </p>
+                                                <p class="text-xs text-slate-500">
+                                                    {{ $log->created_at->format('d M Y, H:i') }} 
+                                                    ({{ $log->created_at->diffForHumans() }})
+                                                </p>
+                                            </div>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $actionConfig['badge'] }}">
+                                                {{ ucfirst($log->action) }}
+                                            </span>
+                                        </div>
+                                        
+                                        @if ($log->action === 'update' && $log->old_values && $log->new_values)
+                                            <div class="mt-3 space-y-2">
+                                                @php
+                                                    $changedFields = [];
+                                                    foreach ($log->new_values as $key => $newValue) {
+                                                        $oldValue = $log->old_values[$key] ?? null;
+                                                        if ($oldValue != $newValue) {
+                                                            $changedFields[$key] = [
+                                                                'old' => $oldValue,
+                                                                'new' => $newValue,
+                                                            ];
+                                                        }
+                                                    }
+                                                @endphp
+                                                
+                                                @if (count($changedFields) > 0)
+                                                    <div class="text-xs font-medium text-slate-700 mb-2">Perubahan:</div>
+                                                    <div class="space-y-1">
+                                                        @foreach ($changedFields as $field => $values)
+                                                            <div class="flex items-start space-x-2 text-xs">
+                                                                <span class="font-medium text-slate-600 capitalize">{{ str_replace('_', ' ', $field) }}:</span>
+                                                                <div class="flex-1">
+                                                                    <div class="flex items-center space-x-2">
+                                                                        <span class="text-red-600 line-through">{{ $values['old'] ?? '-' }}</span>
+                                                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                                        </svg>
+                                                                        <span class="text-green-600 font-medium">{{ $values['new'] ?? '-' }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @elseif ($log->action === 'create' && $log->new_values)
+                                            <div class="mt-2 text-xs text-slate-600">
+                                                <span class="font-medium">Data yang dibuat:</span>
+                                                <ul class="list-disc list-inside mt-1 space-y-1">
+                                                    @foreach (array_slice($log->new_values, 0, 5) as $key => $value)
+                                                        <li>
+                                                            <span class="capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                            <span class="font-medium">{{ $value ?? '-' }}</span>
+                                                        </li>
+                                                    @endforeach
+                                                    @if (count($log->new_values) > 5)
+                                                        <li class="text-slate-400">... dan {{ count($log->new_values) - 5 }} field lainnya</li>
+                                                    @endif
+                                                </ul>
+                                            </div>
+                                        @endif
+                                        
+                                        @if ($log->ip_address)
+                                            <div class="mt-2 text-xs text-slate-400">
+                                                IP: {{ $log->ip_address }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-white rounded-xl border border-slate-200 p-6">
+                        <h3 class="text-lg font-semibold text-slate-900 mb-4">History Perubahan</h3>
+                        <div class="text-center py-8">
+                            <svg class="w-12 h-12 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="text-slate-500">Belum ada history perubahan</p>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <!-- Sidebar -->

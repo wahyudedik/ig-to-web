@@ -13,6 +13,7 @@ use App\Http\Controllers\OSISController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\SarprasController;
 use App\Http\Controllers\SaranaController;
+use App\Http\Controllers\SaranaReportController;
 use App\Http\Controllers\DataManagementController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\LocaleController;
@@ -377,11 +378,18 @@ Route::middleware(['auth', 'verified', 'role:sarpras|admin|superadmin'])->prefix
     Route::get('/sarana/create', [SaranaController::class, 'create'])->name('sarana.create');
     Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');
     Route::get('/sarana/get-barang-by-ruang', [SaranaController::class, 'getBarangByRuang'])->name('sarana.getBarangByRuang');
+    Route::get('/sarana/export-excel', [SaranaController::class, 'exportExcel'])->name('sarana.exportExcel');
+    Route::get('/sarana/download-template', [SaranaController::class, 'downloadTemplate'])->name('sarana.downloadTemplate');
+    Route::post('/sarana/import-excel', [SaranaController::class, 'importExcel'])->name('sarana.importExcel');
     Route::get('/sarana/{sarana}', [SaranaController::class, 'show'])->name('sarana.show');
     Route::get('/sarana/{sarana}/edit', [SaranaController::class, 'edit'])->name('sarana.edit');
     Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update');
     Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy');
     Route::get('/sarana/{sarana}/print-invoice', [SaranaController::class, 'printInvoice'])->name('sarana.printInvoice');
+    
+    // Reports
+    Route::get('/reports', [SaranaReportController::class, 'index'])->name('reports');
+    Route::get('/reports/export-pdf', [SaranaReportController::class, 'exportPdf'])->name('reports.exportPdf');
 });
 
 // Testimonials Management (Access: admin, superadmin)

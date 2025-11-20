@@ -22,6 +22,20 @@
                     </svg>
                     Tambah Sarana
                 </a>
+                <a href="<?php echo e(route('admin.sarpras.sarana.exportExcel', request()->query())); ?>" class="btn btn-success">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export Excel
+                </a>
+                <button type="button" onclick="document.getElementById('importModal').classList.remove('hidden')" class="btn btn-info">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    Import Excel
+                </button>
                 <a href="<?php echo e(route('admin.sarpras.index')); ?>" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -303,6 +317,55 @@
             }
         </script>
     <?php $__env->stopPush(); ?>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Import Sarana dari Excel</h3>
+                    <button onclick="document.getElementById('importModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-slate-600 mb-3">
+                        Upload file Excel (.xlsx, .xls, atau .csv) yang berisi data sarana.
+                    </p>
+                    <a href="<?php echo e(route('admin.sarpras.sarana.downloadTemplate')); ?>" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Download Template Excel
+                    </a>
+                </div>
+
+                <form action="<?php echo e(route('admin.sarpras.sarana.importExcel')); ?>" method="POST" enctype="multipart/form-data">
+                    <?php echo csrf_field(); ?>
+                    <div class="mb-4">
+                        <label for="file" class="form-label">Pilih File Excel</label>
+                        <input type="file" name="file" id="file" accept=".xlsx,.xls,.csv" required class="form-input">
+                        <p class="text-xs text-slate-500 mt-1">Format: .xlsx, .xls, atau .csv (Max: 10MB)</p>
+                    </div>
+
+                    <div class="flex items-center justify-end space-x-3">
+                        <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')" class="btn btn-secondary">
+                            Batal
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Import
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>

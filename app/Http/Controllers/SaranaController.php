@@ -8,6 +8,9 @@ use App\Models\Barang;
 use App\Models\KategoriSarpras;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SaranaExport;
+use App\Imports\SaranaImport;
 
 class SaranaController extends Controller
 {
@@ -54,26 +57,20 @@ class SaranaController extends Controller
     /**
      * Show the form for creating a new sarana.
      */
-    public function create()
+    public function create(Request $request)
     {
         $ruangs = Ruang::active()->orderBy('nama_ruang')->get();
         
-        // Get barang IDs that are already used in other sarana
-        $usedBarangIds = \DB::table('sarana_barang')->pluck('barang_id')->unique()->toArray();
-        
-        // Get available barang:
-        // 1. Barang yang belum punya ruang (ruang_id = null) dan belum digunakan
-        // 2. Barang yang sudah digunakan akan di-filter via AJAX berdasarkan ruang yang dipilih
+        // Get all available barang (allow multiple sarana with same barang - dinamis untuk dana berbeda)
         $barangs = Barang::with('kategori')
             ->active()
-            ->whereNotIn('id', $usedBarangIds)
             ->orderBy('nama_barang')
             ->get();
         
         $kategoris = KategoriSarpras::active()->orderBy('nama_kategori')->get();
 
         // Prepare barang data for JavaScript
-        $barangsJson = $barangs->map(function($b) use ($usedBarangIds) {
+        $barangsJson = $barangs->map(function($b) {
             return [
                 'id' => $b->id,
                 'nama_barang' => $b->nama_barang,
@@ -81,11 +78,15 @@ class SaranaController extends Controller
                 'kategori' => $b->kategori->nama_kategori ?? '-',
                 'ruang_id' => $b->ruang_id, // Include ruang_id to check if barang has room
                 'harga_beli' => $b->harga_beli ?? 0, // Include harga
-                'is_used' => in_array($b->id, $usedBarangIds), // Indikator apakah sudah digunakan (seharusnya false karena sudah di-filter)
+                'kondisi' => $b->kondisi ?? 'baik', // Include kondisi dari master data
             ];
         })->values()->all();
 
-        return view('sarpras.sarana.create', compact('ruangs', 'barangs', 'kategoris', 'barangsJson'));
+        // Pre-fill ruang_id if provided
+        $prefilledRuangId = $request->get('ruang_id');
+        $prefilledBarangId = $request->get('barang_id');
+
+        return view('sarpras.sarana.create', compact('ruangs', 'barangs', 'kategoris', 'barangsJson', 'prefilledRuangId', 'prefilledBarangId'));
     }
 
     /**
@@ -167,24 +168,13 @@ class SaranaController extends Controller
             return \DB::transaction(function() use ($request) {
                 \Log::info('Starting DB transaction');
                 
-                // Check if any barang is already used in other sarana
-                $usedBarangIds = \DB::table('sarana_barang')->pluck('barang_id')->unique()->toArray();
-                $conflictingBarangs = [];
-                
-                // Prepare barang data and validate
+                // Prepare barang data (allow multiple sarana with same barang - dinamis untuk dana berbeda)
                 $barangData = [];
                 $totalJumlah = 0;
                 $firstBarang = null;
                 
                 foreach ($request->barang_ids as $index => $barangId) {
                     if (empty($barangId)) continue;
-                    
-                    // Check if barang is already used
-                    if (in_array($barangId, $usedBarangIds)) {
-                        $barang = Barang::find($barangId);
-                        $conflictingBarangs[] = $barang ? $barang->nama_barang . ' (' . $barang->kode_barang . ')' : 'Barang ID: ' . $barangId;
-                        continue;
-                    }
                     
                     $jumlah = isset($request->jumlah[$index]) ? (int)$request->jumlah[$index] : 1;
                     $kondisi = $request->kondisi[$index] ?? 'baik';
@@ -203,14 +193,6 @@ class SaranaController extends Controller
                     'barang_data' => $barangData,
                     'total_jumlah' => $totalJumlah,
                 ]);
-                
-                if (!empty($conflictingBarangs)) {
-                    \Log::warning('Conflicting barangs found', ['conflicting' => $conflictingBarangs]);
-                    throw new \Illuminate\Validation\ValidationException(
-                        \Validator::make([], []),
-                        ['barang_ids' => 'Barang berikut sudah digunakan di sarana lain: ' . implode(', ', $conflictingBarangs)]
-                    );
-                }
 
                 if (empty($barangData)) {
                     \Log::warning('No barang data after filtering');
@@ -291,7 +273,11 @@ class SaranaController extends Controller
     public function show(Sarana $sarana)
     {
         $sarana->load(['ruang', 'barang.kategori']);
-        return view('sarpras.sarana.show', compact('sarana'));
+        
+        // Load audit logs (history)
+        $auditLogs = $sarana->auditLogs();
+        
+        return view('sarpras.sarana.show', compact('sarana', 'auditLogs'));
     }
 
     /**
@@ -302,41 +288,16 @@ class SaranaController extends Controller
         $sarana->load(['ruang', 'barang.kategori']);
         $ruangs = Ruang::active()->orderBy('nama_ruang')->get();
         
-        // Get barang IDs that are already used in other sarana (exclude current sarana)
-        $usedBarangIds = \DB::table('sarana_barang')
-            ->where('sarana_id', '!=', $sarana->id)
-            ->pluck('barang_id')
-            ->unique()
-            ->toArray();
-        
-        // Get available barang:
-        // 1. Barang yang belum punya ruang (ruang_id = null) dan belum digunakan
-        // 2. Barang yang ada di ruang yang sama dengan sarana ini dan belum digunakan
-        // 3. Barang yang sudah ada di sarana ini (bisa tetap digunakan)
+        // Get all available barang (allow multiple sarana with same barang - dinamis untuk dana berbeda)
         $barangs = Barang::with('kategori')
             ->active()
-            ->where(function($query) use ($usedBarangIds, $sarana) {
-                $query->where(function($q) use ($usedBarangIds, $sarana) {
-                    // Barang yang belum punya ruang atau ada di ruang yang sama
-                    $q->whereNull('ruang_id')
-                        ->orWhere('ruang_id', $sarana->ruang_id);
-                })
-                ->where(function($q) use ($usedBarangIds, $sarana) {
-                    // Exclude yang sudah digunakan di sarana lain, tapi include yang sudah ada di sarana ini
-                    $q->whereNotIn('id', $usedBarangIds)
-                        ->orWhereIn('id', $sarana->barang->pluck('id')->toArray());
-                });
-            })
             ->orderBy('nama_barang')
             ->get();
         
         $kategoris = KategoriSarpras::active()->orderBy('nama_kategori')->get();
 
         // Prepare barang data for JavaScript
-        $currentSaranaBarangIds = $sarana->barang->pluck('id')->toArray();
-        $barangsJson = $barangs->map(function($b) use ($usedBarangIds, $currentSaranaBarangIds) {
-            // Barang dianggap "sudah digunakan" jika ada di sarana lain (bukan sarana yang sedang diedit)
-            $isUsed = in_array($b->id, $usedBarangIds) && !in_array($b->id, $currentSaranaBarangIds);
+        $barangsJson = $barangs->map(function($b) {
             return [
                 'id' => $b->id,
                 'nama_barang' => $b->nama_barang,
@@ -344,7 +305,6 @@ class SaranaController extends Controller
                 'kategori' => $b->kategori->nama_kategori ?? '-',
                 'ruang_id' => $b->ruang_id, // Include ruang_id
                 'harga_beli' => $b->harga_beli ?? 0, // Include harga
-                'is_used' => $isUsed, // Indikator apakah sudah digunakan di sarana lain
             ];
         })->values()->all();
 
@@ -398,29 +358,12 @@ class SaranaController extends Controller
                 'catatan' => $request->catatan,
             ]);
 
-            // Check if any barang is already used in other sarana (exclude current sarana)
-            $usedBarangIds = \DB::table('sarana_barang')
-                ->where('sarana_id', '!=', $sarana->id)
-                ->pluck('barang_id')
-                ->unique()
-                ->toArray();
-            
-            $currentSaranaBarangIds = $sarana->barang->pluck('id')->toArray();
-            $conflictingBarangs = [];
-            
-            // Sync barang with pivot data
+            // Sync barang with pivot data (allow multiple sarana with same barang - dinamis untuk dana berbeda)
             $barangData = [];
             $totalJumlah = 0;
             $firstBarang = null;
             foreach ($request->barang_ids as $index => $barangId) {
                 if (empty($barangId)) continue; // Skip empty values
-                
-                // Check if barang is already used in other sarana (but allow if it's from current sarana)
-                if (in_array($barangId, $usedBarangIds) && !in_array($barangId, $currentSaranaBarangIds)) {
-                    $barang = Barang::find($barangId);
-                    $conflictingBarangs[] = $barang ? $barang->nama_barang . ' (' . $barang->kode_barang . ')' : 'Barang ID: ' . $barangId;
-                    continue;
-                }
                 
                 $jumlah = isset($request->jumlah[$index]) ? (int)$request->jumlah[$index] : 1;
                 $totalJumlah += $jumlah;
@@ -431,12 +374,6 @@ class SaranaController extends Controller
                     'jumlah' => $jumlah,
                     'kondisi' => $request->kondisi[$index] ?? 'baik',
                 ];
-            }
-            
-            if (!empty($conflictingBarangs)) {
-                return back()->withErrors([
-                    'barang_ids' => 'Barang berikut sudah digunakan di sarana lain: ' . implode(', ', $conflictingBarangs)
-                ])->withInput();
             }
 
             if (empty($barangData)) {
@@ -489,28 +426,13 @@ class SaranaController extends Controller
             'sarana_id' => 'nullable|exists:sarana,id', // For edit mode
         ]);
 
-        // Get barang IDs that are already used in other sarana
-        $usedBarangIds = \DB::table('sarana_barang')
-            ->when($request->filled('sarana_id'), function($query) use ($request) {
-                // Exclude barang from current sarana being edited
-                return $query->where('sarana_id', '!=', $request->sarana_id);
-            })
-            ->pluck('barang_id')
-            ->unique()
-            ->toArray();
-
-        // Get barang yang bisa dipilih:
-        // 1. Barang yang ada di ruang yang dipilih (HARUS muncul, meskipun sudah digunakan di sarana lain - untuk konsistensi dengan detail ruang)
-        // 2. Barang yang belum punya ruang (ruang_id = null) dan belum digunakan di sarana lain
+        // Get barang yang bisa dipilih (allow multiple sarana with same barang - dinamis untuk dana berbeda):
+        // 1. Barang yang ada di ruang yang dipilih
+        // 2. Barang yang belum punya ruang (ruang_id = null)
         $barangs = Barang::with('kategori')
-            ->where(function($query) use ($request, $usedBarangIds) {
-                // Barang di ruang yang dipilih (selalu tampilkan, meskipun sudah digunakan)
+            ->where(function($query) use ($request) {
                 $query->where('ruang_id', $request->ruang_id)
-                    // Atau barang yang belum punya ruang dan belum digunakan
-                    ->orWhere(function($q) use ($usedBarangIds) {
-                        $q->whereNull('ruang_id')
-                            ->whereNotIn('id', $usedBarangIds);
-                    });
+                    ->orWhereNull('ruang_id');
             })
             ->active()
             ->orderByRaw("CASE WHEN ruang_id = ? THEN 0 ELSE 1 END", [$request->ruang_id])
@@ -519,8 +441,7 @@ class SaranaController extends Controller
 
         return response()->json([
             'success' => true,
-            'barangs' => $barangs->map(function ($barang) use ($usedBarangIds) {
-                $isUsed = in_array($barang->id, $usedBarangIds);
+            'barangs' => $barangs->map(function ($barang) {
                 return [
                     'id' => $barang->id,
                     'nama_barang' => $barang->nama_barang,
@@ -528,7 +449,7 @@ class SaranaController extends Controller
                     'kategori' => $barang->kategori->nama_kategori ?? '-',
                     'ruang_id' => $barang->ruang_id, // Include ruang_id
                     'harga_beli' => $barang->harga_beli ?? 0, // Include harga
-                    'is_used' => $isUsed, // Indikator apakah sudah digunakan di sarana lain
+                    'kondisi' => $barang->kondisi ?? 'baik', // Include kondisi dari master data
                 ];
             }),
         ]);
@@ -549,5 +470,217 @@ class SaranaController extends Controller
         $filename = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $filename);
         
         return $pdf->download($filename);
+    }
+
+    /**
+     * Export sarana to Excel.
+     */
+    public function exportExcel(Request $request)
+    {
+        // Get filtered sarana (same as index)
+        $query = Sarana::with(['ruang', 'barang.kategori']);
+
+        // Filter by kategori
+        if ($request->filled('kategori_id')) {
+            $query->kategori($request->kategori_id);
+        }
+
+        // Filter by sumber dana
+        if ($request->filled('sumber_dana')) {
+            $query->sumberDana($request->sumber_dana);
+        }
+
+        // Filter by search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('kode_inventaris', 'like', "%{$search}%")
+                  ->orWhere('sumber_dana', 'like', "%{$search}%")
+                  ->orWhereHas('ruang', function($q) use ($search) {
+                      $q->where('nama_ruang', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('barang', function($q) use ($search) {
+                      $q->where('nama_barang', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $saranas = $query->orderBy('tanggal', 'desc')->get();
+
+        $filename = 'sarana-export-' . date('Y-m-d_His') . '.xlsx';
+        return Excel::download(new SaranaExport($saranas), $filename);
+    }
+
+    /**
+     * Download template Excel for sarana import.
+     */
+    public function downloadTemplate()
+    {
+        // Create sample data
+        $sampleData = [
+            [
+                'Kode Inventaris' => 'INV/0001.B001.R001.002.MAUDU/2025',
+                'Ruang' => 'Laboratorium Komputer 1',
+                'Kode Ruang' => 'R001',
+                'Nama Ruang' => 'Laboratorium Komputer 1',
+                'Lokasi Ruang' => 'Gedung A, Lantai 1',
+                'Sumber Dana' => 'BOS',
+                'Kode Sumber Dana' => 'MAUDU/2025',
+                'Tanggal' => '2025-01-15',
+                'Catatan' => 'Inventarisasi peralatan',
+                'Barang - Nama' => '=== 2 BARANG ===',
+                'Barang - Kode' => '',
+                'Barang - Kategori' => '',
+                'Barang - Jumlah' => '2',
+                'Barang - Kondisi' => '',
+                'Barang - Harga Satuan' => '',
+                'Barang - Total Harga' => '',
+                'Barang - Merk' => '',
+                'Barang - Model' => '',
+                'Barang - Serial Number' => '',
+                'Created At' => '',
+                'Updated At' => '',
+            ],
+            [
+                'Kode Inventaris' => '',
+                'Ruang' => '',
+                'Kode Ruang' => '',
+                'Nama Ruang' => '',
+                'Lokasi Ruang' => '',
+                'Sumber Dana' => '',
+                'Kode Sumber Dana' => '',
+                'Tanggal' => '',
+                'Catatan' => '',
+                'Barang - Nama' => 'Komputer Desktop',
+                'Barang - Kode' => 'B001',
+                'Barang - Kategori' => 'Elektronik',
+                'Barang - Jumlah' => '1',
+                'Barang - Kondisi' => 'Baik',
+                'Barang - Harga Satuan' => '5000000',
+                'Barang - Total Harga' => '5000000',
+                'Barang - Merk' => 'Dell',
+                'Barang - Model' => 'OptiPlex 7090',
+                'Barang - Serial Number' => 'SN123456',
+                'Created At' => '',
+                'Updated At' => '',
+            ],
+            [
+                'Kode Inventaris' => '',
+                'Ruang' => '',
+                'Kode Ruang' => '',
+                'Nama Ruang' => '',
+                'Lokasi Ruang' => '',
+                'Sumber Dana' => '',
+                'Kode Sumber Dana' => '',
+                'Tanggal' => '',
+                'Catatan' => '',
+                'Barang - Nama' => 'Proyektor',
+                'Barang - Kode' => 'B002',
+                'Barang - Kategori' => 'Elektronik',
+                'Barang - Jumlah' => '1',
+                'Barang - Kondisi' => 'Baik',
+                'Barang - Harga Satuan' => '3000000',
+                'Barang - Total Harga' => '3000000',
+                'Barang - Merk' => 'Epson',
+                'Barang - Model' => 'EB-X41',
+                'Barang - Serial Number' => 'SN789012',
+                'Created At' => '',
+                'Updated At' => '',
+            ],
+        ];
+
+        $templateExport = new class($sampleData) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            protected $data;
+
+            public function __construct($data)
+            {
+                $this->data = $data;
+            }
+
+            public function array(): array
+            {
+                return $this->data;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'Kode Inventaris',
+                    'Ruang',
+                    'Kode Ruang',
+                    'Nama Ruang',
+                    'Lokasi Ruang',
+                    'Sumber Dana',
+                    'Kode Sumber Dana',
+                    'Tanggal',
+                    'Catatan',
+                    'Barang - Nama',
+                    'Barang - Kode',
+                    'Barang - Kategori',
+                    'Barang - Jumlah',
+                    'Barang - Kondisi',
+                    'Barang - Harga Satuan',
+                    'Barang - Total Harga',
+                    'Barang - Merk',
+                    'Barang - Model',
+                    'Barang - Serial Number',
+                    'Created At',
+                    'Updated At',
+                ];
+            }
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => ['font' => ['bold' => true]],
+                ];
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 25, 'B' => 20, 'C' => 15, 'D' => 20, 'E' => 20,
+                    'F' => 15, 'G' => 18, 'H' => 12, 'I' => 30, 'J' => 30,
+                    'K' => 15, 'L' => 20, 'M' => 10, 'N' => 12, 'O' => 18,
+                    'P' => 18, 'Q' => 15, 'R' => 15, 'S' => 20, 'T' => 20, 'U' => 20,
+                ];
+            }
+        };
+
+        return Excel::download($templateExport, 'template-import-sarana.xlsx');
+    }
+
+    /**
+     * Import sarana from Excel.
+     */
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            $file = $request->file('file');
+            $import = new SaranaImport();
+            
+            Excel::import($import, $file);
+
+            $rowCount = $import->getRowCount();
+            
+            return redirect()->route('admin.sarpras.sarana.index')
+                ->with('success', "Berhasil mengimpor {$rowCount} data sarana dari Excel.");
+        } catch (\Maatwebsite\Excel\Exceptions\SheetNotFoundException $e) {
+            \Log::error("Sheet not found in Excel file", ['error' => $e->getMessage()]);
+            return back()
+                ->with('error', 'File Excel tidak memiliki sheet yang valid. Pastikan file Excel memiliki data di sheet pertama.');
+        } catch (\Maatwebsite\Excel\Exceptions\NoTypeDetectedException $e) {
+            \Log::error("No type detected", ['error' => $e->getMessage()]);
+            return back()
+                ->with('error', 'Format file tidak dikenali. Pastikan file dalam format Excel (.xlsx, .xls) atau CSV (.csv).');
+        } catch (\Exception $e) {
+            \Log::error("Error importing sarana", ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return back()
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
     }
 }

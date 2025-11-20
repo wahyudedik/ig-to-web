@@ -6,6 +6,7 @@ use App\Models\KategoriSarpras;
 use App\Models\Barang;
 use App\Models\Ruang;
 use App\Models\Maintenance;
+use App\Models\Sarana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\BarangImport;
 use App\Exports\BarangExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\NotificationHelper;
+use Carbon\Carbon;
 
 class SarprasController extends Controller
 {
@@ -30,18 +33,55 @@ class SarprasController extends Controller
             'total_barang' => Barang::count(),
             'total_ruang' => Ruang::count(),
             'total_maintenance' => Maintenance::count(),
+            'total_sarana' => Sarana::count(),
             'barang_baik' => Barang::where('kondisi', 'baik')->count(),
             'barang_rusak' => Barang::where('kondisi', 'rusak')->count(),
             'ruang_aktif' => Ruang::where('status', 'aktif')->count(),
             'maintenance_selesai' => Maintenance::where('status', 'selesai')->count(),
+            'total_sarana_nilai' => Sarana::with('barang')->get()->sum(function ($sarana) {
+                return $sarana->barang->sum(function ($barang) {
+                    return ($barang->harga_beli ?? 0) * ($barang->pivot->jumlah ?? 0);
+                });
+            }),
         ];
+
+        // Get barang rusak yang perlu maintenance (belum ada maintenance aktif)
+        $barang_rusak_perlu_maintenance = Barang::where('kondisi', 'rusak')
+            ->whereDoesntHave('maintenance', function ($query) {
+                $query->whereIn('status', ['pending', 'dalam_proses']);
+            })
+            ->count();
+
+        // Get sarana yang perlu update (lebih dari 6 bulan tidak diupdate atau ada barang rusak)
+        $sarana_perlu_update = Sarana::where(function ($query) {
+            // Sarana yang lebih dari 6 bulan tidak diupdate
+            $query->where('updated_at', '<', Carbon::now()->subMonths(6))
+                ->orWhereHas('barang', function ($q) {
+                    // Atau sarana yang memiliki barang dengan kondisi rusak
+                    $q->where('sarana_barang.kondisi', 'rusak');
+                });
+        })->count();
+
+        // Get barang rusak di sarana yang perlu perhatian
+        $barang_rusak_di_sarana = \DB::table('sarana_barang')
+            ->where('kondisi', 'rusak')
+            ->count();
+
+        $stats['barang_rusak_perlu_maintenance'] = $barang_rusak_perlu_maintenance;
+        $stats['sarana_perlu_update'] = $sarana_perlu_update;
+        $stats['barang_rusak_di_sarana'] = $barang_rusak_di_sarana;
 
         $recent_maintenance = Maintenance::with(['user', 'barang', 'ruang'])
             ->latest()
             ->limit(5)
             ->get();
 
-        return view('sarpras.dashboard', compact('stats', 'recent_maintenance'));
+        $recent_sarana = Sarana::with(['ruang', 'barang.kategori'])
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        return view('sarpras.dashboard', compact('stats', 'recent_maintenance', 'recent_sarana'));
     }
 
     // ==================== KATEGORI MANAGEMENT ====================
@@ -294,7 +334,7 @@ class SarprasController extends Controller
      */
     public function showBarang(Barang $barang)
     {
-        $barang->load(['kategori', 'ruang', 'maintenance.user']);
+        $barang->load(['kategori', 'ruang', 'maintenance.user', 'sarana.ruang', 'sarana.barang']);
         return view('sarpras.barang.show', compact('barang'));
     }
 
@@ -487,7 +527,7 @@ class SarprasController extends Controller
      */
     public function showRuang(Ruang $ruang)
     {
-        $ruang->load(['barang.kategori', 'maintenance.user']);
+        $ruang->load(['barang.kategori', 'maintenance.user', 'sarana.barang.kategori']);
         return view('sarpras.ruang.show', compact('ruang'));
     }
 

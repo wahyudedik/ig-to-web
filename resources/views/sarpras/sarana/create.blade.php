@@ -31,7 +31,9 @@
                         class="form-input @error('ruang_id') border-red-300 focus:border-red-500 focus:ring-red-500 @enderror">
                         <option value="">Pilih Ruang</option>
                         @foreach ($ruangs as $ruang)
-                            <option value="{{ $ruang->id }}">{{ $ruang->nama_ruang }} ({{ $ruang->kode_ruang }})</option>
+                            <option value="{{ $ruang->id }}" {{ (isset($prefilledRuangId) && $prefilledRuangId == $ruang->id) ? 'selected' : '' }}>
+                                {{ $ruang->nama_ruang }} ({{ $ruang->kode_ruang }})
+                            </option>
                         @endforeach
                     </select>
                     @error('ruang_id')
@@ -63,9 +65,8 @@
                                     <option value="">Pilih Barang</option>
                                     <template x-for="barangOption in getBarangOptions()" :key="barangOption.id">
                                         <option x-bind:value="barangOption.id" 
-                                            x-bind:disabled="barangOption.is_used"
                                             x-bind:data-harga="barangOption.harga_beli || 0"
-                                            x-text="barangOption.nama_barang + ' (' + barangOption.kode_barang + ')' + (barangOption.ruang_id ? '' : ' - Belum ada ruang') + (barangOption.is_used ? ' - Sudah digunakan' : '')"></option>
+                                            x-text="barangOption.nama_barang + ' (' + barangOption.kode_barang + ')' + (barangOption.ruang_id ? '' : ' - Belum ada ruang')"></option>
                                     </template>
                                 </select>
                                 <p x-show="loading" class="text-xs text-slate-500 mt-1">Memuat barang...</p>
@@ -200,13 +201,22 @@
         <script>
             function saranaForm() {
                 return {
-                    ruangId: '',
-                    barangs: [{
-                        barang_id: '',
-                        jumlah: 1,
-                        kondisi: 'baik',
-                        harga_beli: 0
-                    }],
+                    ruangId: @json($prefilledRuangId ?? ''),
+                    barangs: @if(isset($prefilledBarangId))
+                        [{
+                            barang_id: '{{ $prefilledBarangId }}',
+                            jumlah: 1,
+                            kondisi: 'baik',
+                            harga_beli: 0
+                        }]
+                    @else
+                        [{
+                            barang_id: '',
+                            jumlah: 1,
+                            kondisi: 'baik',
+                            harga_beli: 0
+                        }]
+                    @endif,
                     allBarangs: @json($barangsJson),
                     filteredBarangs: [],
                     sumberDana: '',
@@ -215,6 +225,24 @@
                     loading: false,
 
                     init() {
+                        // Pre-load barang if ruang_id is pre-filled
+                        if (this.ruangId) {
+                            this.loadBarangByRuang(this.ruangId);
+                        }
+                        
+                        // Pre-select barang if barang_id is pre-filled
+                        @if(isset($prefilledBarangId))
+                            this.$nextTick(() => {
+                                const barangId = '{{ $prefilledBarangId }}';
+                                const allOptions = this.getBarangOptions();
+                                const selectedBarang = allOptions.find(b => String(b.id) == String(barangId));
+                                if (selectedBarang && this.barangs.length > 0) {
+                                    this.barangs[0].harga_beli = selectedBarang.harga_beli || 0;
+                                    this.barangs[0].kondisi = selectedBarang.kondisi || 'baik';
+                                }
+                            });
+                        @endif
+                        
                         // Watch for ruang_id changes
                         this.$watch('ruangId', (value) => {
                             if (value) {
@@ -248,7 +276,7 @@
                                 this.barangs = data.barangs.map(barang => ({
                                     barang_id: barang.id,
                                     jumlah: 1,
-                                    kondisi: 'baik',
+                                    kondisi: barang.kondisi || 'baik', // Gunakan kondisi dari master data
                                     harga_beli: barang.harga_beli || 0
                                 }));
                                 this.filteredBarangs = data.barangs;
@@ -290,14 +318,17 @@
                         const selectedBarangId = this.barangs[index].barang_id;
                         if (!selectedBarangId) {
                             this.barangs[index].harga_beli = 0;
+                            this.barangs[index].kondisi = 'baik';
                             return;
                         }
                         
-                        // Find harga from allBarangs or filteredBarangs
+                        // Find harga and kondisi from allBarangs or filteredBarangs
                         const allOptions = this.getBarangOptions();
                         const selectedBarang = allOptions.find(b => b.id == selectedBarangId);
                         if (selectedBarang) {
                             this.barangs[index].harga_beli = selectedBarang.harga_beli || 0;
+                            // Set kondisi dari master data barang
+                            this.barangs[index].kondisi = selectedBarang.kondisi || 'baik';
                         }
                     },
 

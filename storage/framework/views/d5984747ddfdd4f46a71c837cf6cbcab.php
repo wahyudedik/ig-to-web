@@ -11,8 +11,8 @@
      <?php $__env->slot('header', null, []); ?> 
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Daftar Barang Sarpras</h1>
-                <p class="text-slate-600 mt-1">Kelola data barang sarana dan prasarana sekolah</p>
+                <h1 class="text-2xl font-bold text-slate-900"><?php echo e(__('common.sarpras_items_list')); ?></h1>
+                <p class="text-slate-600 mt-1"><?php echo e(__('common.manage_sarpras_items')); ?></p>
             </div>
             <div class="flex items-center space-x-2">
                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create', App\Models\Barang::class)): ?>
@@ -21,7 +21,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
-                        Tambah Barang
+                        <?php echo e(__('common.add_item')); ?>
+
                     </a>
                 <?php endif; ?>
 
@@ -33,7 +34,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
-                            Import/Export
+                            <?php echo e(__('common.import_export')); ?>
+
                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 9l-7 7-7-7" />
@@ -50,12 +52,13 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                         </svg>
-                                        Import Data
+                                        <?php echo e(__('common.import_data')); ?>
+
                                     </a>
                                 <?php endif; ?>
                                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('export', App\Models\Barang::class)): ?>
                                     <div class="px-2 py-1">
-                                        <p class="text-xs text-gray-500 font-semibold mb-1">Export Formats:</p>
+                                        <p class="text-xs text-gray-500 font-semibold mb-1"><?php echo e(__('common.export_formats')); ?></p>
                                     </div>
                                     <a href="<?php echo e(route('admin.sarpras.barang.export')); ?>"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -87,7 +90,8 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        Download Template
+                                        <?php echo e(__('common.download_template')); ?>
+
                                     </a>
                                 <?php endif; ?>
                             </div>
@@ -102,7 +106,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                         </svg>
-                        Barcode
+                        <?php echo e(__('common.barcode')); ?>
+
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
@@ -117,7 +122,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                                 </svg>
-                                Scan Barcode
+                                <?php echo e(__('common.scan_barcode')); ?>
+
                             </a>
                             <button onclick="generateAllBarcodes()"
                                 class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -126,7 +132,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                 </svg>
-                                Generate All Barcodes
+                                <?php echo e(__('common.generate_all_barcodes')); ?>
+
                             </button>
                             <button onclick="bulkPrintBarcodes()"
                                 class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -135,7 +142,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                 </svg>
-                                Bulk Print Barcodes
+                                <?php echo e(__('common.bulk_print_barcodes')); ?>
+
                             </button>
                         </div>
                     </div>
@@ -146,7 +154,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali ke Sarpras
+                    <?php echo e(__('common.back_to_sarpras')); ?>
+
                 </a>
             </div>
         </div>
@@ -167,7 +176,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Barang</p>
+                        <p class="text-sm font-medium text-slate-600"><?php echo e(__('common.total_items')); ?></p>
                         <p class="text-2xl font-bold text-slate-900"><?php echo e($barangs->total()); ?></p>
                     </div>
                 </div>
@@ -185,7 +194,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Baik</p>
+                        <p class="text-sm font-medium text-slate-600"><?php echo e(__('common.good')); ?></p>
                         <p class="text-2xl font-bold text-slate-900"><?php echo e($barangs->where('kondisi', 'baik')->count()); ?>
 
                         </p>
@@ -205,7 +214,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Rusak Ringan</p>
+                        <p class="text-sm font-medium text-slate-600"><?php echo e(__('common.minor_damage')); ?></p>
                         <p class="text-2xl font-bold text-slate-900">
                             <?php echo e($barangs->where('kondisi', 'rusak_ringan')->count()); ?></p>
                     </div>
@@ -224,7 +233,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Rusak Berat</p>
+                        <p class="text-sm font-medium text-slate-600"><?php echo e(__('common.major_damage')); ?></p>
                         <p class="text-2xl font-bold text-slate-900">
                             <?php echo e($barangs->where('kondisi', 'rusak_berat')->count()); ?></p>
                     </div>
@@ -238,12 +247,12 @@
                 class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="<?php echo e(request('search')); ?>"
-                        placeholder="Cari nama barang..." class="form-input">
+                        placeholder="<?php echo e(__('common.search_item_name')); ?>" class="form-input">
                 </div>
                 <div class="flex gap-2">
                     <select name="kategori" class="form-input"
                         onchange="document.getElementById('filterForm').submit();">
-                        <option value="">Semua Kategori</option>
+                        <option value=""><?php echo e(__('common.all_categories')); ?></option>
                         <?php $__currentLoopData = $kategoris; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($k->id); ?>"
                                 <?php echo e(request('kategori') == $k->id ? 'selected' : ''); ?>>
@@ -252,26 +261,27 @@
                     </select>
                     <select name="kondisi" class="form-input"
                         onchange="document.getElementById('filterForm').submit();">
-                        <option value="">Semua Kondisi</option>
-                        <option value="baik" <?php echo e(request('kondisi') == 'baik' ? 'selected' : ''); ?>>Baik</option>
+                        <option value=""><?php echo e(__('common.all_conditions')); ?></option>
+                        <option value="baik" <?php echo e(request('kondisi') == 'baik' ? 'selected' : ''); ?>><?php echo e(__('common.good')); ?></option>
                         <option value="rusak_ringan" <?php echo e(request('kondisi') == 'rusak_ringan' ? 'selected' : ''); ?>>
-                            Rusak Ringan</option>
-                        <option value="rusak_berat" <?php echo e(request('kondisi') == 'rusak_berat' ? 'selected' : ''); ?>>Rusak
-                            Berat</option>
+                            <?php echo e(__('common.minor_damage')); ?></option>
+                        <option value="rusak_berat" <?php echo e(request('kondisi') == 'rusak_berat' ? 'selected' : ''); ?>><?php echo e(__('common.major_damage')); ?></option>
                     </select>
                     <button type="submit" class="btn btn-primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        Cari
+                        <?php echo e(__('common.search')); ?>
+
                     </button>
                     <a href="<?php echo e(route('admin.sarpras.barang.index')); ?>" class="btn btn-secondary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Reset
+                        <?php echo e(__('common.reset')); ?>
+
                     </a>
                 </div>
             </form>
@@ -283,14 +293,14 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Foto</th>
-                            <th>Nama Barang</th>
-                            <th>Kategori</th>
-                            <th>Kondisi</th>
-                            <th>Harga</th>
-                            <th>Lokasi</th>
-                            <th>Aksi</th>
+                            <th><?php echo e(__('common.no')); ?></th>
+                            <th><?php echo e(__('common.photo')); ?></th>
+                            <th><?php echo e(__('common.item_name')); ?></th>
+                            <th><?php echo e(__('common.category')); ?></th>
+                            <th><?php echo e(__('common.condition')); ?></th>
+                            <th><?php echo e(__('common.price')); ?></th>
+                            <th><?php echo e(__('common.location')); ?></th>
+                            <th><?php echo e(__('common.action')); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -340,7 +350,7 @@
                                 <td>
                                     <div class="flex items-center space-x-2">
                                         <a href="<?php echo e(route('admin.sarpras.barang.show', $b)); ?>"
-                                            class="text-blue-600 hover:text-blue-700" title="Lihat Detail">
+                                            class="text-blue-600 hover:text-blue-700" title="<?php echo e(__('common.view_detail')); ?>">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -350,7 +360,7 @@
                                             </svg>
                                         </a>
                                         <a href="<?php echo e(route('admin.sarpras.barang.edit', $b)); ?>"
-                                            class="text-amber-600 hover:text-amber-700" title="Edit">
+                                            class="text-amber-600 hover:text-amber-700" title="<?php echo e(__('common.edit')); ?>">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -358,7 +368,7 @@
                                             </svg>
                                         </a>
                                         <a href="<?php echo e(route('admin.sarpras.barcode.print', $b)); ?>"
-                                            class="text-green-600 hover:text-green-700" title="Print Barcode"
+                                            class="text-green-600 hover:text-green-700" title="<?php echo e(__('common.print_barcode')); ?>"
                                             target="_blank">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -368,11 +378,11 @@
                                         </a>
                                         <form method="POST" action="<?php echo e(route('admin.sarpras.barang.destroy', $b)); ?>"
                                             class="inline"
-                                            data-confirm="Apakah Anda yakin ingin menghapus barang <?php echo e($b->nama_barang); ?>?">
+                                            data-confirm="<?php echo e(str_replace(':name', $b->nama_barang, __('common.delete_item_confirmation'))); ?>">
                                             <?php echo csrf_field(); ?>
                                             <?php echo method_field('DELETE'); ?>
                                             <button type="submit" class="text-red-600 hover:text-red-700"
-                                                title="Hapus">
+                                                title="<?php echo e(__('common.delete')); ?>">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -392,7 +402,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                     </svg>
-                                    <p class="text-slate-500">Belum ada data barang</p>
+                                    <p class="text-slate-500"><?php echo e(__('common.no_items_data')); ?></p>
                                 </td>
                             </tr>
                         <?php endif; ?>
@@ -414,10 +424,10 @@
     <script>
         function generateAllBarcodes() {
             showConfirm(
-                'Konfirmasi',
-                'Apakah Anda yakin ingin generate barcode untuk semua barang yang belum memiliki barcode?',
-                'Ya, Generate',
-                'Batal'
+                '<?php echo e(__('common.confirm')); ?>',
+                '<?php echo e(__('common.generate_barcode_confirmation')); ?>',
+                '<?php echo e(__('common.yes_generate')); ?>',
+                '<?php echo e(__('common.cancel')); ?>'
             ).then((result) => {
                 if (result.isConfirmed) {
                     showLoading();
@@ -439,13 +449,13 @@
                                     location.reload();
                                 }, 1000);
                             } else {
-                                showError('Error: ' + data.message);
+                                showError('<?php echo e(__('common.error')); ?>: ' + data.message);
                             }
                         })
                         .catch(error => {
                             closeLoading();
                             console.error('Error:', error);
-                            showError('Terjadi kesalahan saat generate barcode');
+                            showError('<?php echo e(__('common.error_occurred')); ?>');
                         });
                 }
             });
@@ -475,7 +485,7 @@
                     const barangList = data.data || [];
 
                     if (barangList.length === 0) {
-                        showError('Tidak ada barang tersedia');
+                        showError('<?php echo e(__('common.no_items_available')); ?>');
                         return;
                     }
 
@@ -497,12 +507,13 @@
                     modal.innerHTML = `
                         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
                             <div class="mt-3">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Bulk Print Barcodes</h3>
-                                <p class="text-sm text-gray-600 mb-4">Pilih barang yang akan di-print barcodenya:</p>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4"><?php echo e(__('common.bulk_print_barcodes')); ?></h3>
+                                <p class="text-sm text-gray-600 mb-4"><?php echo e(__('common.select_items_to_print')); ?></p>
                                 <div class="mb-3">
                                     <label class="flex items-center text-sm font-medium text-blue-600 cursor-pointer hover:text-blue-700">
                                         <input type="checkbox" id="selectAllBarcodes" class="mr-2">
-                                        Pilih Semua
+                                        <?php echo e(__('common.select_all')); ?>
+
                                     </label>
                                 </div>
                                 <div class="space-y-1 max-h-60 overflow-y-auto border rounded p-2">
@@ -510,10 +521,12 @@
                                 </div>
                                 <div class="flex justify-end space-x-3 mt-4">
                                     <button onclick="closeBulkPrintModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                                        Batal
+                                        <?php echo e(__('common.cancel')); ?>
+
                                     </button>
                                     <button onclick="processBulkPrint()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                        Print Selected
+                                        <?php echo e(__('common.print_selected')); ?>
+
                                     </button>
                                 </div>
                             </div>
@@ -540,8 +553,8 @@
                     modal.innerHTML = `
                         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
                             <div class="mt-3">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Bulk Print Barcodes</h3>
-                                <p class="text-sm text-gray-600 mb-4">Pilih barang dari halaman ini:</p>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4"><?php echo e(__('common.bulk_print_barcodes')); ?></h3>
+                                <p class="text-sm text-gray-600 mb-4"><?php echo e(__('common.select_items_to_print')); ?></p>
                                 <div class="space-y-2 max-h-60 overflow-y-auto">
                                     <?php $__currentLoopData = $barangs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <label class="flex items-center">
@@ -552,10 +565,12 @@
                                 </div>
                                 <div class="flex justify-end space-x-3 mt-4">
                                     <button onclick="closeBulkPrintModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
-                                        Batal
+                                        <?php echo e(__('common.cancel')); ?>
+
                                     </button>
                                     <button onclick="processBulkPrint()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                        Print Selected
+                                        <?php echo e(__('common.print_selected')); ?>
+
                                     </button>
                                 </div>
                             </div>
@@ -577,7 +592,7 @@
             const selectedIds = Array.from(checkboxes).map(cb => cb.value).filter(id => id); // Filter empty values
 
             if (selectedIds.length === 0) {
-                showError('Pilih minimal satu barang untuk di-print');
+                showError('<?php echo e(__('common.select_at_least_one')); ?>');
                 return;
             }
 

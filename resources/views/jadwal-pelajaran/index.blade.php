@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Jadwal Pelajaran') }}
+                {{ __('common.lesson_schedule') }}
             </h2>
             <div class="flex items-center space-x-2">
                 <a href="{{ route('admin.jadwal-pelajaran.calendar') }}"
@@ -11,7 +11,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    Calendar View
+                    {{ __('common.calendar_view') }}
                 </a>
                 <div class="relative inline-block" x-data="{ open: false }">
                     <button @click="open = !open"
@@ -20,7 +20,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Export
+                        {{ __('common.export') }}
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
@@ -49,7 +49,7 @@
                 </div>
                 <a href="{{ route('admin.jadwal-pelajaran.create') }}"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Tambah Jadwal
+                    {{ __('common.add_schedule') }}
                 </a>
             </div>
         </div>
@@ -78,10 +78,10 @@
                         <form method="GET" action="{{ route('admin.jadwal-pelajaran.index') }}"
                             class="grid grid-cols-1 md:grid-cols-6 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.class_label') }}</label>
                                 <select name="kelas_id"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Semua Kelas</option>
+                                    <option value="">{{ __('common.all_classes') }}</option>
                                     @foreach ($kelasList as $kelas)
                                         <option value="{{ $kelas->id }}"
                                             {{ request('kelas_id') == $kelas->id ? 'selected' : '' }}>
@@ -91,10 +91,10 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Guru</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.teacher') }}</label>
                                 <select name="guru_id"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Semua Guru</option>
+                                    <option value="">{{ __('common.all_teachers') }}</option>
                                     @foreach ($guruList as $guru)
                                         <option value="{{ $guru->id }}"
                                             {{ request('guru_id') == $guru->id ? 'selected' : '' }}>
@@ -104,10 +104,10 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.day') }}</label>
                                 <select name="hari"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Semua Hari</option>
+                                    <option value="">{{ __('common.all_days') }}</option>
                                     @foreach ($hariList as $hari)
                                         <option value="{{ $hari }}"
                                             {{ request('hari') == $hari ? 'selected' : '' }}>
@@ -117,10 +117,10 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Ajaran</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.academic_year') }}</label>
                                 <select name="tahun_ajaran"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Semua Tahun</option>
+                                    <option value="">{{ __('common.all_academic_years') }}</option>
                                     @foreach ($tahunAjaranList as $tahun)
                                         <option value="{{ $tahun }}"
                                             {{ request('tahun_ajaran') == $tahun ? 'selected' : '' }}>
@@ -130,10 +130,10 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Semester</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.semester') }}</label>
                                 <select name="semester"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option value="">Semua Semester</option>
+                                    <option value="">{{ __('common.all_semesters') }}</option>
                                     @foreach ($semesterList as $semester)
                                         <option value="{{ $semester }}"
                                             {{ request('semester') == $semester ? 'selected' : '' }}>
@@ -145,11 +145,11 @@
                             <div class="flex items-end space-x-2">
                                 <button type="submit"
                                     class="flex-1 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                    Filter
+                                    {{ __('common.filter') }}
                                 </button>
                                 <a href="{{ route('admin.jadwal-pelajaran.index') }}"
                                     class="flex-1 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
-                                    Reset
+                                    {{ __('common.reset') }}
                                 </a>
                             </div>
                         </form>
@@ -158,21 +158,21 @@
                     <!-- Stats -->
                     <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="bg-blue-100 p-4 rounded-lg">
-                            <div class="text-sm text-gray-600">Total Jadwal</div>
+                            <div class="text-sm text-gray-600">{{ __('common.total_schedule') }}</div>
                             <div class="text-2xl font-bold text-blue-700">{{ $jadwals->total() }}</div>
                         </div>
                         <div class="bg-green-100 p-4 rounded-lg">
-                            <div class="text-sm text-gray-600">Jadwal Aktif</div>
+                            <div class="text-sm text-gray-600">{{ __('common.active_schedule') }}</div>
                             <div class="text-2xl font-bold text-green-700">
                                 {{ \App\Models\JadwalPelajaran::where('status', 'aktif')->count() }}
                             </div>
                         </div>
                         <div class="bg-purple-100 p-4 rounded-lg">
-                            <div class="text-sm text-gray-600">Kelas Terdaftar</div>
+                            <div class="text-sm text-gray-600">{{ __('common.registered_class') }}</div>
                             <div class="text-2xl font-bold text-purple-700">{{ $kelasList->count() }}</div>
                         </div>
                         <div class="bg-orange-100 p-4 rounded-lg">
-                            <div class="text-sm text-gray-600">Guru Mengajar</div>
+                            <div class="text-sm text-gray-600">{{ __('common.teaching_teacher') }}</div>
                             <div class="text-2xl font-bold text-orange-700">{{ $guruList->count() }}</div>
                         </div>
                     </div>
@@ -184,31 +184,31 @@
                                 <tr>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Hari / Waktu
+                                        {{ __('common.day_time') }}
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Mata Pelajaran
+                                        {{ __('common.subject') }}
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Guru
+                                        {{ __('common.teacher') }}
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Kelas
+                                        {{ __('common.class_label') }}
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Ruang
+                                        {{ __('common.room') }}
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
+                                        {{ __('common.status') }}
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Aksi
+                                        {{ __('common.action') }}
                                     </th>
                                 </tr>
                             </thead>
@@ -224,7 +224,7 @@
                                                     </span>
                                                     <div class="text-sm text-gray-900 mt-1">{{ $jadwal->time_range }}
                                                     </div>
-                                                    <div class="text-xs text-gray-500">{{ $jadwal->duration }} menit
+                                                    <div class="text-xs text-gray-500">{{ $jadwal->duration }} {{ __('common.minutes') }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -254,16 +254,16 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                             <a href="{{ route('admin.jadwal-pelajaran.show', $jadwal) }}"
-                                                class="text-blue-600 hover:text-blue-900">Detail</a>
+                                                class="text-blue-600 hover:text-blue-900">{{ __('common.detail') }}</a>
                                             <a href="{{ route('admin.jadwal-pelajaran.edit', $jadwal) }}"
-                                                class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                                class="text-indigo-600 hover:text-indigo-900">{{ __('common.edit') }}</a>
                                             <form action="{{ route('admin.jadwal-pelajaran.destroy', $jadwal) }}"
                                                 method="POST" class="inline"
-                                                data-confirm="Yakin ingin menghapus jadwal ini?">
+                                                data-confirm="{{ __('common.delete_schedule_confirmation') }}">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-600 hover:text-red-900">
-                                                    Hapus
+                                                    {{ __('common.delete') }}
                                                 </button>
                                             </form>
                                         </td>
@@ -271,7 +271,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                                            Tidak ada data jadwal pelajaran.
+                                            {{ __('common.no_schedule_data') }}
                                         </td>
                                     </tr>
                                 @endforelse

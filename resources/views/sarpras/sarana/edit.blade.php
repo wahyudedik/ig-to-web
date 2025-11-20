@@ -88,9 +88,8 @@
                                     <template x-for="barangOption in getBarangOptions()" :key="barangOption.id">
                                         <option x-bind:value="String(barangOption.id)" 
                                             x-bind:selected="String(barangOption.id) === String(barang.barang_id)"
-                                            x-bind:disabled="barangOption.is_used"
                                             x-bind:data-harga="barangOption.harga_beli || 0"
-                                            x-text="barangOption.nama_barang + ' (' + barangOption.kode_barang + ')' + (barangOption.ruang_id ? '' : ' - Belum ada ruang') + (barangOption.is_used ? ' - Sudah digunakan' : '')"></option>
+                                            x-text="barangOption.nama_barang + ' (' + barangOption.kode_barang + ')' + (barangOption.ruang_id ? '' : ' - Belum ada ruang')"></option>
                                     </template>
                                 </select>
                                 <p x-show="loading" class="text-xs text-slate-500 mt-1">Memuat barang...</p>
@@ -315,11 +314,11 @@
                                     this.barangs = data.barangs.map(barang => ({
                                         barang_id: barang.id,
                                         jumlah: 1,
-                                        kondisi: 'baik',
+                                        kondisi: barang.kondisi || 'baik', // Gunakan kondisi dari master data
                                         harga_beli: barang.harga_beli || 0
                                     }));
                                 } else if (preserveExisting) {
-                                    // Update harga_beli for existing barang if needed
+                                    // Update harga_beli and kondisi for existing barang if needed
                                     this.barangs.forEach((barang, index) => {
                                         if (barang.barang_id) {
                                             const foundBarang = mergedBarangs.find(b => String(b.id) == String(barang.barang_id));
@@ -327,6 +326,10 @@
                                                 // Update harga if not set or if found in new data
                                                 if (!barang.harga_beli || foundBarang.harga_beli) {
                                                     this.barangs[index].harga_beli = foundBarang.harga_beli || barang.harga_beli || 0;
+                                                }
+                                                // Update kondisi dari master data jika belum ada atau masih default
+                                                if (!barang.kondisi || barang.kondisi === 'baik') {
+                                                    this.barangs[index].kondisi = foundBarang.kondisi || barang.kondisi || 'baik';
                                                 }
                                             }
                                         }
@@ -372,14 +375,19 @@
                         const selectedBarangId = this.barangs[index].barang_id;
                         if (!selectedBarangId) {
                             this.barangs[index].harga_beli = 0;
+                            this.barangs[index].kondisi = 'baik';
                             return;
                         }
                         
-                        // Find harga from allBarangs or filteredBarangs
+                        // Find harga and kondisi from allBarangs or filteredBarangs
                         const allOptions = this.getBarangOptions();
                         const selectedBarang = allOptions.find(b => String(b.id) == String(selectedBarangId));
                         if (selectedBarang) {
                             this.barangs[index].harga_beli = selectedBarang.harga_beli || 0;
+                            // Set kondisi dari master data barang (hanya jika belum ada kondisi sebelumnya)
+                            if (!this.barangs[index].kondisi || this.barangs[index].kondisi === 'baik') {
+                                this.barangs[index].kondisi = selectedBarang.kondisi || 'baik';
+                            }
                         }
                     },
 

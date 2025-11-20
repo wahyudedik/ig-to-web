@@ -22,3 +22,10 @@ Schedule::command('instagram:refresh-token')
     ->withoutOverlapping()
     ->onOneServer()
     ->runInBackground();
+
+// Schedule Sarpras notifications (daily at 08:00)
+// Send notifications for damaged items and sarana that need updates
+Schedule::command('sarpras:send-notifications --daily')
+    ->dailyAt('08:00')
+    ->withoutOverlapping()
+    ->runInBackground();

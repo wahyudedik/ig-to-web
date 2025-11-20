@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Milon\Barcode\Facades\DNS1DFacade;
@@ -68,6 +69,16 @@ class Barang extends Model
     public function maintenance(): HasMany
     {
         return $this->hasMany(Maintenance::class, 'item_id')->where('jenis_item', 'barang');
+    }
+
+    /**
+     * Get the sarana that use this barang.
+     */
+    public function sarana(): BelongsToMany
+    {
+        return $this->belongsToMany(Sarana::class, 'sarana_barang')
+            ->withPivot('jumlah', 'kondisi')
+            ->withTimestamps();
     }
 
     /**

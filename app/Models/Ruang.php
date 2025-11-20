@@ -53,6 +53,14 @@ class Ruang extends Model
     }
 
     /**
+     * Get the sarana in this ruang.
+     */
+    public function sarana(): HasMany
+    {
+        return $this->hasMany(Sarana::class, 'ruang_id');
+    }
+
+    /**
      * Boot the model.
      */
     protected static function boot()
