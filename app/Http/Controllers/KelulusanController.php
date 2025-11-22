@@ -519,20 +519,35 @@ class KelulusanController extends Controller
     }
 
     /**
-     * Generate certificate.
+     * Preview certificate in HTML.
      */
     public function generateCertificate(Kelulusan $kelulusan)
+    {
+        // Return HTML preview
+        return view('lulus.certificate', compact('kelulusan'));
+    }
+
+    /**
+     * Download certificate as PDF.
+     */
+    public function downloadCertificate(Kelulusan $kelulusan)
     {
         try {
             // Generate PDF using DomPDF
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('lulus.certificate', compact('kelulusan'));
 
-            // Set paper size and orientation
-            $pdf->setPaper('A4', 'landscape');
+            // Set paper size and orientation - A4 Portrait (210mm x 297mm)
+            $pdf->setPaper('A4', 'portrait');
             
             // Enable remote images and set options for better image handling
             $pdf->setOption('enable-local-file-access', true);
             $pdf->setOption('isRemoteEnabled', true);
+            $pdf->setOption('dpi', 150);
+            $pdf->setOption('isHtml5ParserEnabled', true);
+            $pdf->setOption('isPhpEnabled', true);
+            
+            // Prevent page breaks
+            $pdf->setOption('page-break-inside', 'avoid');
 
             // Generate filename
             $filename = 'Sertifikat_Kelulusan_' . $kelulusan->nama . '_' . $kelulusan->tahun_ajaran . '.pdf';

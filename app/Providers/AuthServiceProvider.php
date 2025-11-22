@@ -17,6 +17,7 @@ use App\Models\JadwalPelajaran;
 use App\Policies\UserPolicy;
 use App\Policies\SarprasPolicy;
 use App\Policies\OSISPolicy;
+use App\Policies\PemilihPolicy;
 use App\Policies\SystemPolicy;
 use App\Policies\SiswaPolicy;
 use App\Policies\GuruPolicy;
@@ -36,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Barang::class => SarprasPolicy::class,
         Calon::class => OSISPolicy::class,
-        Pemilih::class => OSISPolicy::class,
+        Pemilih::class => PemilihPolicy::class,
         Siswa::class => SiswaPolicy::class,
         Guru::class => GuruPolicy::class,
         Kelulusan::class => KelulusanPolicy::class,

@@ -21,7 +21,7 @@
                         Edit Data
                     </a>
                     @if ($kelulusan->status === 'lulus')
-                        <a href="{{ route('admin.lulus.certificate', $kelulusan) }}"
+                        <a href="{{ route('admin.lulus.certificate', $kelulusan) }}" target="_blank"
                             class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                             Generate Sertifikat
                         </a>

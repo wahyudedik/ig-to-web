@@ -301,6 +301,7 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin|guru'])->prefix('a
     Route::put('/{kelulusan}', [KelulusanController::class, 'update'])->name('update');
     Route::delete('/{kelulusan}', [KelulusanController::class, 'destroy'])->name('destroy');
     Route::get('/{kelulusan}/certificate', [KelulusanController::class, 'generateCertificate'])->name('certificate');
+    Route::get('/{kelulusan}/certificate/download', [KelulusanController::class, 'downloadCertificate'])->name('certificate.download');
 });
 
 // E-Lulus Student Routes (Access: siswa) - View only
