@@ -529,6 +529,10 @@ class KelulusanController extends Controller
 
             // Set paper size and orientation
             $pdf->setPaper('A4', 'landscape');
+            
+            // Enable remote images and set options for better image handling
+            $pdf->setOption('enable-local-file-access', true);
+            $pdf->setOption('isRemoteEnabled', true);
 
             // Generate filename
             $filename = 'Sertifikat_Kelulusan_' . $kelulusan->nama . '_' . $kelulusan->tahun_ajaran . '.pdf';
@@ -536,6 +540,10 @@ class KelulusanController extends Controller
             // Return PDF download
             return $pdf->download($filename);
         } catch (\Exception $e) {
+            \Log::error('Certificate generation error: ' . $e->getMessage(), [
+                'kelulusan_id' => $kelulusan->id,
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->back()
                 ->with('error', 'Gagal membuat sertifikat: ' . $e->getMessage());
         }

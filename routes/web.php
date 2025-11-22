@@ -550,12 +550,17 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin'
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
     Route::post('/notifications/{id}/mark-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
     Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'delete'])->name('notifications.delete');
+});
 
-    // Push Notifications
+// Push Notifications (Access: All authenticated users)
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::post('/push/subscribe', [App\Http\Controllers\PushNotificationController::class, 'subscribe'])->name('push.subscribe');
     Route::post('/push/unsubscribe', [App\Http\Controllers\PushNotificationController::class, 'unsubscribe'])->name('push.unsubscribe');
     Route::get('/push/vapid-key', [App\Http\Controllers\PushNotificationController::class, 'vapidPublicKey'])->name('push.vapid-key');
-    Route::delete('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'delete'])->name('notifications.delete');
+});
+
+Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin')->name('admin.')->group(function () {
 
 
     // User Management (Superadmin only)

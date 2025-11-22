@@ -81,6 +81,33 @@
             margin: 20px 0;
         }
 
+        .student-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #d4af37;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .photo-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #ecf0f1;
+            border: 4px solid #d4af37;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #95a5a6;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
         .student-details {
             background: #f8f9fa;
             padding: 20px;
@@ -209,6 +236,66 @@
             <div class="certificate-text">
                 Dengan ini menyatakan bahwa:
             </div>
+
+            @php
+                // Get photo path and convert to base64 for PDF compatibility
+                $imageSrc = null;
+                if ($kelulusan->foto) {
+                    try {
+                        // Path yang disimpan di database: "lulus/photos/filename.jpg"
+                        $photoPath = $kelulusan->foto;
+                        
+                        // Path yang benar untuk storage: storage/app/public/lulus/photos/filename.jpg
+                        // Karena menggunakan disk 'public', file disimpan di storage/app/public/
+                        $fullPath = storage_path('app/public/' . $photoPath);
+                        
+                        // Fallback paths jika path utama tidak ditemukan
+                        if (!file_exists($fullPath)) {
+                            $alternativePaths = [
+                                storage_path('app/' . $photoPath),
+                                public_path('storage/' . $photoPath),
+                                base_path('storage/app/public/' . $photoPath),
+                            ];
+                            
+                            foreach ($alternativePaths as $altPath) {
+                                if (file_exists($altPath) && is_file($altPath)) {
+                                    $fullPath = $altPath;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Convert to base64 if file exists
+                        if (file_exists($fullPath) && is_file($fullPath)) {
+                            $imageData = file_get_contents($fullPath);
+                            if ($imageData !== false) {
+                                $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+                                $mimeType = match($extension) {
+                                    'jpg', 'jpeg' => 'image/jpeg',
+                                    'png' => 'image/png',
+                                    'gif' => 'image/gif',
+                                    'webp' => 'image/webp',
+                                    default => 'image/jpeg'
+                                };
+                                $imageSrc = 'data:' . $mimeType . ';base64,' . base64_encode($imageData);
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // If error, use placeholder
+                        $imageSrc = null;
+                        \Log::warning('Certificate photo error: ' . $e->getMessage(), [
+                            'kelulusan_id' => $kelulusan->id,
+                            'photo_path' => $kelulusan->foto ?? 'null'
+                        ]);
+                    }
+                }
+            @endphp
+            
+            @if ($imageSrc)
+                <img src="{{ $imageSrc }}" alt="{{ $kelulusan->nama }}" class="student-photo">
+            @else
+                <div class="photo-placeholder">{{ substr($kelulusan->nama, 0, 1) }}</div>
+            @endif
 
             <div class="student-name">{{ $kelulusan->nama }}</div>
 

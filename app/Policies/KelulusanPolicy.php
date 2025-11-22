@@ -15,7 +15,7 @@ class KelulusanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('kelulusan.view') || $user->hasRole(['superadmin', 'admin', 'guru']);
+        return $user->can('kelulusan.view') || $user->can('lulus.read') || $user->hasRole(['superadmin', 'admin', 'guru', 'siswa']);
     }
 
     /**
@@ -23,7 +23,7 @@ class KelulusanPolicy
      */
     public function view(User $user, Kelulusan $kelulusan): bool
     {
-        return $user->can('kelulusan.view') || $user->hasRole(['superadmin', 'admin', 'guru']);
+        return $user->can('kelulusan.view') || $user->can('lulus.read') || $user->hasRole(['superadmin', 'admin', 'guru', 'siswa']);
     }
 
     /**

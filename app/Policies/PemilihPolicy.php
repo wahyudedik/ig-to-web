@@ -63,6 +63,6 @@ class PemilihPolicy
      */
     public function viewResults(User $user): bool
     {
-        return $user->can('osis.results') || $user->hasRole(['superadmin', 'admin', 'guru']);
+        return $user->can('osis.results') || $user->hasRole(['superadmin', 'admin', 'guru', 'siswa']);
     }
 }
