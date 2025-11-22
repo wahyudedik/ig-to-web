@@ -44,4 +44,21 @@ class AuthenticatedSessionController extends Controller
 
         return redirect('/');
     }
+
+    /**
+     * Handle GET request to logout (fallback for browser prefetch/cache).
+     * This prevents MethodNotAllowedHttpException when browser tries to access /logout via GET.
+     */
+    public function logoutGet(Request $request): RedirectResponse
+    {
+        // If user is authenticated, logout them
+        if (Auth::check()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        // Redirect to login page
+        return redirect()->route('login');
+    }
 }

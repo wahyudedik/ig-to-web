@@ -227,8 +227,8 @@ Route::middleware(['auth', 'verified', 'role:guru|admin|superadmin'])->prefix('a
     Route::delete('/{siswa}', [SiswaController::class, 'destroy'])->name('destroy');
 });
 
-// OSIS Management (Access: admin, superadmin)
-Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/osis')->name('admin.osis.')->group(function () {
+// OSIS Management (Access: admin, superadmin, osis)
+Route::middleware(['auth', 'verified', 'role:admin|superadmin|osis'])->prefix('admin/osis')->name('admin.osis.')->group(function () {
     Route::get('/', [OSISController::class, 'index'])->name('index');
 
     // Calon Import/Export routes
@@ -272,6 +272,13 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin'])->prefix('admin/
     Route::get('/teacher-view', [OSISController::class, 'teacherView'])->name('teacher-view');
 });
 
+// OSIS Student Routes (Access: siswa) - Voting and Results
+Route::middleware(['auth', 'verified', 'role:siswa'])->prefix('admin/osis')->name('admin.osis.')->group(function () {
+    Route::get('/voting', [OSISController::class, 'voting'])->name('voting');
+    Route::post('/vote', [OSISController::class, 'processVote'])->name('vote');
+    Route::get('/results', [OSISController::class, 'results'])->name('results');
+});
+
 // E-Lulus Management (Access: admin, superadmin, guru)
 Route::middleware(['auth', 'verified', 'role:admin|superadmin|guru'])->prefix('admin/lulus')->name('admin.lulus.')->group(function () {
     // Import/Export routes (must be before resource routes)
@@ -294,6 +301,13 @@ Route::middleware(['auth', 'verified', 'role:admin|superadmin|guru'])->prefix('a
     Route::put('/{kelulusan}', [KelulusanController::class, 'update'])->name('update');
     Route::delete('/{kelulusan}', [KelulusanController::class, 'destroy'])->name('destroy');
     Route::get('/{kelulusan}/certificate', [KelulusanController::class, 'generateCertificate'])->name('certificate');
+});
+
+// E-Lulus Student Routes (Access: siswa) - View only
+Route::middleware(['auth', 'verified', 'role:siswa'])->prefix('admin/lulus')->name('admin.lulus.')->group(function () {
+    Route::get('/', [KelulusanController::class, 'index'])->name('index');
+    Route::get('/check', [KelulusanController::class, 'checkStatus'])->name('check');
+    Route::post('/check', [KelulusanController::class, 'processCheck'])->name('check.process');
 });
 
 // Jadwal Pelajaran Management (Access: guru, admin, superadmin)
@@ -320,6 +334,12 @@ Route::middleware(['auth', 'verified', 'role:guru|admin|superadmin'])->prefix('a
     Route::get('/{jadwalPelajaran}/edit', [App\Http\Controllers\JadwalPelajaranController::class, 'edit'])->name('edit');
     Route::put('/{jadwalPelajaran}', [App\Http\Controllers\JadwalPelajaranController::class, 'update'])->name('update');
     Route::delete('/{jadwalPelajaran}', [App\Http\Controllers\JadwalPelajaranController::class, 'destroy'])->name('destroy');
+});
+
+// Jadwal Pelajaran Student Routes (Access: siswa) - View only
+Route::middleware(['auth', 'verified', 'role:siswa'])->prefix('admin/jadwal-pelajaran')->name('admin.jadwal-pelajaran.')->group(function () {
+    Route::get('/', [App\Http\Controllers\JadwalPelajaranController::class, 'index'])->name('index');
+    Route::get('/calendar', [App\Http\Controllers\JadwalPelajaranController::class, 'calendar'])->name('calendar');
 });
 
 // Sarpras Management (Access: sarpras, admin, superadmin)

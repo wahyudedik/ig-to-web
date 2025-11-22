@@ -39,7 +39,7 @@ class SiswaPolicy
      */
     public function update(User $user, Siswa $siswa): bool
     {
-        return $user->can('siswa.edit') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('siswa.edit') || $user->can('siswa.update') || $user->hasRole(['superadmin', 'admin', 'guru']);
     }
 
     /**

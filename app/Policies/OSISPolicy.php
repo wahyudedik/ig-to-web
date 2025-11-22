@@ -15,7 +15,7 @@ class OSISPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('osis.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.view') || $user->can('osis.read') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -23,7 +23,7 @@ class OSISPolicy
      */
     public function view(User $user, Calon $calon): bool
     {
-        return $user->can('osis.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.view') || $user->can('osis.read') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -31,7 +31,7 @@ class OSISPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('osis.create') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.create') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -39,7 +39,7 @@ class OSISPolicy
      */
     public function update(User $user, Calon $calon): bool
     {
-        return $user->can('osis.edit') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.edit') || $user->can('osis.update') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -47,7 +47,7 @@ class OSISPolicy
      */
     public function delete(User $user, Calon $calon): bool
     {
-        return $user->can('osis.delete') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.delete') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -63,7 +63,7 @@ class OSISPolicy
      */
     public function viewResults(User $user): bool
     {
-        return $user->can('osis.results') || $user->hasRole(['superadmin', 'admin', 'guru']);
+        return $user->can('osis.results') || $user->hasRole(['superadmin', 'admin', 'guru', 'siswa']);
     }
 
     /**
@@ -71,7 +71,7 @@ class OSISPolicy
      */
     public function manageVoters(User $user): bool
     {
-        return $user->can('osis.edit') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.edit') || $user->can('osis.update') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -79,7 +79,7 @@ class OSISPolicy
      */
     public function import(User $user): bool
     {
-        return $user->can('osis.create') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.create') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -87,6 +87,6 @@ class OSISPolicy
      */
     public function export(User $user): bool
     {
-        return $user->can('osis.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.view') || $user->can('osis.read') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 }

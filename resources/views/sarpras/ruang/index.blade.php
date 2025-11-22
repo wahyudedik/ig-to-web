@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Daftar Ruang Sarpras</h1>
-                <p class="text-slate-600 mt-1">Kelola data ruang dan lokasi sarana prasarana sekolah</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.sarpras_rooms_list') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_sarpras_rooms') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 <a href="{{ route('admin.sarpras.ruang.create') }}" class="btn btn-primary">
@@ -11,14 +11,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Tambah Ruang
+                    {{ __('common.add_room') }}
                 </a>
                 <a href="{{ route('admin.sarpras.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali ke Sarpras
+                    {{ __('common.back_to_sarpras') }}
                 </a>
             </div>
         </div>
@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Ruang</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_rooms') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $ruangs->total() }}</p>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Ruang Aktif</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.active_rooms') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $ruangs->where('is_active', true)->count() }}
                         </p>
                     </div>
@@ -75,7 +75,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Barang</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_items') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $ruangs->sum('barang_count') }}</p>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Luas</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_area') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $ruangs->sum('luas_ruang') }} m²</p>
                     </div>
                 </div>
@@ -106,15 +106,14 @@
                 class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari nama ruang..." class="form-input">
+                        placeholder="{{ __('common.search_room_name') }}" class="form-input">
                 </div>
                 <div class="flex gap-2">
                     <select name="status" class="form-input"
                         onchange="document.getElementById('filterForm').submit();">
-                        <option value="">Semua Status</option>
-                        <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                        <option value="tidak_aktif" {{ request('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak
-                            Aktif
+                        <option value="">{{ __('common.all_status') }}</option>
+                        <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>{{ __('common.active') }}</option>
+                        <option value="tidak_aktif" {{ request('status') == 'tidak_aktif' ? 'selected' : '' }}>{{ __('common.inactive') }}
                         </option>
                     </select>
                     <button type="submit" class="btn btn-primary">
@@ -122,14 +121,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        Cari
+                        {{ __('common.search') }}
                     </button>
                     <a href="{{ route('admin.sarpras.ruang.index') }}" class="btn btn-secondary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Reset
+                        {{ __('common.reset') }}
                     </a>
                 </div>
             </form>
@@ -141,15 +140,15 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Foto</th>
-                            <th>Nama Ruang</th>
-                            <th>Lokasi</th>
-                            <th>Luas</th>
-                            <th>Kapasitas</th>
-                            <th>Jumlah Barang</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
+                            <th>{{ __('common.no') }}</th>
+                            <th>{{ __('common.photo') }}</th>
+                            <th>{{ __('common.room_name') }}</th>
+                            <th>{{ __('common.location') }}</th>
+                            <th>{{ __('common.area') }}</th>
+                            <th>{{ __('common.capacity') }}</th>
+                            <th>{{ __('common.item_count') }}</th>
+                            <th>{{ __('common.status') }}</th>
+                            <th>{{ __('common.action') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -189,14 +188,14 @@
                                 <td>
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
-                                        {{ $r->barang_count ?? 0 }} barang
+                                        {{ $r->barang_count ?? 0 }} {{ __('common.items') }}
                                     </span>
                                 </td>
                                 <td>
                                     @if ($r->is_active)
-                                        <span class="badge badge-success">Aktif</span>
+                                        <span class="badge badge-success">{{ __('common.active') }}</span>
                                     @else
-                                        <span class="badge badge-warning">Tidak Aktif</span>
+                                        <span class="badge badge-warning">{{ __('common.inactive') }}</span>
                                     @endif
                                 </td>
                                 <td>
@@ -221,7 +220,7 @@
                                         </a>
                                         <form method="POST" action="{{ route('admin.sarpras.ruang.destroy', $r) }}"
                                             class="inline"
-                                            data-confirm="Apakah Anda yakin ingin menghapus ruang {{ $r->nama_ruang }}?">
+                                            data-confirm="{{ str_replace(':name', $r->nama_ruang, __('common.delete_room_confirmation')) }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-700">
@@ -244,7 +243,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                     </svg>
-                                    <p class="text-slate-500">Belum ada data ruang</p>
+                                    <p class="text-slate-500">{{ __('common.no_rooms_data') }}</p>
                                 </td>
                             </tr>
                         @endforelse

@@ -15,7 +15,7 @@ class JadwalPelajaranPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('jadwal.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('jadwal.view') || $user->can('jadwal.read') || $user->hasRole(['superadmin', 'admin', 'guru', 'siswa']);
     }
 
     /**
@@ -23,7 +23,7 @@ class JadwalPelajaranPolicy
      */
     public function view(User $user, JadwalPelajaran $jadwalPelajaran): bool
     {
-        return $user->can('jadwal.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('jadwal.view') || $user->can('jadwal.read') || $user->hasRole(['superadmin', 'admin', 'guru', 'siswa']);
     }
 
     /**

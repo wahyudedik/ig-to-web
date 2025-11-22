@@ -15,7 +15,7 @@ class PemilihPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('osis.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.view') || $user->can('osis.read') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -23,7 +23,7 @@ class PemilihPolicy
      */
     public function view(User $user, Pemilih $pemilih): bool
     {
-        return $user->can('osis.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.view') || $user->can('osis.read') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -31,7 +31,7 @@ class PemilihPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('osis.create') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.create') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -39,7 +39,7 @@ class PemilihPolicy
      */
     public function update(User $user, Pemilih $pemilih): bool
     {
-        return $user->can('osis.edit') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.edit') || $user->can('osis.update') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**
@@ -47,7 +47,7 @@ class PemilihPolicy
      */
     public function delete(User $user, Pemilih $pemilih): bool
     {
-        return $user->can('osis.delete') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('osis.delete') || $user->hasRole(['superadmin', 'admin', 'osis']);
     }
 
     /**

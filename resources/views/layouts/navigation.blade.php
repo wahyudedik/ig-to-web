@@ -36,25 +36,25 @@
                             <div
                                 class="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div class="py-2">
-                                    @if (Auth::check() && Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('guru.view') || Auth::user()->can('guru.read')))
                                         <a href="{{ route('admin.guru.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-chalkboard-teacher mr-2"></i>Guru Management
                                         </a>
                                     @endif
-                                    @if (Auth::check() && Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('siswa.view') || Auth::user()->can('siswa.read')))
                                         <a href="{{ route('admin.siswa.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-user-graduate mr-2"></i>Siswa Management
                                         </a>
                                     @endif
-                                    @if (Auth::check() && Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('jadwal.read') || Auth::user()->can('jadwal.view')))
                                         <a href="{{ route('admin.jadwal-pelajaran.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-calendar-alt mr-2"></i>Jadwal Pelajaran
                                         </a>
                                     @endif
-                                    @if (Auth::check() && Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']))
+                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']) || Auth::user()->can('sarpras.view') || Auth::user()->can('sarpras.read')))
                                         <a href="{{ route('admin.sarpras.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-building mr-2"></i>Sarpras Management
@@ -66,7 +66,7 @@
                     @endif
 
                     <!-- E-Services -->
-                    @if (Auth::check() && Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru']))
+                    @if (Auth::check() && Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru', 'osis']))
                         <div class="relative group">
                             <button
                                 class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
@@ -79,7 +79,7 @@
                             <div
                                 class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div class="py-2">
-                                    @if (Auth::check() && Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['admin', 'superadmin', 'osis']) || Auth::user()->can('osis.read') || Auth::user()->can('osis.view')))
                                         <a href="{{ route('admin.osis.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-vote-yea mr-2"></i>E-OSIS Voting
@@ -89,6 +89,49 @@
                                         <a href="{{ route('admin.lulus.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-graduation-cap mr-2"></i>E-Lulus Graduation
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Student Menu (Siswa) -->
+                    @if (Auth::check() && Auth::user()->hasRole('siswa'))
+                        <div class="relative group">
+                            <button
+                                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
+                                Student
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div
+                                class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                <div class="py-2">
+                                    @if (Auth::check() && (Auth::user()->hasRole('siswa') || Auth::user()->can('osis.vote')))
+                                        <a href="{{ route('admin.osis.voting') }}"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-vote-yea mr-2"></i>OSIS Voting
+                                        </a>
+                                    @endif
+                                    @if (Auth::check() && (Auth::user()->hasRole('siswa') || Auth::user()->can('osis.results')))
+                                        <a href="{{ route('admin.osis.results') }}"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-chart-bar mr-2"></i>Voting Results
+                                        </a>
+                                    @endif
+                                    @if (Auth::check() && (Auth::user()->hasRole('siswa') || Auth::user()->can('jadwal.read')))
+                                        <a href="{{ route('admin.jadwal-pelajaran.index') }}"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-calendar-alt mr-2"></i>Jadwal Pelajaran
+                                        </a>
+                                    @endif
+                                    @if (Auth::check() && (Auth::user()->hasRole('siswa') || Auth::user()->can('lulus.read')))
+                                        <a href="{{ route('admin.lulus.index') }}"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-graduation-cap mr-2"></i>Kelulusan
                                         </a>
                                     @endif
                                 </div>
@@ -131,8 +174,8 @@
                         </div>
                     @endif
 
-                    <!-- System Management (Superadmin only) -->
-                    @if (Auth::check() && Auth::user()->hasRole('superadmin'))
+                    <!-- System Management (Superadmin & Admin) -->
+                    @if (Auth::check() && Auth::user()->hasAnyRole(['superadmin', 'admin']))
                         <div class="relative group">
                             <button
                                 class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center">
@@ -162,16 +205,20 @@
                                             <i class="fas fa-user-shield mr-2"></i>Role Management
                                         </a>
                                     @endif
-                                    <a href="{{ route('admin.role-permissions.index') }}"
-                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                        <i class="fas fa-shield-alt mr-2"></i>Role & Permissions
-                                    </a>
-                                    @can('viewAny', App\Models\Permission::class)
-                                        <a href="{{ route('admin.permissions.index') }}"
+                                    @if (auth()->user()->hasRole('superadmin'))
+                                        <a href="{{ route('admin.role-permissions.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                            <i class="fas fa-key mr-2"></i>Permission Management
+                                            <i class="fas fa-shield-alt mr-2"></i>Role & Permissions
                                         </a>
-                                    @endcan
+                                    @endif
+                                    @if (auth()->user()->hasRole('superadmin'))
+                                        @can('viewAny', App\Models\Permission::class)
+                                            <a href="{{ route('admin.permissions.index') }}"
+                                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                                <i class="fas fa-key mr-2"></i>Permission Management
+                                            </a>
+                                        @endcan
+                                    @endif
                                     @if (auth()->user()->hasRole('superadmin'))
                                         <a href="{{ route('admin.audit-logs.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
@@ -516,25 +563,25 @@
                                 Management
                             </div>
                             <div class="space-y-1 ml-2">
-                                @if (Auth::check() && Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('guru.view') || Auth::user()->can('guru.read')))
                                     <a href="{{ route('admin.guru.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-chalkboard-teacher mr-2"></i>Guru Management
                                     </a>
                                 @endif
-                                @if (Auth::check() && Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('siswa.view') || Auth::user()->can('siswa.read')))
                                     <a href="{{ route('admin.siswa.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-user-graduate mr-2"></i>Siswa Management
                                     </a>
                                 @endif
-                                @if (Auth::check() && Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']))
+                                @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('jadwal.read') || Auth::user()->can('jadwal.view')))
                                     <a href="{{ route('admin.jadwal-pelajaran.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-calendar-alt mr-2"></i>Jadwal Pelajaran
                                     </a>
                                 @endif
-                                @if (Auth::check() && Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']))
+                                @if (Auth::check() && (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']) || Auth::user()->can('sarpras.view') || Auth::user()->can('sarpras.read')))
                                     <a href="{{ route('admin.sarpras.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-building mr-2"></i>Sarpras Management
@@ -545,11 +592,11 @@
                     @endif
 
                     <!-- E-Services -->
-                    @if (Auth::check() && Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru']))
+                    @if (Auth::check() && Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru', 'osis']))
                         <div class="px-3 py-2">
                             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">E-Services</div>
                             <div class="space-y-1 ml-2">
-                                @if (Auth::check() && Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                @if (Auth::check() && (Auth::user()->hasAnyRole(['admin', 'superadmin', 'osis']) || Auth::user()->can('osis.read') || Auth::user()->can('osis.view')))
                                     <a href="{{ route('admin.osis.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-vote-yea mr-2"></i>E-OSIS Voting

@@ -15,7 +15,7 @@ class KategoriSarprasPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('sarpras.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.view') || $user->can('sarpras.read') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 
     /**
@@ -23,7 +23,7 @@ class KategoriSarprasPolicy
      */
     public function view(User $user, KategoriSarpras $kategoriSarpras): bool
     {
-        return $user->can('sarpras.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.view') || $user->can('sarpras.read') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 
     /**
@@ -31,7 +31,7 @@ class KategoriSarprasPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('sarpras.create') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.create') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 
     /**
@@ -39,7 +39,7 @@ class KategoriSarprasPolicy
      */
     public function update(User $user, KategoriSarpras $kategoriSarpras): bool
     {
-        return $user->can('sarpras.edit') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.edit') || $user->can('sarpras.update') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 
     /**
@@ -47,6 +47,6 @@ class KategoriSarprasPolicy
      */
     public function delete(User $user, KategoriSarpras $kategoriSarpras): bool
     {
-        return $user->can('sarpras.delete') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.delete') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 }

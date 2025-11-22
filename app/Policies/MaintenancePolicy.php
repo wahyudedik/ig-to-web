@@ -15,7 +15,7 @@ class MaintenancePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('sarpras.view') || $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.view') || $user->can('sarpras.read') || $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 
     /**
@@ -23,7 +23,7 @@ class MaintenancePolicy
      */
     public function view(User $user, Maintenance $maintenance): bool
     {
-        return $user->can('sarpras.view') || $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.view') || $user->can('sarpras.read') || $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 
     /**
@@ -31,7 +31,7 @@ class MaintenancePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 
     /**
@@ -39,7 +39,7 @@ class MaintenancePolicy
      */
     public function update(User $user, Maintenance $maintenance): bool
     {
-        return $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 
     /**
@@ -47,6 +47,6 @@ class MaintenancePolicy
      */
     public function delete(User $user, Maintenance $maintenance): bool
     {
-        return $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('sarpras.maintenance') || $user->hasRole(['superadmin', 'admin', 'sarpras']);
     }
 }

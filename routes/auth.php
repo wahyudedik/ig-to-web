@@ -56,4 +56,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    // Fallback route for GET requests to logout (prevents MethodNotAllowedHttpException)
+    // This handles cases where browser prefetch/cache tries to access /logout via GET
+    Route::get('logout', [AuthenticatedSessionController::class, 'logoutGet'])
+        ->name('logout.get');
 });

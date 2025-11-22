@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">Daftar Maintenance Sarpras</h1>
-                <p class="text-slate-600 mt-1">Kelola data maintenance dan perawatan sarana prasarana sekolah</p>
+                <h1 class="text-2xl font-bold text-slate-900">{{ __('common.sarpras_maintenance_list') }}</h1>
+                <p class="text-slate-600 mt-1">{{ __('common.manage_sarpras_maintenance') }}</p>
             </div>
             <div class="flex items-center space-x-2">
                 <a href="{{ route('admin.sarpras.maintenance.create') }}" class="btn btn-primary">
@@ -11,14 +11,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Tambah Maintenance
+                    {{ __('common.add_maintenance') }}
                 </a>
                 <a href="{{ route('admin.sarpras.index') }}" class="btn btn-secondary">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Kembali ke Sarpras
+                    {{ __('common.back_to_sarpras') }}
                 </a>
             </div>
         </div>
@@ -40,7 +40,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Maintenance</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_maintenance') }}</p>
                         <p class="text-2xl font-bold text-slate-900">{{ $maintenances->count() }}</p>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Selesai</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.completed') }}</p>
                         <p class="text-2xl font-bold text-slate-900">
                             {{ $maintenances->where('status', 'selesai')->count() }}</p>
                     </div>
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Dalam Proses</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.in_process') }}</p>
                         <p class="text-2xl font-bold text-slate-900">
                             {{ $maintenances->where('status', 'dalam_proses')->count() }}</p>
                     </div>
@@ -95,7 +95,7 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-slate-600">Total Biaya</p>
+                        <p class="text-sm font-medium text-slate-600">{{ __('common.total_cost') }}</p>
                         <p class="text-2xl font-bold text-slate-900">
                             {{ 'Rp ' . number_format($maintenances->sum('biaya'), 0, ',', '.') }}</p>
                     </div>
@@ -109,15 +109,14 @@
                 class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari jenis maintenance..." class="form-input">
+                        placeholder="{{ __('common.search_maintenance_type') }}" class="form-input">
                 </div>
                 <div class="flex gap-2">
                     <select name="status" class="form-input">
-                        <option value="">Semua Status</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="dalam_proses" {{ request('status') == 'dalam_proses' ? 'selected' : '' }}>Dalam
-                            Proses</option>
-                        <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai
+                        <option value="">{{ __('common.all_status') }}</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('common.pending') }}</option>
+                        <option value="dalam_proses" {{ request('status') == 'dalam_proses' ? 'selected' : '' }}>{{ __('common.in_process') }}</option>
+                        <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>{{ __('common.completed') }}
                         </option>
                     </select>
                     <button type="submit" class="btn btn-primary">
@@ -125,14 +124,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        Cari
+                        {{ __('common.search') }}
                     </button>
                     <a href="{{ route('admin.sarpras.maintenance.index') }}" class="btn btn-secondary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Reset
+                        {{ __('common.reset') }}
                     </a>
                 </div>
             </form>
@@ -144,14 +143,14 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Jenis Maintenance</th>
-                            <th>Item</th>
-                            <th>Status</th>
-                            <th>Biaya</th>
-                            <th>Tanggal</th>
-                            <th>Teknisi</th>
-                            <th>Aksi</th>
+                            <th>{{ __('common.no') }}</th>
+                            <th>{{ __('common.maintenance_type') }}</th>
+                            <th>{{ __('common.item_name') }}</th>
+                            <th>{{ __('common.status') }}</th>
+                            <th>{{ __('common.cost') }}</th>
+                            <th>{{ __('common.maintenance_date') }}</th>
+                            <th>{{ __('common.technician') }}</th>
+                            <th>{{ __('common.action') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -212,7 +211,7 @@
                                         <form method="POST"
                                             action="{{ route('admin.sarpras.maintenance.destroy', $m) }}"
                                             class="inline"
-                                            data-confirm="Apakah Anda yakin ingin menghapus maintenance {{ $m->jenis_maintenance }}?">
+                                            data-confirm="{{ str_replace(':name', $m->jenis_maintenance, __('common.delete_maintenance_confirmation')) }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-700">
@@ -237,7 +236,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    <p class="text-slate-500">Belum ada data maintenance</p>
+                                    <p class="text-slate-500">{{ __('common.no_maintenance_data') }}</p>
                                 </td>
                             </tr>
                         @endforelse

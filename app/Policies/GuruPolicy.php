@@ -15,7 +15,7 @@ class GuruPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('guru.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('guru.view') || $user->can('guru.read') || $user->hasRole(['superadmin', 'admin', 'guru']);
     }
 
     /**
@@ -23,7 +23,7 @@ class GuruPolicy
      */
     public function view(User $user, Guru $guru): bool
     {
-        return $user->can('guru.view') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('guru.view') || $user->can('guru.read') || $user->hasRole(['superadmin', 'admin', 'guru']);
     }
 
     /**
@@ -39,7 +39,7 @@ class GuruPolicy
      */
     public function update(User $user, Guru $guru): bool
     {
-        return $user->can('guru.edit') || $user->hasRole(['superadmin', 'admin']);
+        return $user->can('guru.edit') || $user->can('guru.update') || $user->hasRole(['superadmin', 'admin']);
     }
 
     /**
