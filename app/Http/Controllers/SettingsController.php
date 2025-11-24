@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Page;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Artisan;
 
 class SettingsController extends Controller
 {
@@ -90,6 +91,11 @@ class SettingsController extends Controller
             'headmaster_description' => 'nullable|string',
             'headmaster_vision' => 'nullable|string',
             'headmaster_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // Campus Life Section (can override headmaster info for campus life section)
+            'campus_life_headmaster_name' => 'nullable|string|max:255',
+            'campus_life_headmaster_description' => 'nullable|string',
+            'campus_life_headmaster_vision' => 'nullable|string',
+            'campus_life_headmaster_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'program_section_title' => 'nullable|string|max:255',
             'program_ipa_title' => 'nullable|string|max:255',
             'program_ipa_description' => 'nullable|string',
@@ -164,6 +170,10 @@ class SettingsController extends Controller
             'headmaster_name' => $request->headmaster_name,
             'headmaster_description' => $request->headmaster_description,
             'headmaster_vision' => $request->headmaster_vision,
+            // Campus Life Section
+            'campus_life_headmaster_name' => $request->campus_life_headmaster_name,
+            'campus_life_headmaster_description' => $request->campus_life_headmaster_description,
+            'campus_life_headmaster_vision' => $request->campus_life_headmaster_vision,
             'program_section_title' => $request->program_section_title,
             'program_ipa_title' => $request->program_ipa_title,
             'program_ipa_description' => $request->program_ipa_description,
@@ -215,77 +225,170 @@ class SettingsController extends Controller
             'gallery_subtitle' => $request->gallery_subtitle,
         ];
 
-        // Handle file uploads
-        if ($request->hasFile('logo')) {
-            $logoPath = $request->file('logo')->store('site-assets', 'public');
-            $settings['logo'] = $logoPath;
-        }
+        // Handle file uploads with old file deletion
+        try {
+            if ($request->hasFile('logo')) {
+                // Delete old logo if exists
+                $oldLogo = cache('site_setting_logo');
+                if ($oldLogo && Storage::disk('public')->exists($oldLogo)) {
+                    Storage::disk('public')->delete($oldLogo);
+                }
+                $logoPath = $request->file('logo')->store('site-assets', 'public');
+                $settings['logo'] = $logoPath;
+            }
 
-        if ($request->hasFile('program_section_image')) {
-            $programImagePath = $request->file('program_section_image')->store('site-assets/program', 'public');
-            $settings['program_section_image'] = $programImagePath;
-        }
+            if ($request->hasFile('program_section_image')) {
+                // Delete old image if exists
+                $oldImage = cache('site_setting_program_section_image');
+                if ($oldImage && Storage::disk('public')->exists($oldImage)) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+                $programImagePath = $request->file('program_section_image')->store('site-assets/program', 'public');
+                $settings['program_section_image'] = $programImagePath;
+            }
 
-        if ($request->hasFile('favicon')) {
-            $faviconPath = $request->file('favicon')->store('site-assets', 'public');
-            $settings['favicon'] = $faviconPath;
-        }
+            if ($request->hasFile('favicon')) {
+                // Delete old favicon if exists
+                $oldFavicon = cache('site_setting_favicon');
+                if ($oldFavicon && Storage::disk('public')->exists($oldFavicon)) {
+                    Storage::disk('public')->delete($oldFavicon);
+                }
+                $faviconPath = $request->file('favicon')->store('site-assets', 'public');
+                $settings['favicon'] = $faviconPath;
+            }
 
-        if ($request->hasFile('hero_images')) {
-            $heroImagePaths = [];
-            $uploadedImages = $request->file('hero_images');
+            if ($request->hasFile('hero_images')) {
+                // Delete old hero images if exists
+                $oldHeroImages = cache('site_setting_hero_images');
+                if ($oldHeroImages) {
+                    $oldImagesArray = json_decode($oldHeroImages, true);
+                    if (is_array($oldImagesArray)) {
+                        foreach ($oldImagesArray as $oldImage) {
+                            if (Storage::disk('public')->exists($oldImage)) {
+                                Storage::disk('public')->delete($oldImage);
+                            }
+                        }
+                    }
+                }
 
-            // Limit to maximum 5 images
-            $maxImages = min(5, count($uploadedImages));
+                $heroImagePaths = [];
+                $uploadedImages = $request->file('hero_images');
 
-            for ($i = 0; $i < $maxImages; $i++) {
-                $image = $uploadedImages[$i];
-                if ($image && $image->isValid()) {
-                    $heroImagePaths[] = $image->store('site-assets/hero', 'public');
+                // Limit to maximum 5 images
+                $maxImages = min(5, count($uploadedImages));
+
+                for ($i = 0; $i < $maxImages; $i++) {
+                    $image = $uploadedImages[$i];
+                    if ($image && $image->isValid()) {
+                        $heroImagePaths[] = $image->store('site-assets/hero', 'public');
+                    }
+                }
+
+                if (!empty($heroImagePaths)) {
+                    $settings['hero_images'] = json_encode($heroImagePaths);
                 }
             }
 
-            if (!empty($heroImagePaths)) {
-                $settings['hero_images'] = json_encode($heroImagePaths);
+            if ($request->hasFile('video_thumbnail')) {
+                // Delete old thumbnail if exists
+                $oldThumbnail = cache('site_setting_video_thumbnail');
+                if ($oldThumbnail && Storage::disk('public')->exists($oldThumbnail)) {
+                    Storage::disk('public')->delete($oldThumbnail);
+                }
+                $videoThumbnailPath = $request->file('video_thumbnail')->store('site-assets/video', 'public');
+                $settings['video_thumbnail'] = $videoThumbnailPath;
             }
-        }
 
-        if ($request->hasFile('video_thumbnail')) {
-            $videoThumbnailPath = $request->file('video_thumbnail')->store('site-assets/video', 'public');
-            $settings['video_thumbnail'] = $videoThumbnailPath;
-        }
-
-        if ($request->hasFile('headmaster_photo')) {
-            $headmasterPhotoPath = $request->file('headmaster_photo')->store('site-assets/headmaster', 'public');
-            $settings['headmaster_photo'] = $headmasterPhotoPath;
-        }
-
-        // Handle About Section Images
-        if ($request->hasFile('about_image_1')) {
-            $aboutImage1Path = $request->file('about_image_1')->store('site-assets/about', 'public');
-            $settings['about_image_1'] = $aboutImage1Path;
-        }
-
-        if ($request->hasFile('about_image_2')) {
-            $aboutImage2Path = $request->file('about_image_2')->store('site-assets/about', 'public');
-            $settings['about_image_2'] = $aboutImage2Path;
-        }
-
-        if ($request->hasFile('about_image_3')) {
-            $aboutImage3Path = $request->file('about_image_3')->store('site-assets/about', 'public');
-            $settings['about_image_3'] = $aboutImage3Path;
-        }
-
-        // Save settings to database or config file
-        // For now, we'll store in a simple way
-        foreach ($settings as $key => $value) {
-            if ($value !== null) {
-                // You can create a settings table or use cache/config
-                cache()->put("site_setting_{$key}", $value);
+            if ($request->hasFile('headmaster_photo')) {
+                // Delete old photo if exists
+                $oldPhoto = cache('site_setting_headmaster_photo');
+                if ($oldPhoto && Storage::disk('public')->exists($oldPhoto)) {
+                    Storage::disk('public')->delete($oldPhoto);
+                }
+                $headmasterPhotoPath = $request->file('headmaster_photo')->store('site-assets/headmaster', 'public');
+                $settings['headmaster_photo'] = $headmasterPhotoPath;
             }
+
+            if ($request->hasFile('campus_life_headmaster_photo')) {
+                // Delete old photo if exists
+                $oldPhoto = cache('site_setting_campus_life_headmaster_photo');
+                if ($oldPhoto && Storage::disk('public')->exists($oldPhoto)) {
+                    Storage::disk('public')->delete($oldPhoto);
+                }
+                $campusLifePhotoPath = $request->file('campus_life_headmaster_photo')->store('site-assets/headmaster', 'public');
+                $settings['campus_life_headmaster_photo'] = $campusLifePhotoPath;
+            }
+
+            // Handle About Section Images
+            if ($request->hasFile('about_image_1')) {
+                $oldImage = cache('site_setting_about_image_1');
+                if ($oldImage && Storage::disk('public')->exists($oldImage)) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+                $aboutImage1Path = $request->file('about_image_1')->store('site-assets/about', 'public');
+                $settings['about_image_1'] = $aboutImage1Path;
+            }
+
+            if ($request->hasFile('about_image_2')) {
+                $oldImage = cache('site_setting_about_image_2');
+                if ($oldImage && Storage::disk('public')->exists($oldImage)) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+                $aboutImage2Path = $request->file('about_image_2')->store('site-assets/about', 'public');
+                $settings['about_image_2'] = $aboutImage2Path;
+            }
+
+            if ($request->hasFile('about_image_3')) {
+                $oldImage = cache('site_setting_about_image_3');
+                if ($oldImage && Storage::disk('public')->exists($oldImage)) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+                $aboutImage3Path = $request->file('about_image_3')->store('site-assets/about', 'public');
+                $settings['about_image_3'] = $aboutImage3Path;
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat mengupload file: ' . $e->getMessage());
         }
 
-        return redirect()->back()->with('success', 'Landing page settings updated successfully!');
+        try {
+            // Save settings to cache with long TTL to prevent expiration
+            // Note: Due to duplicate form fields, we prioritize non-empty values
+            foreach ($settings as $key => $value) {
+                if ($value !== null) {
+                    // Special handling for JSON strings (like hero_images)
+                    if ($key === 'hero_images' && is_string($value)) {
+                        // Don't trim JSON strings, save as-is
+                        cache()->put("site_setting_{$key}", $value, now()->addYear());
+                    } elseif (is_string($value)) {
+                        $trimmedValue = trim($value);
+                        // Only save non-empty strings to prevent overwriting with empty values
+                        if ($trimmedValue !== '') {
+                            // Store with very long TTL (1 year) to ensure persistence
+                            cache()->put("site_setting_{$key}", $trimmedValue, now()->addYear());
+                        }
+                        // If empty string, don't overwrite existing cache - keep existing value
+                    } elseif (is_numeric($value)) {
+                        // For numeric values (integers, floats), save directly
+                        cache()->put("site_setting_{$key}", $value, now()->addYear());
+                    } else {
+                        // For other values (arrays, objects, etc.), save directly
+                        cache()->put("site_setting_{$key}", $value, now()->addYear());
+                    }
+                }
+            }
+
+            // Clear view cache to ensure changes are reflected immediately
+            // Note: We don't clear the full cache as it would remove the settings we just saved
+            Artisan::call('view:clear');
+
+            return redirect()->back()->with('success', 'Landing page settings updated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat menyimpan settings: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -358,7 +461,12 @@ class SettingsController extends Controller
             'headmaster_name',
             'headmaster_description',
             'headmaster_vision',
-            'headmaster_photo'
+            'headmaster_photo',
+            // Campus Life Section
+            'campus_life_headmaster_name',
+            'campus_life_headmaster_description',
+            'campus_life_headmaster_vision',
+            'campus_life_headmaster_photo'
         ];
 
         foreach ($settings as $setting) {

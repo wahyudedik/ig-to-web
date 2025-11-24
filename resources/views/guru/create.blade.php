@@ -25,7 +25,7 @@
 
                                 <!-- NIP -->
                                 <div>
-                                    <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">NIP
+                                    <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.nip') }}
                                         *</label>
                                     <input type="text" name="nip" id="nip" value="{{ old('nip') }}"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nip') border-red-500 @else border-gray-300 @enderror"
@@ -37,8 +37,7 @@
 
                                 <!-- Nama Lengkap -->
                                 <div>
-                                    <label for="nama_lengkap" class="block text-sm font-medium text-gray-700 mb-1">Nama
-                                        Lengkap *</label>
+                                    <label for="nama_lengkap" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.full_name_label') }} *</label>
                                     <input type="text" name="nama_lengkap" id="nama_lengkap"
                                         value="{{ old('nama_lengkap') }}"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nama_lengkap') border-red-500 @else border-gray-300 @enderror"
@@ -52,7 +51,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label for="gelar_depan"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Gelar Depan</label>
+                                            class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.title_prefix') }}</label>
                                         <input type="text" name="gelar_depan" id="gelar_depan"
                                             value="{{ old('gelar_depan') }}"
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('gelar_depan') border-red-500 @else border-gray-300 @enderror">
@@ -62,7 +61,7 @@
                                     </div>
                                     <div>
                                         <label for="gelar_belakang"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Gelar Belakang</label>
+                                            class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.title_suffix') }}</label>
                                         <input type="text" name="gelar_belakang" id="gelar_belakang"
                                             value="{{ old('gelar_belakang') }}"
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('gelar_belakang') border-red-500 @else border-gray-300 @enderror">
@@ -74,19 +73,19 @@
 
                                 <!-- Jenis Kelamin -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin *</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.gender_label') }} *</label>
                                     <div class="flex space-x-4">
                                         <label class="flex items-center">
                                             <input type="radio" name="jenis_kelamin" value="L"
                                                 {{ old('jenis_kelamin') == 'L' ? 'checked' : '' }}
                                                 class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                                            <span class="ml-2 text-sm text-gray-700">Laki-laki</span>
+                                            <span class="ml-2 text-sm text-gray-700">{{ __('common.laki_laki') }}</span>
                                         </label>
                                         <label class="flex items-center">
                                             <input type="radio" name="jenis_kelamin" value="P"
                                                 {{ old('jenis_kelamin') == 'P' ? 'checked' : '' }}
                                                 class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                                            <span class="ml-2 text-sm text-gray-700">Perempuan</span>
+                                            <span class="ml-2 text-sm text-gray-700">{{ __('common.perempuan') }}</span>
                                         </label>
                                     </div>
                                     @error('jenis_kelamin')
@@ -98,7 +97,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label for="tanggal_lahir"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir *</label>
+                                            class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.birth_date') }} *</label>
                                         <input type="date" name="tanggal_lahir" id="tanggal_lahir"
                                             value="{{ old('tanggal_lahir') }}"
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal_lahir') border-red-500 @else border-gray-300 @enderror"
@@ -109,7 +108,7 @@
                                     </div>
                                     <div>
                                         <label for="tempat_lahir"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Tempat Lahir *</label>
+                                            class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.birth_place') }} *</label>
                                         <input type="text" name="tempat_lahir" id="tempat_lahir"
                                             value="{{ old('tempat_lahir') }}"
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tempat_lahir') border-red-500 @else border-gray-300 @enderror"
@@ -122,8 +121,7 @@
 
                                 <!-- Alamat -->
                                 <div>
-                                    <label for="alamat" class="block text-sm font-medium text-gray-700 mb-1">Alamat
-                                        *</label>
+                                    <label for="alamat" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.address_label') }} *</label>
                                     <textarea name="alamat" id="alamat" rows="3"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('alamat') border-red-500 @else border-gray-300 @enderror"
                                         required>{{ old('alamat') }}</textarea>
@@ -135,8 +133,7 @@
                                 <!-- Kontak -->
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label for="no_telepon" class="block text-sm font-medium text-gray-700 mb-1">No.
-                                            Telepon</label>
+                                        <label for="no_telepon" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.phone_number_label') }}</label>
                                         <input type="text" name="no_telepon" id="no_telepon"
                                             value="{{ old('no_telepon') }}"
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('no_telepon') border-red-500 @else border-gray-300 @enderror">
@@ -145,8 +142,7 @@
                                         @enderror
                                     </div>
                                     <div>
-                                        <label for="no_wa" class="block text-sm font-medium text-gray-700 mb-1">No.
-                                            WhatsApp</label>
+                                        <label for="no_wa" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.whatsapp_number') }}</label>
                                         <input type="text" name="no_wa" id="no_wa"
                                             value="{{ old('no_wa') }}"
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('no_wa') border-red-500 @else border-gray-300 @enderror">
@@ -159,7 +155,7 @@
                                 <!-- Email -->
                                 <div>
                                     <label for="email"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.email_label') }}</label>
                                     <input type="email" name="email" id="email" value="{{ old('email') }}"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('email') border-red-500 @else border-gray-300 @enderror">
                                     @error('email')
@@ -170,10 +166,10 @@
                                 <!-- Foto -->
                                 <div>
                                     <label for="foto"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.photo') }}</label>
                                     <input type="file" name="foto" id="foto" accept="image/*"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('foto') border-red-500 @else border-gray-300 @enderror">
-                                    <p class="text-gray-500 text-xs mt-1">Max size: 2MB, Formats: JPEG, PNG, JPG, GIF
+                                    <p class="text-gray-500 text-xs mt-1">{{ __('common.max_size_formats') }}
                                     </p>
                                     @error('foto')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -183,17 +179,17 @@
 
                             <!-- Professional Information -->
                             <div class="space-y-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Profesional</h3>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('common.professional_information') }}</h3>
 
                                 <!-- Status Kepegawaian -->
                                 <div>
                                     <label for="status_kepegawaian"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Status Kepegawaian
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.employment_status') }}
                                         *</label>
                                     <select name="status_kepegawaian" id="status_kepegawaian"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('status_kepegawaian') border-red-500 @else border-gray-300 @enderror"
                                         required>
-                                        <option value="">Pilih Status</option>
+                                        <option value="">{{ __('common.select_status') }}</option>
                                         <option value="PNS"
                                             {{ old('status_kepegawaian') == 'PNS' ? 'selected' : '' }}>PNS</option>
                                         <option value="CPNS"
@@ -214,7 +210,7 @@
                                 <!-- Jabatan -->
                                 <div>
                                     <label for="jabatan"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Jabatan</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.position') }}</label>
                                     <input type="text" name="jabatan" id="jabatan"
                                         value="{{ old('jabatan') }}"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('jabatan') border-red-500 @else border-gray-300 @enderror">
@@ -226,7 +222,7 @@
                                 <!-- Tanggal Masuk -->
                                 <div>
                                     <label for="tanggal_masuk"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Tanggal Masuk *</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.entry_date') }} *</label>
                                     <input type="date" name="tanggal_masuk" id="tanggal_masuk"
                                         value="{{ old('tanggal_masuk') }}"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal_masuk') border-red-500 @else border-gray-300 @enderror"
@@ -239,7 +235,7 @@
                                 <!-- Tanggal Keluar -->
                                 <div>
                                     <label for="tanggal_keluar"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Tanggal Keluar</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.exit_date') }}</label>
                                     <input type="date" name="tanggal_keluar" id="tanggal_keluar"
                                         value="{{ old('tanggal_keluar') }}"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal_keluar') border-red-500 @else border-gray-300 @enderror">
@@ -251,20 +247,20 @@
                                 <!-- Status Aktif -->
                                 <div>
                                     <label for="status_aktif"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Status Aktif *</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.active_status') }} *</label>
                                     <select name="status_aktif" id="status_aktif"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('status_aktif') border-red-500 @else border-gray-300 @enderror"
                                         required>
-                                        <option value="">Pilih Status</option>
+                                        <option value="">{{ __('common.select_status') }}</option>
                                         <option value="aktif" {{ old('status_aktif') == 'aktif' ? 'selected' : '' }}>
-                                            Aktif</option>
+                                            {{ __('common.active') }}</option>
                                         <option value="tidak_aktif"
-                                            {{ old('status_aktif') == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif
+                                            {{ old('status_aktif') == 'tidak_aktif' ? 'selected' : '' }}>{{ __('common.inactive') }}
                                         </option>
                                         <option value="pensiun"
-                                            {{ old('status_aktif') == 'pensiun' ? 'selected' : '' }}>Pensiun</option>
+                                            {{ old('status_aktif') == 'pensiun' ? 'selected' : '' }}>{{ __('common.retired') }}</option>
                                         <option value="meninggal"
-                                            {{ old('status_aktif') == 'meninggal' ? 'selected' : '' }}>Meninggal
+                                            {{ old('status_aktif') == 'meninggal' ? 'selected' : '' }}>{{ __('common.deceased') }}
                                         </option>
                                     </select>
                                     @error('status_aktif')
@@ -276,7 +272,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label for="pendidikan_terakhir"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Pendidikan Terakhir
+                                            class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.education_level') }}
                                             *</label>
                                         <input type="text" name="pendidikan_terakhir" id="pendidikan_terakhir"
                                             value="{{ old('pendidikan_terakhir') }}"
@@ -288,14 +284,14 @@
                                     </div>
                                     <div>
                                         <label for="tahun_lulus"
-                                            class="block text-sm font-medium text-gray-700 mb-1">Tahun Lulus *</label>
+                                            class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.education_year') }} *</label>
                                         <input type="text" name="tahun_lulus" id="tahun_lulus"
                                             value="{{ old('tahun_lulus') }}" inputmode="numeric" pattern="[0-9]{4}"
                                             maxlength="4" minlength="4"
                                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tahun_lulus') border-red-500 @else border-gray-300 @enderror"
                                             placeholder="YYYY" required
                                             oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);">
-                                        <small class="text-gray-500">Hanya tahun, contoh: 2023</small>
+                                        <small class="text-gray-500">{{ __('common.year_only_example') }}</small>
                                         @error('tahun_lulus')
                                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                         @enderror
@@ -305,7 +301,7 @@
                                 <!-- Universitas -->
                                 <div>
                                     <label for="universitas"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Universitas *</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.university') }} *</label>
                                     <input type="text" name="universitas" id="universitas"
                                         value="{{ old('universitas') }}"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('universitas') border-red-500 @else border-gray-300 @enderror"
@@ -318,7 +314,7 @@
                                 <!-- Sertifikasi -->
                                 <div>
                                     <label for="sertifikasi"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Sertifikasi</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.certification') }}</label>
                                     <textarea name="sertifikasi" id="sertifikasi" rows="3"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('sertifikasi') border-red-500 @else border-gray-300 @enderror">{{ old('sertifikasi') }}</textarea>
                                     @error('sertifikasi')
@@ -329,7 +325,7 @@
                                 <!-- Mata Pelajaran -->
                                 <div>
                                     <div class="flex items-center justify-between mb-1">
-                                        <label class="block text-sm font-medium text-gray-700">Mata Pelajaran *</label>
+                                        <label class="block text-sm font-medium text-gray-700">{{ __('common.subjects') }} *</label>
                                         <button type="button" onclick="openMataPelajaranModal()"
                                             class="px-3 py-1 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
                                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor"
@@ -337,7 +333,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M12 4v16m8-8H4"></path>
                                             </svg>
-                                            Tambah
+                                            {{ __('common.add') }}
                                         </button>
                                     </div>
                                     <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-2">
@@ -354,7 +350,7 @@
                                             @endforeach
                                         @else
                                             <div class="col-span-2 text-center text-gray-500 py-4">
-                                                Tidak ada mata pelajaran tersedia
+                                                {{ __('common.no_subjects_available') }}
                                             </div>
                                         @endif
                                     </div>
@@ -363,14 +359,14 @@
                                     @enderror
                                     <p class="text-xs text-gray-500 mt-1">
                                         <i class="fas fa-info-circle mr-1"></i>
-                                        Pilih mata pelajaran yang diajarkan oleh guru
+                                        {{ __('common.select_subjects_taught') }}
                                     </p>
                                 </div>
 
                                 <!-- Prestasi -->
                                 <div>
                                     <label for="prestasi"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Prestasi</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.achievement') }}</label>
                                     <textarea name="prestasi" id="prestasi" rows="3"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('prestasi') border-red-500 @else border-gray-300 @enderror">{{ old('prestasi') }}</textarea>
                                     @error('prestasi')
@@ -381,7 +377,7 @@
                                 <!-- Catatan -->
                                 <div>
                                     <label for="catatan"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.notes') }}</label>
                                     <textarea name="catatan" id="catatan" rows="3"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('catatan') border-red-500 @else border-gray-300 @enderror">{{ old('catatan') }}</textarea>
                                     @error('catatan')
@@ -392,8 +388,7 @@
                                 <!-- User Account -->
                                 <div>
                                     <div class="flex items-center justify-between mb-1">
-                                        <label for="user_id" class="block text-sm font-medium text-gray-700">User
-                                            Account</label>
+                                        <label for="user_id" class="block text-sm font-medium text-gray-700">{{ __('common.user_account') }}</label>
                                         <button type="button" onclick="openUserModal()"
                                             class="px-3 py-1 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
                                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor"
@@ -406,7 +401,7 @@
                                     </div>
                                     <select name="user_id" id="user_id"
                                         class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('user_id') border-red-500 @else border-gray-300 @enderror">
-                                        <option value="">Pilih User Account (Opsional)</option>
+                                        <option value="">{{ __('common.select_user_account_optional') }}</option>
                                         @if ($users->count() > 0)
                                             @foreach ($users as $user)
                                                 <option value="{{ $user->id }}"
@@ -415,7 +410,7 @@
                                                 </option>
                                             @endforeach
                                         @else
-                                            <option value="" disabled>Tidak ada user tersedia</option>
+                                            <option value="" disabled>{{ __('common.no_users_available') }}</option>
                                         @endif
                                     </select>
                                     @error('user_id')
@@ -423,7 +418,7 @@
                                     @enderror
                                     <p class="text-xs text-gray-500 mt-1">
                                         <i class="fas fa-info-circle mr-1"></i>
-                                        Hanya menampilkan user yang belum digunakan oleh guru lain
+                                        {{ __('common.only_unused_users') }}
                                     </p>
                                 </div>
                             </div>
@@ -433,11 +428,11 @@
                         <div class="mt-8 flex justify-end space-x-4">
                             <a href="{{ route('admin.guru.index') }}"
                                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                Batal
+                                {{ __('common.cancel') }}
                             </a>
                             <button type="submit"
                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Simpan Data Guru
+                                {{ __('common.save_teacher_data') }}
                             </button>
                         </div>
                     </form>
@@ -451,22 +446,22 @@
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">Kelola Mata Pelajaran</h3>
+                    <h3 class="text-lg font-medium text-gray-900">{{ __('common.manage_subjects') }}</h3>
                 </div>
                 <div class="p-6">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tambah Mata Pelajaran Baru</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.add_new_subject') }}</label>
                         <div class="space-y-3">
-                            <input type="text" id="newMataPelajaran" placeholder="Nama mata pelajaran"
+                            <input type="text" id="newMataPelajaran" placeholder="{{ __('common.subject_name') }}"
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <button onclick="addMataPelajaran()"
                                 class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                                Tambah Mata Pelajaran
+                                {{ __('common.add_subject') }}
                             </button>
                         </div>
                     </div>
                     <div class="border-t pt-4">
-                        <h4 class="text-sm font-medium text-gray-700 mb-2">Daftar Mata Pelajaran</h4>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">{{ __('common.subjects_list') }}</h4>
                         <div id="mataPelajaranList" class="space-y-2 max-h-40 overflow-y-auto">
                             <!-- List will be populated by JavaScript -->
                         </div>
@@ -475,7 +470,7 @@
                 <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
                     <button onclick="closeMataPelajaranModal()"
                         class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
-                        Tutup
+                        {{ __('common.close') }}
                     </button>
                 </div>
             </div>
@@ -487,26 +482,26 @@
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">Kelola User Account</h3>
+                    <h3 class="text-lg font-medium text-gray-900">{{ __('common.manage_user_account') }}</h3>
                 </div>
                 <div class="p-6">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tambah User Baru</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('common.add_new_user') }}</label>
                         <div class="space-y-3">
-                            <input type="text" id="newUserName" placeholder="Nama lengkap"
+                            <input type="text" id="newUserName" placeholder="{{ __('common.full_name_label') }}"
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <input type="email" id="newUserEmail" placeholder="Email"
+                            <input type="email" id="newUserEmail" placeholder="{{ __('common.email_label') }}"
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <input type="password" id="newUserPassword" placeholder="Password"
+                            <input type="password" id="newUserPassword" placeholder="{{ __('common.password') }}"
                                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <button onclick="addUser()"
                                 class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                                Tambah User
+                                {{ __('common.add_user') }}
                             </button>
                         </div>
                     </div>
                     <div class="border-t pt-4">
-                        <h4 class="text-sm font-medium text-gray-700 mb-2">Daftar User</h4>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">{{ __('common.users_list') }}</h4>
                         <div id="userList" class="space-y-2 max-h-40 overflow-y-auto">
                             <!-- List will be populated by JavaScript -->
                         </div>
@@ -515,7 +510,7 @@
                 <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
                     <button onclick="closeUserModal()"
                         class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
-                        Tutup
+                        {{ __('common.close') }}
                     </button>
                 </div>
             </div>
@@ -537,13 +532,13 @@
             const newMataPelajaran = document.getElementById('newMataPelajaran').value;
 
             if (!newMataPelajaran.trim()) {
-                showError('Nama mata pelajaran harus diisi');
+                showError('{{ __('common.subject_name_required') }}');
                 return;
             }
 
             const button = event.target;
             const originalText = button.textContent;
-            button.textContent = 'Loading...';
+            button.textContent = '{{ __('common.loading') }}';
             button.disabled = true;
 
             fetch('{{ route('admin.guru.addSubject') }}', {
@@ -581,9 +576,9 @@
                         loadMataPelajaranList();
 
                         document.getElementById('newMataPelajaran').value = '';
-                        showSuccess('Mata pelajaran berhasil ditambahkan!');
+                        showSuccess('{{ __('common.subject_added_successfully') }}');
                     } else {
-                        showError(data.message || 'Terjadi kesalahan saat menambahkan mata pelajaran');
+                        showError(data.message || '{{ __('common.error_adding_subject') }}');
                     }
                 })
                 .catch(error => {
@@ -599,7 +594,7 @@
                     } else if (error.message) {
                         showError(error.message);
                     } else {
-                        showError('Terjadi kesalahan saat menambahkan mata pelajaran');
+                        showError('{{ __('common.error_adding_subject') }}');
                     }
                 })
                 .finally(() => {
@@ -611,7 +606,7 @@
         function loadMataPelajaranList() {
             // This would typically fetch from an API endpoint
             // For now, we'll just show a placeholder
-            document.getElementById('mataPelajaranList').innerHTML = '<p class="text-gray-500 text-sm">Loading...</p>';
+            document.getElementById('mataPelajaranList').innerHTML = '<p class="text-gray-500 text-sm">{{ __('common.loading') }}</p>';
         }
 
         // User Functions
@@ -630,25 +625,25 @@
             const password = document.getElementById('newUserPassword').value;
             // Validation
             if (!name.trim()) {
-                showError('Nama lengkap harus diisi');
+                showError('{{ __('common.full_name_required') }}');
                 return;
             }
             if (!email.trim()) {
-                showError('Email harus diisi');
+                showError('{{ __('common.email_required') }}');
                 return;
             }
             if (!password.trim()) {
-                showError('Password harus diisi');
+                showError('{{ __('common.password_required') }}');
                 return;
             }
             if (password.length < 8) {
-                showError('Password minimal 8 karakter');
+                showError('{{ __('common.password_min_length') }}');
                 return;
             }
 
             const button = event.target;
             const originalText = button.textContent;
-            button.textContent = 'Loading...';
+            button.textContent = '{{ __('common.loading') }}';
             button.disabled = true;
 
             fetch('{{ route('admin.superadmin.users.store') }}', {
@@ -690,9 +685,9 @@
                         document.getElementById('newUserEmail').value = '';
                         document.getElementById('newUserPassword').value = '';
 
-                        showSuccess('User berhasil ditambahkan!');
+                        showSuccess('{{ __('common.user_added_successfully') }}');
                     } else {
-                        showError(data.message || 'Terjadi kesalahan saat menambahkan user');
+                        showError(data.message || '{{ __('common.error_adding_user') }}');
                     }
                 })
                 .catch(error => {
@@ -708,7 +703,7 @@
                     } else if (error.message) {
                         showError(error.message);
                     } else {
-                        showError('Terjadi kesalahan saat menambahkan user');
+                        showError('{{ __('common.error_adding_user') }}');
                     }
                 })
                 .finally(() => {
@@ -720,7 +715,7 @@
         function loadUserList() {
             // This would typically fetch from an API endpoint
             // For now, we'll just show a placeholder
-            document.getElementById('userList').innerHTML = '<p class="text-gray-500 text-sm">Loading...</p>';
+            document.getElementById('userList').innerHTML = '<p class="text-gray-500 text-sm">{{ __('common.loading') }}</p>';
         }
     </script>
 </x-app-layout>
