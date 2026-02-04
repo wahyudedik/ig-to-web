@@ -1,23 +1,26 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\InstagramController;
-use App\Http\Controllers\InstagramAnalyticsController;
-use App\Http\Controllers\InstagramSettingController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SuperadminController;
-use App\Http\Controllers\PageController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuruController;
-use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\OSISController;
-use App\Http\Controllers\KelulusanController;
-use App\Http\Controllers\SarprasController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\SaranaController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SarprasController;
+use App\Http\Controllers\LetterInController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InstagramController;
+use App\Http\Controllers\KelulusanController;
+use App\Http\Controllers\LetterOutController;
+use App\Http\Controllers\SuperadminController;
+use App\Http\Controllers\LetterFormatController;
 use App\Http\Controllers\SaranaReportController;
 use App\Http\Controllers\DataManagementController;
-use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\LocaleController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InstagramSettingController;
+use App\Http\Controllers\InstagramAnalyticsController;
 
 // ========================================
 // PUBLIC ROUTES (Landing Page & Public Features)
@@ -84,6 +87,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('admin.profile.edit');
     Route::patch('/admin/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
     Route::delete('/admin/profile', [ProfileController::class, 'destroy'])->name('admin.profile.destroy');
+});
+
+// E-Surat Routes
+Route::prefix('admin/surat')->name('admin.letters.')->middleware(['auth', 'verified'])->group(function () {
+    // Surat Keluar
+    Route::prefix('out')->name('out.')->group(function () {
+        Route::get('/', [LetterOutController::class, 'index'])->name('index');
+        Route::get('/create', [LetterOutController::class, 'create'])->name('create');
+        Route::post('/', [LetterOutController::class, 'store'])->name('store');
+        Route::get('/{letter}', [LetterOutController::class, 'show'])->name('show');
+        Route::get('/{letter}/print', [LetterOutController::class, 'print'])->name('print');
+        Route::get('/{letter}/upload', [LetterOutController::class, 'upload'])->name('upload');
+        Route::post('/{letter}/upload', [LetterOutController::class, 'processUpload'])->name('upload.process');
+    });
+
+    // Surat Masuk
+    Route::prefix('in')->name('in.')->group(function () {
+        Route::get('/', [LetterInController::class, 'index'])->name('index');
+        Route::get('/create', [LetterInController::class, 'create'])->name('create');
+        Route::post('/', [LetterInController::class, 'store'])->name('store');
+        Route::get('/{letter}', [LetterInController::class, 'show'])->name('show');
+    });
+
+    // Format Surat (Admin Only)
+    Route::resource('formats', LetterFormatController::class);
 });
 
 // ========================================
@@ -407,7 +435,7 @@ Route::middleware(['auth', 'verified', 'role:sarpras|admin|superadmin'])->prefix
     Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update');
     Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy');
     Route::get('/sarana/{sarana}/print-invoice', [SaranaController::class, 'printInvoice'])->name('sarana.printInvoice');
-    
+
     // Reports
     Route::get('/reports', [SaranaReportController::class, 'index'])->name('reports');
     Route::get('/reports/export-pdf', [SaranaReportController::class, 'exportPdf'])->name('reports.exportPdf');

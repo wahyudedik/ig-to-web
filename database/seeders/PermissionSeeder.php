@@ -683,6 +683,132 @@ class PermissionSeeder extends Seeder
                 'action' => 'edit',
                 'guard_name' => 'web'
             ],
+
+            // Surat Management permissions
+            [
+                'name' => 'surat.view',
+                'display_name' => 'Surat - Lihat Data',
+                'description' => 'Permission untuk melihat surat',
+                'module' => 'surat',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.create',
+                'display_name' => 'Surat - Buat Surat',
+                'description' => 'Permission untuk membuat surat',
+                'module' => 'surat',
+                'action' => 'create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.edit',
+                'display_name' => 'Surat - Edit Surat',
+                'description' => 'Permission untuk mengedit surat',
+                'module' => 'surat',
+                'action' => 'edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.delete',
+                'display_name' => 'Surat - Hapus Surat',
+                'description' => 'Permission untuk menghapus surat',
+                'module' => 'surat',
+                'action' => 'delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.settings',
+                'display_name' => 'Surat - Pengaturan',
+                'description' => 'Permission untuk mengatur format surat',
+                'module' => 'surat',
+                'action' => 'settings',
+                'guard_name' => 'web'
+            ],
+
+            // Surat Masuk specific
+            [
+                'name' => 'surat.in.view',
+                'display_name' => 'Surat Masuk - Lihat Data',
+                'description' => 'Permission untuk melihat surat masuk',
+                'module' => 'surat',
+                'action' => 'in.view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.in.create',
+                'display_name' => 'Surat Masuk - Buat Surat',
+                'description' => 'Permission untuk membuat surat masuk',
+                'module' => 'surat',
+                'action' => 'in.create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.in.edit',
+                'display_name' => 'Surat Masuk - Edit Surat',
+                'description' => 'Permission untuk mengedit surat masuk',
+                'module' => 'surat',
+                'action' => 'in.edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.in.delete',
+                'display_name' => 'Surat Masuk - Hapus Surat',
+                'description' => 'Permission untuk menghapus surat masuk',
+                'module' => 'surat',
+                'action' => 'in.delete',
+                'guard_name' => 'web'
+            ],
+
+            // Surat Keluar specific
+            [
+                'name' => 'surat.out.view',
+                'display_name' => 'Surat Keluar - Lihat Data',
+                'description' => 'Permission untuk melihat surat keluar',
+                'module' => 'surat',
+                'action' => 'out.view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.out.create',
+                'display_name' => 'Surat Keluar - Buat Surat',
+                'description' => 'Permission untuk membuat surat keluar',
+                'module' => 'surat',
+                'action' => 'out.create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.out.edit',
+                'display_name' => 'Surat Keluar - Edit Surat',
+                'description' => 'Permission untuk mengedit surat keluar',
+                'module' => 'surat',
+                'action' => 'out.edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.out.delete',
+                'display_name' => 'Surat Keluar - Hapus Surat',
+                'description' => 'Permission untuk menghapus surat keluar',
+                'module' => 'surat',
+                'action' => 'out.delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.out.print',
+                'display_name' => 'Surat Keluar - Cetak',
+                'description' => 'Permission untuk mencetak surat keluar',
+                'module' => 'surat',
+                'action' => 'out.print',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'surat.out.upload',
+                'display_name' => 'Surat Keluar - Upload Scan',
+                'description' => 'Permission untuk mengupload scan surat keluar',
+                'module' => 'surat',
+                'action' => 'out.upload',
+                'guard_name' => 'web'
+            ],
         ];
 
         foreach ($permissions as $permissionData) {

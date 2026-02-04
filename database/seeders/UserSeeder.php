@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         $superadmin = User::create([
             'name' => 'Super Administrator',
             'email' => 'superadmin@sekolah.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('password'), 
             'email_verified_at' => now(),
             'is_verified_by_admin' => true,
         ]);

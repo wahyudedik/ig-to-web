@@ -26,7 +26,7 @@ class AssignRolesSeeder extends Seeder
         $userRoles = [
             'superadmin@sekolah.com' => 'superadmin',
             'admin@sekolah.com' => 'admin',
-            'guru@sekolah.com' => 'guru',
+            'guru@sekolah.com' => 'guru', 
             'siswa@sekolah.com' => 'siswa',
             'sarpras@sekolah.com' => 'sarpras',
         ];

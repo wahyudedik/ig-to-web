@@ -64,6 +64,18 @@
 
     <!-- Additional Scripts -->
     @stack('scripts')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                window.showSuccess('Berhasil', '{{ session('success') }}');
+            @endif
+
+            @if (session('error'))
+                window.showError('Gagal', '{{ session('error') }}');
+            @endif
+        });
+    </script>
 </body>
 
 </html>

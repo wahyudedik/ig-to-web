@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class, // Butuh UserSeeder
             PageSeeder::class, // Butuh UserSeeder
             NotificationSeeder::class, // Butuh UserSeeder
+            LetterSeeder::class, // Format Surat
         ]);
     }
 }

@@ -36,25 +36,37 @@
                             <div
                                 class="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div class="py-2">
-                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('guru.view') || Auth::user()->can('guru.read')))
+                                    @if (Auth::check() &&
+                                            (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) ||
+                                                Auth::user()->can('guru.view') ||
+                                                Auth::user()->can('guru.read')))
                                         <a href="{{ route('admin.guru.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-chalkboard-teacher mr-2"></i>Guru Management
                                         </a>
                                     @endif
-                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('siswa.view') || Auth::user()->can('siswa.read')))
+                                    @if (Auth::check() &&
+                                            (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) ||
+                                                Auth::user()->can('siswa.view') ||
+                                                Auth::user()->can('siswa.read')))
                                         <a href="{{ route('admin.siswa.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-user-graduate mr-2"></i>Siswa Management
                                         </a>
                                     @endif
-                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('jadwal.read') || Auth::user()->can('jadwal.view')))
+                                    @if (Auth::check() &&
+                                            (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) ||
+                                                Auth::user()->can('jadwal.read') ||
+                                                Auth::user()->can('jadwal.view')))
                                         <a href="{{ route('admin.jadwal-pelajaran.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-calendar-alt mr-2"></i>Jadwal Pelajaran
                                         </a>
                                     @endif
-                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']) || Auth::user()->can('sarpras.view') || Auth::user()->can('sarpras.read')))
+                                    @if (Auth::check() &&
+                                            (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']) ||
+                                                Auth::user()->can('sarpras.view') ||
+                                                Auth::user()->can('sarpras.read')))
                                         <a href="{{ route('admin.sarpras.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-building mr-2"></i>Sarpras Management
@@ -79,7 +91,10 @@
                             <div
                                 class="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div class="py-2">
-                                    @if (Auth::check() && (Auth::user()->hasAnyRole(['admin', 'superadmin', 'osis']) || Auth::user()->can('osis.read') || Auth::user()->can('osis.view')))
+                                    @if (Auth::check() &&
+                                            (Auth::user()->hasAnyRole(['admin', 'superadmin', 'osis']) ||
+                                                Auth::user()->can('osis.read') ||
+                                                Auth::user()->can('osis.view')))
                                         <a href="{{ route('admin.osis.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-vote-yea mr-2"></i>E-OSIS Voting
@@ -90,6 +105,24 @@
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-graduation-cap mr-2"></i>E-Lulus Graduation
                                         </a>
+                                    @endif
+                                    @if (Auth::check() &&
+                                            (Auth::user()->hasAnyRole(['admin', 'superadmin', 'guru', 'sarpras']) || Auth::user()->can('surat.view')))
+                                        <div class="border-t border-slate-100 my-1"></div>
+                                        <a href="{{ route('admin.letters.out.index') }}"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-paper-plane mr-2"></i>Surat Keluar
+                                        </a>
+                                        <a href="{{ route('admin.letters.in.index') }}"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-inbox mr-2"></i>Surat Masuk
+                                        </a>
+                                        @if (Auth::user()->hasAnyRole(['admin', 'superadmin']))
+                                            <a href="{{ route('admin.letters.formats.index') }}"
+                                                class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                                <i class="fas fa-file-contract mr-2"></i>Format Surat
+                                            </a>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
@@ -193,7 +226,11 @@
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-users-cog mr-2"></i>User Management
                                         </a>
-                                    @elseif(auth()->user() && (auth()->user()->can('users.view') || auth()->user()->can('users.create') || auth()->user()->can('users.edit') || auth()->user()->can('users.delete')))
+                                    @elseif(auth()->user() &&
+                                            (auth()->user()->can('users.view') ||
+                                                auth()->user()->can('users.create') ||
+                                                auth()->user()->can('users.edit') ||
+                                                auth()->user()->can('users.delete')))
                                         <a href="{{ route('admin.user-management.index') }}"
                                             class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                             <i class="fas fa-users mr-2"></i>User Management
@@ -427,7 +464,8 @@
                                 <!-- Language Switcher -->
                                 <div class="py-2 border-t border-slate-100">
                                     <div class="px-4 py-2">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">{{ __('common.language') }}
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                                            {{ __('common.language') }}
                                         </p>
                                     </div>
                                     @php
@@ -456,21 +494,30 @@
                                 <!-- Timezone Switcher -->
                                 <div class="py-2 border-t border-slate-100">
                                     <div class="px-4 py-2">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">{{ __('common.timezone') }}
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                                            {{ __('common.timezone') }}
                                         </p>
                                     </div>
                                     @php
-                                        $currentTimezone = session('timezone', Auth::check() && Auth::user() ? (Auth::user()->timezone ?? config('i18n.default_timezone', 'Asia/Jakarta')) : config('i18n.default_timezone', 'Asia/Jakarta'));
+                                        $currentTimezone = session(
+                                            'timezone',
+                                            Auth::check() && Auth::user()
+                                                ? Auth::user()->timezone ??
+                                                    config('i18n.default_timezone', 'Asia/Jakarta')
+                                                : config('i18n.default_timezone', 'Asia/Jakarta'),
+                                        );
                                         $availableTimezones = config('i18n.timezones', []);
                                     @endphp
                                     <form method="POST" action="{{ route('timezone.switch') }}" id="timezone-form">
                                         @csrf
-                                        <select name="timezone" onchange="document.getElementById('timezone-form').submit();"
+                                        <select name="timezone"
+                                            onchange="document.getElementById('timezone-form').submit();"
                                             class="w-full px-4 py-2 text-sm text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                             @foreach ($availableTimezones as $region => $timezones)
                                                 <optgroup label="{{ $region }}">
                                                     @foreach ($timezones as $tz => $label)
-                                                        <option value="{{ $tz }}" {{ $tz === $currentTimezone ? 'selected' : '' }}>
+                                                        <option value="{{ $tz }}"
+                                                            {{ $tz === $currentTimezone ? 'selected' : '' }}>
                                                             {{ $label }}
                                                         </option>
                                                     @endforeach
@@ -483,7 +530,8 @@
                                 <!-- Quick Settings -->
                                 <div class="py-2 border-t border-slate-100">
                                     <div class="px-4 py-2">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">{{ __('common.quick_access') }}
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                                            {{ __('common.quick_access') }}
                                         </p>
                                     </div>
                                     @if (Auth::check() && Auth::user()->hasRole('superadmin'))
@@ -563,25 +611,37 @@
                                 Management
                             </div>
                             <div class="space-y-1 ml-2">
-                                @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('guru.view') || Auth::user()->can('guru.read')))
+                                @if (Auth::check() &&
+                                        (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) ||
+                                            Auth::user()->can('guru.view') ||
+                                            Auth::user()->can('guru.read')))
                                     <a href="{{ route('admin.guru.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-chalkboard-teacher mr-2"></i>Guru Management
                                     </a>
                                 @endif
-                                @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('siswa.view') || Auth::user()->can('siswa.read')))
+                                @if (Auth::check() &&
+                                        (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) ||
+                                            Auth::user()->can('siswa.view') ||
+                                            Auth::user()->can('siswa.read')))
                                     <a href="{{ route('admin.siswa.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-user-graduate mr-2"></i>Siswa Management
                                     </a>
                                 @endif
-                                @if (Auth::check() && (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('jadwal.read') || Auth::user()->can('jadwal.view')))
+                                @if (Auth::check() &&
+                                        (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) ||
+                                            Auth::user()->can('jadwal.read') ||
+                                            Auth::user()->can('jadwal.view')))
                                     <a href="{{ route('admin.jadwal-pelajaran.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-calendar-alt mr-2"></i>Jadwal Pelajaran
                                     </a>
                                 @endif
-                                @if (Auth::check() && (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']) || Auth::user()->can('sarpras.view') || Auth::user()->can('sarpras.read')))
+                                @if (Auth::check() &&
+                                        (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']) ||
+                                            Auth::user()->can('sarpras.view') ||
+                                            Auth::user()->can('sarpras.read')))
                                     <a href="{{ route('admin.sarpras.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-building mr-2"></i>Sarpras Management
@@ -596,7 +656,10 @@
                         <div class="px-3 py-2">
                             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">E-Services</div>
                             <div class="space-y-1 ml-2">
-                                @if (Auth::check() && (Auth::user()->hasAnyRole(['admin', 'superadmin', 'osis']) || Auth::user()->can('osis.read') || Auth::user()->can('osis.view')))
+                                @if (Auth::check() &&
+                                        (Auth::user()->hasAnyRole(['admin', 'superadmin', 'osis']) ||
+                                            Auth::user()->can('osis.read') ||
+                                            Auth::user()->can('osis.view')))
                                     <a href="{{ route('admin.osis.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-vote-yea mr-2"></i>E-OSIS Voting
@@ -677,7 +740,11 @@
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-users-cog mr-2"></i>User Management
                                     </a>
-                                @elseif(auth()->user() && (auth()->user()->can('users.view') || auth()->user()->can('users.create') || auth()->user()->can('users.edit') || auth()->user()->can('users.delete')))
+                                @elseif(auth()->user() &&
+                                        (auth()->user()->can('users.view') ||
+                                            auth()->user()->can('users.create') ||
+                                            auth()->user()->can('users.edit') ||
+                                            auth()->user()->can('users.delete')))
                                     <a href="{{ route('admin.user-management.index') }}"
                                         class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg">
                                         <i class="fas fa-users mr-2"></i>User Management

@@ -33,6 +33,7 @@ class User extends Authenticatable
         'locale',
         'currency',
         'timezone',
+        'unit_code',
     ];
 
     /**
