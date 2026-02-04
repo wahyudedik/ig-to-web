@@ -29,3 +29,8 @@ Schedule::command('sarpras:send-notifications --daily')
     ->dailyAt('08:00')
     ->withoutOverlapping()
     ->runInBackground();
+
+Schedule::command('attendance:sync')
+    ->everyFiveMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();

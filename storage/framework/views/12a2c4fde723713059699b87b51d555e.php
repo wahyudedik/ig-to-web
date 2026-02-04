@@ -65,6 +65,13 @@
                                         </a>
                                     <?php endif; ?>
                                     <?php if(Auth::check() &&
+                                            (Auth::user()->hasAnyRole(['guru', 'admin', 'superadmin']) || Auth::user()->can('attendance.view'))): ?>
+                                        <a href="<?php echo e(route('admin.absensi.index')); ?>"
+                                            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                            <i class="fas fa-user-check mr-2"></i>Absensi
+                                        </a>
+                                    <?php endif; ?>
+                                    <?php if(Auth::check() &&
                                             (Auth::user()->hasAnyRole(['sarpras', 'admin', 'superadmin']) ||
                                                 Auth::user()->can('sarpras.view') ||
                                                 Auth::user()->can('sarpras.read'))): ?>

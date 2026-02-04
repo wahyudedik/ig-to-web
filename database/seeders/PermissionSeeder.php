@@ -684,6 +684,71 @@ class PermissionSeeder extends Seeder
                 'guard_name' => 'web'
             ],
 
+            [
+                'name' => 'attendance.view',
+                'display_name' => 'Absensi - Lihat Data',
+                'description' => 'Permission untuk melihat data absensi',
+                'module' => 'attendance',
+                'action' => 'view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'attendance.sync',
+                'display_name' => 'Absensi - Sinkronisasi',
+                'description' => 'Permission untuk sinkronisasi data absensi dari perangkat',
+                'module' => 'attendance',
+                'action' => 'sync',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'attendance.devices.view',
+                'display_name' => 'Absensi - Lihat Perangkat',
+                'description' => 'Permission untuk melihat daftar perangkat absensi',
+                'module' => 'attendance',
+                'action' => 'devices.view',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'attendance.devices.create',
+                'display_name' => 'Absensi - Tambah Perangkat',
+                'description' => 'Permission untuk menambah perangkat absensi',
+                'module' => 'attendance',
+                'action' => 'devices.create',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'attendance.devices.edit',
+                'display_name' => 'Absensi - Edit Perangkat',
+                'description' => 'Permission untuk mengedit perangkat absensi',
+                'module' => 'attendance',
+                'action' => 'devices.edit',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'attendance.devices.delete',
+                'display_name' => 'Absensi - Hapus Perangkat',
+                'description' => 'Permission untuk menghapus perangkat absensi',
+                'module' => 'attendance',
+                'action' => 'devices.delete',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'attendance.mapping.manage',
+                'display_name' => 'Absensi - Kelola Mapping PIN',
+                'description' => 'Permission untuk mengelola mapping PIN perangkat ke guru/siswa',
+                'module' => 'attendance',
+                'action' => 'mapping.manage',
+                'guard_name' => 'web'
+            ],
+            [
+                'name' => 'attendance.export',
+                'display_name' => 'Absensi - Export Data',
+                'description' => 'Permission untuk export data absensi',
+                'module' => 'attendance',
+                'action' => 'export',
+                'guard_name' => 'web'
+            ],
+
             // Surat Management permissions
             [
                 'name' => 'surat.view',

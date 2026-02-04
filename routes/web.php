@@ -17,6 +17,8 @@ use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\LetterOutController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\LetterFormatController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ZKTecoIClockController;
 use App\Http\Controllers\SaranaReportController;
 use App\Http\Controllers\DataManagementController;
 use App\Http\Controllers\InstagramSettingController;
@@ -63,6 +65,8 @@ Route::get('/instagram/callback', [InstagramController::class, 'handleOAuthCallb
 // Instagram Webhook Endpoints (for Meta verification & notifications)
 Route::get('/instagram/webhook', [InstagramController::class, 'verifyWebhook'])->name('instagram.webhook.verify');
 Route::post('/instagram/webhook', [InstagramController::class, 'handleWebhook'])->name('instagram.webhook.handle');
+
+Route::match(['GET', 'POST'], '/iclock/cdata', [ZKTecoIClockController::class, 'cdata'])->name('zkteco.iclock.cdata');
 
 // Custom pages example
 Route::get('/custom-example', function () {
@@ -112,6 +116,15 @@ Route::prefix('admin/surat')->name('admin.letters.')->middleware(['auth', 'verif
 
     // Format Surat (Admin Only)
     Route::resource('formats', LetterFormatController::class);
+});
+
+Route::middleware(['auth', 'verified', 'role:guru|admin|superadmin'])->prefix('admin/absensi')->name('admin.absensi.')->group(function () {
+    Route::get('/', [AttendanceController::class, 'index'])->name('index');
+    Route::get('/logs', [AttendanceController::class, 'logs'])->name('logs');
+    Route::get('/devices', [AttendanceController::class, 'devices'])->name('devices.index');
+    Route::put('/devices/{device}', [AttendanceController::class, 'updateDevice'])->name('devices.update');
+    Route::get('/mapping', [AttendanceController::class, 'mapping'])->name('mapping.index');
+    Route::post('/mapping', [AttendanceController::class, 'storeMapping'])->name('mapping.store');
 });
 
 // ========================================

@@ -11,6 +11,8 @@ Sistem manajemen sekolah berbasis web yang terintegrasi dengan Instagram untuk m
 ## 📑 Daftar Isi
 
 - [Fitur Utama](#-fitur-utama)
+- [Absensi Fingerprint (ZKTeco)](#-absensi-fingerprint-zkteco)
+- [E-Surat](#-e-surat)
 - [Fitur Masa Depan](#-fitur-masa-depan-roadmap)
 - [Setup Development](#-setup-development-local)
 - [Setup Production VPS](#-setup-production-vps)
@@ -38,11 +40,34 @@ Sistem manajemen sekolah berbasis web yang terintegrasi dengan Instagram untuk m
 - **Jadwal Pelajaran**: Sistem penjadwalan mata pelajaran dengan manajemen kelas dan pengajar
 - **Import/Export**: Excel import/export untuk data bulk
 
+### ⏱️ Absensi Fingerprint (ZKTeco)
+- **Sumber Data**: Log absensi diambil dari perangkat ZKTeco via endpoint iClock `GET|POST /iclock/cdata?SN=...` (LAN/VPN).
+- **Rekap Harian**: Sistem membentuk rekap `first_in` dan `last_out` per hari via command `attendance:sync` (terjadwal tiap 5 menit).
+- **Mapping PIN**: PIN perangkat dipetakan ke data user/guru/siswa agar log bisa dihubungkan ke identitas.
+- **Menu Admin**: Academic → Absensi (`/admin/absensi`) untuk melihat rekap, logs, devices, dan mapping.
+- **Permission**: `attendance.view`, `attendance.sync`, `attendance.devices.*`, `attendance.mapping.manage`, `attendance.export`.
+- **Dokumentasi Setup**: Lihat [absensi-zkteco-setup.md](file:///d:/PROJECT/LARAVEL/ig-to-web/docs/absensi-zkteco-setup.md)
+
+**Rekomendasi perangkat (populer & stabil di Indonesia):**
+- Entry–Menengah: **ZKTeco MB20** (fingerprint + face + RFID, LAN) | **ZKTeco MB160** (face lebih cepat, finger + card).
+- Menengah–Profesional: **ZKTeco MB360**, **ZKTeco iFace 302 / iFace 402** (akurasi tinggi, cocok skala besar).
+
+**Catatan implementasi:**
+- Pastikan perangkat dan server berada di jaringan yang sama (atau lewat VPN) dan perangkat bisa mengakses URL server.
+- Jika menggunakan HTTPS, pastikan sertifikat valid agar device dapat mengirim data secara stabil.
+
 ### 🗳️ Sistem OSIS
 - **Pemilihan OSIS**: Sistem voting online yang aman dan transparan
 - **Kandidat Management**: Data kandidat dengan visi-misi dan program kerja
 - **Voting System**: Real-time voting dengan tracking IP dan user agent
 - **Hasil Voting**: Dashboard hasil dengan grafik dan statistik
+
+### ✉️ E-Surat
+- **Surat Masuk**: Pencatatan surat masuk (nomor manual), upload scan, status `received`, dan log aktivitas.
+- **Surat Keluar**: Pembuatan draft surat keluar dengan nomor otomatis, cetak PDF, upload scan untuk menyelesaikan status `sent`.
+- **Format Surat**: Builder format berbasis segmen (sequence, text, unit code, tanggal/bulan/romawi/tahun) dan preview template.
+- **Counter Nomor Surat**: Mendukung reset per tahun/per bulan, serta scope global atau per unit (berdasarkan `unit_code` user).
+- **Audit Log**: Setiap perubahan surat dicatat pada activity log.
 
 ### 🏢 Sarpras Management
 - **Inventory Management**: Manajemen barang dengan barcode dan QR code

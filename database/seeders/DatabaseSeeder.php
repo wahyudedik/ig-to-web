@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             PageSeeder::class, // Butuh UserSeeder
             NotificationSeeder::class, // Butuh UserSeeder
             LetterSeeder::class, // Format Surat
+            AttendanceSeeder::class, // Absensi
         ]);
     }
 }

@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Exclude Instagram webhook from CSRF verification
         $middleware->validateCsrfTokens(except: [
             'instagram/webhook',
+            'iclock/cdata',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
