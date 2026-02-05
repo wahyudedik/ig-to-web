@@ -21,11 +21,15 @@ Tambahkan ke `.env` di VPS:
 
 ```
 ATTENDANCE_ICLOCK_SECRET=buat-token-random-panjang
+ATTENDANCE_REQUIRE_USER_IDENTITY=true
+ATTENDANCE_REQUIRE_USER_VERIFIED=false
 ```
 
 Fungsi:
-- Mengamankan endpoint `iclock/cdata` dari request liar.
+- Mengamankan endpoint iClock (`/iclock/cdata`, `/iclock/getrequest`, `/iclock/devicecmd`) dari request liar.
 - Device wajib mengirim token pada query string.
+- Jika `ATTENDANCE_REQUIRE_USER_IDENTITY=true`, maka hanya log dari PIN yang ter-mapping ke **akun user** (kind=user) yang akan disimpan.
+- Jika `ATTENDANCE_REQUIRE_USER_VERIFIED=true`, maka user wajib `is_verified_by_admin=true`.
 
 Format URL yang direkomendasikan pada device:
 - `https://domain-anda.com/iclock/cdata?token=ATTENDANCE_ICLOCK_SECRET`
@@ -35,6 +39,7 @@ Sistem juga akan menerima token lewat parameter:
 
 Catatan:
 - Jika `ATTENDANCE_ICLOCK_SECRET` kosong, endpoint menerima request tanpa token.
+- Jika `ATTENDANCE_REQUIRE_USER_IDENTITY=false`, sistem menerima log dari semua PIN (tetap butuh mapping untuk rekap nama).
 
 ### 3) Setup VPS di aaPanel (Nginx/Apache)
 
@@ -98,6 +103,32 @@ Lalu atur:
   - Disarankan tambah proteksi firewall (whitelist IP publik sekolah).
 
 Setelah disimpan, device biasanya akan mengirim request periodik ke server.
+
+### 6B) ADMS Mini (Command Queue) untuk “Ditolak di Mesin”
+
+Selain menerima log (`/iclock/cdata`), project ini juga sudah mendukung mode **ADMS mini** berbasis HTTP untuk mengirim **perintah dari server ke device** (misalnya hapus user di device).
+
+Endpoint yang disediakan:
+- `GET|POST /iclock/getrequest?SN=...&token=...`
+  - Device polling untuk mengambil perintah yang antri.
+  - Response berisi baris perintah format: `C:<id>:<command>`
+- `GET|POST /iclock/devicecmd?SN=...&ID=<id>&Return=<code>&token=...`
+  - Device mengirim hasil eksekusi perintah yang sebelumnya dikirim.
+
+Database yang dipakai:
+- Tabel: `attendance_commands` (dibuat lewat migrasi)
+- Pastikan migrasi sudah dijalankan:
+```
+php artisan migrate
+```
+
+Perilaku otomatis (integrasi dengan mapping):
+- Jika mapping `attendance_identities` untuk `kind=user` dinonaktifkan (`is_active=false`) atau mapping kehilangan `user_id`, sistem akan otomatis membuat antrian perintah hapus user ke semua device aktif.
+- Perintah yang diantrikan saat ini: `DATA DELETE USERINFO PIN=<PIN>`
+
+Catatan:
+- Tidak semua tipe ZKTeco memanggil endpoint ADMS (`getrequest/devicecmd`). Jika device Anda hanya mendukung PUSH iClock, fitur ini tidak akan terpakai (tapi tetap aman).
+- Token yang sama (`ATTENDANCE_ICLOCK_SECRET`) dipakai untuk semua endpoint iClock.
 
 ### 7) Setup User di Device: Face, Finger, dan RFID
 
@@ -196,4 +227,35 @@ php artisan db:seed --class="Database\\Seeders\\AttendanceSeeder"
 #### Log ada tapi rekap kosong
 - Mapping PIN belum dibuat di `/admin/absensi/mapping`.
 - Jalankan `php artisan attendance:sync` atau pastikan scheduler berjalan.
+
+### 11) Jika Ingin “Ditolak di Mesin” (Benar-benar Tidak Bisa Scan)
+
+Ini bisa. Agar user “tidak bisa scan” (finger/face/RFID ditolak), user harus dibatasi dari sisi device (user dihapus/di-disable di mesin).
+
+Ada 3 pendekatan yang realistis:
+
+#### Opsi A — Kelola User di Device (Manual)
+- Hanya daftarkan user yang valid (PIN) dan hapus yang tidak valid.
+- Paling sederhana, tapi butuh disiplin admin device.
+
+#### Opsi B — ADMS via HTTP (Disarankan)
+- Project ini sudah punya **ADMS mini (command queue)**:
+  - device polling `/iclock/getrequest`
+  - device mengirim hasil ke `/iclock/devicecmd`
+- Dengan ini, saat mapping user dinonaktifkan di website, server bisa menyuruh device menghapus user sehingga benar-benar “ditolak di mesin”.
+
+#### Opsi C — Integrasi SDK/Protocol ZKTeco untuk Push User List
+- Secara teknis memungkinkan membuat job/command yang:
+  - Ambil daftar user valid dari database website.
+  - Sinkronkan user ke device (tambah/update/hapus).
+- Syarat utama:
+  - Device harus bisa diakses dari server via jaringan (umumnya TCP port 4370, tergantung device).
+  - Jangan expose port 4370 ke publik internet. Gunakan salah satu:
+    - VPN site-to-site / client VPN (direkomendasikan)
+    - reverse tunnel yang aman
+  - Perlu konfigurasi per device: IP lokal, port, comm key (jika dipakai).
+
+Catatan:
+- Tidak semua model/device membuka semua fitur (hapus user, set verifikasi, dsb) lewat protokol yang sama.
+- Untuk implementasi opsi C yang presisi, biasanya perlu daftar model device yang dipakai (mis. MB20/MB160/MB360/iFace series) dan mode komunikasi yang tersedia.
 

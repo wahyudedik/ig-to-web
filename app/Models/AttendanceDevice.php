@@ -31,4 +31,9 @@ class AttendanceDevice extends Model
     {
         return $this->hasMany(AttendanceLog::class);
     }
+
+    public function commands(): HasMany
+    {
+        return $this->hasMany(AttendanceCommand::class, 'attendance_device_id');
+    }
 }

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\AttendanceIdentity;
 use App\Models\User;
+use App\Observers\AttendanceIdentityObserver;
 use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register User Observer (currently empty, but kept for future use)
         User::observe(UserObserver::class);
+        AttendanceIdentity::observe(AttendanceIdentityObserver::class);
     }
 }

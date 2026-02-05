@@ -67,6 +67,8 @@ Route::get('/instagram/webhook', [InstagramController::class, 'verifyWebhook'])-
 Route::post('/instagram/webhook', [InstagramController::class, 'handleWebhook'])->name('instagram.webhook.handle');
 
 Route::match(['GET', 'POST'], '/iclock/cdata', [ZKTecoIClockController::class, 'cdata'])->name('zkteco.iclock.cdata');
+Route::match(['GET', 'POST'], '/iclock/getrequest', [ZKTecoIClockController::class, 'getrequest'])->name('zkteco.iclock.getrequest');
+Route::match(['GET', 'POST'], '/iclock/devicecmd', [ZKTecoIClockController::class, 'devicecmd'])->name('zkteco.iclock.devicecmd');
 
 // Custom pages example
 Route::get('/custom-example', function () {
